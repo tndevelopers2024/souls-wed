@@ -15,7 +15,7 @@
 :root {
   --sw-orange: #EE7429;
   --sw-gold: #FCCB11;
-  --sw-navy: #37475A;
+  --sw-navy: #1A1A1A;
   --sw-black: #212529;
   --sw-steel: #000000;
   --sw-peach: #EED9C4;
@@ -158,7 +158,7 @@ h6 {
   border-radius: 14px;
   padding: 14px 32px;
   font-weight: 700;
-  color: #37475A;
+  color: #1A1A1A;
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 4px 20px rgba(252, 203, 17, 0.4);

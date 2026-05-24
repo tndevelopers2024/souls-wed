@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Star, ChevronLeft, ChevronRight, Quote, Heart } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 const testimonials = [
   {
@@ -54,122 +54,146 @@ const testimonials = [
 ];
 
 export default function TestimonialsSection() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const scroll = (dir: "left" | "right") => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({ left: dir === "right" ? 320 : -320, behavior: "smooth" });
-  };
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeTestimonial = testimonials[activeIndex];
+
+  const next = () => setActiveIndex((prev) => (prev + 1) % testimonials.length);
+  const prev = () => setActiveIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+
+  // Auto-play
+  useEffect(() => {
+    const timer = setInterval(next, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <section className="py-20 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <motion.div
-          className="flex items-end justify-between mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-orange)" }}>
-              Real Love Stories
-            </p>
-            <h2 className="section-heading">Couples Love SoulsWed</h2>
-            <p className="section-subtext">Discover why thousands of couples trusted us</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex gap-2">
-              <button onClick={() => scroll("left")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-white)", border: "1px solid var(--sw-light-gray)" }}>
-                <ChevronLeft className="w-5 h-5" style={{ color: "var(--sw-navy)" }} />
-              </button>
-              <button onClick={() => scroll("right")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-navy)" }}>
-                <ChevronRight className="w-5 h-5 text-white" />
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Scroll row */}
-        <div ref={scrollRef} className="flex gap-5 overflow-x-auto snap-scroll pb-4" style={{ scrollbarWidth: "none" }}>
-          {testimonials.map((item, i) => (
-            <motion.div
-              key={item.id}
-              className="flex-shrink-0 w-[85vw] sm:w-[300px] md:w-[360px] cursor-pointer group"
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
+    <section className="py-24 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          
+          {/* Left: Text Content */}
+          <div className="order-2 lg:order-1">
+            <motion.p 
+              className="text-sm font-bold uppercase tracking-widest mb-3" 
+              style={{ color: "var(--sw-orange)" }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              style={{ scrollSnapAlign: "start" }}
             >
-              <div className="bg-[#F4F4F4] p-1 rounded-[36px]">
-                <div
-                  className="relative h-[480px] sm:h-[540px] md:h-[600px] w-full"
-                  style={{
-                    clipPath: "inset(0 round 32px)",
-                    WebkitClipPath: "inset(0 round 32px)",
-                  }}
+              Real Love Stories
+            </motion.p>
+            <motion.h2 
+              className="text-4xl md:text-5xl font-bold mb-12"
+              style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              Couples Love SoulsWed
+            </motion.h2>
+            
+            <div className="relative min-h-[260px] sm:min-h-[220px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
                 >
-                  <Image
-                    src={item.image}
-                    alt={item.couple}
-                    fill
-                    sizes="(max-width: 640px) 85vw, (max-width: 768px) 300px, 360px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-
-                  {/* Rating chip — top left */}
-                  <div className="absolute top-4 left-4 z-30 flex items-center gap-1 px-3 py-2 text-xs font-bold rounded-full shadow-sm" style={{ background: "rgba(255,255,255,0.92)", color: "var(--sw-navy)" }}>
-                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
-                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
-                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
-                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
-                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+                  <Quote className="w-12 h-12 mb-6" style={{ color: "var(--sw-light-gray)" }} />
+                  <div className="flex gap-1.5 mb-6">
+                    {[...Array(activeTestimonial.stars)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+                    ))}
                   </div>
-
-                  {/* Icon chip — top right */}
-                  <div className="absolute top-4 right-4 z-30 flex items-center justify-center w-8 h-8 rounded-full" style={{ background: "rgba(255,255,255,0.92)", color: "var(--sw-orange)" }}>
-                    <Heart className="w-4 h-4 fill-current" />
-                  </div>
-
-                  {/* Frosted gradient overlay */}
-                  <div
-                    className="absolute inset-0 z-10 pointer-events-none"
-                    style={{
-                      background: "linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 40%, transparent 65%)",
-                      backdropFilter: "blur(12px)",
-                      WebkitMaskImage: "linear-gradient(to top, black 45%, transparent 70%)",
-                      maskImage: "linear-gradient(to top, black 45%, transparent 70%)",
-                    }}
-                  />
-
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 z-20 p-8 flex flex-col justify-end">
-                    <Quote className="w-10 h-10 mb-4 opacity-20" style={{ color: "var(--sw-navy)" }} />
-                    <p className="text-[17px] leading-relaxed font-medium text-slate-800 mb-6 italic" style={{ fontFamily: "var(--font-body)" }}>
-                      "{item.quote}"
-                    </p>
-                    <div className="flex items-end justify-between pt-4 border-t border-slate-300/40">
-                      <div className="flex flex-col">
-                        <span className="text-[18px] sm:text-[20px] font-bold text-slate-900 leading-none mb-1" style={{ fontFamily: "var(--font-heading)" }}>{item.couple}</span>
-                        <span className="text-sm font-medium" style={{ color: "var(--sw-orange)" }}>{item.venue}</span>
-                      </div>
+                  <p className="text-2xl md:text-3xl leading-snug text-slate-800 font-medium italic mb-8" style={{ fontFamily: "var(--font-heading)" }}>
+                    "{activeTestimonial.quote}"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-1 bg-slate-200 rounded-full overflow-hidden">
+                      <div className="h-full w-1/3 bg-orange-400 rounded-full" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-slate-900">{activeTestimonial.couple}</h4>
+                      <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">
+                        {activeTestimonial.venue} • {activeTestimonial.date}
+                      </p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center gap-4 mt-10">
+              <button 
+                onClick={prev} 
+                className="w-12 h-12 rounded-full border-2 border-slate-100 flex items-center justify-center transition-all hover:border-slate-300 hover:bg-slate-50 group"
+                aria-label="Previous testimonial"
+              >
+                <ChevronLeft className="w-5 h-5 text-slate-400 group-hover:text-slate-700 transition-colors" />
+              </button>
+              <button 
+                onClick={next} 
+                className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:opacity-90 hover:scale-105 shadow-lg shadow-orange-500/20" 
+                style={{ background: "var(--sw-navy)" }}
+                aria-label="Next testimonial"
+              >
+                <ChevronRight className="w-5 h-5 text-white" />
+              </button>
+              
+              <div className="ml-6 flex gap-2">
+                {testimonials.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveIndex(idx)}
+                    className="h-1.5 rounded-full transition-all duration-300"
+                    style={{
+                      width: activeIndex === idx ? "24px" : "8px",
+                      background: activeIndex === idx ? "var(--sw-orange)" : "var(--sw-light-gray)",
+                    }}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
               </div>
-            </motion.div>
-          ))}
-        </div>
-        
-        {/* Mobile Controls */}
-        <div className="md:hidden flex justify-center gap-2 mt-6">
-          <button onClick={() => scroll("left")} className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95" style={{ background: "var(--sw-white)", border: "1px solid var(--sw-light-gray)" }}>
-            <ChevronLeft className="w-6 h-6" style={{ color: "var(--sw-navy)" }} />
-          </button>
-          <button onClick={() => scroll("right")} className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95" style={{ background: "var(--sw-navy)" }}>
-            <ChevronRight className="w-6 h-6 text-white" />
-          </button>
+            </div>
+          </div>
+
+          {/* Right: Image Slider */}
+          <div className="order-1 lg:order-2 w-full max-w-[500px] mx-auto lg:ml-auto">
+            <div className="relative aspect-[4/5] w-full rounded-[2rem] overflow-hidden shadow-2xl group">
+              <AnimatePresence>
+                <motion.div
+                  key={activeIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={activeTestimonial.image}
+                    alt={activeTestimonial.couple}
+                    fill
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+                </motion.div>
+              </AnimatePresence>
+              
+              {/* Decorative badge */}
+              <div className="absolute top-6 right-6 backdrop-blur-md bg-white/20 border border-white/40 px-4 py-2 rounded-full shadow-xl">
+                 <span className="text-white font-bold text-xs tracking-widest uppercase flex items-center gap-2">
+                   <Star className="w-3 h-3 fill-white" />
+                   Verified
+                 </span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

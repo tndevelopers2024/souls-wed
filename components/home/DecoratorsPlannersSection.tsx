@@ -7,20 +7,26 @@ import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, Flower2, Clipboard
 
 const decorators = [
   {
-    id: 1, name: "Beretania Florist", location: "Honolulu, United States",
+    id: 1, name: "Akiko Kovacs", location: "Honolulu, United States",
     price: "₹29,223", unit: "per booking", rating: 0, verified: true, tag: "Decorator",
-    image: "/soulswed/vendors/1182.avif",
+    image: "https://api.soulswed.com/uploads/images/1059/chateau-de-grand-luce-wedding-florist-floraison31.jpg",
+  },
+      {
+    id: 4, name: "Floraison-31", location: "Auckland, New Zealand",
+    price: "₹12,656", unit: "per engagement", rating: 0, verified: true, tag: "Decorator",
+    image: "https://api.soulswed.com/uploads/images/875/63d398e832ee54bf54ac7dc5248d460c.jpg",
   },
   {
     id: 2, name: "French Florist", location: "California, United States",
     price: "₹25,048", unit: "per booking", rating: 0, verified: true, tag: "Decorator",
-    image: "/soulswed/vendors/1162.webp",
+    image: "https://api.soulswed.com/uploads/images/560/321556520_1531622387316917_2524386303577161963_n.jpg",
   },
   {
     id: 3, name: "Les Filles d'a cote", location: "Paris, France",
     price: "₹12,656", unit: "per engagement", rating: 0, verified: true, tag: "Decorator",
-    image: "/soulswed/vendors/1147.png",
+    image: "https://api.soulswed.com/uploads/images/1055/051A1043.jpg",
   },
+
 ];
 
 const planners = [

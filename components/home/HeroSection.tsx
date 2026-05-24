@@ -29,8 +29,8 @@ const categories = [
   "Planners",
 ];
 
-const words = ["Your", "Dream", "Wedding,"];
-const words2 = ["Begins", "Here"];
+const words = ["Extraordinary", "Events,"];
+const words2 = ["Effortlessly", "Planned"];
 
 const bgVideos = [
   "https://soulswed.com/assets/videos/PageVideos/decorators.mp4", // Default
@@ -107,7 +107,7 @@ export default function HeroSection() {
         </motion.div>
 
         {/* Headline Line 1 */}
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-2">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-2">
           <span className="flex flex-wrap justify-center gap-x-4">
             {words.map((word, i) => (
               <motion.span
@@ -124,7 +124,7 @@ export default function HeroSection() {
         </h1>
 
         {/* Headline Line 2 — gold italic */}
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold italic leading-tight mb-6" style={{ color: "var(--sw-gold)" }}>
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold italic leading-tight mb-6" style={{ color: "var(--sw-gold)" }}>
           <span className="flex flex-wrap justify-center gap-x-4">
             {words2.map((word, i) => (
               <motion.span
@@ -147,7 +147,7 @@ export default function HeroSection() {
           className="text-lg md:text-xl max-w-2xl mb-12"
           style={{ color: "rgba(255,255,255,0.8)" }}
         >
-          Discover 24+ categories — venues, photographers, flights, cruises &amp; more
+          Book premier venues, flights, and vendors all in one place.
         </motion.p>
 
         {/* Floating Search Bar */}

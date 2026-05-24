@@ -7,26 +7,37 @@ import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, Sparkles, ArrowRig
 
 const artists = [
   {
-    id: 1,
-    name: "Humayra Hassan",
-    location: "Dubai, UAE",
+    id: 0,
+    name: "Almudena Persa Makeup & Hair",
+    location: "Marbella, Spain",
     price: "₹13,359",
     unit: "per booking",
     rating: 0,
     verified: true,
     tag: "Bridal Specialist",
-    image: "/soulswed/vendors/1176.webp",
+    image: "https://api.soulswed.com/uploads/images/715/R-36galialahav-almudenapersa-maquilladora-novias-jerez.png",
+  },
+  {
+    id: 1,
+    name: "Alisa Lyons",
+    location: "Los Angeles, USA",
+    price: "₹13,359",
+    unit: "per booking",
+    rating: 0,
+    verified: true,
+    tag: "Bridal Specialist",
+    image: "https://api.soulswed.com/uploads/images/402/10.jpg",
   },
   {
     id: 2,
-    name: "Alysha Maree",
+    name: "Bella Bridal Beauty",
     location: "Sydney, Australia",
     price: "₹13,359",
     unit: "per booking",
     rating: 0,
     verified: true,
     tag: "Airbrush Expert",
-    image: "/soulswed/vendors/1175.jpg",
+    image: "https://api.soulswed.com/uploads/images/750/441508695_18150271849312649_842196910519981234_n.jpg",
   },
   {
     id: 3,
@@ -37,7 +48,7 @@ const artists = [
     rating: 0,
     verified: true,
     tag: "Natural Glam",
-    image: "/soulswed/vendors/1168.jpg",
+    image: "https://api.soulswed.com/uploads/images/750/449115705_18154110325312649_3763699514071068272_n.jpg",
   },
 ];
 

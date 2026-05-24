@@ -21,7 +21,7 @@ export default function SimilarVenues({ venues }: SimilarVenuesProps) {
   if (venues.length === 0) return null;
 
   return (
-    <section className="py-16 overflow-hidden" style={{ background: "var(--sw-peach)" }}>
+    <section className="py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-end justify-between mb-8">
           <div>

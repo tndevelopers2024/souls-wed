@@ -6,6 +6,17 @@ import Image from "next/image";
 import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, Camera, Film, ArrowRight } from "lucide-react";
 
 const photographers = [
+      {
+    id: 4,
+    name: "Awarjana Photo Gallery",
+    location: "Sri Lanka",
+    price: "₹187,860",
+    unit: "per day",
+    rating: 0,
+    // verified: true,
+    type: "photo",
+    image: "https://api.soulswed.com/uploads/images/620/454590928_1046256396861567_2347771444487123538_n.jpg",
+  },
   {
     id: 1,
     name: "George Street Photo",
@@ -13,7 +24,7 @@ const photographers = [
     price: "₹212,491",
     unit: "per engagement",
     rating: 0,
-    verified: true,
+    // verified: true,
     type: "both",
     image: "https://images.trvl-media.com/place/6152386/71e8313a-bb03-4920-b0db-8a1c587b45df.jpg",
   },
@@ -24,10 +35,11 @@ const photographers = [
     price: "₹187,860",
     unit: "per day",
     rating: 0,
-    verified: true,
+    // verified: true,
     type: "photo",
-    image: "/soulswed/vendors/1180.jpg",
+    image: "https://cdn0.weddingwire.com/vendor/042391/3_2/960/jpg/gia-photos-wedding-photographer-039_51_193240-177819025787375.jpeg",
   },
+
   {
     id: 3,
     name: "One Moment Hawaii",
@@ -35,10 +47,11 @@ const photographers = [
     price: "₹208,733",
     unit: "per engagement",
     rating: 0,
-    verified: true,
+    // verified: true,
     type: "both",
-    image: "/soulswed/vendors/1179.jpg",
+    image: "https://i.ytimg.com/vi/tlYhE7GiL_E/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLA41zVV8XDBqKE_rOPuKza2Q04uIw",
   },
+
 ];
 
 const typeLabel = { photo: "Photographer", video: "Videographer", both: "Photo + Video" };

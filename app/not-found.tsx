@@ -27,7 +27,7 @@ export default function NotFound() {
         </motion.div>
 
         <h1 className="section-heading mb-4">404</h1>
-        <h2 className="text-2xl font-bold text-[#37475A] mb-4 font-heading">
+        <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4 font-heading">
           Page Not Found
         </h2>
         <p className="section-subtext mb-10">
@@ -38,7 +38,7 @@ export default function NotFound() {
         <motion.div>
           <Link
             href="/"
-            className="bg-[#FCCB11]/90 backdrop-blur-md border border-white/30 rounded-2xl px-8 py-[14px] font-bold text-[#37475A] shadow-[0_4px_20px_rgba(252,203,17,0.4)] inline-flex items-center gap-2"
+            className="bg-[#FCCB11]/90 backdrop-blur-md border border-white/30 rounded-2xl px-8 py-[14px] font-bold text-[#1A1A1A] shadow-[0_4px_20px_rgba(252,203,17,0.4)] inline-flex items-center gap-2"
           >
             <Home className="w-5 h-5" />
             <span>Back to Home</span>
