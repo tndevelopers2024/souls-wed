@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans, Geist } from "next/font/google";
+import { Plus_Jakarta_Sans, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -30,14 +23,21 @@ export const metadata: Metadata = {
   },
 };
 
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(cormorant.variable, plusJakarta.variable, "font-sans", geist.variable)}>
-      <body className="min-h-screen antialiased">{children}</body>
+    <html lang="en" className={cn(plusJakarta.variable, "font-sans", geist.variable)}>
+      <body className="min-h-screen antialiased">
+        <Navbar />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

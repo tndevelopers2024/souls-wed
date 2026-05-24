@@ -4,33 +4,25 @@ import { useState, useEffect, useLayoutEffect } from "react";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { Heart, Menu, X, ChevronDown, LogOut, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { label: "Home", href: "/" },
+  { label: "Venues", href: "/venues" },
+  { label: "Planners", href: "/vendors/planners" },
+  { label: "Photographers", href: "/vendors/photographers" },
   {
-    label: "Venues",
-    href: "/venues",
+    label: "Other Services",
+    href: "#",
     children: [
-      { label: "Banquet Halls", href: "/venues/banquet" },
-      { label: "Palace Venues", href: "/venues/palace" },
-      { label: "Beach Resorts", href: "/venues/beach" },
-      { label: "Destination Venues", href: "/venues/destination" },
-    ],
-  },
-  {
-    label: "Vendors",
-    href: "/vendors",
-    children: [
-      { label: "Photographers", href: "/vendors/photographers" },
-      { label: "Wedding Planners", href: "/vendors/planners" },
-      { label: "Caterers", href: "/vendors/caterers" },
       { label: "Decorators", href: "/vendors/decorators" },
-      { label: "Make-up Artists", href: "/vendors/makeup" },
+      { label: "Makeup Artists", href: "/vendors/makeup" },
+      { label: "Sakhi Service", href: "/services/sakhi" },
     ],
   },
   { label: "Destinations", href: "/destinations" },
   { label: "About", href: "/about" },
-  { label: "Blog", href: "/blog" },
 ];
 
 function DropdownMenu({ items }: { items: { label: string; href: string }[] }) {
@@ -63,10 +55,13 @@ function DropdownMenu({ items }: { items: { label: string; href: string }[] }) {
 }
 
 export default function Navbar() {
+  const pathname = usePathname();
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const isAuthPage = pathname?.startsWith("/login") || pathname?.startsWith("/signup");
 
   interface UserSession {
     id: string;
@@ -122,33 +117,37 @@ export default function Navbar() {
     };
   }, []);
 
+  if (isAuthPage) return null;
+
   return (
     <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
       {/* Floating capsule bar */}
       <motion.div
-        animate={{ boxShadow: scrolled ? "0 8px 40px rgba(0,0,0,0.15)" : "0 4px 20px rgba(0,0,0,0.08)" }}
-        transition={{ duration: 0.3 }}
-        className="rounded-full overflow-visible max-w-7xl mx-auto w-full"
+        animate={{ 
+          boxShadow: scrolled ? "0 10px 40px rgba(0,0,0,0.08)" : "0 4px 20px rgba(0,0,0,0.04)",
+          y: scrolled ? 2 : 0,
+          borderRadius: mobileOpen ? "28px" : "9999px"
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="overflow-visible max-w-7xl mx-auto w-full"
         style={{
-          background: "rgba(255,255,255,0.92)",
-          backdropFilter: "blur(24px)",
+          background: mobileOpen ? "rgba(255,255,255,0.98)" : (scrolled ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.95)"),
+          backdropFilter: "blur(24px) saturate(180%)",
           border: "1px solid rgba(255,255,255,0.8)",
         }}
       >
         <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between h-14 md:h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group flex-shrink-0">
-              <Heart
-                className="w-6 h-6 fill-current transition-transform group-hover:scale-110"
-                style={{ color: "var(--sw-orange)" }}
+            <Link href="/" className="flex items-center group flex-shrink-0">
+              <Image 
+                src="/logo/soulswedlogo-pc.png"
+                alt="SoulsWed Logo"
+                width={160}
+                height={48}
+                className="h-6 md:h-8 w-auto transition-transform group-hover:scale-105"
+                priority
               />
-              <span
-                className="text-xl font-bold tracking-tight font-serif"
-                style={{ color: "var(--sw-navy)" }}
-              >
-                SoulsWed
-              </span>
             </Link>
 
             {/* Desktop Nav */}
@@ -162,19 +161,20 @@ export default function Navbar() {
                 >
                   <Link
                     href={link.href}
-                    className="flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium transition-colors hover:bg-orange-50"
+                    className="relative flex items-center gap-1 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 hover:bg-orange-50/80 hover:text-orange-600 group"
                     style={{ color: "var(--sw-navy)" }}
                   >
                     {link.label}
                     {link.children && (
                       <ChevronDown
-                        className="w-3 h-3 transition-transform"
+                        className="w-3.5 h-3.5 transition-transform duration-300 group-hover:text-orange-500"
                         style={{
                           transform: openDropdown === link.label ? "rotate(180deg)" : "rotate(0deg)",
-                          color: "var(--sw-steel)",
                         }}
                       />
                     )}
+                    {/* Hover micro-animation underline */}
+                    <span className="absolute bottom-1.5 left-4 right-4 h-0.5 bg-orange-500 rounded-full scale-x-0 opacity-0 transition-all duration-300 group-hover:scale-x-100 group-hover:opacity-100" />
                   </Link>
                   <AnimatePresence>
                     {link.children && openDropdown === link.label && (
@@ -254,15 +254,24 @@ export default function Navbar() {
               
               <Link
                 href="/book"
-                className="text-sm font-bold px-5 py-2.5 rounded-full text-white transition-all hover:opacity-90 hover:-translate-y-0.5"
+                className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 hover:scale-105 hover:shadow-lg overflow-hidden group"
                 style={{
-                  background: "var(--sw-orange)",
-                  boxShadow: "0 4px 14px rgba(238,116,41,0.35)",
+                  background: "linear-gradient(135deg, var(--sw-orange), #f95c02)",
+                  boxShadow: "0 6px 20px rgba(238,116,41,0.35)",
                 }}
               >
-                Book Now
+                <span className="relative z-10">Book Now</span>
+                {/* Shine effect overlay */}
+                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-[shimmer_1.5s_infinite] z-0" />
               </Link>
             </div>
+            
+            {/* Adding global animation style for shimmer */}
+            <style jsx global>{`
+              @keyframes shimmer {
+                100% { transform: translateX(100%); }
+              }
+            `}</style>
 
             {/* Mobile hamburger */}
             <button

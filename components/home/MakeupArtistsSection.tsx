@@ -3,72 +3,45 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, ArrowRight } from "lucide-react";
+import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, Sparkles, ArrowRight } from "lucide-react";
 
-const venues = [
+const artists = [
   {
     id: 1,
-    name: "The Ritz-Carlton New York, NoMad",
-    location: "New York, United States",
-    price: "₹144,000",
-    unit: "per day",
-    rating: 5.0,
+    name: "Humayra Hassan",
+    location: "Dubai, UAE",
+    price: "₹13,359",
+    unit: "per booking",
+    rating: 0,
     verified: true,
-    image: "https://www.americanexpress.com/en-us/travel/discover/photos/482736/82062/1200/NYCROLobbyLounge.jpg",
+    tag: "Bridal Specialist",
+    image: "/soulswed/vendors/1176.webp",
   },
   {
     id: 2,
-    name: "Conrad New York Downtown",
-    location: "New York, United States",
-    price: "₹50,000",
-    unit: "per day",
-    rating: 5.0,
+    name: "Alysha Maree",
+    location: "Sydney, Australia",
+    price: "₹13,359",
+    unit: "per booking",
+    rating: 0,
     verified: true,
-    image: "https://i0.wp.com/jimbyerstravel.com/wp-content/uploads/2024/02/12-11-13A-1-2.jpg?resize=1920%2C1794&ssl=1",
+    tag: "Airbrush Expert",
+    image: "/soulswed/vendors/1175.jpg",
   },
   {
     id: 3,
-    name: "Refinery Hotel New York",
-    location: "New York, United States",
-    price: "₹38,000",
-    unit: "per day",
-    rating: 5.0,
-    verified: true,
-    image: "https://static.prod.r53.tablethotels.com/media/hotels/slideshow_images_staged/large/1268892.jpg",
-  },
-  {
-    id: 4,
-    name: "JW Marriott Hotel Hong Kong",
-    location: "Hong Kong",
-    price: "₹27,000",
-    unit: "per day",
+    name: "Ishita Poddar MUA",
+    location: "Auckland, New Zealand",
+    price: "₹6,650",
+    unit: "per booking",
     rating: 0,
     verified: true,
-    image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/HK_%E9%87%91%E9%90%98_Admiralty_%E9%A6%99%E6%B8%AF%E8%90%AC%E8%B1%AA%E9%85%92%E5%BA%97_JW_Marriott_Hotel_%E6%A3%8B%E6%9D%86_flagpoles_December_2020_SS2_06.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
-  },
-  {
-    id: 5,
-    name: "InterContinental Grand Stanford Hong Kong",
-    location: "Hong Kong",
-    price: "₹17,000",
-    unit: "per day",
-    rating: 5.0,
-    verified: true,
-    image: "https://digital.ihg.com/is/image/ihg/intercontinental-hong-kong-10513232848-1x1",
-  },
-  {
-    id: 6,
-    name: "Harbour Grand Hong Kong",
-    location: "Hong Kong",
-    price: "₹1,166,401",
-    unit: "per engagement",
-    rating: 5.0,
-    verified: true,
-    image: "https://familytravelgenie.com/media/wp-uploads/2023/08/Harbour-Grand-Hong-Kong-Lobby.jpeg",
+    tag: "Natural Glam",
+    image: "/soulswed/vendors/1168.jpg",
   },
 ];
 
-export default function FeaturedVenues() {
+export default function MakeupArtistsSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -88,21 +61,17 @@ export default function FeaturedVenues() {
         >
           <div>
             <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-orange)" }}>
-              Top Picks
+              Look Your Best
             </p>
-            <h2 className="section-heading">Amazing Venues</h2>
-            <p className="section-subtext">Best destinations at best prices</p>
+            <h2 className="section-heading">Makeup Artists</h2>
+            <p className="section-subtext">Beauty and the brushes</p>
           </div>
           <div className="flex items-center gap-4">
-            <a
-              href="/category/venues"
-              className="hidden md:inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:gap-3"
-              style={{ background: "var(--sw-white)", color: "var(--sw-navy)" }}
-            >
+            <a href="/category/makeup" className="hidden md:inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:gap-3" style={{ background: "var(--sw-peach)", color: "var(--sw-navy)" }}>
               Search more <ArrowRight className="w-4 h-4" />
             </a>
             <div className="flex gap-2">
-              <button onClick={() => scroll("left")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-white)", border: "0px solid var(--sw-light-gray)" }}>
+              <button onClick={() => scroll("left")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-white)", border: "1px solid var(--sw-light-gray)" }}>
                 <ChevronLeft className="w-5 h-5" style={{ color: "var(--sw-navy)" }} />
               </button>
               <button onClick={() => scroll("right")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-navy)" }}>
@@ -114,9 +83,9 @@ export default function FeaturedVenues() {
 
         {/* Scroll row */}
         <div ref={scrollRef} className="flex gap-5 overflow-x-auto snap-scroll pb-4" style={{ scrollbarWidth: "none" }}>
-          {venues.map((venue, i) => (
+          {artists.map((item, i) => (
             <motion.div
-              key={venue.id}
+              key={item.id}
               className="flex-shrink-0 w-[85vw] sm:w-[300px] md:w-[340px] cursor-pointer"
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -124,7 +93,6 @@ export default function FeaturedVenues() {
               transition={{ duration: 0.5, delay: i * 0.08 }}
               style={{ scrollSnapAlign: "start" }}
             >
-              {/* Card Container */}
               <div className="bg-[#F4F4F4] p-1 rounded-[36px]">
                 <div
                   className="relative h-[440px] sm:h-[500px] md:h-[560px] w-full"
@@ -133,56 +101,55 @@ export default function FeaturedVenues() {
                     WebkitClipPath: "inset(0 round 32px)",
                   }}
                 >
-                  {/* Full-bleed image */}
                   <Image
-                    src={venue.image}
-                    alt={venue.name}
+                    src={item.image}
+                    alt={item.name}
                     fill
                     sizes="(max-width: 640px) 85vw, (max-width: 768px) 300px, 340px"
-                    priority={i === 0}
                     className="object-cover"
                   />
 
                   {/* Rating chip — top left */}
-                  {venue.rating > 0 && (
+                  {item.rating > 0 && (
                     <div className="absolute top-4 left-4 z-30 flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold rounded-full" style={{ background: "rgba(255,255,255,0.92)", color: "var(--sw-navy)" }}>
-                      <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" /> {venue.rating.toFixed(1)}
+                      <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" /> {item.rating.toFixed(1)}
                     </div>
                   )}
 
-                  {/* Frosted gradient mask overlay */}
+                  {/* Tag chip — top right */}
+                  <div className="absolute top-4 right-4 z-30 flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-full" style={{ background: "rgba(255,255,255,0.92)", color: "var(--sw-navy)" }}>
+                    <Sparkles className="w-3.5 h-3.5" style={{ color: "var(--sw-orange)" }} />
+                    {item.tag}
+                  </div>
+
+                  {/* Frosted gradient overlay */}
                   <div
                     className="absolute inset-0 z-10 pointer-events-none"
                     style={{
                       background: "linear-gradient(to top, rgba(255,255,255,0.93) 0%, rgba(255,255,255,0.5) 30%, transparent 55%)",
                       backdropFilter: "blur(8px)",
                       WebkitMaskImage: "linear-gradient(to top, black 36%, transparent 60%)",
-                      maskImage: "linear-gradient(to top, black 36%, transparent 60%)"
+                      maskImage: "linear-gradient(to top, black 36%, transparent 60%)",
                     }}
                   />
 
-                  {/* Content over gradient */}
+                  {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 z-20 p-6 flex flex-col justify-end">
-                    {/* Name + badge */}
                     <div className="flex items-center gap-2 mb-1.5">
                       <h3 className="text-[20px] sm:text-[22px] md:text-[24px] font-bold leading-tight tracking-tight text-slate-900 line-clamp-2" style={{ fontFamily: "var(--font-heading)" }}>
-                        {venue.name}
+                        {item.name}
                       </h3>
-                      {venue.verified && <BadgeCheck className="w-6 h-6 flex-shrink-0 text-white fill-[#16a34a]" />}
+                      {item.verified && <BadgeCheck className="w-6 h-6 flex-shrink-0 text-white fill-[#16a34a]" />}
                     </div>
-
-                    {/* Location */}
                     <div className="flex items-center gap-1.5 mb-5">
                       <MapPin className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                      <span className="text-sm font-medium text-slate-600 line-clamp-1">{venue.location}</span>
+                      <span className="text-sm font-medium text-slate-600 line-clamp-1">{item.location}</span>
                     </div>
-
-                    {/* Price + button */}
                     <div className="flex items-end justify-between">
                       <div className="flex flex-col">
                         <span className="text-xs font-medium text-slate-500">from</span>
-                        <span className="text-[20px] sm:text-[22px] font-bold text-slate-900 leading-none">{venue.price}</span>
-                        <span className="text-xs text-slate-500 mt-1">{venue.unit}</span>
+                        <span className="text-[20px] sm:text-[22px] font-bold text-slate-900 leading-none">{item.price}</span>
+                        <span className="text-xs text-slate-500 mt-1">{item.unit}</span>
                       </div>
                       <button
                         className="text-[15px] sm:text-base font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all hover:scale-105 flex items-center gap-1.5"

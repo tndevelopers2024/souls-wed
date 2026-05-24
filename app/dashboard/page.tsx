@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Phone, Calendar, Heart, MessageSquare, LogOut, ChevronRight, Loader2, Compass } from "lucide-react";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+
+
 
 interface UserSession {
   id: string;
@@ -72,7 +72,7 @@ export default function UserDashboard() {
 
   return (
     <>
-      <Navbar />
+
       <div className="min-h-screen bg-slate-50 pt-28 pb-16 font-body relative overflow-hidden">
         {/* Background orbs */}
         <div
@@ -273,7 +273,7 @@ export default function UserDashboard() {
           </div>
         </main>
       </div>
-      <Footer />
+
     </>
   );
 }

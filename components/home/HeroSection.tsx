@@ -1,12 +1,24 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { ChevronDown, MapPin, Calendar, Users, Layers } from "lucide-react";
-import { useState } from "react";
-
-const popularTags = ["Mumbai", "Goa", "Udaipur", "Dubai", "Bali", "Jaipur"];
-
+import { useState, useEffect } from "react";
+const destinations = [
+  "Paris",
+  "New York",
+  "London",
+  "Tokyo",
+  "Dubai",
+  "Rome",
+  "Bali",
+  "Mumbai",
+  "Jaipur",
+  "Goa",
+  "Udaipur",
+  "Sydney",
+  "Istanbul"
+];
 const categories = [
   "All Categories",
   "Venues",
@@ -20,32 +32,51 @@ const categories = [
 const words = ["Your", "Dream", "Wedding,"];
 const words2 = ["Begins", "Here"];
 
+const bgVideos = [
+  "https://soulswed.com/assets/videos/PageVideos/decorators.mp4", // Default
+  "https://soulswed.com/assets/videos/PageVideos/photographers.mp4",
+  "https://soulswed.com/assets/videos/PageVideos/makeupartists.mp4",
+  "https://soulswed.com/assets/videos/PageVideos/planners.mp4",
+];
+
 export default function HeroSection() {
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentVideoIndex((prev) => (prev + 1) % bgVideos.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Background image */}
-      <Image
-        src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1800&q=80"
-        alt="Luxury wedding venue"
-        fill
-        className="object-cover object-center"
-        priority
-      />
+    <div className="w-full px-3 md:px-5 lg:px-6 pt-4 pb-8">
+      <section className="relative min-h-[calc(100vh-2.5rem)] flex flex-col items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[40px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)]">
+      {/* Background image carousel */}
+      <div className="absolute inset-0 z-0">
+        <AnimatePresence>
+          <motion.div
+            key={currentVideoIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="absolute inset-0"
+          >
+            <video
+              src={bgVideos[currentVideoIndex]}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover object-center"
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-      {/* Gradient mesh overlay */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `
-            radial-gradient(ellipse at 20% 50%, rgba(238,116,41,0.4) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 20%, rgba(252,203,17,0.3) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 80%, rgba(55,71,90,0.4) 0%, transparent 60%),
-            rgba(33,37,41,0.6)
-          `,
-        }}
-      />
+      {/* Simple dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black/40" />
 
       {/* Floating orbs */}
       <div
@@ -62,7 +93,7 @@ export default function HeroSection() {
       />
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 flex flex-col items-center text-center pt-24 pb-12">
+      <div className="relative z-10 w-full max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center pt-24 pb-12">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -124,47 +155,48 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.9, ease: [0.4, 0, 0.2, 1] }}
-          className="w-full max-w-4xl"
+          className="w-full max-w-5xl xl:max-w-6xl"
         >
-          <div className="glass-card p-4 md:p-6">
-            <div className="flex flex-col md:flex-row gap-3">
+          <div className="">
+            <div className="flex flex-col lg:flex-row gap-3">
               {/* Destination */}
-              <div className="flex-1 flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3">
+              <div className="flex-1 min-w-0 flex items-center gap-3 glass-input px-4 py-3">
                 <MapPin className="w-5 h-5 flex-shrink-0" style={{ color: "var(--sw-orange)" }} />
-                <input
-                  type="text"
-                  placeholder="Destination / City"
-                  className="bg-transparent w-full text-white placeholder-white/60 text-sm font-medium outline-none"
-                />
+                <select defaultValue="" className="bg-transparent w-full text-gray-900 text-sm font-semibold outline-none truncate appearance-none cursor-pointer">
+                  <option value="" disabled hidden className="text-gray-500">Destination</option>
+                  {destinations.map((d) => (
+                    <option key={d} value={d} className="text-gray-900">{d}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Date */}
-              <div className="flex-1 flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3">
+              <div className="flex-1 min-w-0 flex items-center gap-3 glass-input px-4 py-3">
                 <Calendar className="w-5 h-5 flex-shrink-0" style={{ color: "var(--sw-gold)" }} />
                 <input
                   type="text"
-                  placeholder="Wedding Date"
-                  className="bg-transparent w-full text-white placeholder-white/60 text-sm font-medium outline-none"
+                  placeholder="Date"
+                  className="bg-transparent w-full text-gray-900 placeholder-gray-500 text-sm font-semibold outline-none truncate"
                   onFocus={(e) => (e.target.type = "date")}
                   onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
                 />
               </div>
 
               {/* Guests */}
-              <div className="flex-1 flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3">
+              <div className="flex-1 min-w-0 flex items-center gap-3 glass-input px-4 py-3">
                 <Users className="w-5 h-5 flex-shrink-0" style={{ color: "var(--sw-steel)" }} />
                 <input
                   type="number"
                   placeholder="Guests"
                   min={1}
-                  className="bg-transparent w-full text-white placeholder-white/60 text-sm font-medium outline-none"
+                  className="bg-transparent w-full text-gray-900 placeholder-gray-500 text-sm font-semibold outline-none truncate"
                 />
               </div>
 
               {/* Category */}
-              <div className="flex-1 flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3">
+              <div className="flex-1 min-w-0 flex items-center gap-3 glass-input px-4 py-3">
                 <Layers className="w-5 h-5 flex-shrink-0" style={{ color: "var(--sw-steel)" }} />
-                <select className="bg-transparent w-full text-white text-sm font-medium outline-none">
+                <select className="bg-transparent w-full text-gray-900 text-sm font-semibold outline-none truncate appearance-none">
                   {categories.map((c) => (
                     <option key={c} value={c} className="text-gray-900">{c}</option>
                   ))}
@@ -172,42 +204,41 @@ export default function HeroSection() {
               </div>
 
               {/* CTA */}
-              <button className="btn-glass whitespace-nowrap !rounded-2xl">
+              <button className="btn-glass whitespace-nowrap !rounded-full">
                 Search Vendors
               </button>
             </div>
 
-            {/* Popular tags */}
-            <div className="flex flex-wrap items-center gap-2 mt-4">
-              <span className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.6)" }}>
-                Popular:
-              </span>
-              {popularTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => setActiveTag(tag === activeTag ? null : tag)}
-                  className="glass text-xs font-semibold px-3 py-1.5 rounded-full transition-all !rounded-full"
-                  style={{
-                    color: activeTag === tag ? "var(--sw-navy)" : "rgba(255,255,255,0.85)",
-                    background: activeTag === tag ? "var(--sw-gold)" : undefined,
-                  }}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
           </div>
         </motion.div>
       </div>
 
+      {/* Carousel Pagination Dots */}
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+        {bgVideos.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentVideoIndex(idx)}
+            className="rounded-full transition-all duration-300 cursor-pointer"
+            style={{
+              width: currentVideoIndex === idx ? "28px" : "8px",
+              height: "8px",
+              background: currentVideoIndex === idx ? "var(--sw-gold)" : "rgba(255,255,255,0.4)",
+            }}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))}
+      </div>
+
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
       >
         <ChevronDown className="w-8 h-8" style={{ color: "rgba(255,255,255,0.6)" }} />
       </motion.div>
     </section>
+    </div>
   );
 }

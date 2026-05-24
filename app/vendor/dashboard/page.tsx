@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { User, Mail, Phone, Building, MapPin, Star, MessageSquare, LogOut, Loader2, Sparkles, CheckCircle2, ShieldAlert } from "lucide-react";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+
+
 
 interface VendorSession {
   id: string;
@@ -75,7 +75,7 @@ export default function VendorDashboard() {
 
   return (
     <>
-      <Navbar />
+
       <div className="min-h-screen bg-slate-50 pt-28 pb-16 font-body relative overflow-hidden">
         {/* Background decorative orbs */}
         <div
@@ -293,7 +293,7 @@ export default function VendorDashboard() {
           </div>
         </main>
       </div>
-      <Footer />
+
     </>
   );
 }

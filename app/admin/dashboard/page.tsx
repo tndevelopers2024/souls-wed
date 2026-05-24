@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { User, Mail, Shield, ShieldCheck, Activity, Cpu, LogOut, Loader2, RefreshCw, AlertCircle } from "lucide-react";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
+
+
 
 interface AdminSession {
   id: string;
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
 
   return (
     <>
-      <Navbar />
+
       <div className="min-h-screen bg-slate-950 text-slate-100 pt-28 pb-16 font-body relative overflow-hidden">
         {/* Background decorative admin gradients */}
         <div
@@ -266,7 +266,7 @@ export default function AdminDashboard() {
           </div>
         </main>
       </div>
-      <Footer />
+
     </>
   );
 }

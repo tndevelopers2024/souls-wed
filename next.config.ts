@@ -7,9 +7,14 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
+      // Catch-all: allow any image host (both HTTPS and HTTP) so adding new URLs never crashes
       {
         protocol: "https",
-        hostname: "images.unsplash.com",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },

@@ -47,7 +47,7 @@ const itemVariants = {
 
 export default function CategoryGrid() {
   return (
-    <section className="py-20 px-4" style={{ background: "var(--sw-white)" }}>
+    <section className="py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -76,7 +76,6 @@ export default function CategoryGrid() {
                 key={cat.slug}
                 href={`/category/${cat.slug}`}
                 variants={itemVariants}
-                whileHover={{ y: -6, scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="group flex flex-col items-center gap-3 p-5 rounded-3xl cursor-pointer text-center"
                 style={{

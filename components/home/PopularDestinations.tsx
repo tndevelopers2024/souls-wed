@@ -25,7 +25,6 @@ function DestinationCard({ city, country, vendors, image, delay }: {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay }}
-      whileHover={{ scale: 1.02 }}
     >
       <Image
         src={image}
@@ -67,7 +66,7 @@ export default function PopularDestinations() {
   const small = destinations.filter((d) => !d.large);
 
   return (
-    <section className="py-20 px-4" style={{ background: "var(--sw-white)" }}>
+    <section className="py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div

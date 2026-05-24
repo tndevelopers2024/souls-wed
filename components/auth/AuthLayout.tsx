@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -37,11 +38,15 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
       >
         {/* Branding header inside card wrapper */}
         <div className="flex flex-col items-center mb-8">
-          <Link href="/" className="flex items-center gap-2 group mb-4">
-            <Heart className="w-8 h-8 fill-current transition-transform group-hover:scale-110" style={{ color: "var(--sw-orange)" }} />
-            <span className="text-2xl font-bold tracking-tight text-slate-900" style={{ fontFamily: "var(--font-heading)" }}>
-              SoulsWed
-            </span>
+          <Link href="/" className="flex items-center group mb-4">
+            <Image 
+              src="/logo/soulswedlogo-pc.png"
+              alt="SoulsWed Logo"
+              width={200}
+              height={60}
+              className="h-10 w-auto transition-transform group-hover:scale-105"
+              priority
+            />
           </Link>
           <h1 className="text-3xl font-bold tracking-tight mb-2 text-slate-900 text-center" style={{ fontFamily: "var(--font-heading)" }}>
             {title}

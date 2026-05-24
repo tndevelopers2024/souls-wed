@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Quote, Heart } from "lucide-react";
 
 const testimonials = [
   {
@@ -11,9 +11,8 @@ const testimonials = [
     couple: "Priya & Arjun",
     date: "February 2025",
     venue: "Udaipur Palace",
-    quote:
-      "SoulsWed made our dream Udaipur wedding a reality. Every vendor was perfectly coordinated — from the palace venue to the mehendi artists. Truly flawless!",
-    image: "https://images.unsplash.com/photo-1529636444744-adffc9135a5e?w=120&q=80",
+    quote: "SoulsWed made our dream Udaipur wedding a reality. Every vendor was perfectly coordinated. Truly flawless!",
+    image: "https://images.unsplash.com/photo-1529636444744-adffc9135a5e?w=800&q=80",
     stars: 5,
   },
   {
@@ -21,9 +20,8 @@ const testimonials = [
     couple: "Meera & Rohan",
     date: "December 2024",
     venue: "Goa Beachside Resort",
-    quote:
-      "We planned our entire Goa beach wedding through SoulsWed in just 3 weeks. The booking process was seamless and the support team was available 24/7. Absolutely loved it!",
-    image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=120&q=80",
+    quote: "We planned our entire Goa beach wedding through SoulsWed in just 3 weeks. The booking process was seamless.",
+    image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80",
     stars: 5,
   },
   {
@@ -31,9 +29,8 @@ const testimonials = [
     couple: "Ananya & Vikram",
     date: "March 2025",
     venue: "Dubai Marina Ballroom",
-    quote:
-      "A destination wedding in Dubai felt overwhelming until we found SoulsWed. They connected us with amazing vendors and handled all the logistics. Worth every penny!",
-    image: "https://images.unsplash.com/photo-1536321115970-5dfa13356211?w=120&q=80",
+    quote: "A destination wedding in Dubai felt overwhelming until we found SoulsWed. They connected us with amazing vendors.",
+    image: "https://images.unsplash.com/photo-1536321115970-5dfa13356211?w=800&q=80",
     stars: 5,
   },
   {
@@ -41,9 +38,8 @@ const testimonials = [
     couple: "Divya & Karan",
     date: "January 2025",
     venue: "Jaipur Haveli",
-    quote:
-      "The royal Jaipur wedding we always dreamed of. SoulsWed's vendor network is unmatched — the choreographers, caterers, and decorators all exceeded our expectations.",
-    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=120&q=80",
+    quote: "The royal Jaipur wedding we always dreamed of. SoulsWed's vendor network is unmatched — everything exceeded expectations.",
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
     stars: 5,
   },
   {
@@ -51,144 +47,129 @@ const testimonials = [
     couple: "Sana & Aditya",
     date: "April 2025",
     venue: "Bali Cliff Estate",
-    quote:
-      "We had the most magical Bali ceremony. SoulsWed made international wedding planning so simple. The app, the team, the vendors — everything was 10/10!",
-    image: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=120&q=80",
+    quote: "We had the most magical Bali ceremony. SoulsWed made international wedding planning so simple. Everything was 10/10!",
+    image: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&q=80",
     stars: 5,
   },
 ];
 
-function StarRating({ count }: { count: number }) {
-  return (
-    <div className="flex gap-1">
-      {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} className="w-4 h-4 fill-current" style={{ color: "var(--sw-gold)" }} />
-      ))}
-    </div>
-  );
-}
-
 export default function TestimonialsSection() {
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => setActive((p) => (p + 1) % testimonials.length), 4000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const visibleCount = 3;
-  const visible = Array.from({ length: visibleCount }, (_, i) =>
-    testimonials[(active + i) % testimonials.length]
-  );
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir === "right" ? 320 : -320, behavior: "smooth" });
+  };
 
   return (
-    <section
-      className="py-24 px-4 overflow-hidden"
-      style={{
-        background: `linear-gradient(135deg, var(--sw-deep-navy) 0%, var(--sw-navy) 100%)`,
-      }}
-    >
-      <div className="max-w-7xl mx-auto">
+    <section className="py-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <motion.div
-          className="text-center mb-14"
+          className="flex items-end justify-between mb-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2
-            className="section-heading"
-            style={{ color: "var(--sw-white)" }}
-          >
-            Couples Love SoulsWed
-          </h2>
-          <p className="section-subtext" style={{ color: "var(--sw-steel)" }}>
-            Real stories from real couples
-          </p>
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-orange)" }}>
+              Real Love Stories
+            </p>
+            <h2 className="section-heading">Couples Love SoulsWed</h2>
+            <p className="section-subtext">Discover why thousands of couples trusted us</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex gap-2">
+              <button onClick={() => scroll("left")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-white)", border: "1px solid var(--sw-light-gray)" }}>
+                <ChevronLeft className="w-5 h-5" style={{ color: "var(--sw-navy)" }} />
+              </button>
+              <button onClick={() => scroll("right")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-navy)" }}>
+                <ChevronRight className="w-5 h-5 text-white" />
+              </button>
+            </div>
+          </div>
         </motion.div>
 
-        {/* Cards */}
-        <div className="hidden md:grid grid-cols-3 gap-6 mb-10">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {visible.map((t) => (
-              <motion.div
-                key={t.id}
-                layout
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                transition={{ duration: 0.4 }}
-                className="glass-card p-6 flex flex-col gap-4"
-              >
-                <StarRating count={t.stars} />
-                <p className="text-sm leading-relaxed italic" style={{ color: "rgba(255,255,255,0.85)" }}>
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="flex items-center gap-3 mt-auto pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
-                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-yellow-400">
-                    <Image src={t.image} alt={t.couple} width={40} height={40} className="object-cover w-full h-full" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-sm" style={{ color: "var(--sw-white)", fontFamily: "var(--font-heading)" }}>
-                      {t.couple}
-                    </div>
-                    <div className="text-xs" style={{ color: "var(--sw-steel)" }}>
-                      {t.venue} · {t.date}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Mobile: single card */}
-        <div className="md:hidden mb-10">
-          <AnimatePresence mode="wait" initial={false}>
+        {/* Scroll row */}
+        <div ref={scrollRef} className="flex gap-5 overflow-x-auto snap-scroll pb-4" style={{ scrollbarWidth: "none" }}>
+          {testimonials.map((item, i) => (
             <motion.div
-              key={testimonials[active].id}
+              key={item.id}
+              className="flex-shrink-0 w-[85vw] sm:w-[300px] md:w-[360px] cursor-pointer group"
               initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4 }}
-              className="glass-card p-6 flex flex-col gap-4"
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              style={{ scrollSnapAlign: "start" }}
             >
-              <StarRating count={testimonials[active].stars} />
-              <p className="text-sm leading-relaxed italic" style={{ color: "rgba(255,255,255,0.85)" }}>
-                &ldquo;{testimonials[active].quote}&rdquo;
-              </p>
-              <div className="flex items-center gap-3 mt-auto pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
-                <div className="w-10 h-10 rounded-full overflow-hidden">
-                  <Image src={testimonials[active].image} alt={testimonials[active].couple} width={40} height={40} className="object-cover w-full h-full" />
-                </div>
-                <div>
-                  <div className="font-bold text-sm" style={{ color: "var(--sw-white)", fontFamily: "var(--font-heading)" }}>
-                    {testimonials[active].couple}
+              <div className="bg-[#F4F4F4] p-1 rounded-[36px]">
+                <div
+                  className="relative h-[480px] sm:h-[540px] md:h-[600px] w-full"
+                  style={{
+                    clipPath: "inset(0 round 32px)",
+                    WebkitClipPath: "inset(0 round 32px)",
+                  }}
+                >
+                  <Image
+                    src={item.image}
+                    alt={item.couple}
+                    fill
+                    sizes="(max-width: 640px) 85vw, (max-width: 768px) 300px, 360px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+
+                  {/* Rating chip — top left */}
+                  <div className="absolute top-4 left-4 z-30 flex items-center gap-1 px-3 py-2 text-xs font-bold rounded-full shadow-sm" style={{ background: "rgba(255,255,255,0.92)", color: "var(--sw-navy)" }}>
+                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
                   </div>
-                  <div className="text-xs" style={{ color: "var(--sw-steel)" }}>
-                    {testimonials[active].venue} · {testimonials[active].date}
+
+                  {/* Icon chip — top right */}
+                  <div className="absolute top-4 right-4 z-30 flex items-center justify-center w-8 h-8 rounded-full" style={{ background: "rgba(255,255,255,0.92)", color: "var(--sw-orange)" }}>
+                    <Heart className="w-4 h-4 fill-current" />
+                  </div>
+
+                  {/* Frosted gradient overlay */}
+                  <div
+                    className="absolute inset-0 z-10 pointer-events-none"
+                    style={{
+                      background: "linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 40%, transparent 65%)",
+                      backdropFilter: "blur(12px)",
+                      WebkitMaskImage: "linear-gradient(to top, black 45%, transparent 70%)",
+                      maskImage: "linear-gradient(to top, black 45%, transparent 70%)",
+                    }}
+                  />
+
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 z-20 p-8 flex flex-col justify-end">
+                    <Quote className="w-10 h-10 mb-4 opacity-20" style={{ color: "var(--sw-navy)" }} />
+                    <p className="text-[17px] leading-relaxed font-medium text-slate-800 mb-6 italic" style={{ fontFamily: "var(--font-body)" }}>
+                      "{item.quote}"
+                    </p>
+                    <div className="flex items-end justify-between pt-4 border-t border-slate-300/40">
+                      <div className="flex flex-col">
+                        <span className="text-[18px] sm:text-[20px] font-bold text-slate-900 leading-none mb-1" style={{ fontFamily: "var(--font-heading)" }}>{item.couple}</span>
+                        <span className="text-sm font-medium" style={{ color: "var(--sw-orange)" }}>{item.venue}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Dots */}
-        <div className="flex justify-center gap-2">
-          {testimonials.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className="rounded-full transition-all duration-300"
-              style={{
-                width: active === i ? "28px" : "8px",
-                height: "8px",
-                background: active === i ? "var(--sw-gold)" : "rgba(255,255,255,0.3)",
-              }}
-            />
           ))}
+        </div>
+        
+        {/* Mobile Controls */}
+        <div className="md:hidden flex justify-center gap-2 mt-6">
+          <button onClick={() => scroll("left")} className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95" style={{ background: "var(--sw-white)", border: "1px solid var(--sw-light-gray)" }}>
+            <ChevronLeft className="w-6 h-6" style={{ color: "var(--sw-navy)" }} />
+          </button>
+          <button onClick={() => scroll("right")} className="w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95" style={{ background: "var(--sw-navy)" }}>
+            <ChevronRight className="w-6 h-6 text-white" />
+          </button>
         </div>
       </div>
     </section>
