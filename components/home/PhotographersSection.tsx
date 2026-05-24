@@ -5,7 +5,19 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, Camera, Film, ArrowRight } from "lucide-react";
 
-const photographers = [
+interface Photographer {
+  id: number;
+  name: string;
+  location: string;
+  price: string;
+  unit: string;
+  rating: number;
+  verified?: boolean;
+  type: string;
+  image: string;
+}
+
+const photographers: Photographer[] = [
       {
     id: 4,
     name: "Awarjana Photo Gallery",
