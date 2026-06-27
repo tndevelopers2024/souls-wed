@@ -21,7 +21,7 @@ const testimonials = [
     date: "December 2024",
     venue: "The Savoy, London",
     quote: "We celebrated at The Savoy and it was pure Edwardian elegance. SoulsWed lined up every vendor flawlessly for our riverside London wedding.",
-    image: "https://a.storyblok.com/f/286880889715208/1920x1080/1b5218305e/savoy.jpg",
+    image: "/images/venues/612c8e185f6636d5ae9501b2d48254c9.jpg",
     stars: 5,
   },
   {
@@ -30,7 +30,7 @@ const testimonials = [
     date: "March 2025",
     venue: "Burj Al Arab, Dubai",
     quote: "Saying 'I do' on the Burj Al Arab terrace above the Arabian Gulf was a dream. SoulsWed made our destination wedding completely effortless.",
-    image: "https://lh3.googleusercontent.com/p/AF1QipPlizicQUiaeWIAm68u9snkGTNv4VBpm8NDytA2=s1360-w1360-h1020-rw",
+    image: "/images/venues/d0cd0e0d28bf57bfd0f5c89ea00579f3.webp",
     stars: 5,
   },
   {
@@ -39,7 +39,7 @@ const testimonials = [
     date: "January 2025",
     venue: "The Plaza Hotel, New York",
     quote: "A Grand Ballroom wedding at The Plaza felt straight out of a movie. SoulsWed made our Manhattan celebration absolutely seamless.",
-    image: "https://lh3.googleusercontent.com/p/AF1QipPbasggnz22sHPx6iw0zZMLlPigxIF1BRlIaFxA=s1360-w1360-h1020-rw",
+    image: "/images/venues/b1ea9c403e0b88139c71eaa449a366d8.webp",
     stars: 5,
   },
   {
@@ -48,7 +48,7 @@ const testimonials = [
     date: "April 2025",
     venue: "Ayana Resort, Bali",
     quote: "Our cliff-top ceremony at Ayana with the legendary Bali sunset was magical. SoulsWed made planning from afar so simple — everything was 10/10!",
-    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80",
+    image: "/images/venues/d26340e9eba57f7de2f3222e2e7ad456.jpg",
     stars: 5,
   },
 ];

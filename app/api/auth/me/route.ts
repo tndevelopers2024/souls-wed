@@ -1,49 +1,65 @@
+/**
+ * 🎓 SESSION CHECK API — GET /api/auth/me
+ * 
+ * This route answers the question: "Is the current user logged in, and who are they?"
+ * 
+ * EVERY page that needs auth (dashboard, vendor panel, admin console, booking)
+ * calls this endpoint to check if the user has a valid session.
+ * 
+ * HOW IT WORKS:
+ * 1. Read the encrypted session cookie using iron-session
+ * 2. If session.isLoggedIn is false → return { authenticated: false }
+ * 3. If logged in → look up the user in MongoDB to confirm they still exist
+ * 4. Return full user profile data
+ * 
+ * WHY CHECK THE DATABASE?
+ * The session cookie says "user abc123 is logged in" — but what if that user
+ * was deleted from the database? We verify against the DB to be safe.
+ */
+
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/lib/models/User";
 import { Vendor } from "@/lib/models/Vendor";
 import { Admin } from "@/lib/models/Admin";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { getIronSession } from "iron-session";
+import { SessionData, defaultSession, sessionOptions } from "@/lib/session";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("soulswed-session");
+    // ─── Step 1: Read the encrypted session ───
+    const session = await getIronSession<SessionData>(
+      await cookies(),
+      sessionOptions
+    );
 
-    if (!sessionCookie || !sessionCookie.value) {
+    // ─── Step 2: Check if logged in ───
+    if (!session.isLoggedIn) {
       return NextResponse.json(
         { authenticated: false, message: "No active session found." },
-        { status: 200 } // Return 200 with authenticated: false for easier front-end handling
-      );
-    }
-
-    let parsedSession;
-    try {
-      parsedSession = JSON.parse(sessionCookie.value);
-    } catch {
-      return NextResponse.json(
-        { authenticated: false, message: "Invalid session cookie format." },
         { status: 200 }
       );
     }
 
-    const { id, role } = parsedSession;
-    if (!id || !role) {
+    const { userId, role } = session;
+    if (!userId || !role) {
       return NextResponse.json(
         { authenticated: false, message: "Malformed session data." },
         { status: 200 }
       );
     }
 
+    // ─── Step 3: Verify user still exists in database ───
     await connectDB();
     let dbUser = null;
 
     if (role === "admin") {
-      dbUser = await Admin.findById(id).select("-passwordHash");
+      dbUser = await Admin.findById(userId).select("-passwordHash");
     } else if (role === "vendor") {
-      dbUser = await Vendor.findById(id).select("-passwordHash");
+      dbUser = await Vendor.findById(userId).select("-passwordHash");
     } else if (role === "user") {
-      dbUser = await User.findById(id).select("-passwordHash");
+      dbUser = await User.findById(userId).select("-passwordHash");
     } else {
       return NextResponse.json(
         { authenticated: false, message: "Unknown role in session." },
@@ -52,12 +68,15 @@ export async function GET() {
     }
 
     if (!dbUser) {
+      // User was deleted from DB but cookie still exists — clear it
+      session.destroy();
       return NextResponse.json(
         { authenticated: false, message: "User not found in database." },
         { status: 200 }
       );
     }
 
+    // ─── Step 4: Return user profile ───
     return NextResponse.json({
       authenticated: true,
       user: {
@@ -65,10 +84,10 @@ export async function GET() {
         name: dbUser.name,
         email: dbUser.email,
         role: role,
-        phone: (dbUser as any).phone || "",
-        businessName: (dbUser as any).businessName || "",
-        category: (dbUser as any).category || "",
-        city: (dbUser as any).city || "",
+        phone: dbUser.phone || "",
+        businessName: dbUser.businessName || "",
+        category: dbUser.category || "",
+        city: dbUser.city || "",
       },
     });
   } catch (error: unknown) {

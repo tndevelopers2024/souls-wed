@@ -253,7 +253,7 @@ export default function Navbar() {
               )}
               
               <Link
-                href="/book"
+                href="/venues"
                 className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 hover:scale-105 hover:shadow-lg overflow-hidden group"
                 style={{
                   background: "linear-gradient(135deg, var(--sw-orange), #f95c02)",
@@ -352,7 +352,7 @@ export default function Navbar() {
                         Sign In
                       </Link>
                       <Link
-                        href="/book"
+                        href="/venues"
                         className="flex-1 font-bold text-sm py-2.5 px-3 rounded-full text-center text-white"
                         style={{ background: "var(--sw-orange)" }}
                         onClick={() => setMobileOpen(false)}

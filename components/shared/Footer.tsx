@@ -79,7 +79,7 @@ const contactItems = [
 ];
 
 const socialLinks = [
-  { icon: IconInstagram, href: "https://instagram.com/soulswed", label: "Instagram" },
+  { icon: IconInstagram, href: "/images/shared/73a78acdfa5d8547664ba493c089879d.jpg", label: "Instagram" },
   { icon: IconFacebook, href: "https://facebook.com/soulswed", label: "Facebook" },
   { icon: IconLinkedIn, href: "https://linkedin.com/company/soulswed", label: "LinkedIn" },
 ];
@@ -136,7 +136,7 @@ export default function Footer() {
         {/* Background image overlay */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&q=60"
+            src="/images/shared/9368d5bcfe07eea016da3567805d57c9.jpg"
             alt=""
             fill
             sizes="100vw"
@@ -338,7 +338,7 @@ export default function Footer() {
         
         {/* WhatsApp */}
         <a
-          href="https://wa.me/919600043002"
+          href="/images/shared/2cf5849d13c2075ac81cd9d3fdf4a688.jpg"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center w-14 h-14 rounded-full shadow-xl transition-all hover:scale-110 hover:shadow-2xl"

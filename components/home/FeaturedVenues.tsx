@@ -14,7 +14,7 @@ const venues = [
     unit: "per day",
     rating: 5.0,
     verified: true,
-    image: "https://www.americanexpress.com/en-us/travel/discover/photos/482736/82062/1200/NYCROLobbyLounge.jpg",
+    image: "/images/home/c90805ff23032394456bcd39453439e7.jpg",
   },
   {
     id: 2,
@@ -24,7 +24,7 @@ const venues = [
     unit: "per day",
     rating: 5.0,
     verified: true,
-    image: "https://i0.wp.com/jimbyerstravel.com/wp-content/uploads/2024/02/12-11-13A-1-2.jpg?resize=1920%2C1794&ssl=1",
+    image: "/images/home/2e738b599bbcea127cb885e1ed70756e.jpg",
   },
   {
     id: 3,
@@ -44,7 +44,7 @@ const venues = [
     unit: "per day",
     rating: 0,
     verified: true,
-    image: "https://upload.wikimedia.org/wikipedia/commons/2/2b/HK_%E9%87%91%E9%90%98_Admiralty_%E9%A6%99%E6%B8%AF%E8%90%AC%E8%B1%AA%E9%85%92%E5%BA%97_JW_Marriott_Hotel_%E6%A3%8B%E6%9D%86_flagpoles_December_2020_SS2_06.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+    image: "/images/home/499f83d693ddd970fa5579a15659fb61.jpg",
   },
   {
     id: 5,
@@ -54,7 +54,7 @@ const venues = [
     unit: "per day",
     rating: 5.0,
     verified: true,
-    image: "https://digital.ihg.com/is/image/ihg/intercontinental-hong-kong-10513232848-1x1",
+    image: "/images/home/95e86ad3ca2d4c9e98e2d291f01f8883.webp",
   },
   {
     id: 6,
@@ -64,7 +64,7 @@ const venues = [
     unit: "per engagement",
     rating: 5.0,
     verified: true,
-    image: "https://familytravelgenie.com/media/wp-uploads/2023/08/Harbour-Grand-Hong-Kong-Lobby.jpeg",
+    image: "/images/home/e2d6a695c47f4ca4b74e988fbe50da14.jpeg",
   },
 ];
 

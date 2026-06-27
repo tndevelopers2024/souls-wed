@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const VendorSchema = new Schema({
   name:         { type: String, required: true },
+  businessName: { type: String },  // Brand/business name — was missing before, signup data was silently dropped
   email:        { type: String, unique: true, sparse: true, lowercase: true, trim: true },
   passwordHash: { type: String },
   phone:        { type: String },

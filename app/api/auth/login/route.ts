@@ -1,3 +1,23 @@
+/**
+ * 🎓 LOGIN API ROUTE
+ * 
+ * WHAT HAPPENS WHEN A USER LOGS IN:
+ * 
+ * 1. Frontend sends: { email, password, role }
+ * 2. We look up the user in the correct MongoDB collection based on role
+ * 3. We verify the password against the stored hash
+ * 4. If valid: create an ENCRYPTED session cookie using iron-session
+ * 5. Return success + user info
+ * 
+ * BEFORE (insecure):
+ *   cookieStore.set("session", JSON.stringify({ id, role }))
+ *   ↑ Anyone could forge this!
+ * 
+ * AFTER (secure):
+ *   Uses iron-session to encrypt the cookie with SESSION_SECRET
+ *   ↑ Nobody can read or tamper with this
+ */
+
 import { connectDB } from "@/lib/mongodb";
 import { Vendor } from "@/lib/models/Vendor";
 import { Admin } from "@/lib/models/Admin";
@@ -5,6 +25,8 @@ import { User } from "@/lib/models/User";
 import { verifyPassword } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { getIronSession } from "iron-session";
+import { SessionData, sessionOptions } from "@/lib/session";
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +40,9 @@ export async function POST(req: Request) {
       );
     }
 
+    // ─── Step 1: Find the user in the correct collection ───
+    // We have 3 separate MongoDB collections: Users, Vendors, Admins
+    // The "role" field from the frontend tells us which one to search
     let user = null;
 
     if (role === "admin") {
@@ -33,6 +58,7 @@ export async function POST(req: Request) {
       );
     }
 
+    // ─── Step 2: Check if user exists and has a password ───
     if (!user || !user.passwordHash) {
       return NextResponse.json(
         { message: "Invalid email or password." },
@@ -40,6 +66,9 @@ export async function POST(req: Request) {
       );
     }
 
+    // ─── Step 3: Verify the password ───
+    // verifyPassword() takes the plain text password and the stored hash,
+    // re-hashes the plain text with the same salt, and compares
     const isValid = verifyPassword(password, user.passwordHash);
     if (!isValid) {
       return NextResponse.json(
@@ -48,19 +77,25 @@ export async function POST(req: Request) {
       );
     }
 
-    // Set secure HTTP-only cookie
-    const cookieStore = await cookies();
-    cookieStore.set("soulswed-session", JSON.stringify({
-      id: user._id,
-      email: user.email,
-      name: user.name,
-      role: role,
-    }), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      path: "/",
-    });
+    // ─── Step 4: Create encrypted session cookie ───
+    // This is the key change from the old approach.
+    // getIronSession() reads/creates the encrypted cookie.
+    // We set properties on it, then call .save() to write the cookie.
+    const session = await getIronSession<SessionData>(
+      await cookies(),
+      sessionOptions
+    );
+
+    session.userId = user._id.toString();
+    session.name = user.name;
+    session.email = user.email;
+    session.role = role;
+    session.isLoggedIn = true;
+
+    await session.save();
+    // ↑ This encrypts all the session data and sets it as a cookie
+    // The cookie value looks like: "Fe26.2**abc123..." (encrypted gibberish)
+    // Nobody can read or modify it without SESSION_SECRET
 
     return NextResponse.json({
       success: true,

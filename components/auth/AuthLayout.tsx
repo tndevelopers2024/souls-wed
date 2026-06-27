@@ -69,7 +69,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
 
         {/* Centered back home navigation */}
         <div className="mt-8 flex justify-center text-xs font-semibold">
-          <Link href="/" className="flex items-center gap-1.5 transition-colors hover:text-orange-600" style={{ color: "var(--sw-navy)" }}>
+          <Link href="/" className="flex items-center gap-2 bg-orange-600 text-white hover:bg-orange-700 px-5 py-2.5 rounded-full transition-colors shadow-sm">
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
           </Link>
         </div>

@@ -15,7 +15,7 @@ const artists = [
     rating: 0,
     verified: true,
     tag: "Bridal Specialist",
-    image: "https://api.soulswed.com/uploads/images/715/R-36galialahav-almudenapersa-maquilladora-novias-jerez.png",
+    image: "/images/home/3bd5b7a48e6e5d2aa756803d28df2bc7.png",
   },
   {
     id: 1,
@@ -26,7 +26,7 @@ const artists = [
     rating: 0,
     verified: true,
     tag: "Bridal Specialist",
-    image: "https://api.soulswed.com/uploads/images/402/10.jpg",
+    image: "/images/home/701053e1dcc44c7f2f0862f42cc9d39b.jpg",
   },
   {
     id: 2,
@@ -37,7 +37,7 @@ const artists = [
     rating: 0,
     verified: true,
     tag: "Airbrush Expert",
-    image: "https://api.soulswed.com/uploads/images/750/441508695_18150271849312649_842196910519981234_n.jpg",
+    image: "/images/home/4933416287a892e453bb299fc5ad60fc.jpg",
   },
   {
     id: 3,
@@ -48,7 +48,7 @@ const artists = [
     rating: 0,
     verified: true,
     tag: "Natural Glam",
-    image: "https://api.soulswed.com/uploads/images/750/449115705_18154110325312649_3763699514071068272_n.jpg",
+    image: "/images/home/72e1eab35a429a87adad5c46f0fbd7f8.jpg",
   },
 ];
 

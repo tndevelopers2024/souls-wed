@@ -9,22 +9,22 @@ const decorators = [
   {
     id: 1, name: "Akiko Kovacs", location: "Honolulu, United States",
     price: "₹29,223", unit: "per booking", rating: 0, verified: true, tag: "Decorator",
-    image: "https://api.soulswed.com/uploads/images/1059/chateau-de-grand-luce-wedding-florist-floraison31.jpg",
+    image: "/images/home/1cc5d798b520b4ba81f15015612796d0.jpg",
   },
       {
     id: 4, name: "Floraison-31", location: "Auckland, New Zealand",
     price: "₹12,656", unit: "per engagement", rating: 0, verified: true, tag: "Decorator",
-    image: "https://api.soulswed.com/uploads/images/875/63d398e832ee54bf54ac7dc5248d460c.jpg",
+    image: "/images/home/1dae12c36000143c2636b828426e4cf3.jpg",
   },
   {
     id: 2, name: "French Florist", location: "California, United States",
     price: "₹25,048", unit: "per booking", rating: 0, verified: true, tag: "Decorator",
-    image: "https://api.soulswed.com/uploads/images/560/321556520_1531622387316917_2524386303577161963_n.jpg",
+    image: "/images/home/f8648d3e1d587c1c62dec1373c2a1e8e.jpg",
   },
   {
     id: 3, name: "Les Filles d'a cote", location: "Paris, France",
     price: "₹12,656", unit: "per engagement", rating: 0, verified: true, tag: "Decorator",
-    image: "https://api.soulswed.com/uploads/images/1055/051A1043.jpg",
+    image: "/images/home/a05874ad857e7eea07ced6a187fa04fe.jpg",
   },
 
 ];

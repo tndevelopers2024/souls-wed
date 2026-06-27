@@ -5,14 +5,14 @@ import Image from "next/image";
 import { MapPin } from "lucide-react";
 
 const destinations = [
-  { city: "Mumbai", country: "India", vendors: 142, image: "https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=700&q=80", large: true },
-  { city: "Goa", country: "India", vendors: 98, image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=700&q=80", large: true },
-  { city: "Udaipur", country: "India", vendors: 76, image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=700&q=80", large: true },
-  { city: "Delhi", country: "India", vendors: 167, image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=500&q=80", large: false },
-  { city: "Jaipur", country: "India", vendors: 89, image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?w=500&q=80", large: false },
-  { city: "Dubai", country: "UAE", vendors: 54, image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=500&q=80", large: false },
-  { city: "Bali", country: "Indonesia", vendors: 43, image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=500&q=80", large: false },
-  { city: "Maldives", country: "Maldives", vendors: 28, image: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=500&q=80", large: false },
+  { city: "Mumbai", country: "India", vendors: 142, image: "/images/home/feea63fc523f8bef7fa280726d06946f.jpg", large: true },
+  { city: "Goa", country: "India", vendors: 98, image: "/images/home/86878ba3e3d3b3081f99380813be8257.jpg", large: true },
+  { city: "Udaipur", country: "India", vendors: 76, image: "/images/home/0da339d12df7892a69b08775abbf5d8b.jpg", large: true },
+  { city: "Delhi", country: "India", vendors: 167, image: "/images/home/338a6464b7c8ebda211d4dd55ae470cd.jpg", large: false },
+  { city: "Jaipur", country: "India", vendors: 89, image: "/images/home/ed2b87a336e96f2bcec07f6072bc0ff8.jpg", large: false },
+  { city: "Dubai", country: "UAE", vendors: 54, image: "/images/home/389089275d5e939c26478a7491283725.jpg", large: false },
+  { city: "Bali", country: "Indonesia", vendors: 43, image: "/images/home/70e083d90e819575d16e361ef6d512cd.jpg", large: false },
+  { city: "Maldives", country: "Maldives", vendors: 28, image: "/images/home/703489ad8b3fd481892b90042f5f8402.jpg", large: false },
 ];
 
 function DestinationCard({ city, country, vendors, image, delay }: {

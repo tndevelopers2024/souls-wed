@@ -23,9 +23,6 @@ export const metadata: Metadata = {
   },
 };
 
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,9 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(plusJakarta.variable, "font-sans", geist.variable)}>
       <body className="min-h-screen antialiased">
-        <Navbar />
         {children}
-        <Footer />
       </body>
     </html>
   );

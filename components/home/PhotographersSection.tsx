@@ -27,7 +27,7 @@ const photographers: Photographer[] = [
     rating: 0,
     // verified: true,
     type: "photo",
-    image: "https://api.soulswed.com/uploads/images/620/454590928_1046256396861567_2347771444487123538_n.jpg",
+    image: "/images/home/a9d04acf8f559614012e1247fcf6381b.jpg",
   },
   {
     id: 1,
@@ -38,7 +38,7 @@ const photographers: Photographer[] = [
     rating: 0,
     // verified: true,
     type: "both",
-    image: "https://images.trvl-media.com/place/6152386/71e8313a-bb03-4920-b0db-8a1c587b45df.jpg",
+    image: "/images/home/d2164b1f027798a6e62f4002043c4b15.jpg",
   },
   {
     id: 2,
@@ -61,7 +61,7 @@ const photographers: Photographer[] = [
     rating: 0,
     // verified: true,
     type: "both",
-    image: "https://i.ytimg.com/vi/tlYhE7GiL_E/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLA41zVV8XDBqKE_rOPuKza2Q04uIw",
+    image: "/images/home/99eadda9b88373538d8b943a635619d9.jpg",
   },
 
 ];

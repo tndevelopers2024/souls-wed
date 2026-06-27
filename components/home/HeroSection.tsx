@@ -33,10 +33,10 @@ const words = ["Extraordinary", "Events,"];
 const words2 = ["Effortlessly", "Planned"];
 
 const bgVideos = [
-  "https://soulswed.com/assets/videos/PageVideos/decorators.mp4", // Default
-  "https://soulswed.com/assets/videos/PageVideos/photographers.mp4",
-  "https://soulswed.com/assets/videos/PageVideos/makeupartists.mp4",
-  "https://soulswed.com/assets/videos/PageVideos/planners.mp4",
+  "/videos/home/98d54592b8b559aaba3a1be833d89a41.mp4", // Default
+  "/videos/home/6443f7453a5075757e193491d6a69ea1.mp4",
+  "/videos/home/dd38fc3826a28cf0ac334ea9e9835830.mp4",
+  "/videos/home/6fd8249497054ca4fe24aaf816e55282.mp4",
 ];
 
 export default function HeroSection() {

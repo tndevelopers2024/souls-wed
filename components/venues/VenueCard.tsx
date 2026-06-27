@@ -180,12 +180,12 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
               }}
             />
           ))}
-          {/* soft light tint so dark text stays legible */}
+          {/* light tint so dark text stays legible even over dark images */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to top, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.3) 44%, rgba(255,255,255,0) 80%)",
+                "linear-gradient(to top, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.8) 32%, rgba(255,255,255,0.45) 58%, rgba(255,255,255,0.12) 78%, rgba(255,255,255,0) 92%)",
             }}
           />
         </div>
