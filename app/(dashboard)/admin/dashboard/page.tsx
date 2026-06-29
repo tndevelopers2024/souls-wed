@@ -485,7 +485,7 @@ export default function AdminDashboard() {
                     isActive 
                       ? "bg-white/20 text-white" 
                       : isDarkMode 
-                        ? "bg-stone-850 text-stone-400 border border-stone-700"
+                        ? "bg-stone-800 text-stone-400 border border-stone-700"
                         : "bg-stone-100 text-stone-500 border border-stone-200"
                   }`}>
                     {item.count}
@@ -532,7 +532,7 @@ export default function AdminDashboard() {
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
-                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-850" : "border-stone-200 hover:bg-stone-50"
+                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
               }`}
             >
               {mobileMenuOpen ? "[Close]" : "[Menu]"}
@@ -627,7 +627,7 @@ export default function AdminDashboard() {
           <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex gap-3 items-start">
             <div>
               <p className="text-xs font-black">Sync Failure Encountered</p>
-              <p className="text-[11px] text-red-650 mt-0.5">{error}</p>
+              <p className="text-[11px] text-red-600 mt-0.5">{error}</p>
             </div>
           </div>
         )}
@@ -805,7 +805,7 @@ export default function AdminDashboard() {
                             <span className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-stone-700' : 'bg-stone-200'}`} />
                             <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>Rooms</span>
                           </div>
-                          <span className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-850'}`}>{totalRoomBookings} ({roomPercentage}%)</span>
+                          <span className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{totalRoomBookings} ({roomPercentage}%)</span>
                         </div>
                       </div>
                     </div>
@@ -1002,7 +1002,7 @@ export default function AdminDashboard() {
                               isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
                             }`}>
                               <td className="p-4">
-                                <p className={`font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-805'}`}>{v.businessName || "No Business Name"}</p>
+                                <p className={`font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.businessName || "No Business Name"}</p>
                                 <p className="text-[10px] text-stone-400 font-semibold mt-0.5">{v.name} • {v.email}</p>
                               </td>
                               <td className="p-4">
@@ -1141,13 +1141,13 @@ export default function AdminDashboard() {
                                       ? "text-blue-700 border-blue-200 bg-blue-50/70 dark:text-blue-400 dark:border-blue-900"
                                       : b.status === "cancelled"
                                       ? "text-red-700 border-red-200 bg-red-50/70 dark:text-red-400 dark:border-red-900"
-                                      : "text-amber-700 border-amber-205 bg-amber-50/70 dark:text-amber-400 dark:border-amber-900"
+                                      : "text-amber-700 border-amber-200 bg-amber-50/70 dark:text-amber-400 dark:border-amber-900"
                                   }`}
                                 >
-                                  <option value="pending" className="text-amber-750 font-bold bg-white dark:bg-stone-900">Pending</option>
-                                  <option value="confirmed" className="text-emerald-750 font-bold bg-white dark:bg-stone-900">Confirmed</option>
-                                  <option value="completed" className="text-blue-750 font-bold bg-white dark:bg-stone-900">Completed</option>
-                                  <option value="cancelled" className="text-red-750 font-bold bg-white dark:bg-stone-900">Cancelled</option>
+                                  <option value="pending" className="text-amber-700 font-bold bg-white dark:bg-stone-900">Pending</option>
+                                  <option value="confirmed" className="text-emerald-700 font-bold bg-white dark:bg-stone-900">Confirmed</option>
+                                  <option value="completed" className="text-blue-700 font-bold bg-white dark:bg-stone-900">Completed</option>
+                                  <option value="cancelled" className="text-red-700 font-bold bg-white dark:bg-stone-900">Cancelled</option>
                                 </select>
                               </td>
                               <td className="p-4 text-center">
@@ -1197,11 +1197,11 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredUsers.map((u) => (
                             <tr key={u._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-850 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
                             }`}>
                               <td className={`p-4 font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{u.name}</td>
                               <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{u.email}</td>
-                              <td className={`p-4 font-medium ${isDarkMode ? 'text-stone-305' : 'text-stone-700'}`}>{u.phone || "N/A"}</td>
+                              <td className={`p-4 font-medium ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{u.phone || "N/A"}</td>
                               <td className="p-4">
                                 <select
                                   value={u.role}
@@ -1282,7 +1282,7 @@ export default function AdminDashboard() {
                                 {v.minGuests}–{v.maxGuests} pax
                               </td>
                               <td className="p-4">
-                                <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-750'}`}>Rating: {v.rating} ({v.reviewCount})</span>
+                                <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>Rating: {v.rating} ({v.reviewCount})</span>
                               </td>
                               <td className="p-4">
                                 <button
@@ -1334,8 +1334,8 @@ export default function AdminDashboard() {
                                   }}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.active
-                                      ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-955/20 dark:text-blue-400 dark:border-blue-900"
-                                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-955/20 dark:text-red-400 dark:border-red-900"
+                                      ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900"
+                                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900"
                                   }`}
                                 >
                                   {v.active ? "Live" : "Hidden"}
@@ -1348,7 +1348,7 @@ export default function AdminDashboard() {
                                     await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
                                     fetchAllData();
                                   }}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-655 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>
