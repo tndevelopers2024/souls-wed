@@ -24,18 +24,6 @@ export default function UserDashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("darkMode") === "true";
-    setIsDarkMode(saved);
-  }, []);
-
-  const toggleDarkMode = () => {
-    const next = !isDarkMode;
-    setIsDarkMode(next);
-    localStorage.setItem("darkMode", String(next));
-  };
 
   const fetchBookings = async () => {
     setLoadingData(true);
@@ -107,16 +95,16 @@ export default function UserDashboard() {
     { id: "settings", label: "Settings" },
   ];
 
-  // Dark Mode helper CSS classes (corrected color classes to standard Tailwind tokens)
-  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#fafaf9] text-stone-800";
-  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200 bg-white/70 text-stone-600";
-  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800 text-stone-300" : "bg-white/70 border-stone-200 text-stone-600";
-  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800 text-white" : "bg-white/70 border-stone-200 text-stone-800";
-  const headingText = isDarkMode ? "text-white" : "text-stone-900";
-  const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
+  // Theme styling CSS classes (strictly light-themed)
+  const containerBg = "bg-[#fafaf9] text-stone-850";
+  const sidebarClass = "border-stone-200 bg-white/70 text-stone-600";
+  const cardClass = "bg-white/70 border-stone-200 text-stone-600";
+  const headerClass = "bg-white/70 border-stone-200 text-stone-850";
+  const headingText = "text-stone-900";
+  const dividerClass = "border-stone-100";
 
   return (
-    <div className={`min-h-[calc(100vh-80px)] font-body flex relative overflow-visible pt-28 pb-12 px-4 sm:px-6 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
+    <div className={`min-h-[calc(100vh-80px)] font-body flex relative overflow-visible pt-28 pb-12 px-4 sm:px-6 transition-colors duration-300 ${containerBg}`}>
       
       {/* Ambient backgrounds */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[120px]" />
@@ -125,7 +113,7 @@ export default function UserDashboard() {
       {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
       <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-9.5rem)] sticky top-28 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
         <div className={`p-6 border-b flex flex-col gap-1 ${dividerClass}`}>
-          <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
+          <h2 className={`font-extrabold text-sm tracking-tight uppercase text-stone-900`}>SoulsWed</h2>
           <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Couple Portal</p>
         </div>
  
@@ -139,9 +127,7 @@ export default function UserDashboard() {
                 className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
                     ? "bg-orange-500 text-white" 
-                    : isDarkMode 
-                      ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
+                    : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                 }`}
               >
                 <span>{item.label}</span>
@@ -157,7 +143,7 @@ export default function UserDashboard() {
           })}
         </nav>
  
-        <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : ''}`}>
+        <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass}`}>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
               {user.name.charAt(0)}
@@ -169,11 +155,7 @@ export default function UserDashboard() {
           </div>
           <button 
             onClick={handleLogout}
-            className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none ${
-              isDarkMode 
-                ? "bg-stone-800 hover:bg-red-950/30 text-stone-300 border-stone-700 hover:border-red-900/60 hover:text-red-400"
-                : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200"
-            }`}
+            className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200`}
           >
             Sign Out
           </button>
@@ -188,9 +170,7 @@ export default function UserDashboard() {
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
-                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
-              }`}
+              className="lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold border-stone-200 hover:bg-stone-50"
             >
               {mobileMenuOpen ? "[Close]" : "[Menu]"}
             </button>
@@ -203,31 +183,6 @@ export default function UserDashboard() {
               </p>
             </div>
           </div>
-
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={toggleDarkMode}
-              className={`px-3 py-1.5 border rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                isDarkMode 
-                  ? "border-stone-800 bg-stone-900 text-amber-400 hover:bg-stone-800" 
-                  : "border-stone-200 bg-white text-stone-600 hover:bg-stone-50"
-              }`}
-            >
-              {isDarkMode ? "Light Mode" : "Dark Mode"}
-            </button>
-
-            <button 
-              onClick={fetchBookings}
-              disabled={loadingData}
-              className={`flex items-center justify-center gap-2 px-3 py-1.5 border rounded-xl font-bold text-xs shadow-none cursor-pointer disabled:opacity-50 ${
-                isDarkMode 
-                  ? "border-stone-800 bg-stone-900 text-stone-300 hover:bg-stone-800" 
-                  : "border-stone-200 bg-white hover:bg-stone-50 text-stone-700"
-              }`}
-            >
-              <span>Sync</span>
-            </button>
-          </div>
         </header>
 
         {/* Mobile menu panel */}
@@ -237,9 +192,7 @@ export default function UserDashboard() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className={`lg:hidden border rounded-2xl p-4 shadow-none flex flex-col gap-2 z-20 ${
-                isDarkMode ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-stone-200 text-stone-800"
-              }`}
+              className="lg:hidden border rounded-2xl p-4 shadow-none flex flex-col gap-2 z-20 bg-white border-stone-200 text-stone-800"
             >
               {menuItems.map((item) => (
                 <button
@@ -251,9 +204,7 @@ export default function UserDashboard() {
                   className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
                     activeTab === item.id 
                       ? "bg-orange-500 text-white" 
-                      : isDarkMode
-                        ? "text-stone-300 hover:bg-stone-800"
-                        : "text-stone-600 hover:bg-stone-50"
+                      : "text-stone-600 hover:bg-stone-50"
                   }`}
                 >
                   <span>{item.label}</span>
@@ -321,9 +272,7 @@ export default function UserDashboard() {
                       <span>Profile Completion</span>
                       <span className="text-orange-600 font-bold">65%</span>
                     </div>
-                    <div className={`w-full h-2.5 rounded-full overflow-hidden mb-5 border ${
-                      isDarkMode ? "bg-stone-950 border-stone-800" : "bg-stone-100 border-stone-200"
-                    }`}>
+                    <div className="w-full h-2.5 rounded-full overflow-hidden mb-5 border bg-stone-100 border-stone-200">
                       <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full w-[65%]" />
                     </div>
                     <ul className="text-xs text-stone-500 flex flex-col gap-2.5">
@@ -377,7 +326,7 @@ export default function UserDashboard() {
 
                     {bookings.length === 0 ? (
                       <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                        <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>No upcoming bookings yet</h4>
+                        <h4 className="font-bold text-sm text-stone-700">No upcoming bookings yet</h4>
                         <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
                           Start by browsing our premium verified venues directory.
                         </p>
@@ -405,9 +354,7 @@ export default function UserDashboard() {
               <div className={`rounded-3xl p-6 border shadow-none min-h-[400px] flex flex-col gap-5 ${cardClass}`}>
                 <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
                   <h3 className={`font-extrabold text-base ${headingText}`}>Booking History</h3>
-                  <span className={`text-[10px] font-black border px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                    isDarkMode ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-600"
-                  }`}>
+                  <span className="text-[10px] font-black border px-2.5 py-1 rounded-full uppercase tracking-wider bg-stone-100 border-stone-200 text-stone-600">
                     {bookings.length} reservations total
                   </span>
                 </div>
@@ -440,9 +387,7 @@ export default function UserDashboard() {
                     <input 
                       type="text" 
                       defaultValue={user.name} 
-                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                      }`} 
+                      className="border rounded-xl px-4 py-2.5 outline-none font-semibold bg-white border-stone-200 text-stone-800" 
                       disabled
                     />
                   </div>
@@ -451,9 +396,7 @@ export default function UserDashboard() {
                     <input 
                       type="email" 
                       defaultValue={user.email} 
-                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                      }`} 
+                      className="border rounded-xl px-4 py-2.5 outline-none font-semibold bg-white border-stone-200 text-stone-800" 
                       disabled
                     />
                   </div>
@@ -463,9 +406,7 @@ export default function UserDashboard() {
                       type="text" 
                       placeholder="Add phone number" 
                       defaultValue={user.phone} 
-                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                      }`} 
+                      className="border rounded-xl px-4 py-2.5 outline-none font-semibold bg-white border-stone-200 text-stone-800" 
                       disabled
                     />
                   </div>
