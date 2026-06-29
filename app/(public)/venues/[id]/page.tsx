@@ -20,7 +20,7 @@ import {
   Check,
   Loader2,
 } from "lucide-react";
-import { getVenueById, venues } from "@/lib/venues-data";
+import type { Venue } from "@/lib/venues-data";
 import VenueHero from "@/components/venues/VenueHero";
 import VenueGallery from "@/components/venues/VenueGallery";
 import VenueSidebar from "@/components/venues/VenueSidebar";
@@ -31,18 +31,52 @@ export default function VenueDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const id = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
-  const venue = getVenueById(id);
+
+  const [venue, setVenue] = useState<Venue | null>(null);
+  const [similar, setSimilar] = useState<Venue[]>([]);
+  const [venueLoading, setVenueLoading] = useState(true);
+  const [venueNotFound, setVenueNotFound] = useState(false);
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  
+
   // Stripe Payment Callback States
   const successParam = searchParams.get("success");
   const sessionId = searchParams.get("session_id");
   const bookingId = searchParams.get("booking_id");
-  
+
   const [verifyingPayment, setVerifyingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
+  // ── Fetch this venue from MongoDB API ──────────────────────────────────────
+  useEffect(() => {
+    if (!id) return;
+    setVenueLoading(true);
+    fetch(`/api/venues?id=${encodeURIComponent(id)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const raw = data.venues?.[0];
+        if (!raw) {
+          setVenueNotFound(true);
+          return;
+        }
+        setVenue({ ...raw, id: raw.venueId } as Venue);
+
+        // Fetch similar venues (exclude current)
+        return fetch("/api/venues?limit=6")
+          .then((r) => r.json())
+          .then((d) => {
+            const others = (d.venues ?? [])
+              .filter((v: Record<string, unknown>) => v.venueId !== id)
+              .slice(0, 5)
+              .map((v: Record<string, unknown>) => ({ ...v, id: v.venueId })) as Venue[];
+            setSimilar(others);
+          });
+      })
+      .catch(() => setVenueNotFound(true))
+      .finally(() => setVenueLoading(false));
+  }, [id]);
+
+  // ── Stripe payment verification ─────────────────────────────────────────────
   useEffect(() => {
     if (successParam === "true" && sessionId && bookingId) {
       setVerifyingPayment(true);
@@ -67,15 +101,22 @@ export default function VenueDetailPage() {
     }
   }, [successParam, sessionId, bookingId]);
 
-  if (!venue) {
+  // ── Loading & not-found guards ─────────────────────────────────────────────
+  if (venueLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--sw-white)" }}>
+        <Loader2 className="w-10 h-10 animate-spin" style={{ color: "var(--sw-orange)" }} />
+        <p className="text-sm text-slate-500 font-medium">Loading venue details...</p>
+      </div>
+    );
+  }
+
+  if (venueNotFound || !venue) {
     notFound();
   }
 
-  const similar = venues.filter((v) => v.id !== venue.id).slice(0, 5);
-
   return (
     <div className="min-h-screen" style={{ background: "var(--sw-white)" }}>
-
 
       {/* ── Main content ────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 py-10">

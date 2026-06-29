@@ -2,16 +2,17 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronDown, X, MapPin, Star, Building2, Globe, LayoutGrid, List } from "lucide-react";
+import { Search, ChevronDown, X, MapPin, Star, Building2, Globe, LayoutGrid, List, Loader2 } from "lucide-react";
 import VenueCard from "@/components/venues/VenueCard";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
-import { venues } from "@/lib/venues-data";
+import type { Venue } from "@/lib/venues-data";
 
 const sortOptions = ["Recommended", "Price: Low to High", "Price: High to Low", "Highest Rated"];
 
-
-
 export default function VenuesPage() {
+  const [allVenues, setAllVenues] = useState<Venue[]>([]);
+  const [fetchLoading, setFetchLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [activeCity, setActiveCity] = useState("");
   const [sort, setSort] = useState("Recommended");
@@ -21,8 +22,29 @@ export default function VenuesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [viewType, setViewType] = useState<"grid" | "list">("grid");
 
+  // ── Fetch venues from MongoDB API ──────────────────────────────────────────
+  useEffect(() => {
+    setFetchLoading(true);
+    setFetchError(null);
+    fetch("/api/venues")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load venues");
+        return res.json();
+      })
+      .then((data) => {
+        // Map MongoDB doc shape (venueId) back to Venue interface (id)
+        const mapped = (data.venues ?? []).map((v: Record<string, unknown>) => ({
+          ...v,
+          id: v.venueId as string,
+        })) as Venue[];
+        setAllVenues(mapped);
+      })
+      .catch((err) => setFetchError(err.message))
+      .finally(() => setFetchLoading(false));
+  }, []);
+
   const filtered = useMemo(() => {
-    let list = [...venues];
+    let list = [...allVenues];
 
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -61,7 +83,7 @@ export default function VenuesPage() {
     }
 
     return list;
-  }, [search, activeCity, sort]);
+  }, [search, activeCity, sort, allVenues]);
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -82,6 +104,34 @@ export default function VenuesPage() {
   if (search.trim()) activeFilters.push({ label: `"${search}"`, onRemove: () => setSearch("") });
   if (activeCity) activeFilters.push({ label: activeCity, onRemove: () => setActiveCity("") });
   if (sort !== "Recommended") activeFilters.push({ label: sort, onRemove: () => setSort("Recommended") });
+
+  // Loading skeleton
+  if (fetchLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--sw-white)" }}>
+        <Loader2 className="w-10 h-10 animate-spin" style={{ color: "var(--sw-orange)" }} />
+        <p className="text-sm text-slate-500 font-medium">Loading venues from database...</p>
+      </div>
+    );
+  }
+
+  // Error state
+  if (fetchError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4" style={{ background: "var(--sw-white)" }}>
+        <Building2 className="w-12 h-12 text-red-400" />
+        <p className="text-base font-bold text-slate-700">Failed to load venues</p>
+        <p className="text-sm text-slate-400">{fetchError}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-2 px-6 py-2.5 rounded-full text-sm font-bold text-white transition-all"
+          style={{ background: "var(--sw-orange)" }}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ background: "var(--sw-white)" }}>
