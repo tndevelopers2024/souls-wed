@@ -116,19 +116,19 @@ export default function UserDashboard() {
   const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
 
   return (
-    <div className={`min-h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
+    <div className={`min-h-[calc(100vh-80px)] font-body flex relative overflow-visible pt-28 pb-12 px-4 sm:px-6 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
       
       {/* Ambient backgrounds */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[120px]" />
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[120px]" />
-
+ 
       {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
-      <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
+      <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-9.5rem)] sticky top-28 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
         <div className={`p-6 border-b flex flex-col gap-1 ${dividerClass}`}>
           <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
           <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Couple Portal</p>
         </div>
-
+ 
         <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5">
           {menuItems.map((item) => {
             const isActive = activeTab === item.id;
@@ -156,7 +156,7 @@ export default function UserDashboard() {
             );
           })}
         </nav>
-
+ 
         <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : ''}`}>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
@@ -179,9 +179,9 @@ export default function UserDashboard() {
           </button>
         </div>
       </aside>
-
+ 
       {/* ─── MAIN CONTENT AREA ─── */}
-      <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
+      <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-visible">
         
         {/* Floating Top Header */}
         <header className={`border rounded-2xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-300 ${headerClass}`}>
