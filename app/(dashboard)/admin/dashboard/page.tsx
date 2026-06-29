@@ -330,7 +330,7 @@ export default function AdminDashboard() {
         title: "New Client Registered",
         desc: `${u.name} joined as platform user`,
         time: u.createdAt,
-        bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200/50",
+        bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200",
       });
     });
 
@@ -340,9 +340,7 @@ export default function AdminDashboard() {
         title: v.verified ? "Vendor Partner Active" : "Vendor Registration Pending",
         desc: `${v.businessName || v.name} registered under ${v.category}`,
         time: v.createdAt,
-        bgColor: v.verified 
-          ? (isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200/50") 
-          : (isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200/50"),
+        bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200",
       });
     });
 
@@ -352,7 +350,7 @@ export default function AdminDashboard() {
         title: `Booking Order: ${b.status.toUpperCase()}`,
         desc: `${b.userName} booked ${b.venueName} (${formatAsCurrency(b.advanceAmount, "INR")} advance)`,
         time: b.createdAt,
-        bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200/50",
+        bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200",
       });
     });
 
@@ -416,12 +414,11 @@ export default function AdminDashboard() {
     );
   });
 
-  // Mobile menu control
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-850 font-body">
+      <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-800 font-body">
         <div className="w-10 h-10 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin mb-4" />
         <p className="font-bold text-sm tracking-wide">SECURE CONSOLE</p>
       </div>
@@ -439,14 +436,14 @@ export default function AdminDashboard() {
     { id: "venues", label: "Venues Directory", count: venuesList.length || null },
   ];
 
-  // Dark Mode Style Classes helpers (shadow-none to remove heavy shadows)
-  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#fafaf9] text-stone-850";
-  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200/60 bg-white/70 text-stone-600";
-  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800/80 text-stone-300" : "bg-white/70 border-stone-200/60 text-stone-650";
-  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800/80 text-white" : "bg-white/70 border-stone-200/60 text-stone-850";
+  // Standard theme variables for consistency (corrected colors from non-standard)
+  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#fafaf9] text-stone-800";
+  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200 bg-white/70 text-stone-600";
+  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800 text-stone-300" : "bg-white/70 border-stone-200 text-stone-600";
+  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800 text-white" : "bg-white/70 border-stone-200 text-stone-800";
   const headingText = isDarkMode ? "text-white" : "text-stone-900";
   const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
-  const subCardClass = isDarkMode ? "bg-stone-950/60 border-stone-850" : "bg-[#fafaf9] border-stone-200";
+  const subCardClass = isDarkMode ? "bg-stone-950/60 border-stone-800" : "bg-[#fafaf9] border-stone-200";
 
   return (
     <div className={`min-h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg}`}>
@@ -455,7 +452,7 @@ export default function AdminDashboard() {
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[150px]" />
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[150px]" />
 
-      {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
+      {/* ─── FLOATING SIDEBAR ─── */}
       <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
         {/* Branding header */}
         <div className={`p-6 border-b flex flex-col gap-1 ${dividerClass}`}>
@@ -488,7 +485,7 @@ export default function AdminDashboard() {
                     isActive 
                       ? "bg-white/20 text-white" 
                       : isDarkMode 
-                        ? "bg-stone-800 text-stone-400 border border-stone-700"
+                        ? "bg-stone-850 text-stone-400 border border-stone-700"
                         : "bg-stone-100 text-stone-500 border border-stone-200"
                   }`}>
                     {item.count}
@@ -507,7 +504,7 @@ export default function AdminDashboard() {
             </div>
             <div className="min-w-0 flex-1">
               <h4 className={`font-bold text-xs truncate ${headingText}`}>{admin.name}</h4>
-              <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider truncate">{admin.role}</p>
+              <p className="text-[9px] font-bold text-stone-450 uppercase tracking-wider truncate">{admin.role}</p>
             </div>
           </div>
 
@@ -516,8 +513,8 @@ export default function AdminDashboard() {
               onClick={handleLogout}
               className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none ${
                 isDarkMode 
-                  ? "bg-stone-850 hover:bg-red-950/30 text-stone-300 border-stone-800 hover:border-red-900/60 hover:text-red-400" 
-                  : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-655 border border-stone-200 hover:border-red-200"
+                  ? "bg-stone-800 hover:bg-red-950/30 text-stone-300 border-stone-700 hover:border-red-900/60 hover:text-red-400" 
+                  : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200"
               }`}
             >
               Sign Out
@@ -530,12 +527,12 @@ export default function AdminDashboard() {
       <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
 
         {/* Floating Top Header */}
-        <header className={`border rounded-2xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-300 ${headerClass}`}>
+        <header className={`border rounded-2xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-305 ${headerClass}`}>
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
-                isDarkMode ? "border-stone-855 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
+                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-850" : "border-stone-200 hover:bg-stone-50"
               }`}
             >
               {mobileMenuOpen ? "[Close]" : "[Menu]"}
@@ -607,7 +604,7 @@ export default function AdminDashboard() {
                   <span>{item.label}</span>
                   {item.count !== null && (
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                      activeTab === item.id ? "bg-white/20 text-white" : "bg-stone-100 text-stone-600"
+                      activeTab === item.id ? "bg-white/20 text-white" : "bg-stone-105 text-stone-600"
                     }`}>
                       {item.count}
                     </span>
@@ -627,7 +624,7 @@ export default function AdminDashboard() {
 
         {/* Global Error Notice */}
         {error && (
-          <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-755 flex gap-3 items-start">
+          <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex gap-3 items-start">
             <div>
               <p className="text-xs font-black">Sync Failure Encountered</p>
               <p className="text-[11px] text-red-650 mt-0.5">{error}</p>
@@ -650,7 +647,7 @@ export default function AdminDashboard() {
               {activeTab === "overview" && (
                 <div className="flex flex-col gap-6">
                   
-                  {/* Stats Cards Row (Perfect Alignment to 4-Column Grid) */}
+                  {/* Stats Cards Row */}
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                     {[
                       { 
@@ -658,7 +655,7 @@ export default function AdminDashboard() {
                         value: formatAsCurrency(stats?.totalRevenue || 0, "INR"), 
                         change: "+12.4% vs last week", 
                         isUp: true, 
-                        bgColor: "bg-[#fff] border-stone-200/80" ,
+                        bgColor: "bg-white border-stone-200" ,
                         darkBg: "bg-stone-900/60 border-stone-800 text-stone-300"
                       },
                       { 
@@ -666,7 +663,7 @@ export default function AdminDashboard() {
                         value: stats?.totalUsers ?? "0", 
                         change: "+8.2% vs last month", 
                         isUp: true, 
-                        bgColor: "bg-[#fff] border-stone-200/80",
+                        bgColor: "bg-white border-stone-200",
                         darkBg: "bg-stone-900/60 border-stone-800 text-stone-300"
                       },
                       { 
@@ -674,7 +671,7 @@ export default function AdminDashboard() {
                         value: stats?.totalVendors ?? "0", 
                         change: `${pendingApprovals.length} pending`, 
                         isUp: pendingApprovals.length === 0, 
-                        bgColor: "bg-[#fff] border-stone-200/80",
+                        bgColor: "bg-white border-stone-200",
                         darkBg: "bg-stone-900/60 border-stone-800 text-stone-300"
                       },
                       { 
@@ -682,7 +679,7 @@ export default function AdminDashboard() {
                         value: stats?.totalBookings ?? "0", 
                         change: `${bookings.filter(b=>b.status==='confirmed').length} confirmed`, 
                         isUp: true, 
-                        bgColor: "bg-[#fff] border-stone-200/80",
+                        bgColor: "bg-white border-stone-200",
                         darkBg: "bg-stone-900/60 border-stone-800 text-stone-300"
                       },
                     ].map((card, i) => (
@@ -691,7 +688,7 @@ export default function AdminDashboard() {
                       }`}>
                         <div>
                           <span className="text-[10px] font-black uppercase tracking-wider text-stone-400">{card.title}</span>
-                          <h3 className={`text-xl md:text-2xl font-black tracking-tight leading-none mt-2.5 ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>{card.value}</h3>
+                          <h3 className={`text-xl md:text-2xl font-black tracking-tight leading-none mt-2.5 ${isDarkMode ? 'text-white' : 'text-stone-905'}`}>{card.value}</h3>
                         </div>
                         <span className={`text-[10px] font-bold mt-2.5 inline-block ${card.isUp ? 'text-emerald-600' : 'text-amber-600'}`}>
                           {card.change}
@@ -700,7 +697,7 @@ export default function AdminDashboard() {
                     ))}
                   </div>
 
-                  {/* Charts Row (Perfect Alignment to 4-Column Grid: Spans 3 and 1) */}
+                  {/* Charts Row */}
                   <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
                     {/* CSS Bar Chart */}
                     <div className={`xl:col-span-3 rounded-3xl border p-6 shadow-none flex flex-col justify-between ${cardClass}`}>
@@ -734,16 +731,16 @@ export default function AdminDashboard() {
                             <div className="flex gap-1.5 items-end h-36 w-full justify-center">
                               {/* Bookings bar */}
                               <div 
-                                className="w-4 bg-orange-400 hover:bg-orange-500 rounded-t-lg transition-all duration-300"
+                                className="w-4 bg-orange-400 hover:bg-orange-500 rounded-t-lg transition-all duration-305"
                                 style={{ height: `${(d.bookings / maxBookings) * 100}%` }}
                               />
                               {/* Revenue bar */}
                               <div 
-                                className="w-4 bg-amber-500 hover:bg-amber-600 rounded-t-lg transition-all duration-300"
+                                className="w-4 bg-amber-500 hover:bg-amber-600 rounded-t-lg transition-all duration-305"
                                 style={{ height: `${(d.revenue / maxRevenue) * 100}%` }}
                               />
                             </div>
-                            <span className="text-[10px] font-black text-stone-550 mt-2.5 uppercase tracking-wide">{d.month}</span>
+                            <span className="text-[10px] font-black text-stone-500 mt-2.5 uppercase tracking-wide">{d.month}</span>
                           </div>
                         ))}
                       </div>
@@ -801,7 +798,7 @@ export default function AdminDashboard() {
                             <span className="w-2 h-2 rounded-full bg-orange-500" />
                             <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>Venues</span>
                           </div>
-                          <span className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-850'}`}>{totalVenueBookings} ({venuePercentage}%)</span>
+                          <span className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{totalVenueBookings} ({venuePercentage}%)</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
                           <div className="flex items-center gap-2">
@@ -814,7 +811,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {/* Logs & Monitor Row (Perfect Alignment to 4-Column Grid: Spans 3 and 1) */}
+                  {/* Logs & Monitor Row */}
                   <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
                     {/* Live Audit Log Feed */}
                     <div className={`xl:col-span-3 rounded-3xl border p-6 shadow-none ${cardClass}`}>
@@ -834,13 +831,13 @@ export default function AdminDashboard() {
                         ) : (
                           activities.map((act, idx) => (
                             <div key={idx} className={`p-3 rounded-2xl border flex items-center justify-between gap-3.5 transition-all duration-200 ${
-                              isDarkMode ? "bg-stone-900/80 border-stone-850" : "bg-[#fafaf9] border-stone-200/50"
+                              isDarkMode ? "bg-stone-900/80 border-stone-800" : "bg-[#fafaf9] border-stone-200"
                             }`}>
                               <div className="min-w-0 flex-1">
                                 <p className={`text-xs font-bold ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{act.title}</p>
-                                <p className="text-[10px] text-stone-500 truncate mt-0.5">{act.desc}</p>
+                                <p className="text-[10px] text-stone-505 truncate mt-0.5">{act.desc}</p>
                               </div>
-                              <span className="text-[9px] font-bold text-stone-400 whitespace-nowrap tracking-wide">{formatDate(act.time)}</span>
+                              <span className="text-[9px] font-bold text-stone-450 whitespace-nowrap tracking-wide">{formatDate(act.time)}</span>
                             </div>
                           ))
                         )}
@@ -858,15 +855,15 @@ export default function AdminDashboard() {
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                           <span className="text-stone-400 font-bold">DATABASE: CONNECTED</span>
                         </div>
-                        <div className="flex justify-between border-b border-stone-800 pb-1 mt-1 text-stone-450">
+                        <div className="flex justify-between border-b border-stone-800 pb-1 mt-1 text-stone-400">
                           <span>Connection</span>
                           <span className="text-stone-300 font-bold">direct-replica</span>
                         </div>
-                        <div className="flex justify-between border-b border-stone-800 pb-1 text-stone-450">
+                        <div className="flex justify-between border-b border-stone-800 pb-1 text-stone-400">
                           <span>Ping Latency</span>
                           <span className="text-stone-300 font-bold">24 ms</span>
                         </div>
-                        <div className="flex justify-between border-b border-stone-800 pb-1 text-stone-450">
+                        <div className="flex justify-between border-b border-stone-800 pb-1 text-stone-400">
                           <span>Admins</span>
                           <span className="text-stone-300 font-bold">{stats?.totalAdmins ?? "1"} active</span>
                         </div>
@@ -896,7 +893,7 @@ export default function AdminDashboard() {
                       <h3 className={`font-extrabold text-base ${headingText}`}>New Vendor Registrations</h3>
                       <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Verify and moderate brand profile requests in the onboarding pipeline</p>
                     </div>
-                    <span className="text-[10px] font-black bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider dark:bg-amber-950/20 dark:border-amber-900/50">
+                    <span className="text-[10px] font-black bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider dark:bg-amber-905/20 dark:border-amber-900/50">
                       {filteredApprovals.length} pending verification
                     </span>
                   </div>
@@ -913,7 +910,7 @@ export default function AdminDashboard() {
                       {filteredApprovals.map((v) => (
                         <div 
                           key={v._id}
-                          className={`p-5 rounded-2xl border flex flex-col justify-between hover:border-orange-250 transition-colors shadow-none ${subCardClass}`}
+                          className={`p-5 rounded-2xl border flex flex-col justify-between hover:border-orange-200 transition-colors shadow-none ${subCardClass}`}
                         >
                           <div>
                             <div className="flex items-start justify-between gap-4">
@@ -957,8 +954,8 @@ export default function AdminDashboard() {
                               onClick={() => handleDeleteVendor(v._id)}
                               className={`flex-1 border font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
                                 isDarkMode 
-                                  ? "bg-stone-900 border-stone-850 hover:bg-red-950/20 text-stone-305 hover:border-red-900 hover:text-red-400" 
-                                  : "bg-white hover:bg-red-50 border-stone-200 hover:border-red-200 text-stone-600 hover:text-red-650"
+                                  ? "bg-stone-900 border-stone-800 hover:bg-red-950/20 text-stone-300 hover:border-red-900 hover:text-red-400" 
+                                  : "bg-white hover:bg-red-50 border-stone-200 hover:border-red-200 text-stone-600 hover:text-red-600"
                               }`}
                             >
                               Reject Application
@@ -989,7 +986,7 @@ export default function AdminDashboard() {
                     <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className={`border-b text-stone-500 font-bold ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
+                          <tr className={`border-b text-stone-505 font-bold ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
                             <th className="p-4">Brand / Owner</th>
                             <th className="p-4">Category</th>
                             <th className="p-4">City</th>
@@ -1002,10 +999,10 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredVendors.map((v) => (
                             <tr key={v._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-855 hover:bg-stone-900/40" : "border-stone-150 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
                             }`}>
                               <td className="p-4">
-                                <p className={`font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.businessName || "No Business Name"}</p>
+                                <p className={`font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-805'}`}>{v.businessName || "No Business Name"}</p>
                                 <p className="text-[10px] text-stone-400 font-semibold mt-0.5">{v.name} • {v.email}</p>
                               </td>
                               <td className="p-4">
@@ -1017,15 +1014,15 @@ export default function AdminDashboard() {
                               </td>
                               <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{v.city || "N/A"}</td>
                               <td className="p-4">
-                                <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-750'}`}>Rating: {v.rating || 0} ({v.reviewCount || 0})</span>
+                                <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>Rating: {v.rating || 0} ({v.reviewCount || 0})</span>
                               </td>
                               <td className="p-4">
                                 <button
                                   onClick={() => handleUpdateVendorStatus(v._id, !v.verified)}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.verified
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-250 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
-                                      : "bg-stone-50 text-stone-550 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
+                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
                                   {v.verified ? "Verified" : "Pending"}
@@ -1036,8 +1033,8 @@ export default function AdminDashboard() {
                                   onClick={() => handleUpdateVendorStatus(v._id, undefined, !v.featured)}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.featured
-                                      ? "bg-orange-50 text-orange-700 border-orange-255 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900"
-                                      : "bg-stone-50 text-stone-550 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900"
+                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
                                   {v.featured ? "Featured" : "Regular"}
@@ -1046,7 +1043,7 @@ export default function AdminDashboard() {
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteVendor(v._id)}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-500 hover:text-red-600 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>
@@ -1071,14 +1068,14 @@ export default function AdminDashboard() {
                   </div>
 
                   {filteredBookings.length === 0 ? (
-                    <div className="py-20 text-center text-stone-500 text-sm font-semibold">
+                    <div className="py-20 text-center text-stone-505 text-sm font-semibold">
                       No bookings matching "{searchTerm}"
                     </div>
                   ) : (
                     <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className={`border-b text-stone-500 font-bold ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
+                          <tr className={`border-b text-stone-505 font-bold ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
                             <th className="p-4">Booking Info</th>
                             <th className="p-4">Client Details</th>
                             <th className="p-4">Specifications</th>
@@ -1091,7 +1088,7 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredBookings.map((b) => (
                             <tr key={b._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-855 hover:bg-stone-900/40" : "border-stone-150 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
                             }`}>
                               <td className="p-4">
                                 <p className={`font-black text-sm leading-tight ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{b.venueName}</p>
@@ -1099,19 +1096,19 @@ export default function AdminDashboard() {
                                   <span className="text-[9px] text-stone-400 font-mono">ID: {b._id.slice(0, 8)}...</span>
                                   <button 
                                     onClick={() => copyToClipboard(b._id)}
-                                    className="text-[9px] font-bold text-stone-450 hover:underline cursor-pointer"
+                                    className="text-[9px] font-bold text-stone-500 hover:underline cursor-pointer"
                                   >
                                     {copiedId === b._id ? "[Copied]" : "[Copy ID]"}
                                   </button>
                                 </div>
                               </td>
                               <td className="p-4">
-                                <p className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-750'}`}>{b.userName}</p>
+                                <p className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{b.userName}</p>
                                 <p className="text-[10px] text-stone-450 mt-0.5">{b.userEmail} • {b.userPhone || "No Phone"}</p>
                               </td>
                               <td className="p-4">
                                 <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border uppercase ${
-                                  isDarkMode ? "bg-stone-850 border-stone-750 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-650"
+                                  isDarkMode ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-600"
                                 }`}>
                                   {b.bookingType}
                                 </span>
@@ -1130,33 +1127,33 @@ export default function AdminDashboard() {
                                 )}
                               </td>
                               <td className="p-4">
-                                <p className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-855'}`}>{formatAsCurrency(b.totalAmount, b.currency || "INR")}</p>
+                                <p className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{formatAsCurrency(b.totalAmount, b.currency || "INR")}</p>
                                 <p className="text-[10px] text-stone-450 font-bold mt-0.5">Adv: {formatAsCurrency(b.advanceAmount, b.currency || "INR")}</p>
                               </td>
                               <td className="p-4">
                                 <select
                                   value={b.status}
                                   onChange={(e) => handleUpdateBookingStatus(b._id, e.target.value)}
-                                  className={`text-[10px] font-extrabold rounded-full border px-3 py-1 bg-white outline-none cursor-pointer transition-colors dark:bg-stone-900 ${
+                                  className={`text-[10px] font-extrabold rounded-lg border px-2.5 py-1 bg-white outline-none cursor-pointer transition-colors dark:bg-stone-900 bg-none ${
                                     b.status === "confirmed"
-                                      ? "text-emerald-700 border-emerald-250 bg-emerald-50/70 dark:text-emerald-400 dark:border-emerald-900"
+                                      ? "text-emerald-700 border-emerald-200 bg-emerald-50/70 dark:text-emerald-400 dark:border-emerald-900"
                                       : b.status === "completed"
                                       ? "text-blue-700 border-blue-200 bg-blue-50/70 dark:text-blue-400 dark:border-blue-900"
                                       : b.status === "cancelled"
                                       ? "text-red-700 border-red-200 bg-red-50/70 dark:text-red-400 dark:border-red-900"
-                                      : "text-amber-700 border-amber-250 bg-amber-50/70 dark:text-amber-400 dark:border-amber-900"
+                                      : "text-amber-700 border-amber-205 bg-amber-50/70 dark:text-amber-400 dark:border-amber-900"
                                   }`}
                                 >
-                                  <option value="pending" className="text-amber-700 font-bold bg-white dark:bg-stone-900">Pending</option>
-                                  <option value="confirmed" className="text-emerald-700 font-bold bg-white dark:bg-stone-900">Confirmed</option>
-                                  <option value="completed" className="text-blue-700 font-bold bg-white dark:bg-stone-900">Completed</option>
-                                  <option value="cancelled" className="text-red-700 font-bold bg-white dark:bg-stone-900">Cancelled</option>
+                                  <option value="pending" className="text-amber-750 font-bold bg-white dark:bg-stone-900">Pending</option>
+                                  <option value="confirmed" className="text-emerald-750 font-bold bg-white dark:bg-stone-900">Confirmed</option>
+                                  <option value="completed" className="text-blue-750 font-bold bg-white dark:bg-stone-900">Completed</option>
+                                  <option value="cancelled" className="text-red-750 font-bold bg-white dark:bg-stone-900">Cancelled</option>
                                 </select>
                               </td>
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteBooking(b._id)}
-                                  className="px-2 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-650 transition-all cursor-pointer"
+                                  className="px-2 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>
@@ -1200,16 +1197,16 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredUsers.map((u) => (
                             <tr key={u._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-855 hover:bg-stone-900/40" : "border-stone-150 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-850 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
                             }`}>
                               <td className={`p-4 font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{u.name}</td>
-                              <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-305' : 'text-stone-700'}`}>{u.email}</td>
+                              <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{u.email}</td>
                               <td className={`p-4 font-medium ${isDarkMode ? 'text-stone-305' : 'text-stone-700'}`}>{u.phone || "N/A"}</td>
                               <td className="p-4">
                                 <select
                                   value={u.role}
                                   onChange={(e) => handleUpdateUserRole(u._id, e.target.value)}
-                                  className="text-[10px] font-black bg-white border border-stone-300 text-stone-700 rounded-xl px-2.5 py-1.5 outline-none cursor-pointer hover:border-stone-400 transition-colors dark:bg-stone-900 dark:border-stone-700 dark:text-stone-300"
+                                  className="text-[10px] font-black bg-white border border-stone-300 text-stone-700 rounded-xl px-2.5 py-1 outline-none cursor-pointer hover:border-stone-400 transition-colors dark:bg-stone-900 dark:border-stone-700 dark:text-stone-300 bg-none"
                                 >
                                   <option value="user">User</option>
                                   <option value="couple">Couple</option>
@@ -1220,7 +1217,7 @@ export default function AdminDashboard() {
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteUser(u._id)}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-655 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>
@@ -1248,7 +1245,7 @@ export default function AdminDashboard() {
                   </div>
 
                   {filteredVenuesList.length === 0 ? (
-                    <div className="py-20 text-center text-stone-550 text-sm font-semibold">
+                    <div className="py-20 text-center text-stone-500 text-sm font-semibold">
                       No venues matching "{searchTerm}"
                     </div>
                   ) : (
@@ -1269,7 +1266,7 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredVenuesList.map((v) => (
                             <tr key={v._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-855 hover:bg-stone-900/40" : "border-stone-150 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
                             }`}>
                               <td className="p-4">
                                 <p className={`font-black text-sm leading-tight ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.name}</p>
@@ -1278,7 +1275,7 @@ export default function AdminDashboard() {
                               <td className="p-4">
                                 <p className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{v.city}</p>
                                 <span className={`text-[9px] font-black border px-2 py-0.5 rounded-full mt-1.5 inline-block uppercase tracking-wide ${
-                                  isDarkMode ? "bg-stone-800 border-stone-700 text-stone-450" : "bg-stone-100 border-stone-200 text-stone-600"
+                                  isDarkMode ? "bg-stone-800 border-stone-700 text-stone-400" : "bg-stone-100 border-stone-200 text-stone-600"
                                 }`}>{v.type}</span>
                               </td>
                               <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
@@ -1299,8 +1296,8 @@ export default function AdminDashboard() {
                                   }}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.verified
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-250 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
-                                      : "bg-stone-50 text-stone-550 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
+                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
                                   {v.verified ? "Verified" : "Pending"}
@@ -1318,8 +1315,8 @@ export default function AdminDashboard() {
                                   }}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.featured
-                                      ? "bg-orange-50 text-orange-700 border-orange-255 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900"
-                                      : "bg-stone-50 text-stone-550 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900"
+                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
                                   {v.featured ? "Featured" : "Regular"}
@@ -1337,8 +1334,8 @@ export default function AdminDashboard() {
                                   }}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.active
-                                      ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900"
-                                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900"
+                                      ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-955/20 dark:text-blue-400 dark:border-blue-900"
+                                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-955/20 dark:text-red-400 dark:border-red-900"
                                   }`}
                                 >
                                   {v.active ? "Live" : "Hidden"}
@@ -1351,7 +1348,7 @@ export default function AdminDashboard() {
                                     await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
                                     fetchAllData();
                                   }}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-650 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-655 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>

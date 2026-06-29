@@ -96,7 +96,7 @@ export default function VendorDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-850 font-body">
+      <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-805 font-body">
         <div className="w-10 h-10 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin mb-4" />
         <p className="font-bold text-sm tracking-wide">SECURE WORKSPACE</p>
       </div>
@@ -111,11 +111,11 @@ export default function VendorDashboard() {
     { id: "settings", label: "Business Profile" },
   ];
 
-  // Dark Mode helper CSS classes (shadow-none)
-  const containerBg = isDarkMode ? "bg-stone-955 text-stone-200" : "bg-[#fafaf9] text-stone-850";
-  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200/60 bg-white/70 text-stone-650";
-  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800/80 text-stone-300" : "bg-white/70 border-stone-200/60 text-stone-655";
-  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800/80 text-white" : "bg-white/70 border-stone-200/60 text-stone-850";
+  // Dark Mode helper CSS classes (corrected color classes to standard Tailwind tokens)
+  const containerBg = isDarkMode ? "bg-stone-955 text-stone-200" : "bg-[#fafaf9] text-stone-800";
+  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200 bg-white/70 text-stone-600";
+  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800 text-stone-300" : "bg-white/70 border-stone-200 text-stone-600";
+  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800 text-white" : "bg-white/70 border-stone-200 text-stone-800";
   const headingText = isDarkMode ? "text-white" : "text-stone-900";
   const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
 
@@ -144,7 +144,7 @@ export default function VendorDashboard() {
                   isActive 
                     ? "bg-orange-500 text-white" 
                     : isDarkMode 
-                      ? "text-stone-400 hover:text-white hover:bg-stone-855"
+                      ? "text-stone-400 hover:text-white hover:bg-stone-850"
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                 }`}
               >
@@ -175,7 +175,7 @@ export default function VendorDashboard() {
             onClick={handleLogout}
             className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none ${
               isDarkMode 
-                ? "bg-stone-850 hover:bg-red-950/30 text-stone-305 border-stone-800 hover:border-red-900/60 hover:text-red-450"
+                ? "bg-stone-850 hover:bg-red-950/30 text-stone-305 border-stone-800 hover:border-red-900/60 hover:text-red-455"
                 : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-655 border border-stone-200 hover:border-red-200"
             }`}
           >
@@ -193,7 +193,7 @@ export default function VendorDashboard() {
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
-                isDarkMode ? "border-stone-855 text-stone-300 hover:bg-stone-850" : "border-stone-200 hover:bg-stone-50"
+                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
               }`}
             >
               {mobileMenuOpen ? "[Close]" : "[Menu]"}
@@ -256,8 +256,8 @@ export default function VendorDashboard() {
                     activeTab === item.id 
                       ? "bg-orange-500 text-white" 
                       : isDarkMode
-                        ? "text-stone-355 hover:bg-stone-800"
-                        : "text-stone-600 hover:bg-stone-50"
+                        ? "text-stone-300 hover:bg-stone-800"
+                        : "text-stone-605 hover:bg-stone-50"
                   }`}
                 >
                   <span>{item.label}</span>
@@ -303,7 +303,7 @@ export default function VendorDashboard() {
                   <div className="flex gap-3 text-xs font-semibold">
                     <div>
                       <h4 className={`font-bold ${headingText}`}>Account Verification Pending</h4>
-                      <p className="text-[10px] text-stone-550 mt-0.5 font-medium">
+                      <p className="text-[10px] text-stone-500 mt-0.5 font-medium">
                         Administrators will verify your brand details soon. Showcase catalog is active for updates.
                       </p>
                     </div>
@@ -370,7 +370,7 @@ export default function VendorDashboard() {
                           className={`p-5 rounded-3xl border flex flex-col gap-3 relative overflow-hidden group shadow-none transition-all duration-300 hover:-translate-y-0.5 ${cardClass}`}
                         >
                           <span className={`text-2xl font-black ${headingText}`}>{stat.count}</span>
-                          <span className="text-xs font-bold text-stone-400">{stat.label}</span>
+                          <span className="text-xs font-bold text-stone-450">{stat.label}</span>
                         </div>
                       ))}
                     </div>
@@ -381,7 +381,7 @@ export default function VendorDashboard() {
                         <h3 className={`font-extrabold text-sm ${headingText}`}>Active Inquiries</h3>
                         <button 
                           onClick={() => setActiveTab("leads")}
-                          className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 cursor-pointer"
+                          className="text-xs font-bold text-orange-600 hover:text-orange-750 flex items-center gap-0.5 cursor-pointer"
                         >
                           View All Leads
                         </button>
@@ -389,8 +389,8 @@ export default function VendorDashboard() {
 
                       {bookings.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                          <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-slate-705'}`}>All Caught Up!</h4>
-                          <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
+                          <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-305' : 'text-stone-750'}`}>All Caught Up!</h4>
+                          <p className="text-xs text-stone-450 max-w-xs mt-1 font-medium">
                             No active couple requests currently. Complete your business information to start appearing in search queries.
                           </p>
                         </div>
@@ -448,7 +448,7 @@ export default function VendorDashboard() {
                       type="text" 
                       defaultValue={vendor.businessName} 
                       className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-950 border-stone-850 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-850"
                       }`} 
                       disabled
                     />
@@ -459,7 +459,7 @@ export default function VendorDashboard() {
                       type="text" 
                       defaultValue={vendor.category} 
                       className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-955 border-stone-850 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-850"
                       }`} 
                       disabled
                     />
@@ -470,7 +470,7 @@ export default function VendorDashboard() {
                       type="text" 
                       defaultValue={vendor.city} 
                       className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-955 border-stone-850 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                        isDarkMode ? "bg-stone-955 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-850"
                       }`} 
                       disabled
                     />
@@ -481,7 +481,7 @@ export default function VendorDashboard() {
                       type="email" 
                       defaultValue={vendor.email} 
                       className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-955 border-stone-850 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                        isDarkMode ? "bg-stone-955 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-850"
                       }`} 
                       disabled
                     />

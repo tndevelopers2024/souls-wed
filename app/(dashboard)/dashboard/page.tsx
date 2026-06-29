@@ -92,7 +92,7 @@ export default function UserDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-850 font-body">
+      <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-800 font-body">
         <div className="w-10 h-10 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin mb-4" />
         <p className="font-bold text-sm tracking-wide">SECURE ACCESS</p>
       </div>
@@ -107,11 +107,11 @@ export default function UserDashboard() {
     { id: "settings", label: "Settings" },
   ];
 
-  // Dark Mode helper CSS classes (shadow-none)
-  const containerBg = isDarkMode ? "bg-stone-955 text-stone-200" : "bg-[#fafaf9] text-stone-850";
-  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200/60 bg-white/70 text-stone-650";
-  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800/80 text-stone-300" : "bg-white/70 border-stone-200/60 text-stone-650";
-  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800/80 text-white" : "bg-white/70 border-stone-200/60 text-stone-855";
+  // Dark Mode helper CSS classes (corrected color classes to standard Tailwind tokens)
+  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#fafaf9] text-stone-800";
+  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200 bg-white/70 text-stone-600";
+  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800 text-stone-300" : "bg-white/70 border-stone-200 text-stone-600";
+  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800 text-white" : "bg-white/70 border-stone-200 text-stone-800";
   const headingText = isDarkMode ? "text-white" : "text-stone-900";
   const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
 
@@ -140,7 +140,7 @@ export default function UserDashboard() {
                   isActive 
                     ? "bg-orange-500 text-white" 
                     : isDarkMode 
-                      ? "text-stone-400 hover:text-white hover:bg-stone-850"
+                      ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                 }`}
               >
@@ -171,8 +171,8 @@ export default function UserDashboard() {
             onClick={handleLogout}
             className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none ${
               isDarkMode 
-                ? "bg-stone-850 hover:bg-red-950/30 text-stone-305 border-stone-800 hover:border-red-900/60 hover:text-red-455"
-                : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-605 border border-stone-200 hover:border-red-200"
+                ? "bg-stone-800 hover:bg-red-950/30 text-stone-300 border-stone-700 hover:border-red-900/60 hover:text-red-400"
+                : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200"
             }`}
           >
             Sign Out
@@ -189,7 +189,7 @@ export default function UserDashboard() {
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
-                isDarkMode ? "border-stone-855 text-stone-300 hover:bg-stone-850" : "border-stone-200 hover:bg-stone-50"
+                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
               }`}
             >
               {mobileMenuOpen ? "[Close]" : "[Menu]"}
@@ -252,7 +252,7 @@ export default function UserDashboard() {
                     activeTab === item.id 
                       ? "bg-orange-500 text-white" 
                       : isDarkMode
-                        ? "text-stone-305 hover:bg-stone-800"
+                        ? "text-stone-300 hover:bg-stone-800"
                         : "text-stone-600 hover:bg-stone-50"
                   }`}
                 >
@@ -295,7 +295,7 @@ export default function UserDashboard() {
                 {/* Profile Card & Wedding Prep */}
                 <div className="lg:col-span-1 flex flex-col gap-6">
                   
-                  {/* Business Details card */}
+                  {/* Details card */}
                   <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
                     <h3 className={`font-extrabold text-sm mb-4 ${headingText}`}>My Account Profile</h3>
                     <div className={`flex flex-col gap-4 border-t pt-4 text-xs ${dividerClass}`}>
@@ -319,10 +319,10 @@ export default function UserDashboard() {
                     <h4 className={`font-extrabold text-sm mb-4 ${headingText}`}>Your Wedding Prep</h4>
                     <div className="flex justify-between text-xs font-semibold text-stone-400 mb-2">
                       <span>Profile Completion</span>
-                      <span className="text-orange-655 font-bold">65%</span>
+                      <span className="text-orange-600 font-bold">65%</span>
                     </div>
                     <div className={`w-full h-2.5 rounded-full overflow-hidden mb-5 border ${
-                      isDarkMode ? "bg-stone-950 border-stone-850" : "bg-stone-100 border-stone-200/30"
+                      isDarkMode ? "bg-stone-950 border-stone-800" : "bg-stone-100 border-stone-200"
                     }`}>
                       <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full w-[65%]" />
                     </div>
@@ -377,7 +377,7 @@ export default function UserDashboard() {
 
                     {bookings.length === 0 ? (
                       <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                        <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-slate-705'}`}>No upcoming bookings yet</h4>
+                        <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>No upcoming bookings yet</h4>
                         <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
                           Start by browsing our premium verified venues directory.
                         </p>
@@ -406,7 +406,7 @@ export default function UserDashboard() {
                 <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
                   <h3 className={`font-extrabold text-base ${headingText}`}>Booking History</h3>
                   <span className={`text-[10px] font-black border px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                    isDarkMode ? "bg-stone-850 border-stone-750 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-600"
+                    isDarkMode ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-600"
                   }`}>
                     {bookings.length} reservations total
                   </span>
@@ -414,7 +414,7 @@ export default function UserDashboard() {
 
                 {bookings.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center py-16">
-                    <h4 className="font-bold text-stone-705 text-sm">No bookings recorded</h4>
+                    <h4 className="font-bold text-stone-700 text-sm">No bookings recorded</h4>
                     <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
                       Checkouts and active vendor deposits will show here.
                     </p>
@@ -441,7 +441,7 @@ export default function UserDashboard() {
                       type="text" 
                       defaultValue={user.name} 
                       className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                       }`} 
                       disabled
                     />
@@ -452,7 +452,7 @@ export default function UserDashboard() {
                       type="email" 
                       defaultValue={user.email} 
                       className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-955 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                       }`} 
                       disabled
                     />
@@ -464,7 +464,7 @@ export default function UserDashboard() {
                       placeholder="Add phone number" 
                       defaultValue={user.phone} 
                       className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
-                        isDarkMode ? "bg-stone-955 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                        isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                       }`} 
                       disabled
                     />
