@@ -446,7 +446,7 @@ export default function AdminDashboard() {
   const subCardClass = isDarkMode ? "bg-stone-950/60 border-stone-800" : "bg-[#fafaf9] border-stone-200";
 
   return (
-    <div className={`min-h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg}`}>
+    <div className={`min-h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
       
       {/* Background Decorative Ambient Shapes */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[150px]" />
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
       <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
         {/* Branding header */}
         <div className={`p-6 border-b flex flex-col gap-1 ${dividerClass}`}>
-          <h2 className="font-extrabold text-stone-900 text-sm tracking-tight dark:text-white uppercase">SoulsWed</h2>
+          <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
           <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Admin Control</p>
         </div>
 

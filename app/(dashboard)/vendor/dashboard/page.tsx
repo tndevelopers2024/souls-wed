@@ -120,7 +120,7 @@ export default function VendorDashboard() {
   const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
 
   return (
-    <div className={`min-h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg}`}>
+    <div className={`min-h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
       
       {/* Ambient background gradients */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[120px]" />
@@ -129,7 +129,7 @@ export default function VendorDashboard() {
       {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
       <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
         <div className={`p-6 border-b flex flex-col gap-1 ${dividerClass}`}>
-          <h2 className="font-extrabold text-stone-900 text-sm tracking-tight dark:text-white uppercase">SoulsWed</h2>
+          <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
           <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Partner Portal</p>
         </div>
 
