@@ -464,14 +464,14 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-stone-800 font-body flex relative overflow-hidden">
+    <div className="min-h-screen bg-[#fafaf9] text-stone-850 font-body flex relative overflow-hidden p-0 sm:p-2">
       
       {/* Background Decorative Ambient Shapes */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.06] pointer-events-none rounded-full bg-[#EE7429] blur-[150px]" />
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.06] pointer-events-none rounded-full bg-[#FCCB11] blur-[150px]" />
 
-      {/* ─── SIDEBAR (Desktop) ─── */}
-      <aside className="hidden lg:flex flex-col w-64 border-r border-stone-200 bg-white min-h-screen sticky top-0 shrink-0 z-30 shadow-sm">
+      {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
+      <aside className="hidden lg:flex flex-col w-64 border border-stone-200/60 bg-white/70 backdrop-blur-md rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-md">
         {/* Branding header */}
         <div className="p-6 border-b border-stone-100 flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md">
@@ -517,7 +517,7 @@ export default function AdminDashboard() {
         </nav>
 
         {/* Footer profile info */}
-        <div className="p-4 border-t border-stone-100 bg-stone-50/50">
+        <div className="p-4 border-t border-stone-100 bg-stone-50/50 rounded-b-3xl">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-sm">
               {admin.name.slice(0, 2).toUpperCase()}
@@ -541,10 +541,10 @@ export default function AdminDashboard() {
       </aside>
 
       {/* ─── MAIN CONTENT CONTAINER ─── */}
-      <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
 
-        {/* Top Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-stone-200 sticky top-0 z-20 px-6 py-4 flex items-center justify-between shadow-sm">
+        {/* Floating Top Header */}
+        <header className="bg-white/70 backdrop-blur-md border border-stone-200/60 rounded-2xl px-6 py-4 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-4">
             {/* Mobile menu hamburger toggle */}
             <button 
@@ -555,10 +555,10 @@ export default function AdminDashboard() {
             </button>
             
             <div>
-              <h1 className="font-black text-stone-900 text-lg md:text-xl font-serif tracking-tight capitalize">
+              <h1 className="font-extrabold text-stone-900 text-lg md:text-xl font-serif tracking-tight capitalize">
                 {activeTab === "overview" ? "Analytics Command Room" : menuItems.find(i=>i.id===activeTab)?.label}
               </h1>
-              <p className="text-[11px] text-stone-500 font-semibold mt-0.5">
+              <p className="text-[10px] text-stone-500 font-semibold mt-0.5">
                 {loadingData ? "Fetching real-time updates..." : `Sync Status: Active • Operator: ${admin.name}`}
               </p>
             </div>
