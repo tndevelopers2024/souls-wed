@@ -90,7 +90,7 @@ export default function VendorDashboard() {
   return (
     <>
 
-      <div className="min-h-screen bg-slate-50 pt-28 pb-16 font-body relative overflow-hidden">
+      <div className="min-h-screen bg-slate-50 pt-10 pb-16 font-body relative overflow-hidden">
         {/* Background decorative orbs */}
         <div
           className="absolute w-[35rem] h-[35rem] -top-32 -left-32 opacity-25 pointer-events-none rounded-full"
