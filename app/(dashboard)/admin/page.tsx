@@ -222,7 +222,7 @@ export default function AdminLoginPage() {
                   </label>
                   <input
                     type="email"
-                    placeholder="admin@soulswed.com"
+                    placeholder="Enter email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="admin-input"
