@@ -23,7 +23,9 @@ import {
   Menu,
   X,
   RefreshCw,
-  ChevronRight
+  ChevronRight,
+  Sun,
+  Moon
 } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 
@@ -49,6 +51,18 @@ export default function VendorDashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode") === "true";
+    setIsDarkMode(saved);
+  }, []);
+
+  const toggleDarkMode = () => {
+    const next = !isDarkMode;
+    setIsDarkMode(next);
+    localStorage.setItem("darkMode", String(next));
+  };
 
   const fetchBookings = async () => {
     setLoadingData(true);
@@ -121,21 +135,29 @@ export default function VendorDashboard() {
     { id: "settings", label: "Business Profile", icon: <Sliders className="w-4 h-4" /> },
   ];
 
+  // Dark Mode helper CSS classes
+  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#fafaf9] text-stone-850";
+  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200/60 bg-white/70 backdrop-blur-md text-stone-650";
+  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800/80 text-stone-300" : "bg-white/70 border-stone-200/60 text-stone-655";
+  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800/80 text-white" : "bg-white/70 border-stone-200/60 text-stone-850";
+  const headingText = isDarkMode ? "text-white" : "text-stone-900";
+  const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
+
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-stone-850 font-body flex relative overflow-hidden p-0 sm:p-2">
+    <div className={`min-h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg}`}>
       
       {/* Ambient background gradients */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.05] pointer-events-none rounded-full bg-orange-500 blur-[120px]" />
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.05] pointer-events-none rounded-full bg-amber-500 blur-[120px]" />
 
       {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
-      <aside className="hidden lg:flex flex-col w-64 border border-stone-200/60 bg-white/70 backdrop-blur-md rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-md">
-        <div className="p-6 border-b border-stone-100 flex items-center gap-3">
+      <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-md transition-all duration-300 ${sidebarClass}`}>
+        <div className={`p-6 border-b flex items-center gap-3 ${dividerClass}`}>
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white shadow-md">
             <Building className="w-4.5 h-4.5" />
           </div>
           <div>
-            <h2 className="font-extrabold text-stone-900 text-sm tracking-tight">SoulsWed</h2>
+            <h2 className="font-extrabold text-stone-900 text-sm tracking-tight dark:text-white">SoulsWed</h2>
             <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Partner Portal</p>
           </div>
         </div>
@@ -150,7 +172,9 @@ export default function VendorDashboard() {
                 className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
                     ? "bg-orange-500 text-white shadow-md shadow-orange-500/10" 
-                    : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
+                    : isDarkMode 
+                      ? "text-stone-400 hover:text-white hover:bg-stone-850"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -169,19 +193,23 @@ export default function VendorDashboard() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-stone-100 bg-stone-50/50 rounded-b-3xl">
+        <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : ''}`}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-orange-100 text-orange-700 border border-orange-200 flex items-center justify-center font-black text-sm shadow-sm">
+            <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 flex items-center justify-center font-black text-sm shadow-sm">
               {vendor.businessName ? vendor.businessName.slice(0, 2).toUpperCase() : "VP"}
             </div>
             <div className="min-w-0 flex-1">
-              <h4 className="font-bold text-stone-850 text-xs truncate">{vendor.businessName || vendor.name}</h4>
+              <h4 className={`font-bold text-xs truncate ${headingText}`}>{vendor.businessName || vendor.name}</h4>
               <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider truncate">Partner Vendor</p>
             </div>
           </div>
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white hover:bg-red-50 text-stone-600 hover:text-red-650 border border-stone-200 hover:border-red-200 rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-sm"
+            className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-sm ${
+              isDarkMode 
+                ? "bg-stone-850 hover:bg-red-950/30 text-stone-305 border-stone-800 hover:border-red-900/60 hover:text-red-450"
+                : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-650 border border-stone-200 hover:border-red-200"
+            }`}
           >
             <LogOut className="w-3.5 h-3.5" />
             Sign Out
@@ -193,7 +221,7 @@ export default function VendorDashboard() {
       <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
         
         {/* Floating Top Header */}
-        <header className="bg-white/70 backdrop-blur-md border border-stone-200/60 rounded-2xl px-6 py-4 flex items-center justify-between shadow-sm">
+        <header className={`border rounded-2xl px-6 py-4 flex items-center justify-between shadow-sm transition-colors duration-300 ${headerClass}`}>
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -202,7 +230,7 @@ export default function VendorDashboard() {
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <div>
-              <h1 className="font-extrabold text-stone-900 text-lg tracking-tight font-serif capitalize">
+              <h1 className={`font-extrabold text-lg tracking-tight font-serif capitalize ${headingText}`}>
                 {activeTab === "overview" ? (vendor.businessName || "Partner Dashboard") : menuItems.find(i=>i.id===activeTab)?.label}
               </h1>
               <p className="text-[10px] text-stone-500 font-semibold mt-0.5">
@@ -212,10 +240,27 @@ export default function VendorDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Dark Mode toggle */}
+            <button 
+              onClick={toggleDarkMode}
+              className={`p-2 border rounded-xl shadow-sm transition-all cursor-pointer ${
+                isDarkMode 
+                  ? "border-stone-800 bg-stone-900 text-amber-400 hover:bg-stone-800" 
+                  : "border-stone-200 bg-white text-stone-600 hover:bg-stone-50"
+              }`}
+              title="Toggle Theme Mode"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
             <button 
               onClick={fetchBookings}
               disabled={loadingData}
-              className="flex items-center justify-center gap-2 px-3 py-1.5 border border-stone-200 rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs shadow-sm cursor-pointer disabled:opacity-50"
+              className={`flex items-center justify-center gap-2 px-3 py-1.5 border rounded-xl font-bold text-xs shadow-sm cursor-pointer disabled:opacity-50 ${
+                isDarkMode 
+                  ? "border-stone-800 bg-stone-900 text-stone-300 hover:bg-stone-800" 
+                  : "border-stone-200 bg-white hover:bg-stone-50 text-stone-700"
+              }`}
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loadingData ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Sync Leads</span>
@@ -230,7 +275,9 @@ export default function VendorDashboard() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="lg:hidden bg-white/90 backdrop-blur-md border border-stone-200 rounded-2xl p-4 shadow-lg flex flex-col gap-2 z-20"
+              className={`lg:hidden border rounded-2xl p-4 shadow-lg flex flex-col gap-2 z-20 ${
+                isDarkMode ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-stone-200 text-stone-800"
+              }`}
             >
               {menuItems.map((item) => (
                 <button
@@ -242,7 +289,9 @@ export default function VendorDashboard() {
                   className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
                     activeTab === item.id 
                       ? "bg-orange-500 text-white" 
-                      : "text-stone-600 hover:bg-stone-50"
+                      : isDarkMode
+                        ? "text-stone-305 hover:bg-stone-800"
+                        : "text-stone-600 hover:bg-stone-50"
                   }`}
                 >
                   <span>{item.label}</span>
@@ -255,7 +304,7 @@ export default function VendorDashboard() {
                   )}
                 </button>
               ))}
-              <hr className="border-stone-100 my-2" />
+              <hr className={`my-2 ${dividerClass}`} />
               <button 
                 onClick={handleLogout}
                 className="flex items-center justify-center gap-2 p-3 bg-red-50 text-red-700 font-bold rounded-xl text-xs"
@@ -283,13 +332,15 @@ export default function VendorDashboard() {
               <div className="flex flex-col gap-5">
                 
                 {/* Account verification warning banner */}
-                <div className="bg-amber-50/60 border border-amber-250 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                <div className={`border rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm ${
+                  isDarkMode ? "bg-amber-955/10 border-amber-900/50" : "bg-amber-50/60 border-amber-255"
+                }`}>
                   <div className="flex gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 dark:bg-amber-950/20 dark:text-amber-400">
                       <ShieldAlert className="w-4.5 h-4.5" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-stone-850 text-xs">Account Verification Pending</h4>
+                      <h4 className={`font-bold text-xs ${headingText}`}>Account Verification Pending</h4>
                       <p className="text-[10px] text-stone-500 mt-0.5 font-medium">
                         Administrators will verify your brand details soon. Showcase catalog is active for updates.
                       </p>
@@ -303,32 +354,32 @@ export default function VendorDashboard() {
                   <div className="lg:col-span-1 flex flex-col gap-6">
                     
                     {/* Business details card */}
-                    <div className="rounded-3xl p-6 bg-white/70 backdrop-blur-md border border-stone-200/60 shadow-sm">
-                      <h3 className="font-extrabold text-stone-850 text-sm mb-4">Business Profile</h3>
-                      <div className="flex flex-col gap-4 border-t border-stone-100 pt-4 text-xs">
+                    <div className={`rounded-3xl p-6 border shadow-sm ${cardClass}`}>
+                      <h3 className={`font-extrabold text-sm mb-4 ${headingText}`}>Business Profile</h3>
+                      <div className={`flex flex-col gap-4 border-t pt-4 text-xs ${dividerClass}`}>
                         <div>
                           <span className="text-[10px] text-stone-400 block font-bold uppercase">Brand Name</span>
-                          <span className="text-stone-800 font-semibold">{vendor.businessName}</span>
+                          <span className={`font-semibold ${headingText}`}>{vendor.businessName}</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-stone-400 block font-bold uppercase">Category & City</span>
-                          <span className="text-stone-800 font-semibold">{vendor.category} • {vendor.city}</span>
+                          <span className={`font-semibold ${headingText}`}>{vendor.category} • {vendor.city}</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-stone-400 block font-bold uppercase">Representative</span>
-                          <span className="text-stone-800 font-semibold">{vendor.name}</span>
+                          <span className={`font-semibold ${headingText}`}>{vendor.name}</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-stone-400 block font-bold uppercase">Email Address</span>
-                          <span className="text-stone-800 font-semibold">{vendor.email}</span>
+                          <span className={`font-semibold ${headingText}`}>{vendor.email}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Availability Card */}
-                    <div className="rounded-3xl p-6 bg-white/70 backdrop-blur-md border border-stone-200/60 shadow-sm">
+                    <div className={`rounded-3xl p-6 border shadow-sm ${cardClass}`}>
                       <div className="flex justify-between items-center mb-4">
-                        <h4 className="font-extrabold text-stone-850 text-sm">Accepting Enquiries</h4>
+                        <h4 className={`font-extrabold text-sm ${headingText}`}>Accepting Enquiries</h4>
                         <div
                           onClick={() => setAvailable(!available)}
                           className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-colors ${available ? "bg-emerald-500" : "bg-stone-300"}`}
@@ -354,11 +405,13 @@ export default function VendorDashboard() {
                       ].map((stat, i) => (
                         <div
                           key={i}
-                          className="p-5 rounded-3xl bg-white/75 backdrop-blur-md border border-stone-200/60 flex flex-col gap-3 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+                          className={`p-5 rounded-3xl border flex flex-col gap-3 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 ${cardClass}`}
                         >
                           <div className="flex justify-between items-start">
-                            <span className="text-2xl font-black text-stone-900">{stat.count}</span>
-                            <div className="p-2 rounded-xl bg-stone-50 border border-stone-100 flex items-center justify-center">
+                            <span className={`text-2xl font-black ${headingText}`}>{stat.count}</span>
+                            <div className={`p-2 rounded-xl border flex items-center justify-center ${
+                              isDarkMode ? "bg-stone-900 border-stone-850" : "bg-stone-50 border-stone-100"
+                            }`}>
                               {stat.icon}
                             </div>
                           </div>
@@ -368,9 +421,9 @@ export default function VendorDashboard() {
                     </div>
 
                     {/* Leads list section */}
-                    <div className="rounded-3xl p-6 bg-white/70 backdrop-blur-md border border-stone-200/60 shadow-sm flex flex-col gap-5 min-h-[320px]">
-                      <div className="flex justify-between items-center pb-2 border-b border-stone-100">
-                        <h3 className="font-extrabold text-stone-850 text-sm">Active Inquiries</h3>
+                    <div className={`rounded-3xl p-6 border shadow-sm flex flex-col gap-5 min-h-[320px] ${cardClass}`}>
+                      <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
+                        <h3 className={`font-extrabold text-sm ${headingText}`}>Active Inquiries</h3>
                         <button 
                           onClick={() => setActiveTab("leads")}
                           className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 cursor-pointer"
@@ -381,10 +434,12 @@ export default function VendorDashboard() {
 
                       {bookings.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                          <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 border border-orange-200/60 flex items-center justify-center mb-3">
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-3 ${
+                            isDarkMode ? "bg-stone-900 border border-stone-800 text-stone-400" : "bg-orange-50 text-orange-500 border border-orange-200/60"
+                          }`}>
                             <CheckCircle2 className="w-6 h-6" />
                           </div>
-                          <h4 className="font-bold text-stone-700 text-sm">All Caught Up!</h4>
+                          <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-slate-705'}`}>All Caught Up!</h4>
                           <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
                             No active couple requests currently. Complete your business information to start appearing in search queries.
                           </p>
@@ -404,10 +459,12 @@ export default function VendorDashboard() {
 
             {/* LEADS LIST SECTION */}
             {activeTab === "leads" && (
-              <div className="rounded-3xl p-6 bg-white/70 backdrop-blur-md border border-stone-200/60 shadow-sm min-h-[400px] flex flex-col gap-5">
-                <div className="flex justify-between items-center pb-2 border-b border-stone-100">
-                  <h3 className="font-extrabold text-stone-850 text-base">Booking Inquiries</h3>
-                  <span className="text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-250 px-2.5 py-1 rounded-full uppercase tracking-wider">
+              <div className={`rounded-3xl p-6 border shadow-sm min-h-[400px] flex flex-col gap-5 ${cardClass}`}>
+                <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
+                  <h3 className={`font-extrabold text-base ${headingText}`}>Booking Inquiries</h3>
+                  <span className={`text-[10px] font-black border px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                    isDarkMode ? "bg-emerald-950/20 text-emerald-400 border-emerald-900" : "bg-emerald-50 text-emerald-700 border-emerald-250"
+                  }`}>
                     {bookings.length} active leads
                   </span>
                 </div>
@@ -417,7 +474,7 @@ export default function VendorDashboard() {
                     <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 border border-orange-200 flex items-center justify-center mb-3">
                       <MessageSquare className="w-5 h-5" />
                     </div>
-                    <h4 className="font-bold text-stone-700 text-sm">No inquiries recorded</h4>
+                    <h4 className="font-bold text-stone-705 text-sm">No inquiries recorded</h4>
                     <p className="text-xs text-stone-400 max-w-xs mt-1">
                       Couple checkout orders and price requests will show here.
                     </p>
@@ -434,16 +491,18 @@ export default function VendorDashboard() {
 
             {/* SETTINGS SECTION */}
             {activeTab === "settings" && (
-              <div className="rounded-3xl p-6 bg-white/70 backdrop-blur-md border border-stone-200/60 shadow-sm min-h-[400px]">
-                <h3 className="font-extrabold text-stone-850 text-base pb-3 border-b border-stone-100 mb-6">Business Showcase Settings</h3>
+              <div className={`rounded-3xl p-6 border shadow-sm min-h-[400px] ${cardClass}`}>
+                <h3 className={`font-extrabold text-base pb-3 border-b mb-6 ${dividerClass} ${headingText}`}>Business Showcase Settings</h3>
                 
-                <div className="max-w-md flex flex-col gap-5 text-xs text-stone-700">
+                <div className="max-w-md flex flex-col gap-5 text-xs">
                   <div className="flex flex-col gap-1.5">
                     <label className="font-bold text-stone-500 uppercase tracking-wider">Brand Name</label>
                     <input 
                       type="text" 
                       defaultValue={vendor.businessName} 
-                      className="bg-white border border-stone-200 rounded-xl px-4 py-2.5 outline-none font-semibold text-stone-800" 
+                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
+                        isDarkMode ? "bg-stone-950 border-stone-850 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                      }`} 
                       disabled
                     />
                   </div>
@@ -452,7 +511,9 @@ export default function VendorDashboard() {
                     <input 
                       type="text" 
                       defaultValue={vendor.category} 
-                      className="bg-white border border-stone-200 rounded-xl px-4 py-2.5 outline-none font-semibold text-stone-800" 
+                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
+                        isDarkMode ? "bg-stone-950 border-stone-850 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                      }`} 
                       disabled
                     />
                   </div>
@@ -461,7 +522,9 @@ export default function VendorDashboard() {
                     <input 
                       type="text" 
                       defaultValue={vendor.city} 
-                      className="bg-white border border-stone-200 rounded-xl px-4 py-2.5 outline-none font-semibold text-stone-800" 
+                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
+                        isDarkMode ? "bg-stone-950 border-stone-850 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                      }`} 
                       disabled
                     />
                   </div>
@@ -470,7 +533,9 @@ export default function VendorDashboard() {
                     <input 
                       type="email" 
                       defaultValue={vendor.email} 
-                      className="bg-white border border-stone-200 rounded-xl px-4 py-2.5 outline-none font-semibold text-stone-800" 
+                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${
+                        isDarkMode ? "bg-stone-950 border-stone-850 text-stone-200" : "bg-white border-stone-200 text-stone-850"
+                      }`} 
                       disabled
                     />
                   </div>
