@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, ArrowRight, Crown } from "lucide-react";
 import type { Venue } from "@/lib/venues-data";
+import VenueCard from "@/components/venues/VenueCard";
 
 interface SimilarVenuesProps {
   venues: Venue[];
