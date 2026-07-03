@@ -16,7 +16,8 @@ import {
   Users, 
   BedDouble, 
   Clock, 
-  AlertCircle 
+  AlertCircle,
+  Heart
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatAsCurrency } from "@/lib/currency";
@@ -132,126 +133,129 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
 
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row">
-      {/* Left: Venue Image */}
-      {venueImage && (
-        <div className="relative w-full md:w-56 h-48 md:h-auto flex-shrink-0 bg-slate-100">
-          <img
-            src={venueImage}
-            alt={booking.venueName}
-            className="w-full h-full object-cover"
-          />
-          {/* Status badge on mobile overlay */}
-          <div className="absolute top-3 right-3 md:hidden">
-            {getStatusBadge()}
-          </div>
-        </div>
+    <div className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-auto min-h-[420px] cursor-pointer block group">
+      {/* Full Background Image */}
+      {venueImage ? (
+        <img
+          src={venueImage}
+          alt={booking.venueName}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 w-full h-full bg-slate-800" />
       )}
 
-      {/* Right: Content */}
-      <div className="flex-grow flex flex-col justify-between">
-        {/* Header */}
-        <div className="bg-slate-50 border-b border-slate-100 p-4 flex items-start justify-between">
-          <div>
-            <h3 className="font-bold text-slate-800 text-lg mb-1">{booking.venueName}</h3>
-            <p className="text-xs text-slate-500 font-mono">ID: {booking._id.substring(18)}</p>
-          </div>
-          <div className="hidden md:block">
-            {getStatusBadge()}
-          </div>
+      {/* Tag pill top-left */}
+      <div
+        className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white bg-slate-900/80 backdrop-blur-md"
+      >
+        {getStatusBadge()}
+      </div>
+
+      {/* Heart pill top-right */}
+      <button className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-white flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shadow-sm" onClick={(e) => e.preventDefault()}>
+        <Heart className="w-4 h-4" />
+      </button>
+
+      {/* Progressive frosted blur - Made taller to fit content */}
+      <div className="absolute inset-x-0 bottom-0 h-[85%] z-10 pointer-events-none">
+        {[ { blur: 1, solid: 55, fade: 100 }, { blur: 3, solid: 42, fade: 78 }, { blur: 6, solid: 28, fade: 58 }, { blur: 12, solid: 16, fade: 40 }, { blur: 24, solid: 6, fade: 24 } ].map((l, idx) => (
+          <div key={idx} className="absolute inset-0" style={{ backdropFilter: `blur(${l.blur}px)`, WebkitBackdropFilter: `blur(${l.blur}px)`, maskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)`, WebkitMaskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)` }} />
+        ))}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0.5) 65%, rgba(255,255,255,0.1) 85%, rgba(255,255,255,0) 100%)" }} />
+      </div>
+
+      {/* Content Area */}
+      <div className="absolute inset-x-0 bottom-0 z-20 px-5 pt-6 pb-5 flex flex-col h-full justify-end">
+        
+        <div className="mb-3">
+          <p className="text-xs text-slate-600 font-mono mb-1 bg-white/50 w-fit px-2 py-0.5 rounded-md">ID: {booking._id.substring(18)}</p>
+          <h3 className="text-2xl font-bold leading-snug text-slate-900 line-clamp-2" style={{ fontFamily: "var(--font-heading)" }}>
+            {booking.venueName}
+          </h3>
         </div>
 
-        {/* Body */}
-        <div className="p-5 flex-grow">
-          <div className="flex flex-col gap-3">
-            {renderDate()}
-            
-            <div className="flex items-center gap-4">
-              {booking.bookingType === "venue" ? (
-                <div className="flex items-center gap-1.5 text-sm text-slate-600">
-                  <Users className="w-4 h-4 text-orange-500" />
-                  <span>{booking.guestCount} Guests</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5 text-sm text-slate-600">
-                  <BedDouble className="w-4 h-4 text-orange-500" />
-                  <span>{booking.roomCount} Rooms</span>
-                </div>
-              )}
-              
-              {booking.functionType && (
-                <div className="flex items-center gap-1.5 text-sm text-slate-600 capitalize">
-                  <Clock className="w-4 h-4 text-orange-500" />
-                  <span>{booking.functionType}</span>
-                </div>
-              )}
-            </div>
-
-            {/* User Details (For Vendor View) */}
-            {isVendor && (
-              <div className="mt-3 bg-orange-50 rounded-xl p-3 border border-orange-100">
-                <p className="text-xs font-bold text-slate-700 mb-1">Customer Details</p>
-                <p className="text-sm font-semibold text-slate-800">{booking.userName}</p>
-                <p className="text-xs text-slate-600">{booking.userPhone} • {booking.userEmail}</p>
+        <div className="flex flex-col gap-2.5 mb-4 bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-white/40 shadow-sm">
+          {renderDate()}
+          <div className="flex items-center gap-4">
+            {booking.bookingType === "venue" ? (
+              <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium">
+                <Users className="w-4 h-4 text-orange-500" />
+                <span>{booking.guestCount} Guests</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium">
+                <BedDouble className="w-4 h-4 text-orange-500" />
+                <span>{booking.roomCount} Rooms</span>
+              </div>
+            )}
+            {booking.functionType && (
+              <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium capitalize">
+                <Clock className="w-4 h-4 text-orange-500" />
+                <span>{booking.functionType}</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Footer / Pricing */}
-        <div className="border-t border-slate-100 p-5 bg-slate-50/50">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-6">
-              <div>
-                <p className="text-xs text-slate-500">Total Amount</p>
-                <p className="font-bold text-slate-800">
-                  {formatAsCurrency(booking.totalAmount, booking.currency || "INR")}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-slate-500">Advance Paid</p>
-                <p className={`font-bold ${booking.status === 'confirmed' ? 'text-emerald-600' : 'text-slate-400'}`}>
-                  {booking.status === 'confirmed' 
-                    ? formatAsCurrency(booking.advanceAmount, booking.currency || "INR")
-                    : formatAsCurrency(0, booking.currency || "INR")
-                  }
-                </p>
-              </div>
-            </div>
+        {/* User Details (For Vendor View) */}
+        {isVendor && (
+          <div className="mb-4 bg-orange-50/80 backdrop-blur-sm rounded-xl p-3 border border-orange-200/50 shadow-sm">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Customer Details</p>
+            <p className="text-sm font-bold text-slate-800">{booking.userName}</p>
+            <p className="text-xs text-slate-600 font-medium mt-0.5">{booking.userPhone} • {booking.userEmail}</p>
+          </div>
+        )}
 
-            {/* Action Buttons for User */}
-            {!isVendor && (booking.status === "pending" || booking.status === "confirmed") && (
-              <div className="flex gap-2 w-full sm:w-auto">
+        <div className="flex items-end justify-between mt-1">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-baseline gap-2">
+              <span className="text-[11px] font-medium text-slate-500 uppercase">Total</span>
+              <span className="text-lg font-bold text-slate-900 leading-none">
+                {formatAsCurrency(booking.totalAmount, booking.currency || "INR")}
+              </span>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-[11px] font-medium text-slate-500 uppercase">Paid</span>
+              <span className={`text-sm font-bold leading-none ${booking.status === 'confirmed' ? 'text-emerald-600' : 'text-slate-400'}`}>
+                {booking.status === 'confirmed' 
+                  ? formatAsCurrency(booking.advanceAmount, booking.currency || "INR")
+                  : formatAsCurrency(0, booking.currency || "INR")
+                }
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons for User */}
+          {!isVendor && (booking.status === "pending" || booking.status === "confirmed") && (
+            <div className="flex flex-col gap-2">
+              {booking.status === "pending" && (
                 <button
-                  onClick={() => setShowCancelConfirm(true)}
+                  onClick={handlePayAdvance}
                   disabled={deleting}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-4 py-2.5 rounded-xl text-xs transition-colors disabled:opacity-50"
+                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-full text-xs transition-colors shadow-sm disabled:opacity-50"
                 >
-                  {deleting ? "Cancelling..." : "Cancel"}
+                  Pay Advance
                 </button>
-                {booking.status === "pending" && (
-                  <button
-                    onClick={handlePayAdvance}
-                    disabled={deleting}
-                    className="bg-orange-600 hover:bg-orange-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-colors disabled:opacity-50 shadow-sm"
-                  >
-                    Pay Advance
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Payment Error */}
-          {paymentError && (
-            <div className="mt-3 flex items-start gap-1.5 text-xs text-red-600 bg-red-50 p-2 rounded-lg border border-red-100">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <p>{paymentError}</p>
+              )}
+              <button
+                onClick={() => setShowCancelConfirm(true)}
+                disabled={deleting}
+                className="bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 font-bold px-5 py-2 rounded-full text-[11px] transition-colors border border-slate-200 disabled:opacity-50"
+              >
+                {deleting ? "Cancelling..." : "Cancel Booking"}
+              </button>
             </div>
           )}
-
-
         </div>
+
+        {/* Payment Error */}
+        {paymentError && (
+          <div className="mt-3 flex items-start gap-1.5 text-[11px] font-medium text-red-600 bg-red-50/90 backdrop-blur-sm p-2 rounded-lg border border-red-100">
+            <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+            <p>{paymentError}</p>
+          </div>
+        )}
       </div>
 
       {/* Custom Confirmation Modal via Portal */}

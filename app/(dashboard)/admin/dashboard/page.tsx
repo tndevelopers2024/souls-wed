@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
+import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2 } from "lucide-react";
 
 interface AdminSession {
   id: string;
@@ -910,56 +911,56 @@ export default function AdminDashboard() {
                       {filteredApprovals.map((v) => (
                         <div 
                           key={v._id}
-                          className={`p-5 rounded-2xl border flex flex-col justify-between hover:border-orange-200 transition-colors shadow-none ${subCardClass}`}
+                          className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-auto min-h-[380px] cursor-pointer block group bg-gradient-to-br from-slate-800 to-slate-900"
                         >
-                          <div>
-                            <div className="flex items-start justify-between gap-4">
-                              <div>
-                                <h4 className={`font-extrabold text-base leading-tight ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.businessName || "No Business Name"}</h4>
-                                <p className="text-xs text-stone-550 font-medium mt-1">{v.name}</p>
-                              </div>
-                              <span className="text-[9px] font-black uppercase bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full shrink-0 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-300">
-                                {v.category}
-                              </span>
-                            </div>
+                          {/* Ambient background decoration */}
+                          <div className="absolute -top-20 -right-20 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl pointer-events-none" />
+                          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
 
-                            <div className={`grid grid-cols-2 gap-3 mt-5 border-t pt-4 text-xs ${dividerClass}`}>
-                              <div>
-                                <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wide">Base City</span>
-                                <span className={`font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{v.city || "Not Specified"}</span>
-                              </div>
-                              <div>
-                                <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wide">Contact Email</span>
-                                <span className={`font-semibold truncate block ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`} title={v.email}>{v.email}</span>
-                              </div>
-                              <div>
-                                <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wide">Phone</span>
-                                <span className={`font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{v.phone || "N/A"}</span>
-                              </div>
-                              <div>
-                                <span className="text-[10px] text-stone-400 block font-bold uppercase tracking-wide">Registered</span>
-                                <span className={`font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{formatDate(v.createdAt)}</span>
-                              </div>
-                            </div>
+                          {/* Tag pill top-left */}
+                          <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white bg-slate-900/80 backdrop-blur-md">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            {v.category}
                           </div>
 
-                          <div className={`flex gap-2.5 mt-6 border-t pt-4 ${dividerClass}`}>
-                            <button
-                              onClick={() => handleUpdateVendorStatus(v._id, true)}
-                              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
-                            >
-                              Approve Partner
-                            </button>
-                            <button
-                              onClick={() => handleDeleteVendor(v._id)}
-                              className={`flex-1 border font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
-                                isDarkMode 
-                                  ? "bg-stone-900 border-stone-800 hover:bg-red-950/20 text-stone-300 hover:border-red-900 hover:text-red-400" 
-                                  : "bg-white hover:bg-red-50 border-stone-200 hover:border-red-200 text-stone-600 hover:text-red-600"
-                              }`}
-                            >
-                              Reject Application
-                            </button>
+                          {/* Status pill top-right */}
+                          <div className="absolute top-4 right-4 z-20 px-3 py-1.5 rounded-full text-[10px] font-bold text-amber-800 bg-amber-100 uppercase tracking-widest shadow-sm">
+                            Pending
+                          </div>
+
+                          {/* Content Area */}
+                          <div className="absolute inset-x-0 bottom-0 z-20 px-5 pt-6 pb-5 flex flex-col h-full justify-end">
+                            <div className="mb-4">
+                              <h3 className="text-2xl font-bold leading-snug text-white line-clamp-2" style={{ fontFamily: "var(--font-heading)" }}>
+                                {v.businessName || "No Business Name"}
+                              </h3>
+                              <div className="flex items-center gap-1 mt-2">
+                                <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                                <span className="text-xs font-medium text-slate-300 line-clamp-1">{v.city || "Not Specified"}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2.5 mb-5 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-sm">
+                              <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Rep:</span> {v.name}</p>
+                              <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Email:</span> {v.email}</p>
+                              <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Phone:</span> {v.phone || "N/A"}</p>
+                              <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Applied:</span> {formatDate(v.createdAt)}</p>
+                            </div>
+
+                            <div className="flex gap-3 mt-1">
+                              <button
+                                onClick={() => handleUpdateVendorStatus(v._id, true)}
+                                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 rounded-full text-xs transition-colors shadow-sm cursor-pointer"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleDeleteVendor(v._id)}
+                                className="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-100 border border-red-500/30 font-bold py-3 rounded-full text-xs transition-colors cursor-pointer"
+                              >
+                                Reject
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}

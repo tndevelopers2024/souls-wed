@@ -53,7 +53,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
               <div className="flex flex-wrap gap-4 mb-4 sm:mb-0">
                 <div className="flex items-center gap-1.5 text-sm text-slate-600">
                   <Users className="w-4 h-4 text-slate-400" />
-                  <span>{venue.minGuests} - {venue.maxGuests} Guests</span>
+                  <span>{venue.minGuests}-{venue.maxGuests} pax</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-slate-600">
                   <BedDouble className="w-4 h-4 text-slate-400" />
@@ -66,11 +66,11 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
                 <span className="text-xs font-medium text-slate-500 block mb-0.5">Starting from</span>
                 <div className="flex items-baseline gap-1">
                   <span className="text-xl font-bold text-slate-900">{venue.price}</span>
-                  <span className="text-sm text-slate-500">{venue.priceUnit}</span>
+                  <span className="text-sm text-slate-500 capitalize">{venue.priceUnit}</span>
                 </div>
               </div>
               <span className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-900 text-sm font-bold rounded-full transition-colors border border-slate-200">
-                View Details
+                Book +
               </span>
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
   /* ── Grid view: full-bleed image + bottom frosted-glass overlay ── */
   return (
     <Link href={`/venues/${venue.id}`} className="block h-full">
-      <div className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-[440px] sm:h-[480px] lg:h-[520px]">
+      <div className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-full">
 
         {/* Full-bleed image */}
         <Image
@@ -94,26 +94,31 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
         />
 
         {/* Tag pill top-left */}
-        {venue.featured && (
+        {venue.featured ? (
           <div
-            className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white"
+            className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm"
             style={{ background: "var(--sw-orange)" }}
           >
             <Crown className="w-3.5 h-3.5" />
             Featured
           </div>
-        )}
-
-        {/* Rating pill top-right */}
-        {venue.rating > 0 && (
+        ) : venue.rating > 0 ? (
           <div
-            className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
-            style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(10px)" }}
+            className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm"
+            style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(10px)" }}
           >
-            <Star className="w-3 h-3" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+            <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
             <span className="text-slate-800">{venue.rating.toFixed(1)}</span>
           </div>
-        )}
+        ) : null}
+
+        {/* Heart pill top-right */}
+        <button
+          className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 hover:bg-white transition-colors shadow-sm"
+          onClick={(e) => e.preventDefault()}
+        >
+          <Heart className="w-4 h-4" />
+        </button>
 
         {/* Progressive frosted blur */}
         <div className="absolute inset-x-0 bottom-0 h-[72%] z-10 pointer-events-none">
@@ -140,39 +145,66 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
 
         {/* Content */}
         <div className="absolute inset-x-0 bottom-0 z-20 px-4 pt-5 pb-4 flex flex-col">
-          <h3 className="text-[17px] font-bold leading-snug text-slate-900 line-clamp-2 mb-1" style={{ fontFamily: "var(--font-heading)" }}>
+          <h3 className="text-[22px] font-bold leading-snug text-slate-900 line-clamp-2 mb-1" style={{ fontFamily: "var(--font-heading)" }}>
             {venue.name}
           </h3>
 
-          <div className="flex items-center gap-1 mb-2">
-            <MapPin className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
-            <span className="text-xs font-medium text-slate-700 line-clamp-1">
+          <div className="flex items-center gap-1 mb-1">
+            <MapPin className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+            <span className="text-[13px] font-medium text-slate-600 line-clamp-1">
               {venue.location}, {venue.country}
             </span>
           </div>
 
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            <span className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200/50">
-              {venue.minGuests} - {venue.maxGuests} Guests
-            </span>
-            <span className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200/50">
+          {/* Rating in content area */}
+          {venue.rating > 0 && (
+            <div className="flex items-center mb-3 mt-1">
+              <div className="flex items-center gap-0.5 mr-1.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i} 
+                    className="w-3.5 h-3.5" 
+                    style={{ color: "var(--sw-gold)" }} 
+                    fill={i < Math.round(venue.rating) ? "var(--sw-gold)" : "transparent"} 
+                  />
+                ))}
+              </div>
+              <span className="text-[13px] font-bold text-slate-800">{venue.rating.toFixed(1)}</span>
+              <span className="text-[13px] text-slate-500 font-medium ml-1">({venue.reviewCount} reviews)</span>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
+              <Users className="w-3.5 h-3.5 text-slate-500" />
+              {venue.minGuests}-{venue.maxGuests} pax
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
+              <BedDouble className="w-3.5 h-3.5 text-slate-500" />
               {venue.rooms} Rooms
-            </span>
+            </div>
+            <div 
+              className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm"
+              style={{ color: "var(--sw-orange)" }}
+            >
+              {venue.type}
+            </div>
           </div>
 
-          <div className="flex items-end justify-between">
+          <div className="flex items-end justify-between mt-auto">
             <div className="flex flex-col">
-              <span className="text-[11px] font-medium text-slate-600 block">from</span>
-              <span className="text-[18px] font-bold text-slate-900 leading-tight">
-                {venue.price}
-              </span>
-              <span className="text-[11px] font-medium text-slate-600 ml-1">{venue.priceUnit}</span>
+              <span className="text-[11px] font-medium text-slate-500 block mb-0.5">from</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-[22px] font-bold text-slate-900 leading-none tracking-tight">
+                  {venue.price}
+                </span>
+                <span className="text-[12px] font-medium text-slate-500 capitalize">{venue.priceUnit}</span>
+              </div>
             </div>
             <span
-              className="text-xs font-bold px-4 py-2 rounded-full text-white"
-              style={{ background: "var(--sw-navy)" }}
+              className="text-[14px] font-bold px-5 py-2.5 rounded-full text-slate-900 bg-white shadow-sm hover:bg-slate-50 transition-colors"
             >
-              View Details →
+              Book +
             </span>
           </div>
         </div>
