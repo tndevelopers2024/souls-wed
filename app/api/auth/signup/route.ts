@@ -108,6 +108,7 @@ export async function POST(req: Request) {
       // Create vendor
       const newVendor = new Vendor({
         name, // contact person
+        businessName,
         email,
         passwordHash,
         phone,

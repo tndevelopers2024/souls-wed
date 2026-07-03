@@ -338,9 +338,11 @@ export default function UserDashboard() {
                         </Link>
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-4 overflow-y-auto pr-1">
-                        {bookings.slice(0, 3).map((booking) => (
-                          <BookingCard key={booking._id} booking={booking} />
+                      <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+                        {bookings.slice(0, 6).map((booking) => (
+                          <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
+                            <BookingCard booking={booking} />
+                          </div>
                         ))}
                       </div>
                     )}
@@ -367,9 +369,11 @@ export default function UserDashboard() {
                     </p>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-4">
+                  <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
                     {bookings.map((booking) => (
-                      <BookingCard key={booking._id} booking={booking} />
+                      <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
+                        <BookingCard booking={booking} />
+                      </div>
                     ))}
                   </div>
                 )}

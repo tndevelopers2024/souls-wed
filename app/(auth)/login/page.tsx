@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useLayoutEffect } from "react";
+import React, { Suspense, useState, useLayoutEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Mail, Loader2, AlertCircle } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -11,8 +11,27 @@ import PasswordInput from "@/components/auth/PasswordInput";
 type UserRole = "user" | "vendor" | "admin";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginLoading />}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginLoading() {
+  return (
+    <AuthLayout title="User Portal" subtitle="Preparing secure access...">
+      <div className="flex flex-col items-center justify-center py-10">
+        <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+      </div>
+    </AuthLayout>
+  );
+}
+
+function LoginPageContent() {
   const router = useRouter();
-  const [role, setRole] = useState<UserRole>("user");
+  const searchParams = useSearchParams();
+  const role = getRoleFromParam(searchParams.get("role"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,7 +45,6 @@ export default function LoginPage() {
       setLoading(false);
       setError(null);
       setSuccess(false);
-      setRole("user");
     };
   }, []);
 
@@ -243,9 +261,43 @@ export default function LoginPage() {
                 </Link>
               </div>
             )}
+
+            {/* Vendor / User toggle */}
+            {role !== "admin" && (
+              <div className="text-center text-slate-400 text-xs mt-1">
+                {role === "vendor" ? (
+                  <>
+                    Not a vendor?{" "}
+                    <Link
+                      href="/login"
+                      className="text-orange-500 hover:text-orange-600 font-semibold transition-colors"
+                    >
+                      User Login
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    Are you a vendor?{" "}
+                    <Link
+                      href="/login?role=vendor"
+                      className="text-orange-500 hover:text-orange-600 font-semibold transition-colors"
+                    >
+                      Vendor Login
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
+
           </motion.form>
         )}
       </AnimatePresence>
     </AuthLayout>
   );
+}
+
+function getRoleFromParam(roleParam: string | null): UserRole {
+  return roleParam === "vendor" || roleParam === "admin" || roleParam === "user"
+    ? roleParam
+    : "user";
 }

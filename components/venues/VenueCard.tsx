@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Star, Users, BedDouble, Crown, Heart } from "lucide-react";
 import type { Venue } from "@/lib/venues-data";
+import { useCurrency } from "@/lib/CurrencyContext";
+import { convertPriceString } from "@/lib/currency";
 
 interface VenueCardProps {
   venue: Venue;
@@ -19,10 +21,11 @@ const blurLayers = [
 ];
 
 export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
+  const { currency } = useCurrency();
   if (view === "list") {
     return (
       <Link href={`/venues/${venue.id}`} className="group block">
-        <div className="bg-white rounded-[24px] border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row">
+        <div className="bg-white rounded-[32px] border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row">
           <div className="relative w-full sm:w-[280px] h-[220px] sm:h-auto flex-shrink-0">
             <Image src={venue.image} alt={venue.name} fill sizes="(max-width: 640px) 100vw, 280px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
             {venue.featured && (
@@ -65,7 +68,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
               <div>
                 <span className="text-xs font-medium text-slate-500 block mb-0.5">Starting from</span>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-bold text-slate-900">{venue.price}</span>
+                  <span className="text-xl font-bold text-slate-900">{convertPriceString(venue.price, currency)}</span>
                   <span className="text-sm text-slate-500 capitalize">{venue.priceUnit}</span>
                 </div>
               </div>
@@ -81,8 +84,8 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
 
   /* ── Grid view: full-bleed image + bottom frosted-glass overlay ── */
   return (
-    <Link href={`/venues/${venue.id}`} className="block h-full">
-      <div className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-full">
+    <Link href={`/venues/${venue.id}`} className="block group">
+      <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[460px] sm:h-[500px] lg:h-[540px]">
 
         {/* Full-bleed image */}
         <Image
@@ -90,7 +93,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
           alt={venue.name}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
         {/* Tag pill top-left */}
@@ -196,8 +199,8 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
               <span className="text-[11px] font-medium text-slate-500 block mb-0.5">from</span>
               <div className="flex items-baseline gap-1">
                 <span className="text-[22px] font-bold text-slate-900 leading-none tracking-tight">
-                  {venue.price}
-                </span>
+                    {convertPriceString(venue.price, currency)}
+                  </span>
                 <span className="text-[12px] font-medium text-slate-500 capitalize">{venue.priceUnit}</span>
               </div>
             </div>

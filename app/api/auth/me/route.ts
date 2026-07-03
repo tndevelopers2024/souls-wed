@@ -24,7 +24,7 @@ import { Admin } from "@/lib/models/Admin";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
-import { SessionData, defaultSession, sessionOptions } from "@/lib/session";
+import { SessionData, sessionOptions } from "@/lib/session";
 
 export async function GET() {
   try {
@@ -88,6 +88,14 @@ export async function GET() {
         businessName: dbUser.businessName || "",
         category: dbUser.category || "",
         city: dbUser.city || "",
+        description: dbUser.description || "",
+        website: dbUser.website || "",
+        instagram: dbUser.instagram || "",
+        priceFrom: dbUser.priceFrom || "",
+        images: dbUser.images || [],
+        verified: dbUser.verified || false,
+        featured: dbUser.featured || false,
+        available: dbUser.available !== false,
       },
     });
   } catch (error: unknown) {

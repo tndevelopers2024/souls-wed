@@ -447,7 +447,7 @@ export default function AdminDashboard() {
   const subCardClass = isDarkMode ? "bg-stone-950/60 border-stone-800" : "bg-[#fafaf9] border-stone-200";
 
   return (
-    <div className={`min-h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
+    <div className={`h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
       
       {/* Background Decorative Ambient Shapes */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[150px]" />
@@ -945,6 +945,19 @@ export default function AdminDashboard() {
                               <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Email:</span> {v.email}</p>
                               <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Phone:</span> {v.phone || "N/A"}</p>
                               <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Applied:</span> {formatDate(v.createdAt)}</p>
+                              
+                              {v.images && v.images.length > 0 && (
+                                <div className="mt-2 border-t border-white/10 pt-2">
+                                  <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1.5">Showcase Gallery ({v.images.length}/6)</p>
+                                  <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+                                    {v.images.map((imgUrl: string, idx: number) => (
+                                      <div key={idx} className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/15 shrink-0 bg-slate-950">
+                                        <img src={imgUrl} alt="Showcase Preview" className="w-full h-full object-cover" />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
 
                             <div className="flex gap-3 mt-1">

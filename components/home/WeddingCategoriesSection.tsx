@@ -98,7 +98,7 @@ export default function WeddingCategoriesSection() {
               href={`/category/${cat.slug}`}
               variants={itemVariants}
               whileHover={{ y: -6 }}
-              className="relative h-44 md:h-56 rounded-3xl overflow-hidden cursor-pointer group"
+              className="relative h-44 md:h-56 rounded-[32px] overflow-hidden cursor-pointer group"
             >
               <Image
                 src={cat.image}

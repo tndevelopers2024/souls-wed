@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useLayoutEffect } from "react";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { Heart, Menu, X, ChevronDown, LogOut, LayoutDashboard } from "lucide-react";
+import { Heart, Menu, X, ChevronDown, LogOut, LayoutDashboard, Check, Globe, DollarSign, User } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useCurrency } from "@/lib/CurrencyContext";
+import { CURRENCIES } from "@/lib/currency";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -60,6 +62,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const { currency, setCurrency } = useCurrency();
 
   const isAuthPage = pathname?.startsWith("/login") || pathname?.startsWith("/signup");
 
@@ -120,7 +123,7 @@ export default function Navbar() {
   if (isAuthPage) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
+    <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:px-6 sm:pt-5">
       {/* Floating capsule bar */}
       <motion.div
         animate={{ 
@@ -136,8 +139,8 @@ export default function Navbar() {
           border: "1px solid rgba(255,255,255,0.8)",
         }}
       >
-        <div className="px-4 sm:px-6">
-          <div className="flex items-center justify-between h-14 md:h-16">
+        <div className="px-5 sm:px-3">
+          <div className="flex items-center justify-between h-16 md:h-18" style={{ minHeight: '68px' }}>
             {/* Logo */}
             <Link href="/" className="flex items-center group flex-shrink-0">
               <Image 
@@ -151,7 +154,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-0.5">
+            <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
                 <div
                   key={link.href}
@@ -161,7 +164,7 @@ export default function Navbar() {
                 >
                   <Link
                     href={link.href}
-                    className="relative flex items-center gap-1 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 hover:bg-orange-50/80 hover:text-orange-600 group"
+                    className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:bg-orange-50/80 hover:text-orange-600 group"
                     style={{ color: "var(--sw-navy)" }}
                   >
                     {link.label}
@@ -186,82 +189,163 @@ export default function Navbar() {
             </div>
 
             {/* Desktop CTA */}
-            <div className="hidden md:flex items-center gap-4">
-              {loading ? (
-                <div className="w-8 h-8 rounded-full bg-orange-100/50 animate-pulse" />
-              ) : user ? (
-                <div className="relative" onMouseEnter={() => setOpenDropdown("userMenu")} onMouseLeave={() => setOpenDropdown(null)}>
+            <div className="hidden md:flex items-center gap-3">
+
+              {/* ── Icon cluster pill ── */}
+              <div className="flex items-center gap-1 p-1 rounded-full" style={{ background: "rgba(0,0,0,0.05)", border: "1px solid rgba(0,0,0,0.06)" }}>
+
+                {/* Currency toggle */}
+                <div
+                  className="relative z-50"
+                  onMouseEnter={() => setOpenDropdown("currencyMenu")}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
                   <button
-                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-sm font-semibold transition-all hover:bg-orange-50 outline-none cursor-pointer"
-                    style={{ color: "var(--sw-navy)" }}
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500 text-white transition-all duration-200 outline-none cursor-pointer hover:bg-orange-600 hover:scale-105"
+                    title="Change currency"
                   >
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center font-bold text-[10px] uppercase shadow-sm">
-                      {user.name.charAt(0)}
-                    </div>
-                    <span className="max-w-[100px] truncate text-xs">{user.name}</span>
-                    <ChevronDown className="w-3.5 h-3.5 opacity-60 transition-transform" style={{ transform: openDropdown === "userMenu" ? "rotate(180deg)" : "rotate(0)" }} />
+                    <DollarSign className="w-4 h-4" />
                   </button>
-                  
                   <AnimatePresence>
-                    {openDropdown === "userMenu" && (
+                    {openDropdown === "currencyMenu" && (
                       <motion.div
-                        initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                        initial={{ opacity: 0, y: 12, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-56 rounded-[24px] overflow-hidden z-50 p-1.5"
+                        exit={{ opacity: 0, y: 8, scale: 0.97, transition: { duration: 0.12 } }}
+                        transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                        className="absolute right-0 top-full mt-3 w-52 rounded-3xl overflow-hidden z-50 origin-top-right"
                         style={{
-                          background: "rgba(255,255,255,0.98)",
-                          backdropFilter: "blur(20px)",
-                          border: "1px solid rgba(0,0,0,0.07)",
-                          boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
+                          background: "#ffffff",
+                          border: "1px solid rgba(0,0,0,0.08)",
+                          boxShadow: "0 20px 60px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.06)",
                         }}
                       >
-                        <div className="px-4 py-2.5 border-b border-slate-100 mb-1">
-                          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Signed in as</p>
-                          <p className="text-sm font-bold text-slate-800 truncate">{user.name}</p>
-                          <span className="inline-block mt-1 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700">
-                            {user.role}
-                          </span>
+                        {/* Header */}
+                        <div className="px-4 py-3 flex items-center justify-between" style={{ background: "var(--sw-orange)" }}>
+                          <span className="text-white text-[11px] font-black uppercase tracking-widest">Currency</span>
+                          <span className="text-white/90 text-xs font-bold">{CURRENCIES[currency]?.symbol} {currency}</span>
                         </div>
-                        <Link
-                          href={user.role === "admin" ? "/admin/dashboard" : user.role === "vendor" ? "/vendor/dashboard" : "/dashboard"}
-                          className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:bg-orange-50 text-slate-700 hover:text-slate-900"
-                        >
-                          <LayoutDashboard className="w-4 h-4 text-orange-500" />
-                          <span>My Dashboard</span>
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors hover:bg-red-50 text-red-600 hover:text-red-700 text-left cursor-pointer"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span>Sign Out</span>
-                        </button>
+
+                        {/* Currency list */}
+                        <div className="p-2 flex flex-col gap-0.5 max-h-72 overflow-y-auto">
+                          {Object.keys(CURRENCIES).map((code) => {
+                            const isSelected = currency === code;
+                            const sym = CURRENCIES[code].symbol;
+                            return (
+                              <button
+                                key={code}
+                                onClick={() => { setCurrency(code); setOpenDropdown(null); }}
+                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 text-left cursor-pointer ${
+                                  isSelected
+                                    ? "bg-orange-50 text-orange-600"
+                                    : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                                }`}
+                              >
+                                <span className={`flex items-center justify-center w-8 h-8 rounded-full text-[12px] font-bold flex-shrink-0 ${
+                                  isSelected ? "bg-orange-500 text-white" : "bg-slate-100 text-slate-600"
+                                }`}>
+                                  {sym.trim()}
+                                </span>
+                                <span className="flex-1">{code}</span>
+                                {isSelected && <Check className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
-              ) : (
-                <Link
-                  href="/login"
-                  className="text-sm font-semibold px-4 py-2 rounded-full transition-colors hover:bg-orange-50"
-                  style={{ color: "var(--sw-navy)" }}
-                >
-                  Sign In
-                </Link>
-              )}
-              
+
+                {/* Divider */}
+                <div className="w-px h-4 bg-black/10 mx-0.5" />
+
+                {/* User avatar / Sign in */}
+                {loading ? (
+                  <div className="w-8 h-8 rounded-full bg-orange-200 animate-pulse" />
+                ) : user ? (
+                  <div className="relative" onMouseEnter={() => setOpenDropdown("userMenu")} onMouseLeave={() => setOpenDropdown(null)}>
+                    <button
+                      className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500 text-white font-extrabold text-[12px] uppercase transition-all duration-200 outline-none cursor-pointer hover:bg-orange-600 hover:scale-105"
+                      title={user.name}
+                    >
+                      {user.name.charAt(0)}
+                    </button>
+                    <AnimatePresence>
+                      {openDropdown === "userMenu" && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                          transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                          className="absolute right-0 top-full mt-3 w-60 rounded-3xl overflow-hidden z-50"
+                          style={{
+                            background: "#ffffff",
+                            border: "1px solid rgba(0,0,0,0.08)",
+                            boxShadow: "0 20px 60px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.06)",
+                          }}
+                        >
+                          {/* User header */}
+                          <div className="relative px-5 pt-5 pb-4 overflow-hidden" style={{ background: "linear-gradient(135deg, #ff6b35 0%, #f59e0b 100%)" }}>
+                            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 70% 50%, white 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
+                            <div className="relative flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-black text-lg uppercase border border-white/30">
+                                {user.name.charAt(0)}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-white font-bold text-sm truncate">{user.name}</p>
+                                <p className="text-white/70 text-[11px] truncate">{user.email}</p>
+                                <span className="inline-block mt-1 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/20 text-white">
+                                  {user.role}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Menu items */}
+                          <div className="p-2">
+                            <Link
+                              href={user.role === "admin" ? "/admin/dashboard" : user.role === "vendor" ? "/vendor/dashboard" : "/dashboard"}
+                              className="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group/link"
+                            >
+                              <span className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center group-hover/link:bg-orange-500 transition-colors">
+                                <LayoutDashboard className="w-4 h-4 text-orange-500 group-hover/link:text-white transition-colors" />
+                              </span>
+                              <span>My Dashboard</span>
+                            </Link>
+                            <div className="my-1.5 mx-1 h-px bg-slate-100" />
+                            <button
+                              onClick={handleLogout}
+                              className="w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-sm font-semibold text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors text-left cursor-pointer group/logout"
+                            >
+                              <span className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center group-hover/logout:bg-red-500 transition-colors">
+                                <LogOut className="w-4 h-4 text-red-400 group-hover/logout:text-white transition-colors" />
+                              </span>
+                              <span>Sign Out</span>
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="flex items-center justify-center w-8 h-8 rounded-full text-slate-600 text-sm font-semibold transition-colors hover:bg-orange-500 hover:text-white cursor-pointer"
+                    title="Sign In"
+                  >
+                    <User className="w-4 h-4" />
+                  </Link>
+                )}
+              </div>
+
+              {/* Book Now */}
               <Link
                 href="/venues"
-                className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 hover:scale-105 hover:shadow-lg overflow-hidden group"
-                style={{
-                  background: "linear-gradient(135deg, var(--sw-orange), #f95c02)",
-                  boxShadow: "0 6px 20px rgba(238,116,41,0.35)",
-                }}
+                className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 hover:scale-105 overflow-hidden group"
+                style={{ background: "var(--sw-orange)" }}
               >
                 <span className="relative z-10">Book Now</span>
-                {/* Shine effect overlay */}
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-[shimmer_1.5s_infinite] z-0" />
               </Link>
             </div>

@@ -47,3 +47,22 @@ export function formatAsCurrency(amountInINR: number, targetCurrency: string): s
   // Standard international formatting
   return `${currencyDetail.symbol}${Math.round(converted).toLocaleString()}`;
 }
+
+/**
+ * Parses an INR price string like "₹3,35,840" or "₹335840" into a plain number.
+ */
+export function parseINRString(priceStr: string | undefined | null): number {
+  if (!priceStr) return 0;
+  const cleaned = priceStr.replace(/[₹,\s]/g, "");
+  return parseFloat(cleaned) || 0;
+}
+
+/**
+ * Converts an INR price string (e.g. "₹335840") to the target currency formatted string.
+ * Drop-in replacement for displaying any price stored as an INR string.
+ */
+export function convertPriceString(priceStr: string | undefined | null, targetCurrency: string): string {
+  const inr = parseINRString(priceStr);
+  if (inr === 0) return priceStr || "";
+  return formatAsCurrency(inr, targetCurrency);
+}

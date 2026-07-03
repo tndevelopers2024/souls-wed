@@ -20,7 +20,7 @@ function DestinationCard({ city, country, vendors, image, delay }: {
 }) {
   return (
     <motion.div
-      className="relative rounded-3xl overflow-hidden cursor-pointer group h-full"
+      className="relative rounded-[32px] overflow-hidden cursor-pointer group h-full"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}

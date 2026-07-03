@@ -1,9 +1,3 @@
-/**
- * GET  /api/venues          — list all active venues (with optional filters)
- * PATCH /api/venues         — admin: update a venue (verify, feature, toggle active)
- * DELETE /api/venues?id=... — admin: delete a venue
- */
-
 import { connectDB } from "@/lib/mongodb";
 import { Venue } from "@/lib/models/Venue";
 import { NextResponse } from "next/server";
@@ -12,23 +6,33 @@ import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "@/lib/session";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GET — public, fetch venues with optional filters
+// GET — public (active only); vendors/admins see all including inactive
 // ─────────────────────────────────────────────────────────────────────────────
 export async function GET(req: Request) {
   try {
     await connectDB();
     const { searchParams } = new URL(req.url);
 
-    const query: Record<string, unknown> = { active: true };
+    const query: Record<string, unknown> = {};
+
+    // Check if authenticated vendor/admin — they see inactive too
+    const cookieStore = await cookies();
+    const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
+    const isPrivileged = session.isLoggedIn && (session.role === "vendor" || session.role === "admin");
+    if (!isPrivileged) {
+      query.active = true;
+    }
 
     const city     = searchParams.get("city");
-    const featured = searchParams.get("featured");
-    const search   = searchParams.get("search");
-    const id       = searchParams.get("id");      // fetch by venueId
+    const featured  = searchParams.get("featured");
+    const verified  = searchParams.get("verified");
+    const search    = searchParams.get("search");
+    const id        = searchParams.get("id");
 
-    if (id)       query.venueId = id;
-    if (city)     query.city    = { $regex: city, $options: "i" };
+    if (id)       query.venueId  = id;
+    if (city)     query.city     = { $regex: city, $options: "i" };
     if (featured) query.featured = true;
+    if (verified) query.verified = true;
     if (search) {
       query.$or = [
         { name:     { $regex: search, $options: "i" } },
@@ -38,11 +42,10 @@ export async function GET(req: Request) {
       ];
     }
 
-    const limit  = parseInt(searchParams.get("limit")  ?? "100");
-    const skip   = parseInt(searchParams.get("skip")   ?? "0");
+    const limit = parseInt(searchParams.get("limit") ?? "100");
+    const skip  = parseInt(searchParams.get("skip")  ?? "0");
 
     const venues = await Venue.find(query).limit(limit).skip(skip).lean();
-
     return NextResponse.json({ success: true, venues, total: venues.length });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -51,12 +54,71 @@ export async function GET(req: Request) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PATCH — admin: update venue fields
+// POST — vendor or admin: create a new venue (starts inactive, pending admin)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function POST(req: Request) {
+  try {
+    const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
+    if (!session.isLoggedIn || (session.role !== "admin" && session.role !== "vendor")) {
+      return NextResponse.json({ message: "Unauthorized." }, { status: 401 });
+    }
+
+    await connectDB();
+    const body = await req.json();
+
+    if (!body.name?.trim() || !body.city?.trim()) {
+      return NextResponse.json({ message: "Venue name and city are required." }, { status: 400 });
+    }
+
+    const slug = (body.name as string)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+    const venueId = `venue-${slug}-${Date.now()}`;
+
+    const venue = new Venue({
+      venueId,
+      name:               body.name,
+      location:           body.location   || body.city,
+      city:               body.city,
+      country:            body.country    || "India",
+      type:               body.type       || "Banquet Hall",
+      price:              body.price      || "0",
+      priceUnit:          body.priceUnit  || "per day",
+      pricePerPlateVeg:   body.pricePerPlateVeg    || "",
+      pricePerPlateNonVeg:body.pricePerPlateNonVeg || "",
+      rentalCost:         body.rentalCost || "",
+      image:              body.image      || "",
+      gallery:            Array.isArray(body.gallery) ? body.gallery : [],
+      minGuests:          parseInt(body.minGuests) || 50,
+      maxGuests:          parseInt(body.maxGuests) || 500,
+      rooms:              parseInt(body.rooms)     || 0,
+      outdoor:            Boolean(body.outdoor),
+      indoor:             body.indoor !== false,
+      parking:            Boolean(body.parking),
+      catering:           Boolean(body.catering),
+      description:        body.description || "",
+      features:           Array.isArray(body.features) ? body.features : [],
+      verified: false,
+      featured: false,
+      active:   false, // admin must activate
+    });
+
+    await venue.save();
+    return NextResponse.json({ success: true, venue }, { status: 201 });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ message: "Failed to create venue.", error: msg }, { status: 500 });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PATCH — admin or vendor: update allowed venue fields
 // ─────────────────────────────────────────────────────────────────────────────
 export async function PATCH(req: Request) {
   try {
     const session = await getIronSession<SessionData>(await cookies(), sessionOptions);
-    if (!session.isLoggedIn || session.role !== "admin") {
+    if (!session.isLoggedIn || (session.role !== "admin" && session.role !== "vendor")) {
       return NextResponse.json({ message: "Unauthorized." }, { status: 401 });
     }
 
@@ -68,23 +130,31 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ message: "venueId is required." }, { status: 400 });
     }
 
-    // Only allow safe fields to be updated by admin
+    const safeFields = [
+      "verified", "featured", "active",
+      "name", "city", "location", "country", "type", "description",
+      "price", "priceUnit", "pricePerPlateVeg", "pricePerPlateNonVeg", "rentalCost",
+      "minGuests", "maxGuests", "rooms",
+      "outdoor", "indoor", "parking", "catering",
+      "image", "gallery", "features",
+    ];
+
     const allowed: Record<string, unknown> = {};
-    const safeFields = ["verified", "featured", "active", "name", "city", "location", "type", "description", "pricePerPlateVeg", "pricePerPlateNonVeg", "rentalCost", "price", "minGuests", "maxGuests", "outdoor", "indoor", "parking", "catering"];
     for (const field of safeFields) {
       if (updates[field] !== undefined) allowed[field] = updates[field];
     }
+
+    // Vendors cannot flip admin-only flags
+    if (session.role === "vendor") {
+      delete allowed.verified;
+      delete allowed.featured;
+      delete allowed.active;
+    }
+
     allowed.updatedAt = new Date();
 
-    const venue = await Venue.findOneAndUpdate(
-      { venueId },
-      { $set: allowed },
-      { new: true }
-    );
-
-    if (!venue) {
-      return NextResponse.json({ message: "Venue not found." }, { status: 404 });
-    }
+    const venue = await Venue.findOneAndUpdate({ venueId }, { $set: allowed }, { new: true });
+    if (!venue) return NextResponse.json({ message: "Venue not found." }, { status: 404 });
 
     return NextResponse.json({ success: true, venue });
   } catch (err: unknown) {
@@ -94,7 +164,7 @@ export async function PATCH(req: Request) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DELETE — admin: permanently delete a venue
+// DELETE — admin only: permanently delete a venue
 // ─────────────────────────────────────────────────────────────────────────────
 export async function DELETE(req: Request) {
   try {

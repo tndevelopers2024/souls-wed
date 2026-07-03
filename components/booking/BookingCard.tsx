@@ -133,7 +133,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
 
 
   return (
-    <div className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-auto min-h-[420px] cursor-pointer block group">
+    <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[540px] cursor-pointer group">
       {/* Full Background Image */}
       {venueImage ? (
         <img
@@ -145,10 +145,8 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
         <div className="absolute inset-0 w-full h-full bg-slate-800" />
       )}
 
-      {/* Tag pill top-left */}
-      <div
-        className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white bg-slate-900/80 backdrop-blur-md"
-      >
+      {/* Status Badge top-left */}
+      <div className="absolute top-4 left-4 z-20">
         {getStatusBadge()}
       </div>
 

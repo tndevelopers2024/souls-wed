@@ -77,7 +77,7 @@ export default function CategoryGrid() {
                 href={`/category/${cat.slug}`}
                 variants={itemVariants}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="group flex flex-col items-center gap-3 p-5 rounded-3xl cursor-pointer text-center"
+                className="group flex flex-col items-center gap-3 p-5 rounded-[32px] cursor-pointer text-center"
                 style={{
                   background: "rgba(255,255,255,0.6)",
                   border: "1px solid var(--sw-light-gray)",
@@ -95,7 +95,7 @@ export default function CategoryGrid() {
               >
                 {/* Icon container */}
                 <div
-                  className="w-14 h-14 flex items-center justify-center rounded-2xl"
+                  className="w-14 h-14 flex items-center justify-center rounded-3xl"
                   style={{
                     background: "linear-gradient(135deg, var(--sw-orange), var(--sw-gold))",
                   }}

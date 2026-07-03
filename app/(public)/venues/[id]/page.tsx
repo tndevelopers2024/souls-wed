@@ -26,11 +26,14 @@ import VenueGallery from "@/components/venues/VenueGallery";
 import VenueSidebar from "@/components/venues/VenueSidebar";
 import VenueReviews from "@/components/venues/VenueReviews";
 import SimilarVenues from "@/components/venues/SimilarVenues";
+import { useCurrency } from "@/lib/CurrencyContext";
+import { convertPriceString } from "@/lib/currency";
 
 export default function VenueDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const id = typeof params.id === "string" ? params.id : params.id?.[0] ?? "";
+  const { currency } = useCurrency();
 
   const [venue, setVenue] = useState<Venue | null>(null);
   const [similar, setSimilar] = useState<Venue[]>([]);
@@ -224,7 +227,7 @@ export default function VenueDetailPage() {
                       <p className="text-xs text-slate-400">Per plate, inclusive of taxes</p>
                     </div>
                     <p className="text-lg font-bold" style={{ color: "var(--sw-navy)" }}>
-                      {venue.pricePerPlateVeg}
+                      {convertPriceString(venue.pricePerPlateVeg, currency)}
                     </p>
                   </div>
                 )}
@@ -235,7 +238,7 @@ export default function VenueDetailPage() {
                       <p className="text-xs text-slate-400">Per plate, inclusive of taxes</p>
                     </div>
                     <p className="text-lg font-bold" style={{ color: "var(--sw-navy)" }}>
-                      {venue.pricePerPlateNonVeg}
+                      {convertPriceString(venue.pricePerPlateNonVeg, currency)}
                     </p>
                   </div>
                 )}
@@ -246,7 +249,7 @@ export default function VenueDetailPage() {
                       <p className="text-xs text-slate-400">Full-day exclusive use</p>
                     </div>
                     <p className="text-lg font-bold" style={{ color: "var(--sw-navy)" }}>
-                      {venue.rentalCost}
+                      {convertPriceString(venue.rentalCost, currency)}
                     </p>
                   </div>
                 )}

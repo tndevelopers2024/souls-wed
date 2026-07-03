@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, Flower2, ClipboardList, ArrowRight, Heart } from "lucide-react";
+import { useCurrency } from "@/lib/CurrencyContext";
+import { convertPriceString } from "@/lib/currency";
 
 const decorators = [
   {
@@ -57,6 +59,7 @@ const subtext: Record<Tab, string> = {
 export default function DecoratorsPlannersSection() {
   const [activeTab, setActiveTab] = useState<Tab>("decorators");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { currency } = useCurrency();
   const items = activeTab === "decorators" ? decorators : planners;
 
   const scroll = (dir: "left" | "right") => {
@@ -65,7 +68,7 @@ export default function DecoratorsPlannersSection() {
   };
 
   return (
-    <section className="py-20 overflow-hidden">
+    <section className="py-20 overflow-x-clip">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -139,13 +142,13 @@ export default function DecoratorsPlannersSection() {
                   transition={{ duration: 0.4, delay: i * 0.07 }}
                   style={{ scrollSnapAlign: "start" }}
                 >
-                  <div className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-[440px] sm:h-[480px] lg:h-[520px]">
+                  <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[460px] sm:h-[500px] lg:h-[540px]">
                       <Image
                         src={item.image}
                         alt={item.name}
                         fill
                         sizes="(max-width: 640px) 85vw, (max-width: 768px) 300px, 340px"
-                        className="object-cover"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
                       />
 
                       {/* Tag pill top-left */}
@@ -161,7 +164,7 @@ export default function DecoratorsPlannersSection() {
 
                       {/* Heart pill top-right */}
                       <button
-                        className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shadow-sm"
+                        className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 hover:bg-white transition-colors shadow-sm"
                         onClick={(e) => e.preventDefault()}
                       >
                         <Heart className="w-4 h-4" />
@@ -202,9 +205,9 @@ export default function DecoratorsPlannersSection() {
                           {item.name}
                         </h3>
 
-                        <div className="flex items-center gap-1 mb-2">
-                          <MapPin className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
-                          <span className="text-xs font-medium text-slate-700 line-clamp-1">{item.location}</span>
+                        <div className="flex items-center gap-1 mb-1">
+                          <MapPin className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                          <span className="text-[13px] font-medium text-slate-600 line-clamp-1">{item.location}</span>
                         </div>
 
                         {/* Rating in content area */}
@@ -238,7 +241,7 @@ export default function DecoratorsPlannersSection() {
                             <span className="text-[11px] font-medium text-slate-500 block mb-0.5">from</span>
                             <div className="flex items-baseline gap-1">
                               <span className="text-[22px] font-bold text-slate-900 leading-none tracking-tight">
-                                {item.price}
+                                {convertPriceString(item.price, currency)}
                               </span>
                               <span className="text-[12px] font-medium text-slate-500 capitalize">{item.unit}</span>
                             </div>

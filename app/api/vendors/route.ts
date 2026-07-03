@@ -1,19 +1,133 @@
 import { connectDB } from "@/lib/mongodb";
 import { Vendor } from "@/lib/models/Vendor";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { getIronSession } from "iron-session";
+import { SessionData, sessionOptions } from "@/lib/session";
 
 export async function GET(req: Request) {
-  await connectDB();
-  const { searchParams } = new URL(req.url);
-  const category = searchParams.get("category");
-  const city = searchParams.get("city");
-  const featured = searchParams.get("featured");
+  try {
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get("category");
+    const city = searchParams.get("city");
+    const featured = searchParams.get("featured");
+    const search = searchParams.get("search");
 
-  const query: Record<string, unknown> = {};
-  if (category) query.category = category;
-  if (city) query.city = city;
-  if (featured) query.featured = true;
+    const query: Record<string, unknown> = {
+      verified: true,
+      available: true,
+    };
 
-  const vendors = await Vendor.find(query).limit(20);
-  return NextResponse.json(vendors);
+    if (category) query.category = { $regex: `^${escapeRegex(category)}$`, $options: "i" };
+    if (city) query.city = { $regex: city, $options: "i" };
+    if (featured) query.featured = true;
+    if (search) {
+      query.$or = [
+        { businessName: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+        { city: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const vendors = await Vendor.find(query)
+      .select("-passwordHash")
+      .sort({ featured: -1, rating: -1, createdAt: -1 })
+      .limit(60)
+      .lean();
+
+    return NextResponse.json({ success: true, vendors });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to fetch vendors.";
+    return NextResponse.json({ success: false, message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const session = await getIronSession<SessionData>(
+      await cookies(),
+      sessionOptions
+    );
+
+    if (!session.isLoggedIn || session.role !== "vendor") {
+      return NextResponse.json({ message: "Vendor login required." }, { status: 401 });
+    }
+
+    await connectDB();
+    const body = await req.json();
+
+    const allowed: Record<string, unknown> = {};
+    const listingFields = [
+      "businessName",
+      "name",
+      "phone",
+      "category",
+      "city",
+      "description",
+      "website",
+      "instagram",
+      "priceFrom",
+      "images",
+    ];
+
+    for (const field of listingFields) {
+      if (body[field] !== undefined) allowed[field] = sanitizeVendorField(field, body[field]);
+    }
+
+    if (body.available !== undefined) {
+      allowed.available = Boolean(body.available);
+    }
+
+    const hasListingChanges = listingFields.some((field) => body[field] !== undefined);
+    if (hasListingChanges) {
+      allowed.verified = false;
+      allowed.featured = false;
+    }
+
+    const vendor = await Vendor.findByIdAndUpdate(
+      session.userId,
+      { $set: allowed },
+      { new: true, runValidators: true }
+    ).select("-passwordHash");
+
+    if (!vendor) {
+      return NextResponse.json({ message: "Vendor profile not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: hasListingChanges
+        ? "Profile saved and sent back to admin approval."
+        : "Availability updated.",
+      vendor,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to update vendor profile.";
+    return NextResponse.json({ success: false, message }, { status: 500 });
+  }
+}
+
+function sanitizeVendorField(field: string, value: unknown) {
+  if (field === "priceFrom") {
+    const price = Number(value);
+    return Number.isFinite(price) && price >= 0 ? price : undefined;
+  }
+
+  if (field === "images") {
+    if (Array.isArray(value)) {
+      return value.map(String).map((item) => item.trim()).filter(Boolean).slice(0, 6);
+    }
+    if (typeof value === "string") {
+      return value.split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 6);
+    }
+    return [];
+  }
+
+  return typeof value === "string" ? value.trim().slice(0, field === "description" ? 600 : 120) : value;
+}
+
+function escapeRegex(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
