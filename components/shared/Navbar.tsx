@@ -141,7 +141,7 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center group flex-shrink-0">
               <Image 
-                src="/logo/soulswedlogo-pc.png"
+                src="/logo/logo-by-soulswed.png"
                 alt="SoulsWed Logo"
                 width={160}
                 height={48}

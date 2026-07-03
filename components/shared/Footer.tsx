@@ -184,7 +184,7 @@ export default function Footer() {
             <div className="lg:col-span-2 lg:pr-12">
               <Link href="/" className="flex items-center mb-5 group inline-flex">
                 <Image 
-                  src="/logo/soulswedlogo-pc.png"
+                  src="/logo/logo-by-soulswed.png"
                   alt="SoulsWed Logo"
                   width={200}
                   height={60}

@@ -40,7 +40,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="flex items-center group mb-4">
             <Image 
-              src="/logo/soulswedlogo-pc.png"
+              src="/logo/logo-by-soulswed.png"
               alt="SoulsWed Logo"
               width={200}
               height={60}

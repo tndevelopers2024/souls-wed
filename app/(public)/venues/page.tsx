@@ -442,7 +442,7 @@ export default function VenuesPage() {
             </button>
           </motion.div>
         ) : (
-          <div className={viewType === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-5 max-w-4xl mx-auto"}>
+          <div className={viewType === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" : "flex flex-col gap-5 max-w-4xl mx-auto"}>
             {visible.map((venue, i) => (
               <motion.div
                 key={venue.id}

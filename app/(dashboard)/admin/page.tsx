@@ -126,7 +126,7 @@ export default function AdminLoginPage() {
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="flex items-center group mb-5">
             <Image
-              src="/logo/soulswedlogo-pc.png"
+              src="/logo/logo-by-soulswed.png"
               alt="SoulsWed Logo"
               width={180}
               height={55}
