@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { LayoutDashboard, BookHeart, Settings } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 
 interface UserSession {
@@ -100,9 +101,9 @@ export default function UserDashboard() {
   if (!user) return null;
 
   const menuItems = [
-    { id: "overview", label: "My Hub" },
-    { id: "bookings", label: "My Bookings", count: bookings.length || null },
-    { id: "settings", label: "Settings" },
+    { id: "overview", label: "My Hub", icon: LayoutDashboard },
+    { id: "bookings", label: "My Bookings", count: bookings.length || null, icon: BookHeart },
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   // Theme styling CSS classes
@@ -132,22 +133,17 @@ export default function UserDashboard() {
           ) : (
             <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SW</h2>
           )}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer`}
-          >
-            {sidebarCollapsed ? '>' : '<'}
-          </button>
         </div>
  
         <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5">
           {menuItems.map((item) => {
             const isActive = activeTab === item.id;
+            const Icon = item.icon;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as TabType)}
-                className={`w-full flex items-center justify-center lg:justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
                     ? "bg-orange-500 text-white" 
                     : isDarkMode
@@ -156,7 +152,10 @@ export default function UserDashboard() {
                 }`}
                 title={item.label}
               >
-                {!sidebarCollapsed && <span>{item.label}</span>}
+                <div className="flex items-center gap-3">
+                  <Icon className="w-[18px] h-[18px] shrink-0" />
+                  {!sidebarCollapsed && <span>{item.label}</span>}
+                </div>
                 {!sidebarCollapsed && item.count !== undefined && item.count !== null && (
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
                     isActive 
@@ -169,9 +168,9 @@ export default function UserDashboard() {
                   </span>
                 )}
                 {sidebarCollapsed && item.count !== undefined && item.count !== null && (
-                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-black ${
+                  <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${
                     isActive 
-                      ? "bg-white/20 text-white" 
+                      ? "bg-white text-orange-600" 
                       : isDarkMode 
                         ? "bg-stone-800 text-stone-400 border border-stone-700"
                         : "bg-stone-100 text-stone-500 border border-stone-200"
@@ -184,59 +183,68 @@ export default function UserDashboard() {
           })}
         </nav>
  
-        <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : ''}`}>
-          {!sidebarCollapsed ? (
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
-                {user.name.charAt(0)}
-              </div>
-              <div className="min-w-0 flex-1">
-                <h4 className={`font-bold text-xs truncate ${headingText}`}>{user.name}</h4>
-                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider truncate">{user.email}</p>
-              </div>
-              {/* Dark mode toggle — icon only */}
-              <button
-                onClick={toggleDarkMode}
-                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                className={`w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
-                  isDarkMode
-                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
-                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
-                }`}
-              >
-                {isDarkMode ? "☀" : "☾"}
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3 items-center mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
-                {user.name.charAt(0)}
-              </div>
-              {/* Dark mode toggle — icon only */}
-              <button
-                onClick={toggleDarkMode}
-                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                className={`w-8 h-8 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
-                  isDarkMode
-                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
-                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
-                }`}
-              >
-                {isDarkMode ? "☀" : "☾"}
-              </button>
-            </div>
-          )}
+        <div className={`p-4 border-t flex flex-col gap-1.5 ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : 'bg-stone-50/50'} rounded-b-3xl`}>
           <button 
-            onClick={handleLogout}
-            className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none ${
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
               isDarkMode 
-                ? "bg-stone-800 hover:bg-red-950/30 text-stone-300 border-stone-700 hover:border-red-900/60 hover:text-red-400"
-                : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200"
+                ? "text-stone-400 hover:text-white hover:bg-stone-800/60" 
+                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
             }`}
+            title={sidebarCollapsed ? "Expand sidebar" : "Hide sidebar"}
           >
-            {!sidebarCollapsed && 'Sign Out'}
-            {sidebarCollapsed && 'Out'}
+            <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            {!sidebarCollapsed && <span>Hide sidebar</span>}
           </button>
+
+          <button 
+            onClick={toggleDarkMode}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+              isDarkMode 
+                ? "text-stone-400 hover:text-white hover:bg-stone-800/60" 
+                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
+            }`}
+            title={isDarkMode ? "Switch to Light mode" : "Switch to Dark mode"}
+          >
+            {isDarkMode ? (
+              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            ) : (
+              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            )}
+            {!sidebarCollapsed && <span>{isDarkMode ? "Light mode" : "Dark mode"}</span>}
+          </button>
+
+          <div className="my-1 border-t border-transparent" />
+
+          <div className={`flex items-center justify-between p-2 rounded-xl transition-colors ${isDarkMode ? 'bg-stone-900/50 hover:bg-stone-800' : 'bg-white hover:bg-stone-50 border border-stone-100'}`}>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs uppercase">
+                {user.name.charAt(0)}
+              </div>
+              {!sidebarCollapsed && (
+                <div className="min-w-0 flex-1 pr-2">
+                  <h4 className={`font-bold text-xs truncate ${headingText}`}>{user.name}</h4>
+                  <p className="text-[10px] font-medium text-stone-500 truncate">{user.email}</p>
+                </div>
+              )}
+            </div>
+            
+            <button 
+              onClick={handleLogout} 
+              title="Sign Out" 
+              className={`shrink-0 p-1.5 rounded-lg transition-colors cursor-pointer ${sidebarCollapsed ? 'mx-auto' : ''} ${isDarkMode ? 'text-stone-400 hover:text-red-400 hover:bg-red-950/30' : 'text-stone-500 hover:text-red-500 hover:bg-red-50'}`}
+            >
+              <svg className="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
+          </div>
         </div>
       </aside>
  

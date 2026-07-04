@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2 } from "lucide-react";
+import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Sparkles, HeartHandshake } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 
 interface VendorSession {
@@ -25,7 +27,7 @@ interface VendorSession {
   available?: boolean;
 }
 
-type TabType = "overview" | "leads" | "venues" | "settings";
+type TabType = "overview" | "leads" | "venues" | "settings" | "planners" | "photographers" | "decorators" | "makeupartists" | "sakhiservice";
 
 interface DashboardBooking {
   _id: string;
@@ -421,10 +423,15 @@ export default function VendorDashboard() {
   if (!vendor) return null;
 
   const menuItems = [
-    { id: "overview", label: "Dashboard" },
-    { id: "leads", label: "Booking Inquiries", count: bookings.length || null },
-    { id: "venues", label: "My Venues", count: venues.length || null },
-    { id: "settings", label: "Business Profile" },
+    { id: "overview", label: "Dashboard", icon: LayoutDashboard },
+    { id: "leads", label: "Booking Inquiries", count: bookings.length || null, icon: Inbox },
+    { id: "venues", label: "My Venues", count: venues.length || null, icon: MapPin },
+    { id: "settings", label: "Business Profile", icon: Settings },
+    { id: "planners", label: "Planners", icon: ClipboardList },
+    { id: "photographers", label: "Photographers", icon: Camera },
+    { id: "decorators", label: "Decorators", icon: Brush },
+    { id: "makeupartists", label: "Makeup Artists", icon: Sparkles },
+    { id: "sakhiservice", label: "Sakhi Service", icon: HeartHandshake },
   ];
 
   // Dark Mode helper CSS classes (corrected color classes to standard Tailwind tokens)
@@ -448,28 +455,32 @@ export default function VendorDashboard() {
         <div className={`p-6 border-b flex items-center justify-between ${dividerClass}`}>
           {!sidebarCollapsed ? (
             <div className="flex flex-col gap-1">
-              <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
-              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Partner Portal</p>
+              <Link href="/">
+                <Image 
+                  src="/logo/logo-by-soulswed.png" 
+                  alt="SoulsWed" 
+                  width={150} 
+                  height={45} 
+                  className="h-8 w-auto hover:opacity-80 transition-opacity" 
+                  priority
+                />
+              </Link>
+              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest mt-1">Partner Portal</p>
             </div>
           ) : (
             <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SW</h2>
           )}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer`}
-          >
-            {sidebarCollapsed ? '>' : '<'}
-          </button>
         </div>
 
         <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5">
           {menuItems.map((item) => {
             const isActive = activeTab === item.id;
+            const Icon = item.icon;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as TabType)}
-                className={`w-full flex items-center justify-center lg:justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
                     ? "bg-orange-500 text-white" 
                     : isDarkMode
@@ -478,7 +489,10 @@ export default function VendorDashboard() {
                 }`}
                 title={item.label}
               >
-                {!sidebarCollapsed && <span>{item.label}</span>}
+                <div className="flex items-center gap-3">
+                  <Icon className="w-[18px] h-[18px] shrink-0" />
+                  {!sidebarCollapsed && <span>{item.label}</span>}
+                </div>
                 {!sidebarCollapsed && item.count !== undefined && item.count !== null && (
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
                     isActive ? "bg-white/20 text-white" : "bg-stone-100 text-stone-500 border border-stone-200"
@@ -487,8 +501,8 @@ export default function VendorDashboard() {
                   </span>
                 )}
                 {sidebarCollapsed && item.count !== undefined && item.count !== null && (
-                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-black ${
-                    isActive ? "bg-white/20 text-white" : "bg-stone-100 text-stone-500 border border-stone-200"
+                  <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${
+                    isActive ? "bg-white text-orange-600" : "bg-stone-100 text-stone-500 border border-stone-200"
                   }`}>
                     {item.count}
                   </span>
@@ -498,59 +512,68 @@ export default function VendorDashboard() {
           })}
         </nav>
 
-        <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : ''}`}>
-          {!sidebarCollapsed ? (
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
-                {vendor.businessName ? vendor.businessName.slice(0, 2) : "VP"}
-              </div>
-              <div className="min-w-0 flex-1">
-                <h4 className={`font-bold text-xs truncate ${headingText}`}>{vendor.businessName || vendor.name}</h4>
-                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider truncate">Partner Vendor</p>
-              </div>
-              {/* Dark mode toggle — icon only */}
-              <button
-                onClick={toggleDarkMode}
-                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                className={`w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
-                  isDarkMode
-                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
-                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
-                }`}
-              >
-                {isDarkMode ? "☀" : "☾"}
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3 items-center mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
-                {vendor.businessName ? vendor.businessName.slice(0, 2) : "VP"}
-              </div>
-              {/* Dark mode toggle — icon only */}
-              <button
-                onClick={toggleDarkMode}
-                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                className={`w-8 h-8 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
-                  isDarkMode
-                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
-                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
-                }`}
-              >
-                {isDarkMode ? "☀" : "☾"}
-              </button>
-            </div>
-          )}
+        <div className={`p-4 border-t flex flex-col gap-1.5 ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : 'bg-stone-50/50'} rounded-b-3xl`}>
           <button 
-            onClick={handleLogout}
-            className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none ${
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
               isDarkMode 
-                ? "bg-stone-800 hover:bg-red-950/30 text-stone-300 border-stone-700 hover:border-red-900/60 hover:text-red-400"
-                : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200"
+                ? "text-stone-400 hover:text-white hover:bg-stone-800/60" 
+                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
             }`}
+            title={sidebarCollapsed ? "Expand sidebar" : "Hide sidebar"}
           >
-            {!sidebarCollapsed && 'Sign Out'}
-            {sidebarCollapsed && 'Out'}
+            <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+            {!sidebarCollapsed && <span>Hide sidebar</span>}
           </button>
+
+          <button 
+            onClick={toggleDarkMode}
+            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+              isDarkMode 
+                ? "text-stone-400 hover:text-white hover:bg-stone-800/60" 
+                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
+            }`}
+            title={isDarkMode ? "Switch to Light mode" : "Switch to Dark mode"}
+          >
+            {isDarkMode ? (
+              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            ) : (
+              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            )}
+            {!sidebarCollapsed && <span>{isDarkMode ? "Light mode" : "Dark mode"}</span>}
+          </button>
+
+          <div className="my-1 border-t border-transparent" />
+
+          <div className={`flex items-center justify-between p-2 rounded-xl transition-colors ${isDarkMode ? 'bg-stone-900/50 hover:bg-stone-800' : 'bg-white hover:bg-stone-50 border border-stone-100'}`}>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs uppercase">
+                {vendor.businessName ? vendor.businessName.slice(0, 1) : "V"}
+              </div>
+              {!sidebarCollapsed && (
+                <div className="min-w-0 flex-1 pr-2">
+                  <h4 className={`font-bold text-xs truncate ${headingText}`}>{vendor.businessName || vendor.name}</h4>
+                  <p className="text-[10px] font-medium text-stone-500 truncate">{vendor.email}</p>
+                </div>
+              )}
+            </div>
+            
+            <button 
+              onClick={handleLogout} 
+              title="Sign Out" 
+              className={`shrink-0 p-1.5 rounded-lg transition-colors cursor-pointer ${sidebarCollapsed ? 'mx-auto' : ''} ${isDarkMode ? 'text-stone-400 hover:text-red-400 hover:bg-red-950/30' : 'text-stone-500 hover:text-red-500 hover:bg-red-50'}`}
+            >
+              <svg className="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -678,136 +701,53 @@ export default function VendorDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="flex flex-col gap-6">
                   
-                  {/* Left Column: Profile Card & Availability */}
-                  <div className="lg:col-span-1 flex flex-col gap-6">
-                    
-                    {/* Business details card */}
-                    <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
-                      <h3 className={`font-extrabold text-sm mb-4 ${headingText}`}>Business Profile</h3>
-                      <div className={`flex flex-col gap-4 border-t pt-4 text-xs ${dividerClass}`}>
-                        <div>
-                          <span className="text-[10px] text-stone-400 block font-bold uppercase">Brand Name</span>
-                          <span className={`font-semibold ${headingText}`}>{vendor.businessName}</span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-stone-400 block font-bold uppercase">Category & City</span>
-                          <span className={`font-semibold ${headingText}`}>{vendor.category} • {vendor.city}</span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-stone-400 block font-bold uppercase">Representative</span>
-                          <span className={`font-semibold ${headingText}`}>{vendor.name}</span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-stone-400 block font-bold uppercase">Email Address</span>
-                          <span className={`font-semibold ${headingText}`}>{vendor.email}</span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-stone-400 block font-bold uppercase">Public Status</span>
-                          <span className={`font-semibold ${vendor.verified && available ? "text-emerald-600" : "text-amber-600"}`}>
-                            {vendor.verified && available ? "Live in directory" : vendor.verified ? "Approved but paused" : "Pending admin approval"}
-                          </span>
-                        </div>
+                  {/* Performance grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { label: "Partner Rating", count: "New" },
+                      { label: "Total Reviews", count: "0" },
+                      { label: "Active Leads", count: bookings.length },
+                    ].map((stat, i) => (
+                      <div
+                        key={i}
+                        className={`p-5 rounded-3xl border flex flex-col gap-3 relative overflow-hidden group shadow-none transition-all duration-300 hover:-translate-y-0.5 ${cardClass}`}
+                      >
+                        <span className={`text-2xl font-black ${headingText}`}>{stat.count}</span>
+                        <span className="text-xs font-bold text-stone-450">{stat.label}</span>
                       </div>
-                    </div>
-
-                    {/* Availability Card */}
-                    <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
-                      <div className="flex justify-between items-center mb-4">
-                        <h4 className={`font-extrabold text-sm ${headingText}`}>Accepting Enquiries</h4>
-                        <button
-                          type="button"
-                          onClick={() => handleAvailabilityChange(!available)}
-                          className={`w-11 h-6 rounded-full p-1 cursor-pointer transition-colors ${available ? "bg-emerald-500" : "bg-stone-300"}`}
-                        >
-                          <div className={`bg-white w-4 h-4 rounded-full shadow-none transition-transform ${available ? "translate-x-5" : "translate-x-0"}`} />
-                        </button>
-                      </div>
-                      <p className="text-[10px] text-stone-500 leading-relaxed font-medium">
-                        Toggle visibility to accept or pause pricing requests from couples searching in {vendor.city}.
-                      </p>
-                    </div>
-
-                    {/* Showcase Gallery Card */}
-                    <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
-                      <h3 className={`font-extrabold text-sm mb-4 ${headingText}`}>Showcase Gallery</h3>
-                      {vendor.images && vendor.images.length > 0 ? (
-                        <div className="grid grid-cols-3 gap-2 border-t pt-4">
-                          {vendor.images.map((imgUrl, idx) => (
-                            <div key={idx} className="relative aspect-square rounded-xl overflow-hidden group border border-stone-200/10">
-                              <img
-                                src={imgUrl}
-                                alt={`Showcase ${idx + 1}`}
-                                className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="border-t pt-4 text-center py-6">
-                          <p className="text-[10px] text-stone-400 font-bold mb-2">NO SHOWCASE IMAGES</p>
-                          <button
-                            type="button"
-                            onClick={() => setActiveTab("settings")}
-                            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-[10px] font-bold transition-colors cursor-pointer"
-                          >
-                            Add Showcase Photos
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    ))}
                   </div>
 
-                  {/* Right Column: Performance and Active Leads */}
-                  <div className="lg:col-span-2 flex flex-col gap-6">
-                    
-                    {/* Performance grid */}
-                    <div className="grid grid-cols-3 gap-4">
-                      {[
-                        { label: "Partner Rating", count: "New" },
-                        { label: "Total Reviews", count: "0" },
-                        { label: "Active Leads", count: bookings.length },
-                      ].map((stat, i) => (
-                        <div
-                          key={i}
-                          className={`p-5 rounded-3xl border flex flex-col gap-3 relative overflow-hidden group shadow-none transition-all duration-300 hover:-translate-y-0.5 ${cardClass}`}
-                        >
-                          <span className={`text-2xl font-black ${headingText}`}>{stat.count}</span>
-                          <span className="text-xs font-bold text-stone-450">{stat.label}</span>
-                        </div>
-                      ))}
+                  {/* Leads list section */}
+                  <div className={`rounded-3xl p-6 border shadow-none flex flex-col gap-5 min-h-[320px] ${cardClass}`}>
+                    <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
+                      <h3 className={`font-extrabold text-sm ${headingText}`}>Active Inquiries</h3>
+                      <button 
+                        onClick={() => setActiveTab("leads")}
+                        className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 cursor-pointer"
+                      >
+                        View All Leads
+                      </button>
                     </div>
 
-                    {/* Leads list section */}
-                    <div className={`rounded-3xl p-6 border shadow-none flex flex-col gap-5 min-h-[320px] ${cardClass}`}>
-                      <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
-                        <h3 className={`font-extrabold text-sm ${headingText}`}>Active Inquiries</h3>
-                        <button 
-                          onClick={() => setActiveTab("leads")}
-                          className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 cursor-pointer"
-                        >
-                          View All Leads
-                        </button>
+                    {bookings.length === 0 ? (
+                      <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
+                        <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>All Caught Up!</h4>
+                        <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
+                          No active couple requests currently. Complete your business information to start appearing in search queries.
+                        </p>
                       </div>
-
-                      {bookings.length === 0 ? (
-                        <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                          <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>All Caught Up!</h4>
-                          <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
-                            No active couple requests currently. Complete your business information to start appearing in search queries.
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-                          {bookings.slice(0, 6).map((booking) => (
-                            <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
-                              <BookingCard booking={booking} isVendor={true} />
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    ) : (
+                      <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+                        {bookings.slice(0, 6).map((booking) => (
+                          <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
+                            <BookingCard booking={booking} isVendor={true} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -855,36 +795,44 @@ export default function VendorDashboard() {
                   <div>
                     <h3 className={`font-extrabold text-base ${headingText}`}>My Venues</h3>
                     <p className="text-[10px] text-stone-400 font-medium mt-0.5">
-                      {venueView === "grid" ? `${venues.length} venue${venues.length !== 1 ? "s" : ""} in your account` :
-                       venueView === "add" ? "Fill in the details to list a new venue" :
-                       `Editing: ${editingVenue?.name}`}
+                      {`${venues.length} venue${venues.length !== 1 ? "s" : ""} in your account`}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {venueView !== "grid" && (
-                      <button
-                        onClick={() => setVenueView("grid")}
-                        className={`px-4 py-2 rounded-xl text-[11px] font-bold border cursor-pointer transition-all ${
-                          isDarkMode ? "border-stone-700 text-stone-300 hover:bg-stone-800" : "border-stone-200 text-stone-600 hover:bg-stone-50"
-                        }`}
-                      >
-                        Cancel
-                      </button>
-                    )}
-                    {venueView === "grid" && (
-                      <button
-                        onClick={openAddVenue}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-[11px] font-bold cursor-pointer transition-all"
-                      >
-                        <Plus className="w-3.5 h-3.5" /> Add New Venue
-                      </button>
-                    )}
+                    <button
+                      onClick={openAddVenue}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-[11px] font-bold cursor-pointer transition-all"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Add New Venue
+                    </button>
                   </div>
                 </div>
 
-                {/* ── ADD / EDIT FORM ── */}
-                {(venueView === "add" || venueView === "edit") && (
-                  <div className={`rounded-3xl border p-6 shadow-none ${cardClass}`}>
+                {/* ── ADD / EDIT FORM MODAL ── */}
+                <AnimatePresence>
+                  {(venueView === "add" || venueView === "edit") && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm"
+                    >
+                      <motion.div
+                        initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                        className={`w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 md:p-8 border shadow-2xl relative ${cardClass}`}
+                        style={{ scrollbarWidth: 'none' }}
+                      >
+                        <button
+                          onClick={() => setVenueView("grid")}
+                          className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 transition-colors z-10 cursor-pointer"
+                        >
+                          ✕
+                        </button>
+                        <h3 className={`font-extrabold text-lg mb-6 ${headingText}`}>
+                          {venueView === "add" ? "Add New Venue" : `Edit Venue: ${editingVenue?.name}`}
+                        </h3>
                     {venueMessage && (
                       <div className={`mb-5 rounded-3xl px-4 py-3 text-xs font-bold border ${
                         venueMessage.includes("Failed") || venueMessage.includes("required")
@@ -1143,12 +1091,13 @@ export default function VendorDashboard() {
                           : "Changes are saved immediately and visible on the public listing."}
                       </p>
                     </div>
-                  </div>
-                )}
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* ── VENUE GRID ── */}
-                {venueView === "grid" && (
-                  venues.length === 0 ? (
+                {venues.length === 0 ? (
                     <div className={`rounded-3xl border p-12 flex flex-col items-center justify-center text-center shadow-none ${cardClass}`}>
                       <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
                         isDarkMode ? "bg-stone-800" : "bg-stone-100"
@@ -1287,7 +1236,7 @@ export default function VendorDashboard() {
                       })}
                     </div>
                   )
-                )}
+                }
               </div>
             )}
 
@@ -1546,6 +1495,15 @@ export default function VendorDashboard() {
                     {savingProfile ? "Saving..." : "Save and Request Approval"}
                   </button>
                 </form>
+              </div>
+            )}
+
+            {["planners", "photographers", "decorators", "makeupartists", "sakhiservice"].includes(activeTab) && (
+              <div className={`rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-none ${cardClass} min-h-[400px]`}>
+                <h4 className={`font-bold text-xl mb-2 ${headingText}`}>Coming Soon</h4>
+                <p className="text-sm text-stone-400 max-w-md">
+                  This module is currently under construction.
+                </p>
               </div>
             )}
 
