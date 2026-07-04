@@ -41,21 +41,18 @@ async function seed() {
     const admins = db.collection("admins");
 
     const email = "admin@soulswed.com";
-    const existing = await admins.findOne({ email });
-    if (existing) {
-      console.log("✅ Admin already exists:", email);
-      console.log("   ID:", existing._id.toString());
-    } else {
-      const result = await admins.insertOne({
-        name: "Admin",
-        email,
-        passwordHash: hashPassword("password123"),
-        role: "admin",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-      console.log("✅ Admin created! ID:", result.insertedId.toString());
-    }
+    // Delete any existing admin first
+    await admins.deleteMany({ email });
+    console.log("🔄 Creating fresh admin account...");
+    const result = await admins.insertOne({
+      name: "Admin",
+      email,
+      passwordHash: hashPassword("admin123"),
+      role: "admin",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    console.log("✅ Admin created! ID:", result.insertedId.toString());
   } finally {
     await client.close();
   }

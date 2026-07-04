@@ -29,7 +29,13 @@ export async function POST(req: Request) {
 
     if (role === "admin") {
       const { accessCode } = body;
-      const systemAccessCode = process.env.ADMIN_ACCESS_CODE || "SOULSWED_SECRET_2026";
+      const systemAccessCode = process.env.ADMIN_ACCESS_CODE;
+      if (!systemAccessCode) {
+        return NextResponse.json(
+          { message: "Admin registration is not available." },
+          { status: 503 }
+        );
+      }
 
       if (!accessCode || accessCode !== systemAccessCode) {
         return NextResponse.json(
@@ -131,15 +137,8 @@ export async function POST(req: Request) {
     }
   } catch (error: unknown) {
     console.error("Signup error:", error);
-    const errMsg = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { 
-        message: "Internal server error occurred.",
-        details: errMsg,
-        hint: errMsg.includes("ENOTFOUND") || errMsg.includes("placeholder")
-          ? "Please ensure you have replaced the 'cluster0.xxxxxxx.mongodb.net' host placeholder in your .env.local with your actual MongoDB Atlas cluster address."
-          : undefined
-      },
+      { message: "Internal server error occurred." },
       { status: 500 }
     );
   }

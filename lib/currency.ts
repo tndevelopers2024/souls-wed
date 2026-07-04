@@ -1,42 +1,40 @@
 export interface CurrencyDetail {
   code: string;
-  rate: number; // 1 unit of this currency = how many INR (e.g. 1 USD = 83.5 INR)
+  /** How many INR equal 1 unit of this currency (e.g. 1 USD = 83.5 INR) */
+  rate: number;
   symbol: string;
-  isRazorpay: boolean; // Route INR to Razorpay, others to Stripe
 }
 
 export const CURRENCIES: Record<string, CurrencyDetail> = {
-  INR: { code: "INR", rate: 1.0, symbol: "₹", isRazorpay: true },
-  USD: { code: "USD", rate: 83.5, symbol: "$", isRazorpay: false },
-  EUR: { code: "EUR", rate: 90.0, symbol: "€", isRazorpay: false },
-  GBP: { code: "GBP", rate: 106.0, symbol: "£", isRazorpay: false },
-  AED: { code: "AED", rate: 22.7, symbol: "AED ", isRazorpay: false },
-  CAD: { code: "CAD", rate: 61.0, symbol: "C$", isRazorpay: false },
-  CHF: { code: "CHF", rate: 93.0, symbol: "CHF ", isRazorpay: false },
-  LKR: { code: "LKR", rate: 0.28, symbol: "Rs ", isRazorpay: false },
-  NZD: { code: "NZD", rate: 51.0, symbol: "NZ$", isRazorpay: false },
-  THB: { code: "THB", rate: 2.27, symbol: "฿", isRazorpay: false },
-  ZAR: { code: "ZAR", rate: 4.45, symbol: "R ", isRazorpay: false },
+  INR: { code: "INR", rate: 1.0,   symbol: "₹"    },
+  USD: { code: "USD", rate: 83.5,  symbol: "$"    },
+  EUR: { code: "EUR", rate: 90.0,  symbol: "€"    },
+  GBP: { code: "GBP", rate: 106.0, symbol: "£"    },
+  AED: { code: "AED", rate: 22.7,  symbol: "AED " },
+  CAD: { code: "CAD", rate: 61.0,  symbol: "C$"   },
+  CHF: { code: "CHF", rate: 93.0,  symbol: "CHF " },
+  LKR: { code: "LKR", rate: 0.28,  symbol: "Rs "  },
+  NZD: { code: "NZD", rate: 51.0,  symbol: "NZ$"  },
+  THB: { code: "THB", rate: 2.27,  symbol: "฿"    },
+  ZAR: { code: "ZAR", rate: 4.45,  symbol: "R "   },
 };
 
 /**
- * Converts an INR amount to target currency.
+ * Converts an INR amount to the target currency amount.
  */
 export function convertINRTo(amountInINR: number, targetCurrency: string): number {
-  const currencyDetail = CURRENCIES[targetCurrency] || CURRENCIES.INR;
-  return amountInINR / currencyDetail.rate;
+  const detail = CURRENCIES[targetCurrency] ?? CURRENCIES.INR;
+  return amountInINR / detail.rate;
 }
 
 /**
- * Formats an amount with the currency symbol.
+ * Formats an INR amount as a display string in the target currency.
  */
 export function formatAsCurrency(amountInINR: number, targetCurrency: string): string {
-  const currencyDetail = CURRENCIES[targetCurrency] || CURRENCIES.INR;
+  const detail = CURRENCIES[targetCurrency] ?? CURRENCIES.INR;
   const converted = convertINRTo(amountInINR, targetCurrency);
-  
-  // Format based on currency type
+
   if (targetCurrency === "INR") {
-    // Standard Indian formatting (e.g., Lakhs/Crores)
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
@@ -44,8 +42,7 @@ export function formatAsCurrency(amountInINR: number, targetCurrency: string): s
     }).format(amountInINR);
   }
 
-  // Standard international formatting
-  return `${currencyDetail.symbol}${Math.round(converted).toLocaleString()}`;
+  return `${detail.symbol}${Math.round(converted).toLocaleString()}`;
 }
 
 /**
@@ -58,8 +55,7 @@ export function parseINRString(priceStr: string | undefined | null): number {
 }
 
 /**
- * Converts an INR price string (e.g. "₹335840") to the target currency formatted string.
- * Drop-in replacement for displaying any price stored as an INR string.
+ * Converts an INR price string (e.g. "₹335840") to a display string in the target currency.
  */
 export function convertPriceString(priceStr: string | undefined | null, targetCurrency: string): string {
   const inr = parseINRString(priceStr);

@@ -107,6 +107,7 @@ export default function VendorDashboard() {
   const [isDarkMode, setIsDarkMode] = useState(
     () => typeof window !== "undefined" && localStorage.getItem("darkMode") === "true"
   );
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
 
@@ -442,10 +443,23 @@ export default function VendorDashboard() {
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[120px]" />
 
       {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
-      <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
-        <div className={`p-6 border-b flex flex-col gap-1 ${dividerClass}`}>
-          <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
-          <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Partner Portal</p>
+      <aside className={`hidden lg:flex flex-col border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass} ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
+        {/* Branding header with collapse button */}
+        <div className={`p-6 border-b flex items-center justify-between ${dividerClass}`}>
+          {!sidebarCollapsed ? (
+            <div className="flex flex-col gap-1">
+              <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
+              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Partner Portal</p>
+            </div>
+          ) : (
+            <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SW</h2>
+          )}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className={`p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer`}
+          >
+            {sidebarCollapsed ? '>' : '<'}
+          </button>
         </div>
 
         <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5">
@@ -455,17 +469,25 @@ export default function VendorDashboard() {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as TabType)}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`w-full flex items-center justify-center lg:justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
                     ? "bg-orange-500 text-white" 
-                    : isDarkMode 
+                    : isDarkMode
                       ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                 }`}
+                title={item.label}
               >
-                <span>{item.label}</span>
-                {item.count !== undefined && item.count !== null && (
+                {!sidebarCollapsed && <span>{item.label}</span>}
+                {!sidebarCollapsed && item.count !== undefined && item.count !== null && (
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                    isActive ? "bg-white/20 text-white" : "bg-stone-100 text-stone-500 border border-stone-200"
+                  }`}>
+                    {item.count}
+                  </span>
+                )}
+                {sidebarCollapsed && item.count !== undefined && item.count !== null && (
+                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-black ${
                     isActive ? "bg-white/20 text-white" : "bg-stone-100 text-stone-500 border border-stone-200"
                   }`}>
                     {item.count}
@@ -477,15 +499,47 @@ export default function VendorDashboard() {
         </nav>
 
         <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : ''}`}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
-              {vendor.businessName ? vendor.businessName.slice(0, 2) : "VP"}
+          {!sidebarCollapsed ? (
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
+                {vendor.businessName ? vendor.businessName.slice(0, 2) : "VP"}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h4 className={`font-bold text-xs truncate ${headingText}`}>{vendor.businessName || vendor.name}</h4>
+                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider truncate">Partner Vendor</p>
+              </div>
+              {/* Dark mode toggle — icon only */}
+              <button
+                onClick={toggleDarkMode}
+                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                className={`w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
+                  isDarkMode
+                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
+                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
+                }`}
+              >
+                {isDarkMode ? "☀" : "☾"}
+              </button>
             </div>
-            <div className="min-w-0 flex-1">
-              <h4 className={`font-bold text-xs truncate ${headingText}`}>{vendor.businessName || vendor.name}</h4>
-              <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider truncate">Partner Vendor</p>
+          ) : (
+            <div className="flex flex-col gap-3 items-center mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
+                {vendor.businessName ? vendor.businessName.slice(0, 2) : "VP"}
+              </div>
+              {/* Dark mode toggle — icon only */}
+              <button
+                onClick={toggleDarkMode}
+                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                className={`w-8 h-8 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
+                  isDarkMode
+                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
+                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
+                }`}
+              >
+                {isDarkMode ? "☀" : "☾"}
+              </button>
             </div>
-          </div>
+          )}
           <button 
             onClick={handleLogout}
             className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none ${
@@ -494,7 +548,8 @@ export default function VendorDashboard() {
                 : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200"
             }`}
           >
-            Sign Out
+            {!sidebarCollapsed && 'Sign Out'}
+            {sidebarCollapsed && 'Out'}
           </button>
         </div>
       </aside>
@@ -527,17 +582,6 @@ export default function VendorDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button 
-              onClick={toggleDarkMode}
-              className={`px-3 py-1.5 border rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                isDarkMode 
-                  ? "border-stone-800 bg-stone-900 text-amber-400 hover:bg-stone-800" 
-                  : "border-stone-200 bg-white text-stone-600 hover:bg-stone-50"
-              }`}
-            >
-              {isDarkMode ? "Light Mode" : "Dark Mode"}
-            </button>
-
             <button 
               onClick={fetchBookings}
               disabled={loadingData}
@@ -842,7 +886,7 @@ export default function VendorDashboard() {
                 {(venueView === "add" || venueView === "edit") && (
                   <div className={`rounded-3xl border p-6 shadow-none ${cardClass}`}>
                     {venueMessage && (
-                      <div className={`mb-5 rounded-2xl px-4 py-3 text-xs font-bold border ${
+                      <div className={`mb-5 rounded-3xl px-4 py-3 text-xs font-bold border ${
                         venueMessage.includes("Failed") || venueMessage.includes("required")
                           ? "bg-red-50 text-red-700 border-red-200"
                           : "bg-emerald-50 text-emerald-700 border-emerald-200"
@@ -1129,7 +1173,7 @@ export default function VendorDashboard() {
                         const price = venue.price || venue.pricePerPlateVeg || "—";
                         const rating = venue.rating || 0;
                         return (
-                          <div key={venue._id} className="relative group/card rounded-[28px] overflow-hidden shadow-sm border border-slate-100 h-[460px] sm:h-[500px]">
+                          <div key={venue._id} className="relative group/card rounded-3xl overflow-hidden shadow-sm border border-slate-100 h-[460px] sm:h-[500px]">
 
                             {/* Full-bleed image */}
                             {thumb ? (
@@ -1254,7 +1298,7 @@ export default function VendorDashboard() {
                 
                 <form onSubmit={handleSaveProfile} className="max-w-2xl flex flex-col gap-5 text-xs">
                   {profileMessage && (
-                    <div className={`rounded-2xl border px-4 py-3 font-bold ${
+                    <div className={`rounded-3xl border px-4 py-3 font-bold ${
                       profileMessage.includes("Failed")
                         ? "bg-red-50 text-red-700 border-red-200"
                         : "bg-amber-50 text-amber-800 border-amber-200"
@@ -1371,7 +1415,7 @@ export default function VendorDashboard() {
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
                       {showcaseImages.map((imgUrl, index) => (
-                        <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-stone-200/20 group">
+                        <div key={index} className="relative aspect-square rounded-3xl overflow-hidden border border-stone-200/20 group">
                           <img
                             src={imgUrl}
                             alt={`Preview ${index + 1}`}
@@ -1382,7 +1426,7 @@ export default function VendorDashboard() {
                               <button
                                 type="button"
                                 onClick={() => removeImage(index)}
-                                className="p-1.5 bg-red-600/95 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
+                                className="p-1.5 bg-red-600/95 text-white rounded-xl hover:bg-red-700 transition-colors cursor-pointer"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -1392,7 +1436,7 @@ export default function VendorDashboard() {
                                 type="button"
                                 onClick={() => moveImage(index, "left")}
                                 disabled={index === 0}
-                                className="p-1 bg-white/20 text-white rounded-md disabled:opacity-30 hover:bg-white/40 cursor-pointer"
+                                className="p-1 bg-white/20 text-white rounded-xl disabled:opacity-30 hover:bg-white/40 cursor-pointer"
                               >
                                 <ArrowLeft className="w-3.5 h-3.5" />
                               </button>
@@ -1400,7 +1444,7 @@ export default function VendorDashboard() {
                                 type="button"
                                 onClick={() => moveImage(index, "right")}
                                 disabled={index === showcaseImages.length - 1}
-                                className="p-1 bg-white/20 text-white rounded-md disabled:opacity-30 hover:bg-white/40 cursor-pointer"
+                                className="p-1 bg-white/20 text-white rounded-xl disabled:opacity-30 hover:bg-white/40 cursor-pointer"
                               >
                                 <ArrowRight className="w-3.5 h-3.5" />
                               </button>
@@ -1410,7 +1454,7 @@ export default function VendorDashboard() {
                       ))}
 
                       {showcaseImages.length < 6 && (
-                        <label className="relative aspect-square rounded-2xl border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center cursor-pointer hover:border-orange-500 hover:bg-orange-500/5 transition-all text-stone-400 hover:text-orange-500">
+                        <label className="relative aspect-square rounded-3xl border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center cursor-pointer hover:border-orange-500 hover:bg-orange-500/5 transition-all text-stone-400 hover:text-orange-500">
                           {uploadingImage ? (
                             <>
                               <Loader2 className="w-5 h-5 animate-spin text-orange-500 mb-1" />

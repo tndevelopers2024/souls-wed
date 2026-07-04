@@ -11,7 +11,8 @@ export default async function VendorsPage() {
 }
 
 async function getPublicVendors(): Promise<PublicVendor[]> {
-  await connectDB();
+  try {
+    await connectDB();
   
   // Fetch active vendors
   const dbVendors = await Vendor.find({ verified: true, available: true })
@@ -59,4 +60,8 @@ async function getPublicVendors(): Promise<PublicVendor[]> {
     if (!a.featured && b.featured) return 1;
     return (b.rating || 0) - (a.rating || 0);
   });
+  } catch (err) {
+    console.error("Failed to fetch public vendors:", err);
+    return [];
+  }
 }

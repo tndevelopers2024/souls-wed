@@ -43,6 +43,14 @@ export async function GET(
       );
     }
 
+    // Validate format strictly before parsing
+    if (!/^\d{4}-\d{2}$/.test(monthParam)) {
+      return NextResponse.json(
+        { message: "Invalid 'month' format. Expected YYYY-MM (e.g. 2026-07)" },
+        { status: 400 }
+      );
+    }
+
     // ─── Parse month into date range ───
     // "2026-07" → startOfMonth = July 1, endOfMonth = July 31
     const [year, month] = monthParam.split("-").map(Number);
@@ -119,8 +127,8 @@ export async function GET(
  */
 function formatDate(date: Date): string {
   const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
+  const year = d.getUTCFullYear();
+  const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }

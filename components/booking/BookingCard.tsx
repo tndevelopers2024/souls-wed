@@ -2,7 +2,7 @@
  * 🎓 BOOKING CARD COMPONENT
  * 
  * Displays a single booking in the user or vendor dashboard.
- * Includes Razorpay integration to pay for pending bookings.
+ * Includes Stripe payment integration for pending bookings.
  */
 
 "use client";
@@ -91,20 +91,21 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
   const handlePayAdvance = async () => {
     setPaymentError(null);
     try {
-      // Step 1: Create Order (Stripe)
       const res = await fetch("/api/bookings/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookingId: booking._id }),
+        body: JSON.stringify({ bookingId: booking._id ?? booking.id }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to initiate payment");
 
-      // Step 2: Redirect directly to Stripe Checkout
+      if (!data.url) throw new Error("No payment URL returned from server.");
+
+      // Redirect to Stripe Checkout
       window.location.href = data.url;
-    } catch (err: any) {
-      setPaymentError(err.message || "Failed to initiate payment");
+    } catch (err: unknown) {
+      setPaymentError(err instanceof Error ? err.message : "Failed to initiate payment");
     }
   };
 
@@ -116,15 +117,15 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
       const res = await fetch("/api/bookings", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookingId: booking._id }),
+        body: JSON.stringify({ bookingId: booking._id ?? booking.id }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to cancel booking");
 
       setIsDeleted(true);
       router.refresh();
-    } catch (err: any) {
-      setPaymentError(err.message || "Failed to cancel booking");
+    } catch (err: unknown) {
+      setPaymentError(err instanceof Error ? err.message : "Failed to cancel booking");
     } finally {
       setDeleting(false);
     }

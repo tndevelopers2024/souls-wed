@@ -5,22 +5,41 @@ import { SessionData, sessionOptions } from "@/lib/session";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
+const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+
 export async function POST(req: Request) {
   try {
-    // Check vendor authentication
+    // Check vendor or admin authentication
     const session = await getIronSession<SessionData>(
       await cookies(),
       sessionOptions
     );
 
-    if (!session.isLoggedIn || session.role !== "vendor") {
-      return NextResponse.json({ message: "Vendor login required." }, { status: 401 });
+    if (!session.isLoggedIn || (session.role !== "vendor" && session.role !== "admin")) {
+      return NextResponse.json({ message: "Vendor or admin login required." }, { status: 401 });
     }
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
     if (!file) {
       return NextResponse.json({ message: "No file uploaded." }, { status: 400 });
+    }
+
+    // Validate MIME type
+    if (!ALLOWED_MIME_TYPES.has(file.type)) {
+      return NextResponse.json(
+        { message: "Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed." },
+        { status: 400 }
+      );
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      return NextResponse.json(
+        { message: "File too large. Maximum allowed size is 5 MB." },
+        { status: 400 }
+      );
     }
 
     // Read file bytes
@@ -31,13 +50,12 @@ export async function POST(req: Request) {
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });
 
-    // Generate unique name to avoid duplicates
+    // Generate unique name — keep only the extension from the original file
+    const ext = file.name.split(".").pop()?.replace(/[^a-zA-Z0-9]/g, "") ?? "jpg";
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const cleanFilename = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const filename = `${uniqueSuffix}-${cleanFilename}`;
+    const filename = `${uniqueSuffix}.${ext}`;
     const filePath = path.join(uploadDir, filename);
 
-    // Save image file
     await writeFile(filePath, buffer);
 
     const publicUrl = `/uploads/${filename}`;

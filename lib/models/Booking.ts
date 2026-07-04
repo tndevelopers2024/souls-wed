@@ -10,7 +10,7 @@
  *                       → cancelled
  * 
  * "pending"   = User submitted the form, payment not yet received
- * "confirmed" = Payment verified by Razorpay, booking is locked in
+ * "confirmed" = Payment verified by Stripe, booking is locked in
  * "completed" = The event date has passed, service was delivered
  * "cancelled" = Either user or vendor cancelled before the event
  * 
@@ -93,13 +93,9 @@ const BookingSchema = new Schema({
     default: "pending",
   },
 
-  // ─── PAYMENT (Razorpay) ───────────────────────────────────
-  // These fields are filled in during the payment flow:
-  // 1. create-order API sets razorpayOrderId
-  // 2. verify-payment API sets razorpayPaymentId + razorpaySignature
-  razorpayOrderId:   { type: String },
-  razorpayPaymentId: { type: String },
-  razorpaySignature: { type: String },
+  // ─── PAYMENT (Stripe) ─────────────────────────────────────
+  // stripeSessionId: set by create-order, verified by verify-payment
+  stripeSessionId: { type: String },
 
   // ─── EVENT DETAILS ────────────────────────────────────────
   functionType:   { type: String },    // "wedding", "pre-wedding", "reception"

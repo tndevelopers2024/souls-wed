@@ -14,7 +14,7 @@ async function seed() {
       const admin = new Admin({
         name: "Admin",
         email: email,
-        passwordHash: hashPassword("password123"),
+        passwordHash: hashPassword("admin123"),
         role: "admin",
       });
       await admin.save();

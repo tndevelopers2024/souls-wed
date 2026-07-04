@@ -466,6 +466,7 @@ export default function BookingForm({
           value={specialRequests}
           onChange={(e) => setSpecialRequests(e.target.value)}
           placeholder="Add any special requirements or notes here..."
+          maxLength={1000}
           className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-orange-400 transition-colors resize-none"
         />
       </div>

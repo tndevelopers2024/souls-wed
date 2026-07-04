@@ -69,7 +69,7 @@ export async function GET() {
 
     if (!dbUser) {
       // User was deleted from DB but cookie still exists — clear it
-      session.destroy();
+      await session.destroy();
       return NextResponse.json(
         { authenticated: false, message: "User not found in database." },
         { status: 200 }
@@ -100,15 +100,8 @@ export async function GET() {
     });
   } catch (error: unknown) {
     console.error("Error in /api/auth/me:", error);
-    const errMsg = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { 
-        message: "Internal server error occurred.",
-        details: errMsg,
-        hint: errMsg.includes("ENOTFOUND") || errMsg.includes("placeholder")
-          ? "Please ensure you have replaced the 'cluster0.xxxxxxx.mongodb.net' host placeholder in your .env.local with your actual MongoDB Atlas cluster address."
-          : undefined
-      },
+      { message: "Internal server error occurred." },
       { status: 500 }
     );
   }

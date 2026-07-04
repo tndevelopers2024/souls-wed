@@ -87,8 +87,7 @@ export default function VenueDetailPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          gateway: "stripe",
-          payment_intent_id: sessionId,
+          stripe_session_id: sessionId,
           bookingId: bookingId,
         }),
       })

@@ -55,9 +55,9 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ message: "Vendor ID is required." }, { status: 400 });
     }
 
-    const updateData: Record<string, any> = {};
-    if (verified !== undefined) updateData.verified = verified;
-    if (featured !== undefined) updateData.featured = featured;
+    const updateData: Record<string, boolean> = {};
+    if (verified !== undefined) updateData.verified = Boolean(verified);
+    if (featured !== undefined) updateData.featured = Boolean(featured);
 
     const updatedVendor = await Vendor.findByIdAndUpdate(
       vendorId,

@@ -20,8 +20,6 @@
 
 import { connectDB } from "@/lib/mongodb";
 import { Booking } from "@/lib/models/Booking";
-import { User } from "@/lib/models/User";
-import { hashPassword } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
@@ -73,6 +71,13 @@ export async function POST(req: Request) {
     if (!venueId || !venueName || !bookingType || !totalAmount) {
       return NextResponse.json(
         { message: "Missing required booking fields." },
+        { status: 400 }
+      );
+    }
+
+    if (specialRequests && specialRequests.length > 1000) {
+      return NextResponse.json(
+        { message: "Special requests must be 1000 characters or fewer." },
         { status: 400 }
       );
     }
@@ -190,9 +195,10 @@ export async function GET() {
 
     await connectDB();
 
-    // Find bookings. For users, only their own. For vendors/admins, see all (for demo purposes)
-    let query: any = { userId: session.userId };
-    if (session.role === "vendor" || session.role === "admin") {
+    // Users see only their own bookings.
+    // Admins see all bookings. Vendors have their own dedicated endpoint.
+    let query: Record<string, unknown> = { userId: session.userId };
+    if (session.role === "admin") {
       query = {};
     }
 

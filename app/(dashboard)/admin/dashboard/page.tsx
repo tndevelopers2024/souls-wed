@@ -38,6 +38,7 @@ export default function AdminDashboard() {
   // Copy state for feedback
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("darkMode") === "true";
@@ -454,11 +455,23 @@ export default function AdminDashboard() {
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[150px]" />
 
       {/* ─── FLOATING SIDEBAR ─── */}
-      <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
-        {/* Branding header */}
-        <div className={`p-6 border-b flex flex-col gap-1 ${dividerClass}`}>
-          <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
-          <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Admin Control</p>
+      <aside className={`hidden lg:flex flex-col border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass} ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
+        {/* Branding header with collapse button */}
+        <div className={`p-6 border-b flex items-center justify-between ${dividerClass}`}>
+          {!sidebarCollapsed ? (
+            <div className="flex flex-col gap-1">
+              <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
+              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Admin Control</p>
+            </div>
+          ) : (
+            <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SW</h2>
+          )}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className={`p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer`}
+          >
+            {sidebarCollapsed ? '>' : '<'}
+          </button>
         </div>
 
         {/* Navigation Link list */}
@@ -472,17 +485,29 @@ export default function AdminDashboard() {
                   setActiveTab(item.id as TabType);
                   setSearchTerm("");
                 }}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`w-full flex items-center justify-center lg:justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
                     ? "bg-orange-500 text-white" 
                     : isDarkMode
                       ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                 }`}
+                title={item.label}
               >
-                <span>{item.label}</span>
-                {item.count !== null && (
+                {!sidebarCollapsed && <span>{item.label}</span>}
+                {!sidebarCollapsed && item.count !== null && (
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                    isActive 
+                      ? "bg-white/20 text-white" 
+                      : isDarkMode 
+                        ? "bg-stone-800 text-stone-400 border border-stone-700"
+                        : "bg-stone-100 text-stone-500 border border-stone-200"
+                  }`}>
+                    {item.count}
+                  </span>
+                )}
+                {sidebarCollapsed && item.count !== null && (
+                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-black ${
                     isActive 
                       ? "bg-white/20 text-white" 
                       : isDarkMode 
@@ -499,15 +524,47 @@ export default function AdminDashboard() {
 
         {/* Footer profile info */}
         <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : ''}`}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
-              {admin.name.slice(0, 2)}
+          {!sidebarCollapsed ? (
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
+                {admin.name.slice(0, 2)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h4 className={`font-bold text-xs truncate ${headingText}`}>{admin.name}</h4>
+                <p className="text-[9px] font-bold text-stone-450 uppercase tracking-wider truncate">{admin.role}</p>
+              </div>
+              {/* Dark mode toggle */}
+              <button
+                onClick={toggleDarkMode}
+                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                className={`w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
+                  isDarkMode
+                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
+                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
+                }`}
+              >
+                {isDarkMode ? "☀" : "☾"}
+              </button>
             </div>
-            <div className="min-w-0 flex-1">
-              <h4 className={`font-bold text-xs truncate ${headingText}`}>{admin.name}</h4>
-              <p className="text-[9px] font-bold text-stone-450 uppercase tracking-wider truncate">{admin.role}</p>
+          ) : (
+            <div className="flex flex-col gap-3 items-center mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
+                {admin.name.slice(0, 2)}
+              </div>
+              {/* Dark mode toggle */}
+              <button
+                onClick={toggleDarkMode}
+                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                className={`w-8 h-8 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
+                  isDarkMode
+                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
+                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
+                }`}
+              >
+                {isDarkMode ? "☀" : "☾"}
+              </button>
             </div>
-          </div>
+          )}
 
           <div className="flex gap-2">
             <button 
@@ -518,7 +575,8 @@ export default function AdminDashboard() {
                   : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200"
               }`}
             >
-              Sign Out
+              {!sidebarCollapsed && 'Sign Out'}
+              {sidebarCollapsed && 'Out'}
             </button>
           </div>
         </div>
@@ -528,7 +586,7 @@ export default function AdminDashboard() {
       <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
 
         {/* Floating Top Header */}
-        <header className={`border rounded-2xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-305 ${headerClass}`}>
+        <header className={`border rounded-3xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-305 ${headerClass}`}>
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -551,17 +609,6 @@ export default function AdminDashboard() {
 
           <div className="flex items-center gap-3">
             <button 
-              onClick={toggleDarkMode}
-              className={`px-3 py-1.5 border rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                isDarkMode 
-                  ? "border-stone-800 bg-stone-900 text-amber-400 hover:bg-stone-800" 
-                  : "border-stone-200 bg-white text-stone-600 hover:bg-stone-50"
-              }`}
-            >
-              {isDarkMode ? "Light Mode" : "Dark Mode"}
-            </button>
-            
-            <button 
               onClick={fetchAllData}
               disabled={loadingData}
               className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-xl font-bold text-xs shadow-none transition-all cursor-pointer disabled:opacity-50 ${
@@ -582,7 +629,7 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className={`lg:hidden border rounded-2xl px-6 py-4 absolute w-full top-[68px] z-30 shadow-none flex flex-col gap-2 ${
+              className={`lg:hidden border rounded-3xl px-6 py-4 absolute w-full top-[68px] z-30 shadow-none flex flex-col gap-2 ${
                 isDarkMode ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-stone-200 text-stone-800"
               }`}
             >

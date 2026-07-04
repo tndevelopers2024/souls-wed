@@ -109,15 +109,8 @@ export async function POST(req: Request) {
     });
   } catch (error: unknown) {
     console.error("Login API error:", error);
-    const errMsg = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { 
-        message: "Internal server error occurred.",
-        details: errMsg,
-        hint: errMsg.includes("ENOTFOUND") || errMsg.includes("placeholder")
-          ? "Please ensure you have replaced the 'cluster0.xxxxxxx.mongodb.net' host placeholder in your .env.local with your actual MongoDB Atlas cluster address."
-          : undefined
-      },
+      { message: "Internal server error occurred." },
       { status: 500 }
     );
   }

@@ -8,7 +8,6 @@ import { getStripe } from "@/lib/stripe";
 
 export async function POST(req: Request) {
   try {
-    // ─── Authentication check ───
     const session = await getIronSession<SessionData>(
       await cookies(),
       sessionOptions
@@ -21,10 +20,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const {
-      payment_intent_id,
-      bookingId,
-    } = await req.json();
+    const { stripe_session_id, bookingId } = await req.json();
 
     if (!bookingId) {
       return NextResponse.json(
@@ -33,29 +29,24 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!payment_intent_id) {
+    if (!stripe_session_id) {
       return NextResponse.json(
         { message: "Missing Stripe session ID." },
         { status: 400 }
       );
     }
 
-    // Bypass verification for Stripe mock sessions
-    if (payment_intent_id.startsWith("session_mock_")) {
-      // Mock success
-    } else {
-      const stripe = getStripe();
-      const sessionObj = await stripe.checkout.sessions.retrieve(payment_intent_id);
+    // Verify the payment with Stripe
+    const stripe = getStripe();
+    const stripeSession = await stripe.checkout.sessions.retrieve(stripe_session_id);
 
-      if (sessionObj.payment_status !== "paid") {
-        return NextResponse.json(
-          { message: "Stripe payment not successful." },
-          { status: 400 }
-        );
-      }
+    if (stripeSession.payment_status !== "paid") {
+      return NextResponse.json(
+        { message: "Stripe payment not completed." },
+        { status: 400 }
+      );
     }
 
-    // ─── Step 2: Update booking status ───
     await connectDB();
 
     const booking = await Booking.findById(bookingId);
@@ -66,7 +57,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Security: verify ownership
+    // Verify ownership
     if (booking.userId.toString() !== session.userId) {
       return NextResponse.json(
         { message: "Permission denied." },
@@ -74,8 +65,24 @@ export async function POST(req: Request) {
       );
     }
 
-    // Save payment details and update status
-    booking.razorpayPaymentId = payment_intent_id; // Store Stripe Session ID
+    // Cross-check: the session ID must match what we stored when creating the order
+    if (booking.stripeSessionId && booking.stripeSessionId !== stripe_session_id) {
+      return NextResponse.json(
+        { message: "Session ID mismatch. Payment cannot be verified." },
+        { status: 400 }
+      );
+    }
+
+    // Prevent double-confirmation
+    if (booking.status === "confirmed") {
+      return NextResponse.json({
+        success: true,
+        message: "Booking is already confirmed.",
+        booking: { id: booking._id, status: booking.status, venueName: booking.venueName },
+      });
+    }
+
+    booking.stripeSessionId = stripe_session_id;
     booking.status = "confirmed";
     await booking.save();
 

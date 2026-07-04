@@ -45,9 +45,12 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ message: "User ID and role are required." }, { status: 400 });
     }
 
-    const validRoles = ["user", "vendor", "couple"];
+    const validRoles = ["user", "couple"];
     if (!validRoles.includes(role)) {
-      return NextResponse.json({ message: "Invalid role." }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid role. Valid roles for users are: user, couple." },
+        { status: 400 }
+      );
     }
 
     const updatedUser = await User.findByIdAndUpdate(
