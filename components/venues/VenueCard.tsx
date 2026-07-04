@@ -85,7 +85,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
   /* ── Grid view: full-bleed image + bottom frosted-glass overlay ── */
   return (
     <Link href={`/venues/${venue.id}`} className="block group">
-      <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[460px] sm:h-[500px] lg:h-[540px]">
+      <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[460px] sm:h-[500px] lg:h-[540px] bg-white [transform:translateZ(0)]">
 
         {/* Full-bleed image */}
         <Image

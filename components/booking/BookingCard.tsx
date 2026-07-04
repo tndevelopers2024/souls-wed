@@ -134,7 +134,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
 
 
   return (
-    <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[540px] cursor-pointer group">
+    <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[540px] cursor-pointer group bg-white [transform:translateZ(0)]">
       {/* Full Background Image */}
       {venueImage ? (
         <img

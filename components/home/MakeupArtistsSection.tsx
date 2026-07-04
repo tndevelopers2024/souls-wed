@@ -107,7 +107,7 @@ export default function MakeupArtistsSection() {
                   transition={{ duration: 0.4, delay: i * 0.07 }}
                   style={{ scrollSnapAlign: "start" }}
                 >
-                  <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-full">
+                  <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-full bg-white [transform:translateZ(0)]">
                       <Image
                         src={item.image}
                         alt={item.name}
