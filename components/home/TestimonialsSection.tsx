@@ -12,7 +12,7 @@ const testimonials = [
     date: "February 2025",
     venue: "Château de Chantilly, Paris",
     quote: "Our fairy-tale wedding at Château de Chantilly was beyond anything we imagined — the gardens, the grand ballroom, every detail perfectly coordinated by SoulsWed.",
-    image: "https://lh3.googleusercontent.com/gps-cs-s/APNQkAHJ4SNiRzQGPi15Lq_BiOfldM3R2vQi9nuQTubW7wZh-tDURmPBWPlhozC6ZT29jLUvXdIbN0DgB8392BL8iTF6zCIw0q-EHJTZe7cYCyPS02cKvR9trqhr7cVo6kL-UhQSJboN1UTukLxq=s1360-w1360-h1020-rw",
+    image: "", // Removed broken external image
     stars: 5,
   },
   {
@@ -130,14 +130,14 @@ export default function TestimonialsSection() {
             <div className="flex items-center gap-4 mt-10">
               <button 
                 onClick={prev} 
-                className="w-12 h-12 rounded-full border-2 border-slate-100 flex items-center justify-center transition-all hover:border-slate-300 hover:bg-slate-50 group"
+                className="w-12 h-12 rounded-full border-2 border-slate-100 flex items-center justify-center transition-all hover:border-slate-300 hover:bg-slate-50 group cursor-pointer"
                 aria-label="Previous testimonial"
               >
                 <ChevronLeft className="w-5 h-5 text-slate-400 group-hover:text-slate-700 transition-colors" />
               </button>
               <button 
                 onClick={next} 
-                className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:opacity-90 hover:scale-105 shadow-lg shadow-orange-500/20" 
+                className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:opacity-90 hover:scale-105 shadow-lg shadow-orange-500/20 cursor-pointer" 
                 style={{ background: "var(--sw-navy)" }}
                 aria-label="Next testimonial"
               >
@@ -149,7 +149,7 @@ export default function TestimonialsSection() {
                   <button
                     key={idx}
                     onClick={() => setActiveIndex(idx)}
-                    className="h-1.5 rounded-full transition-all duration-300"
+                    className="h-1.5 rounded-full transition-all duration-300 cursor-pointer"
                     style={{
                       width: activeIndex === idx ? "24px" : "8px",
                       background: activeIndex === idx ? "var(--sw-orange)" : "var(--sw-light-gray)",
@@ -163,8 +163,8 @@ export default function TestimonialsSection() {
 
           {/* Right: Image Slider */}
           <div className="order-1 lg:order-2 w-full max-w-[500px] mx-auto lg:ml-auto">
-            <div className="relative aspect-[4/5] w-full rounded-[2rem] overflow-hidden shadow-2xl group">
-              <AnimatePresence>
+            <div className="relative aspect-[4/5] w-full rounded-[2rem] overflow-hidden shadow-2xl group bg-slate-100">
+              <AnimatePresence mode="wait">
                 <motion.div
                   key={activeIndex}
                   initial={{ opacity: 0 }}
@@ -173,19 +173,33 @@ export default function TestimonialsSection() {
                   transition={{ duration: 0.6 }}
                   className="absolute inset-0"
                 >
-                  <Image
-                    src={activeTestimonial.image}
-                    alt={activeTestimonial.couple}
-                    fill
-                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
+                  {activeTestimonial.image ? (
+                    <Image
+                      src={activeTestimonial.image}
+                      alt={activeTestimonial.couple}
+                      fill
+                      className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
+                  ) : (
+                    <div 
+                      className="w-full h-full flex flex-col items-center justify-center p-8 text-center"
+                      style={{ 
+                        background: "linear-gradient(135deg, #ffedd5 0%, #fef9c3 100%)" 
+                      }}
+                    >
+                      <Quote className="w-20 h-20 mb-4" style={{ color: "var(--sw-orange)", opacity: 0.15 }} />
+                      <span className="text-sm font-bold tracking-widest uppercase text-slate-500">
+                        SoulsWed Stories
+                      </span>
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
                 </motion.div>
               </AnimatePresence>
               
               {/* Decorative badge */}
-              <div className="absolute top-6 right-6 backdrop-blur-md bg-white/20 border border-white/40 px-4 py-2 rounded-full shadow-xl">
+              <div className="absolute top-6 right-6 backdrop-blur-md bg-white/20 border border-white/40 px-4 py-2 rounded-full shadow-xl z-20">
                  <span className="text-white font-bold text-xs tracking-widest uppercase flex items-center gap-2">
                    <Star className="w-3 h-3 fill-white" />
                    Verified

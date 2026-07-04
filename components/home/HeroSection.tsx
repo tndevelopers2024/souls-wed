@@ -213,31 +213,7 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Carousel Pagination Dots */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
-        {bgVideos.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrentVideoIndex(idx)}
-            className="rounded-full transition-all duration-300 cursor-pointer"
-            style={{
-              width: currentVideoIndex === idx ? "28px" : "8px",
-              height: "8px",
-              background: currentVideoIndex === idx ? "var(--sw-gold)" : "rgba(255,255,255,0.4)",
-            }}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
-        ))}
-      </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <ChevronDown className="w-8 h-8" style={{ color: "rgba(255,255,255,0.6)" }} />
-      </motion.div>
     </section>
     </div>
   );

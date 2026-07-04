@@ -118,14 +118,14 @@ export default function PhotographersSection() {
           {photographers.map((item, i) => (
                 <motion.div
                   key={item.id}
-                  className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] cursor-pointer block group"
+                  className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] h-[460px] sm:h-[500px] lg:h-[540px] cursor-pointer block group"
                   initial={{ opacity: 0, x: 40 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.07 }}
                   style={{ scrollSnapAlign: "start" }}
                 >
-                  <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[460px] sm:h-[500px] lg:h-[540px]">
+                  <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-full">
                       <Image
                         src={item.image}
                         alt={item.name}
