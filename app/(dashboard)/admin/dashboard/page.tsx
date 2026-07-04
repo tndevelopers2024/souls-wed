@@ -531,7 +531,7 @@ export default function AdminDashboard() {
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className={`font-bold text-xs truncate ${headingText}`}>{admin.name}</h4>
-                <p className="text-[9px] font-bold text-stone-450 uppercase tracking-wider truncate">{admin.role}</p>
+                <p className="text-[9px] font-bold text-stone-450 uppercase tracking-wider truncate">{admin.email}</p>
               </div>
               {/* Dark mode toggle */}
               <button

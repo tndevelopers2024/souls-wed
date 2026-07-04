@@ -24,6 +24,16 @@ export default function UserDashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => 
+    typeof window !== "undefined" && localStorage.getItem("darkMode") === "true"
+  );
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const toggleDarkMode = () => {
+    const next = !isDarkMode;
+    setIsDarkMode(next);
+    localStorage.setItem("darkMode", String(next));
+  };
 
   const fetchBookings = async () => {
     setLoadingData(true);
@@ -95,26 +105,39 @@ export default function UserDashboard() {
     { id: "settings", label: "Settings" },
   ];
 
-  // Theme styling CSS classes (strictly light-themed)
-  const containerBg = "bg-[#fafaf9] text-stone-850";
-  const sidebarClass = "border-stone-200 bg-white/70 text-stone-600";
-  const cardClass = "bg-white/70 border-stone-200 text-stone-600";
-  const headerClass = "bg-white/70 border-stone-200 text-stone-850";
-  const headingText = "text-stone-900";
-  const dividerClass = "border-stone-100";
+  // Theme styling CSS classes
+  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#fafaf9] text-stone-800";
+  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200 bg-white/70 text-stone-600";
+  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800 text-stone-300" : "bg-white/70 border-stone-200 text-stone-600";
+  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800 text-white" : "bg-white/70 border-stone-200 text-stone-800";
+  const headingText = isDarkMode ? "text-white" : "text-stone-900";
+  const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
 
   return (
-    <div className={`min-h-[calc(100vh-80px)] font-body flex relative overflow-visible pt-28 pb-12 px-4 sm:px-6 transition-colors duration-300 ${containerBg}`}>
+    <div className={`h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
       
       {/* Ambient backgrounds */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[120px]" />
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[120px]" />
  
       {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
-      <aside className={`hidden lg:flex flex-col w-64 border rounded-3xl m-3 h-[calc(100vh-9.5rem)] sticky top-28 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass}`}>
-        <div className={`p-6 border-b flex flex-col gap-1 ${dividerClass}`}>
-          <h2 className={`font-extrabold text-sm tracking-tight uppercase text-stone-900`}>SoulsWed</h2>
-          <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Couple Portal</p>
+      <aside className={`hidden lg:flex flex-col border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass} ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
+        {/* Branding header with collapse button */}
+        <div className={`p-6 border-b flex items-center justify-between ${dividerClass}`}>
+          {!sidebarCollapsed ? (
+            <div className="flex flex-col gap-1">
+              <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
+              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Couple Portal</p>
+            </div>
+          ) : (
+            <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SW</h2>
+          )}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className={`p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer`}
+          >
+            {sidebarCollapsed ? '>' : '<'}
+          </button>
         </div>
  
         <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5">
@@ -124,16 +147,34 @@ export default function UserDashboard() {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as TabType)}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                className={`w-full flex items-center justify-center lg:justify-between px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
                     ? "bg-orange-500 text-white" 
-                    : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
+                    : isDarkMode
+                      ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                 }`}
+                title={item.label}
               >
-                <span>{item.label}</span>
-                {item.count !== undefined && item.count !== null && (
+                {!sidebarCollapsed && <span>{item.label}</span>}
+                {!sidebarCollapsed && item.count !== undefined && item.count !== null && (
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                    isActive ? "bg-white/20 text-white" : "bg-stone-100 text-stone-500 border border-stone-200"
+                    isActive 
+                      ? "bg-white/20 text-white" 
+                      : isDarkMode 
+                        ? "bg-stone-800 text-stone-400 border border-stone-700"
+                        : "bg-stone-100 text-stone-500 border border-stone-200"
+                  }`}>
+                    {item.count}
+                  </span>
+                )}
+                {sidebarCollapsed && item.count !== undefined && item.count !== null && (
+                  <span className={`px-1.5 py-0.5 rounded-full text-[8px] font-black ${
+                    isActive 
+                      ? "bg-white/20 text-white" 
+                      : isDarkMode 
+                        ? "bg-stone-800 text-stone-400 border border-stone-700"
+                        : "bg-stone-100 text-stone-500 border border-stone-200"
                   }`}>
                     {item.count}
                   </span>
@@ -143,34 +184,73 @@ export default function UserDashboard() {
           })}
         </nav>
  
-        <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass}`}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
-              {user.name.charAt(0)}
+        <div className={`p-4 border-t bg-stone-50/50 rounded-b-3xl ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : ''}`}>
+          {!sidebarCollapsed ? (
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
+                {user.name.charAt(0)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h4 className={`font-bold text-xs truncate ${headingText}`}>{user.name}</h4>
+                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider truncate">{user.email}</p>
+              </div>
+              {/* Dark mode toggle — icon only */}
+              <button
+                onClick={toggleDarkMode}
+                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                className={`w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
+                  isDarkMode
+                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
+                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
+                }`}
+              >
+                {isDarkMode ? "☀" : "☾"}
+              </button>
             </div>
-            <div className="min-w-0 flex-1">
-              <h4 className={`font-bold text-xs truncate ${headingText}`}>{user.name}</h4>
-              <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider truncate">Couple Member</p>
+          ) : (
+            <div className="flex flex-col gap-3 items-center mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 flex items-center justify-center font-black text-xs uppercase">
+                {user.name.charAt(0)}
+              </div>
+              {/* Dark mode toggle — icon only */}
+              <button
+                onClick={toggleDarkMode}
+                title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                className={`w-8 h-8 flex items-center justify-center rounded-xl border text-sm transition-all cursor-pointer ${
+                  isDarkMode
+                    ? "border-stone-700 bg-stone-800 text-amber-400 hover:bg-stone-700"
+                    : "border-stone-200 bg-white text-stone-500 hover:bg-stone-50 hover:text-stone-800"
+                }`}
+              >
+                {isDarkMode ? "☀" : "☾"}
+              </button>
             </div>
-          </div>
+          )}
           <button 
             onClick={handleLogout}
-            className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200`}
+            className={`w-full flex items-center justify-center gap-2 px-3 py-2 border rounded-xl text-[11px] font-bold transition-all cursor-pointer shadow-none ${
+              isDarkMode 
+                ? "bg-stone-800 hover:bg-red-950/30 text-stone-300 border-stone-700 hover:border-red-900/60 hover:text-red-400"
+                : "bg-white hover:bg-red-50 text-stone-600 hover:text-red-600 border border-stone-200 hover:border-red-200"
+            }`}
           >
-            Sign Out
+            {!sidebarCollapsed && 'Sign Out'}
+            {sidebarCollapsed && 'Out'}
           </button>
         </div>
       </aside>
  
       {/* ─── MAIN CONTENT AREA ─── */}
-      <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-visible">
+      <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
         
         {/* Floating Top Header */}
         <header className={`border rounded-2xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-300 ${headerClass}`}>
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold border-stone-200 hover:bg-stone-50"
+              className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
+                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
+              }`}
             >
               {mobileMenuOpen ? "[Close]" : "[Menu]"}
             </button>
@@ -192,7 +272,9 @@ export default function UserDashboard() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="lg:hidden border rounded-2xl p-4 shadow-none flex flex-col gap-2 z-20 bg-white border-stone-200 text-stone-800"
+              className={`lg:hidden border rounded-2xl p-4 shadow-none flex flex-col gap-2 z-20 ${
+                isDarkMode ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-stone-200 text-stone-800"
+              }`}
             >
               {menuItems.map((item) => (
                 <button
@@ -204,13 +286,15 @@ export default function UserDashboard() {
                   className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
                     activeTab === item.id 
                       ? "bg-orange-500 text-white" 
-                      : "text-stone-600 hover:bg-stone-50"
+                      : isDarkMode
+                        ? "text-stone-300 hover:bg-stone-800"
+                        : "text-stone-600 hover:bg-stone-50"
                   }`}
                 >
                   <span>{item.label}</span>
                   {item.count !== undefined && item.count !== null && (
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                      activeTab === item.id ? "bg-white/20 text-white" : "bg-stone-100 text-stone-600"
+                      activeTab === item.id ? "bg-white/20 text-white" : isDarkMode ? "bg-stone-800 text-stone-400" : "bg-stone-100 text-stone-600"
                     }`}>
                       {item.count}
                     </span>
