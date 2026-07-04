@@ -1116,13 +1116,13 @@ export default function VendorDashboard() {
                       </button>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                       {venues.map((venue) => {
                         const thumb = venue.image || (venue.gallery && venue.gallery[0]) || "";
                         const price = venue.price || venue.pricePerPlateVeg || "—";
                         const rating = venue.rating || 0;
                         return (
-                          <div key={venue._id} className="relative group/card rounded-3xl overflow-hidden shadow-sm border border-slate-100 h-[460px] sm:h-[500px]">
+                          <div key={venue._id} className="relative group/card rounded-3xl overflow-hidden shadow-md border border-slate-100 h-[400px] sm:h-[440px]">
 
                             {/* Full-bleed image */}
                             {thumb ? (
@@ -1152,7 +1152,7 @@ export default function VendorDashboard() {
                             </span>
 
                             {/* Progressive frosted blur overlay */}
-                            <div className="absolute inset-x-0 bottom-0 h-[72%] z-10 pointer-events-none">
+                            <div className="absolute inset-x-0 bottom-0 h-[85%] z-10 pointer-events-none">
                               {[
                                 { blur: 1,  solid: 55, fade: 100 },
                                 { blur: 3,  solid: 42, fade: 78 },
@@ -1180,11 +1180,11 @@ export default function VendorDashboard() {
                             </div>
 
                             {/* Content area */}
-                            <div className="absolute inset-x-0 bottom-0 z-20 px-4 pt-4 pb-4 flex flex-col">
-                              <h3 className="text-[20px] font-bold leading-snug text-slate-900 line-clamp-1 mb-0.5" style={{ fontFamily: "var(--font-heading, serif)" }}>
+                            <div className="absolute inset-x-0 bottom-0 z-20 px-3 pt-3 pb-3 flex flex-col">
+                              <h3 className="text-[17px] font-bold leading-snug text-slate-900 line-clamp-1 mb-0.5" style={{ fontFamily: "var(--font-heading, serif)" }}>
                                 {venue.name}
                               </h3>
-                              <p className="text-[12px] text-slate-500 font-medium mb-1 line-clamp-1">
+                              <p className="text-[11px] text-slate-500 font-medium mb-1 line-clamp-1">
                                 📍 {venue.location || venue.city}{venue.country ? `, ${venue.country}` : ""}
                               </p>
 
@@ -1202,14 +1202,14 @@ export default function VendorDashboard() {
                               )}
 
                               {/* Pills row */}
-                              <div className="flex flex-wrap gap-1.5 mb-3">
-                                <span className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white text-slate-700 shadow-sm">
+                              <div className="flex flex-wrap gap-1 mb-2.5">
+                                <span className="flex items-center gap-1 text-[9px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-700 shadow-sm">
                                   👥 {venue.minGuests || 50}–{venue.maxGuests || 500} pax
                                 </span>
-                                <span className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white text-slate-700 shadow-sm">
+                                <span className="flex items-center gap-1 text-[9px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-700 shadow-sm">
                                   🛏 {venue.rooms || 0} Rooms
                                 </span>
-                                <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white shadow-sm" style={{ color: "var(--sw-orange)" }}>
+                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white shadow-sm" style={{ color: "var(--sw-orange)" }}>
                                   {venue.type || "Venue"}
                                 </span>
                               </div>
@@ -1217,18 +1217,32 @@ export default function VendorDashboard() {
                               {/* Price + Edit button */}
                               <div className="flex items-end justify-between mt-auto">
                                 <div>
-                                  <span className="text-[11px] text-slate-500 block mb-0.5">from</span>
-                                  <span className="text-[20px] font-bold text-slate-900 leading-none">
+                                  <span className="text-[10px] text-slate-500 block mb-0.5">from</span>
+                                  <span className="text-[18px] font-bold text-slate-900 leading-none">
                                     {price}
                                   </span>
-                                  <span className="text-[11px] text-slate-500 ml-1 capitalize">{venue.priceUnit || "per day"}</span>
+                                  <span className="text-[10px] text-slate-500 ml-1 capitalize">{venue.priceUnit || "per day"}</span>
                                 </div>
-                                <button
-                                  onClick={() => openEditVenue(venue)}
-                                  className="text-[13px] font-bold px-5 py-2.5 rounded-full text-slate-900 bg-white shadow-sm hover:bg-orange-500 hover:text-white transition-all cursor-pointer"
-                                >
-                                  Edit ✎
-                                </button>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (confirm(`Are you sure you want to delete ${venue.name}?`)) {
+                                        setVenues(prev => prev.filter(v => v._id !== venue._id));
+                                      }
+                                    }}
+                                    className="flex items-center justify-center w-8 h-8 rounded-full text-red-500 bg-white shadow-sm hover:bg-red-50 hover:text-red-600 transition-all cursor-pointer border border-transparent hover:border-red-200"
+                                    title="Delete Venue"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => openEditVenue(venue)}
+                                    className="text-[12px] font-bold px-4 py-2 rounded-full text-white bg-orange-500 shadow-sm hover:bg-orange-600 transition-all cursor-pointer"
+                                  >
+                                    Edit ✎
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
