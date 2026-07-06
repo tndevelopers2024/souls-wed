@@ -1,0 +1,95 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+
+export default function Preloader() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Only show preloader once per session
+    const hasSeenPreloader = sessionStorage.getItem("hasSeenPreloader");
+    
+    if (hasSeenPreloader) {
+      setIsLoading(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      sessionStorage.setItem("hasSeenPreloader", "true");
+    }, 2500); // 2.5 seconds display
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {isLoading && (
+        <motion.div
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
+          style={{ background: "var(--sw-navy)" }} // Dark premium background
+        >
+          {/* Animated background noise/texture */}
+          <div className="absolute inset-0 opacity-20 pointer-events-none noise-texture" />
+
+          {/* Golden accent glow in the center */}
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.15 }}
+            transition={{ duration: 2, ease: "easeOut" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vw] max-w-[600px] max-h-[600px] bg-amber-400 rounded-full blur-[120px] pointer-events-none"
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            className="relative z-10 flex flex-col items-center"
+          >
+            {/* Logo Image */}
+            <div className="relative w-48 md:w-64 h-12 md:h-16 mb-6">
+              <Image
+                src="/images/shared/78411bb746a788c0abdbdc309104f47a.png" // Using the main logo
+                alt="SoulsWed"
+                fill
+                className="object-contain brightness-0 invert" // Make it white for the dark background
+                priority
+              />
+            </div>
+
+            {/* Tagline / Loading bar */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
+              className="flex flex-col items-center"
+            >
+              <p className="text-amber-400/90 font-bold uppercase tracking-[0.3em] text-xs md:text-sm mb-6">
+                Flawless Moves. Perfect Events.
+              </p>
+
+              {/* Elegant thin loading bar */}
+              <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
+                <motion.div
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "100%" }}
+                  transition={{ 
+                    repeat: Infinity, 
+                    duration: 1.5, 
+                    ease: "easeInOut" 
+                  }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400 to-transparent w-full h-full"
+                />
+              </div>
+            </motion.div>
+
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}

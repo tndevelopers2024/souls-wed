@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { CurrencyProvider } from "@/lib/CurrencyContext";
+import Preloader from "@/components/shared/Preloader";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -41,6 +42,7 @@ export default function RootLayout({
     <html lang="en" className={cn(plusJakarta.variable, "font-sans", geist.variable)}>
       <body className="min-h-screen antialiased">
         <CurrencyProvider>
+          <Preloader />
           {children}
         </CurrencyProvider>
       </body>
