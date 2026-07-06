@@ -53,7 +53,7 @@ export default function Preloader() {
             {/* Logo Image */}
             <div className="relative w-48 md:w-64 h-12 md:h-16 mb-6">
               <Image
-                src="/images/shared/78411bb746a788c0abdbdc309104f47a.png" // Using the main logo
+                src="/logo/logo-by-soulswed.png" // Using the main logo
                 alt="SoulsWed"
                 fill
                 className="object-contain brightness-0 invert" // Make it white for the dark background
