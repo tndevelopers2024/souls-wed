@@ -116,11 +116,11 @@ export default function MakeupArtistsSection() {
                     unit={item.unit}
                     rating={item.rating}
                     image={item.image}
-                    tag={
-                      <>
+                    tags={
+                      <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
                         <Sparkles className="w-3.5 h-3.5 text-slate-500" />
                         {item.tag}
-                      </>
+                      </div>
                     }
                   />
             </motion.div>

@@ -134,11 +134,11 @@ export default function PhotographersSection() {
                     unit={item.unit}
                     rating={item.rating}
                     image={item.image}
-                    tag={
-                      <>
+                    tags={
+                      <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
                         <TypeIcon type={item.type} />
                         {typeLabel[item.type as keyof typeof typeLabel]}
-                      </>
+                      </div>
                     }
                   />
             </motion.div>

@@ -10,7 +10,9 @@ interface VendorCardProps {
   price: string;
   unit: string;
   rating: number;
-  tag: React.ReactNode;
+  reviewCount?: number;
+  tags?: React.ReactNode;
+  badge?: React.ReactNode;
   image: string;
 }
 
@@ -21,7 +23,9 @@ export default function VendorCard({
   price,
   unit,
   rating,
-  tag,
+  reviewCount,
+  tags,
+  badge,
   image,
 }: VendorCardProps) {
   const { currency } = useCurrency();
@@ -36,8 +40,10 @@ export default function VendorCard({
         className="object-cover transition-transform duration-700"
       />
 
-      {/* Tag pill top-left */}
-      {rating > 0 && (
+      {/* Top Left Badge or Rating */}
+      {badge ? (
+        badge
+      ) : rating > 0 ? (
         <div
           className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm"
           style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(10px)" }}
@@ -45,7 +51,7 @@ export default function VendorCard({
           <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
           <span className="text-slate-800">{rating.toFixed(1)}</span>
         </div>
-      )}
+      ) : null}
 
       {/* Heart pill top-right */}
       <button
@@ -109,14 +115,17 @@ export default function VendorCard({
               ))}
             </div>
             <span className="text-[13px] font-bold text-slate-800">{rating.toFixed(1)}</span>
+            {reviewCount !== undefined && (
+              <span className="text-[13px] text-slate-500 font-medium ml-1">({reviewCount} reviews)</span>
+            )}
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2 mb-4">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
-            {tag}
+        {tags && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {tags}
           </div>
-        </div>
+        )}
 
         <div className="flex items-end justify-between mt-auto">
           <div className="flex flex-col">
