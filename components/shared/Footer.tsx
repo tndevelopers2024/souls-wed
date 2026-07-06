@@ -120,7 +120,7 @@ export default function Footer() {
       {/* Floating capsule footer with increased dynamic width */}
       <div className="max-w-[96%] xl:max-w-[1440px] 2xl:max-w-[1580px] mx-auto px-4 pb-6 w-full">
       <footer
-        className="relative overflow-hidden rounded-[40px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)] noise-texture transition-all duration-500 hover:shadow-[0_32px_80px_rgba(252,203,17,0.18)]"
+        className="relative overflow-hidden rounded-[32px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)] noise-texture transition-all duration-500 hover:shadow-[0_32px_80px_rgba(252,203,17,0.18)]"
         style={{
           background: "linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 253, 245, 0.97) 100%)",
         }}
@@ -145,18 +145,18 @@ export default function Footer() {
           />
         </div>
 
-        <div className="relative z-10 w-full mx-auto px-6 sm:px-10 lg:px-16 py-16 md:py-20">
+        <div className="relative z-10 w-full mx-auto px-6 sm:px-10 lg:px-16 py-10 md:py-12">
           
           {/* Top Row: Newsletter Subscription */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-14 mb-14 border-b border-amber-100/50">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-8 mb-8 border-b border-amber-100/50">
             <div className="lg:col-span-7">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest text-amber-700 bg-amber-50 border border-amber-100/60 mb-3 uppercase">
                 ✨ Exclusive Club
               </span>
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-800">
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-800">
                 Join the <span className="bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">SoulsWed Circle</span>
               </h3>
-              <p className="text-sm text-slate-500 mt-2.5 max-w-xl font-medium leading-relaxed">
+              <p className="text-xs text-slate-500 mt-2 max-w-xl font-medium leading-relaxed">
                 Subscribe to receive curated destination wedding inspiration, venue guides, and exclusive partner promotions.
               </p>
             </div>
@@ -165,7 +165,7 @@ export default function Footer() {
                 <input
                   type="email"
                   placeholder="Enter your email address"
-                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-6 py-4.5 pr-40 outline-none transition-all text-sm text-slate-800 shadow-inner font-medium placeholder-slate-400"
+                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-5 py-3 pr-36 outline-none transition-all text-sm text-slate-800 shadow-inner font-medium placeholder-slate-400"
                 />
                 <button
                   type="submit"
@@ -178,7 +178,7 @@ export default function Footer() {
           </div>
 
           {/* Middle Row: Links Grid (Asymmetrical Layout) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-6">
 
             {/* Col 1 — Brand (Spans 2 columns on lg for gorgeous breathing room) */}
             <div className="lg:col-span-2 lg:pr-12">
@@ -188,13 +188,13 @@ export default function Footer() {
                   alt="SoulsWed Logo"
                   width={200}
                   height={60}
-                  className="h-8 md:h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+                  className="h-7 md:h-8 w-auto transition-transform duration-300 group-hover:scale-105"
                 />
               </Link>
-              <p className="text-base leading-relaxed mb-2 font-bold text-slate-700">
+              <p className="text-sm leading-relaxed mb-1.5 font-bold text-slate-700">
                 Flawless Moves. Perfect Events.
               </p>
-              <p className="text-xs leading-relaxed mb-8 text-slate-500 font-medium max-w-sm">
+              <p className="text-xs leading-relaxed mb-5 text-slate-500 font-medium max-w-sm">
                 India&apos;s premium wedding marketplace for destination weddings across India and beyond. Providing luxury planners, venues, and media.
               </p>
               <div className="flex gap-3">
@@ -218,7 +218,7 @@ export default function Footer() {
               <h4 className="text-xs font-extrabold mb-6 uppercase tracking-widest text-slate-400">
                 About Us
               </h4>
-              <ul className="flex flex-col gap-4.5">
+              <ul className="flex flex-col gap-3">
                 {aboutLinks.map((item) => (
                   <li key={item.href}>
                     <Link
@@ -241,7 +241,7 @@ export default function Footer() {
               <h4 className="text-xs font-extrabold mb-6 uppercase tracking-widest text-slate-400">
                 Our Services
               </h4>
-              <ul className="flex flex-col gap-4.5">
+              <ul className="flex flex-col gap-3">
                 {services.map((item) => (
                   <li key={item.href}>
                     <Link
@@ -268,7 +268,7 @@ export default function Footer() {
                 {contactItems.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <li key={item.label} className="flex items-start gap-3 group bg-white/40 hover:bg-white/90 border border-amber-100/30 hover:border-amber-200/60 rounded-full pl-4 pr-6 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xs">
+                    <li key={item.label} className="flex items-start gap-3 group bg-white/40 hover:bg-white/90 border border-amber-100/30 hover:border-amber-200/60 rounded-full pl-3 pr-5 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xs">
                       <div
                         className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110 border border-amber-100"
                         style={{ background: "rgba(252, 203, 17, 0.12)" }}
@@ -293,9 +293,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom strip */}
         <div
-          className="relative z-10 border-t py-7 px-8"
+          className="relative z-10 border-t py-4 px-6"
           style={{ borderColor: "rgba(252, 203, 17, 0.12)" }}
         >
           <div className="max-w-none mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
