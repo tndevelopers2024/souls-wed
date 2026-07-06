@@ -8,9 +8,18 @@ export default function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Only show preloader once per session
+    const hasSeenPreloader = sessionStorage.getItem("hasSeenPreloader");
+    
+    if (hasSeenPreloader) {
+      setIsLoading(false);
+      return;
+    }
+
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 5000); // 5 seconds display
+      sessionStorage.setItem("hasSeenPreloader", "true");
+    }, 1500); // 1.5 seconds display
 
     return () => clearTimeout(timer);
   }, []);
