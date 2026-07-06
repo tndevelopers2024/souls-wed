@@ -120,7 +120,7 @@ export default function Footer() {
       {/* Floating capsule footer with increased dynamic width */}
       <div className="max-w-[94%] md:max-w-[90%] lg:max-w-[1200px] xl:max-w-[1300px] mx-auto px-4 pb-6 w-full">
       <footer
-        className="relative overflow-hidden rounded-[32px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)] noise-texture transition-all duration-500 hover:shadow-[0_32px_80px_rgba(252,203,17,0.18)]"
+        className="relative overflow-hidden rounded-[48px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)] noise-texture transition-all duration-500 hover:shadow-[0_32px_80px_rgba(252,203,17,0.18)]"
         style={{
           background: "linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 253, 245, 0.97) 100%)",
         }}
