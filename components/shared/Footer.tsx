@@ -125,8 +125,7 @@ export default function Footer() {
           background: "linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 253, 245, 0.97) 100%)",
         }}
       >
-        {/* Top gold/amber gradient highlight line */}
-        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-500 z-20" />
+
 
         {/* Animated glowing decorative gradient orbs */}
         <div className="absolute -right-32 -bottom-32 w-[450px] h-[450px] rounded-full bg-gradient-to-br from-yellow-300/20 via-amber-200/15 to-orange-200/5 blur-3xl pointer-events-none z-0 animate-float-1" />
