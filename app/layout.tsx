@@ -21,6 +21,14 @@ export const metadata: Metadata = {
     description:
       "Discover 24+ categories — venues, photographers, flights, cruises & more for your dream wedding.",
     siteName: "SoulsWed",
+    images: [
+      {
+        url: "/openGraph/image.png",
+        width: 1200,
+        height: 630,
+        alt: "SoulsWed",
+      },
+    ],
   },
 };
 
