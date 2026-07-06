@@ -314,7 +314,7 @@ export default function Navbar() {
                 >
                   <Link
                     href={link.href}
-                    className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:bg-orange-50/80 hover:text-orange-600 group"
+                    className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-orange-600 group"
                     style={{ color: "var(--sw-navy)" }}
                   >
                     {link.label}
