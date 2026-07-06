@@ -160,7 +160,7 @@ export default function HeroSection() {
           <div className="bg-white/95 backdrop-blur-md rounded-[32px] md:rounded-full p-2 md:p-2.5 shadow-2xl border border-white/30 flex flex-col md:flex-row items-center relative z-20 w-full">
             
             {/* Destination */}
-            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center group relative">
+            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center items-start text-left group relative">
               <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-gray-800 cursor-pointer mb-0.5">Destination</label>
               <select defaultValue="" className="bg-transparent w-full text-gray-900 text-[15px] font-semibold outline-none truncate appearance-none cursor-pointer p-0 m-0 leading-tight">
                 <option value="" disabled hidden className="text-gray-400 font-normal">Where to?</option>
@@ -173,7 +173,7 @@ export default function HeroSection() {
             <div className="hidden md:block w-px h-10 bg-gray-200" />
 
             {/* Date */}
-            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center group relative">
+            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center items-start text-left group relative">
               <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-gray-800 cursor-pointer mb-0.5">Date</label>
               <input
                 type="text"
@@ -187,7 +187,7 @@ export default function HeroSection() {
             <div className="hidden md:block w-px h-10 bg-gray-200" />
 
             {/* Guests */}
-            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center group relative">
+            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center items-start text-left group relative">
               <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-gray-800 cursor-pointer mb-0.5">Guests</label>
               <input
                 type="number"
@@ -200,7 +200,7 @@ export default function HeroSection() {
             <div className="hidden md:block w-px h-10 bg-gray-200" />
 
             {/* Category */}
-            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center group relative">
+            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center items-start text-left group relative">
               <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-gray-800 cursor-pointer mb-0.5">Category</label>
               <select className="bg-transparent w-full text-gray-900 text-[15px] font-semibold outline-none truncate appearance-none cursor-pointer p-0 m-0 leading-tight">
                 <option value="" disabled hidden className="text-gray-400 font-normal">All Categories</option>
