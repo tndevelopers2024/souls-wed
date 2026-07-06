@@ -178,7 +178,7 @@ export default function TestimonialsSection() {
                       src={activeTestimonial.image}
                       alt={activeTestimonial.couple}
                       fill
-                      className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                      className="object-cover transition-transform duration-1000"
                       sizes="(max-width: 1024px) 100vw, 50vw"
                     />
                   ) : (

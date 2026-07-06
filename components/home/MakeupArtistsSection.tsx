@@ -113,7 +113,7 @@ export default function MakeupArtistsSection() {
                         alt={item.name}
                         fill
                         sizes="(max-width: 640px) 85vw, (max-width: 768px) 300px, 340px"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="object-cover transition-transform duration-700"
                       />
 
                       {/* Tag pill top-left */}
