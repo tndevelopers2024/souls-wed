@@ -31,7 +31,7 @@ export default function Preloader() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
-          style={{ background: "var(--sw-navy)" }} // Dark premium background
+          style={{ background: "#FDFBF9" }} // Light premium background
         >
           {/* Animated background noise/texture */}
           <div className="absolute inset-0 opacity-20 pointer-events-none noise-texture" />
@@ -56,7 +56,7 @@ export default function Preloader() {
                 src="/logo/logo-by-soulswed.png" // Using the main logo
                 alt="SoulsWed"
                 fill
-                className="object-contain brightness-0 invert" // Make it white for the dark background
+                className="object-contain" // Original dark logo
                 priority
               />
             </div>
@@ -68,12 +68,12 @@ export default function Preloader() {
               transition={{ delay: 0.8, duration: 0.8 }}
               className="flex flex-col items-center"
             >
-              <p className="text-amber-400/90 font-bold uppercase tracking-[0.3em] text-xs md:text-sm mb-6">
+              <p className="text-amber-600 font-bold uppercase tracking-[0.3em] text-xs md:text-sm mb-6">
                 Flawless Moves. Perfect Events.
               </p>
 
               {/* Elegant thin loading bar */}
-              <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
+              <div className="w-48 h-[2px] bg-amber-100 rounded-full overflow-hidden relative">
                 <motion.div
                   initial={{ x: "-100%" }}
                   animate={{ x: "100%" }}
@@ -82,7 +82,7 @@ export default function Preloader() {
                     duration: 1.5, 
                     ease: "easeInOut" 
                   }}
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400 to-transparent w-full h-full"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500 to-transparent w-full h-full"
                 />
               </div>
             </motion.div>
