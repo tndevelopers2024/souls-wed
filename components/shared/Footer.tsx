@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Heart, Phone, Mail, ChevronUp, MapPin, ArrowUpRight } from "lucide-react";
+import { Heart, Phone, Mail, MessageCircle, ChevronUp } from "lucide-react";
 
 function IconInstagram({ className }: { className?: string }) {
   return (
@@ -33,61 +33,55 @@ function IconLinkedIn({ className }: { className?: string }) {
   );
 }
 
-function IconX({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-    </svg>
-  );
-}
-
-function IconYouTube({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-    </svg>
-  );
-}
-
-function IconWhatsApp({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.662-2.06-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-    </svg>
-  );
-}
-
 const aboutLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Success Stories", href: "/stories" },
-  { label: "Wedding Journal", href: "/blog" },
-  { label: "Contact Us", href: "/contact" },
+  { label: "Blog", href: "/blog" },
+  { label: "Careers", href: "/careers" },
+  { label: "Press", href: "/press" },
+  { label: "Contact", href: "/contact" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms & Conditions", href: "/terms" },
 ];
 
-const servicesLinks = [
-  { label: "Destination Weddings", href: "/services/destination" },
-  { label: "Vendor Management", href: "/services/vendors" },
-  { label: "Guest Hospitality", href: "/services/hospitality" },
-  { label: "Event Styling", href: "/services/styling" },
-  { label: "Consultation", href: "/services/consultation" },
-];
-
-const vendorLinks = [
-  { label: "Venues", href: "/category/venues" },
-  { label: "Planners", href: "/category/planners" },
+const services = [
+  { label: "Venues & Banquet Halls", href: "/category/venues" },
+  { label: "Wedding Planners", href: "/category/planners" },
   { label: "Photographers", href: "/category/photographers" },
   { label: "Decorators", href: "/category/decorators" },
-  { label: "Makeup Artists", href: "/category/makeup" },
+  { label: "Make-up Artists", href: "/category/makeup" },
+  { label: "Caterers", href: "/category/caterers" },
+  { label: "DJs", href: "/category/djs" },
+  { label: "Cruises", href: "/category/cruises" },
+];
+
+const contactItems = [
+  {
+    icon: Phone,
+    label: "24/7 Support",
+    lines: ["+91 98765 43210", "+91 98765 43211"],
+  },
+  {
+    icon: MessageCircle,
+    label: "WhatsApp Enquiry",
+    lines: ["+91 96000 43002"],
+  },
+  {
+    icon: Phone,
+    label: "For Bookings",
+    lines: ["+91 80412 48273"],
+  },
+  {
+    icon: Mail,
+    label: "Email Us",
+    lines: ["hello@soulswed.com", "vendors@soulswed.com"],
+  },
 ];
 
 const socialLinks = [
-  { icon: IconInstagram, href: "https://instagram.com/soulswed", label: "Instagram" },
-  { icon: IconX, href: "https://x.com/soulswed", label: "X" },
+  { icon: IconInstagram, href: "/images/shared/73a78acdfa5d8547664ba493c089879d.jpg", label: "Instagram" },
   { icon: IconFacebook, href: "https://facebook.com/soulswed", label: "Facebook" },
   { icon: IconLinkedIn, href: "https://linkedin.com/company/soulswed", label: "LinkedIn" },
-  { icon: IconYouTube, href: "https://youtube.com/soulswed", label: "YouTube" },
-  { icon: IconWhatsApp, href: "https://wa.me/919600043002", label: "WhatsApp" },
 ];
 
 export default function Footer() {
@@ -98,162 +92,232 @@ export default function Footer() {
 
   return (
     <>
-      <div className="max-w-[96%] xl:max-w-[1440px] 2xl:max-w-[1580px] mx-auto px-4 pb-8 w-full mt-10">
-        <footer
-          className="rounded-[40px] overflow-hidden bg-gradient-to-b from-[#FDFBF9] to-[#F9F4EE] border border-amber-900/5 shadow-sm"
-        >
-          <div className="px-6 sm:px-10 md:px-16 lg:px-20 py-16 md:py-20">
-            {/* Top Row: CTA */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-12 border-b border-slate-200/60 mb-12">
-              <div>
-                <h3 className="text-3xl md:text-4xl text-slate-800 mb-2" style={{ fontFamily: "var(--font-heading)" }}>
-                  Ready to start your <span className="text-amber-700 italic">SoulsWed journey?</span>
-                </h3>
-                <p className="text-slate-500">Book a free 30-minute consultation — no pressure, just clarity.</p>
-              </div>
-              <Link href="/contact" className="inline-flex items-center justify-center bg-[#b91c1c] hover:bg-[#991b1b] text-white font-bold px-7 py-4 rounded-full transition-colors whitespace-nowrap gap-2 shadow-sm text-sm">
-                Book Free Strategy Call <ArrowUpRight className="w-4 h-4" />
-              </Link>
-            </div>
+      {/* Self-contained CSS animations for the background floating gradient mesh */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes float-orb-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(40px, -60px) scale(1.2); }
+        }
+        @keyframes float-orb-2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-50px, 40px) scale(1.1); }
+        }
+        @keyframes float-orb-3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(30px, 30px) scale(1.15); }
+        }
+        .animate-float-1 {
+          animation: float-orb-1 18s ease-in-out infinite;
+        }
+        .animate-float-2 {
+          animation: float-orb-2 22s ease-in-out infinite;
+        }
+        .animate-float-3 {
+          animation: float-orb-3 26s ease-in-out infinite;
+        }
+      `}} />
 
-            {/* Middle Row: Links Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-6">
-              
-              {/* Col 1: Brand */}
-              <div className="lg:col-span-4 xl:col-span-4 lg:pr-8">
-                <Link href="/" className="inline-block mb-6">
-                  <Image 
-                    src="/logo/logo-by-soulswed.png"
-                    alt="SoulsWed Logo"
-                    width={180}
-                    height={54}
-                    className="h-12 w-auto"
-                  />
-                </Link>
-                <p className="text-[17px] italic text-slate-700 mb-5 font-serif">
-                  "Make your wedding flawless."
-                </p>
-                <p className="text-xs text-slate-500 leading-relaxed mb-8 max-w-sm">
-                  India's premium wedding marketplace for destination weddings across India and beyond. Providing luxury planners, venues, and media.
-                </p>
-                
-                <div className="flex flex-wrap gap-2.5">
-                  {socialLinks.map(({ icon: Icon, href, label }) => (
-                    <a
-                      key={href}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={label}
-                      className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-slate-200 text-slate-400 hover:text-amber-700 hover:border-amber-200 hover:bg-amber-50 transition-all duration-300"
-                    >
-                      <Icon className="w-4 h-4" />
-                    </a>
-                  ))}
-                </div>
-              </div>
+      {/* Floating capsule footer with increased dynamic width */}
+      <div className="max-w-[96%] xl:max-w-[1440px] 2xl:max-w-[1580px] mx-auto px-4 pb-6 w-full">
+      <footer
+        className="relative overflow-hidden rounded-[40px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)] noise-texture transition-all duration-500 hover:shadow-[0_32px_80px_rgba(252,203,17,0.18)]"
+        style={{
+          background: "linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 253, 245, 0.97) 100%)",
+        }}
+      >
+        {/* Top gold/amber gradient highlight line */}
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-yellow-400 via-amber-400 to-orange-500 z-20" />
 
-              {/* Col 2: COMMUNITY */}
-              <div className="lg:col-span-2">
-                <h4 className="text-[10px] font-bold text-amber-700 tracking-widest uppercase mb-6 flex items-center gap-2">
-                  <span className="w-4 h-[1px] bg-amber-700/40"></span>
-                  Community
-                </h4>
-                <ul className="flex flex-col gap-3.5">
-                  {aboutLinks.map(link => (
-                    <li key={link.label}>
-                      <Link href={link.href} className="text-[13px] text-slate-500 hover:text-amber-700 transition-colors font-medium">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        {/* Animated glowing decorative gradient orbs */}
+        <div className="absolute -right-32 -bottom-32 w-[450px] h-[450px] rounded-full bg-gradient-to-br from-yellow-300/20 via-amber-200/15 to-orange-200/5 blur-3xl pointer-events-none z-0 animate-float-1" />
+        <div className="absolute -left-28 -top-28 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-yellow-200/15 via-amber-100/10 to-transparent blur-3xl pointer-events-none z-0 animate-float-2" />
+        <div className="absolute left-1/3 top-1/4 w-[450px] h-[450px] rounded-full bg-gradient-to-br from-yellow-100/10 via-amber-50/5 to-transparent blur-3xl pointer-events-none z-0 animate-float-3" />
 
-              {/* Col 3: SERVICES */}
-              <div className="lg:col-span-2">
-                <h4 className="text-[10px] font-bold text-amber-700 tracking-widest uppercase mb-6 flex items-center gap-2">
-                  <span className="w-4 h-[1px] bg-amber-700/40"></span>
-                  Services
-                </h4>
-                <ul className="flex flex-col gap-3.5">
-                  {servicesLinks.map(link => (
-                    <li key={link.label}>
-                      <Link href={link.href} className="text-[13px] text-slate-500 hover:text-amber-700 transition-colors font-medium">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        {/* Background image overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/shared/9368d5bcfe07eea016da3567805d57c9.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center pointer-events-none"
+            style={{ opacity: 0.02, mixBlendMode: "multiply" }}
+          />
+        </div>
 
-              {/* Col 4: VENDORS */}
-              <div className="lg:col-span-2">
-                <h4 className="text-[10px] font-bold text-amber-700 tracking-widest uppercase mb-6 flex items-center gap-2">
-                  <span className="w-4 h-[1px] bg-amber-700/40"></span>
-                  Vendors
-                </h4>
-                <ul className="flex flex-col gap-3.5">
-                  {vendorLinks.map(link => (
-                    <li key={link.label}>
-                      <Link href={link.href} className="text-[13px] text-slate-500 hover:text-amber-700 transition-colors font-medium">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Col 5: GET IN TOUCH */}
-              <div className="lg:col-span-2">
-                <h4 className="text-[10px] font-bold text-amber-700 tracking-widest uppercase mb-6 flex items-center gap-2">
-                  <span className="w-4 h-[1px] bg-amber-700/40"></span>
-                  Get In Touch
-                </h4>
-                <div className="flex flex-col gap-5">
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 shrink-0 rounded-full bg-[#fdf5eb] flex items-center justify-center text-amber-700">
-                      <Mail className="w-3.5 h-3.5" />
-                    </div>
-                    <div>
-                      <span className="block text-[9px] font-bold text-slate-400 tracking-widest uppercase mb-0.5">Email</span>
-                      <a href="mailto:hello@soulswed.com" className="text-[12px] text-slate-800 hover:text-amber-700 transition-colors font-medium">hello@soulswed.com</a>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 shrink-0 rounded-full bg-[#fdf5eb] flex items-center justify-center text-amber-700">
-                      <Phone className="w-3.5 h-3.5" />
-                    </div>
-                    <div>
-                      <span className="block text-[9px] font-bold text-slate-400 tracking-widest uppercase mb-0.5">Phone</span>
-                      <a href="tel:+919876543210" className="text-[12px] text-slate-800 hover:text-amber-700 transition-colors font-medium">+91 98765 43210</a>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 shrink-0 rounded-full bg-[#fdf5eb] flex items-center justify-center text-amber-700">
-                      <MapPin className="w-3.5 h-3.5" />
-                    </div>
-                    <div>
-                      <span className="block text-[9px] font-bold text-slate-400 tracking-widest uppercase mb-0.5">Location</span>
-                      <span className="text-[12px] text-slate-800 font-medium leading-tight inline-block">Serving couples across India & NRIs.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            </div>
-
-            {/* Bottom strip */}
-            <div className="mt-16 pt-8 border-t border-slate-200/60 flex flex-col md:flex-row items-center justify-between gap-4">
-              <p className="text-[10px] font-medium text-slate-400">
-                © 2026 SoulsWed. All rights reserved.
+        <div className="relative z-10 w-full mx-auto px-6 sm:px-10 lg:px-16 py-16 md:py-20">
+          
+          {/* Top Row: Newsletter Subscription */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-14 mb-14 border-b border-amber-100/50">
+            <div className="lg:col-span-7">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest text-amber-700 bg-amber-50 border border-amber-100/60 mb-3 uppercase">
+                ✨ Exclusive Club
+              </span>
+              <h3 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-800">
+                Join the <span className="bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">SoulsWed Circle</span>
+              </h3>
+              <p className="text-sm text-slate-500 mt-2.5 max-w-xl font-medium leading-relaxed">
+                Subscribe to receive curated destination wedding inspiration, venue guides, and exclusive partner promotions.
               </p>
-              <p className="text-[10px] font-medium text-slate-400 tracking-wide uppercase">
-                India's Premium Wedding Marketplace • Trusted Platform
-              </p>
+            </div>
+            <div className="lg:col-span-5 flex items-center">
+              <form onSubmit={(e) => e.preventDefault()} className="relative w-full flex items-center">
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-6 py-4.5 pr-40 outline-none transition-all text-sm text-slate-800 shadow-inner font-medium placeholder-slate-400"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-2 top-2 bottom-2 px-7 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 text-white font-bold text-xs tracking-wider uppercase hover:shadow-[0_4px_15px_rgba(238,116,41,0.35)] hover:from-amber-600 hover:to-orange-600 transition-all duration-300 hover:scale-102 cursor-pointer"
+                >
+                  Subscribe
+                </button>
+              </form>
             </div>
           </div>
-        </footer>
+
+          {/* Middle Row: Links Grid (Asymmetrical Layout) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8">
+
+            {/* Col 1 — Brand (Spans 2 columns on lg for gorgeous breathing room) */}
+            <div className="lg:col-span-2 lg:pr-12">
+              <Link href="/" className="flex items-center mb-5 group inline-flex">
+                <Image 
+                  src="/logo/logo-by-soulswed.png"
+                  alt="SoulsWed Logo"
+                  width={200}
+                  height={60}
+                  className="h-8 md:h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+                />
+              </Link>
+              <p className="text-base leading-relaxed mb-2 font-bold text-slate-700">
+                Flawless Moves. Perfect Events.
+              </p>
+              <p className="text-xs leading-relaxed mb-8 text-slate-500 font-medium max-w-sm">
+                India&apos;s premium wedding marketplace for destination weddings across India and beyond. Providing luxury planners, venues, and media.
+              </p>
+              <div className="flex gap-3">
+                {socialLinks.map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={href}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-115 hover:-translate-y-1 hover:bg-gradient-to-tr hover:from-amber-400 hover:to-orange-500 text-amber-700 hover:text-white border border-amber-100 hover:border-transparent bg-amber-50/40 shadow-xs"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Col 2 — About Us */}
+            <div>
+              <h4 className="text-xs font-extrabold mb-6 uppercase tracking-widest text-slate-400">
+                About Us
+              </h4>
+              <ul className="flex flex-col gap-4.5">
+                {aboutLinks.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="group text-sm font-semibold text-slate-600 hover:text-amber-600 transition-all duration-200 flex items-center gap-1.5"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 opacity-0 scale-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
+                      <span className="group-hover:translate-x-1.5 transition-transform duration-200 flex items-center gap-0.5">
+                        {item.label}
+                        <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-amber-500 font-light">→</span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Col 3 — Our Services */}
+            <div>
+              <h4 className="text-xs font-extrabold mb-6 uppercase tracking-widest text-slate-400">
+                Our Services
+              </h4>
+              <ul className="flex flex-col gap-4.5">
+                {services.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="group text-sm font-semibold text-slate-600 hover:text-amber-600 transition-all duration-200 flex items-center gap-1.5"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 opacity-0 scale-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
+                      <span className="group-hover:translate-x-1.5 transition-transform duration-200 flex items-center gap-0.5">
+                        {item.label}
+                        <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-amber-500 font-light">→</span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Col 4 — Contact Info (Bento interactive cards) */}
+            <div>
+              <h4 className="text-xs font-extrabold mb-6 uppercase tracking-widest text-slate-400">
+                Contact Info
+              </h4>
+              <ul className="flex flex-col gap-3.5">
+                {contactItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.label} className="flex items-start gap-3 group bg-white/40 hover:bg-white/90 border border-amber-100/30 hover:border-amber-200/60 rounded-full pl-4 pr-6 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xs">
+                      <div
+                        className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110 border border-amber-100"
+                        style={{ background: "rgba(252, 203, 17, 0.12)" }}
+                      >
+                        <Icon className="w-4 h-4 text-amber-700" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-800">
+                          {item.label}
+                        </p>
+                        {item.lines.map((line) => (
+                          <p key={line} className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                            {line}
+                          </p>
+                        ))}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom strip */}
+        <div
+          className="relative z-10 border-t py-7 px-8"
+          style={{ borderColor: "rgba(252, 203, 17, 0.12)" }}
+        >
+          <div className="max-w-none mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-slate-400 font-semibold">
+              © 2026 SoulsWed. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6">
+              <Link href="/privacy" className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
+                Terms of Service
+              </Link>
+              <span className="text-xs flex items-center gap-1 text-slate-400 font-semibold">
+                Made with
+                <Heart className="w-3 h-3 fill-current mx-0.5 text-red-500 animate-pulse" />
+                in India
+              </span>
+            </div>
+          </div>
+        </div>
+      </footer>
       </div>
 
       {/* Floating Action Buttons (Scroll to Top & WhatsApp) */}
@@ -261,22 +325,31 @@ export default function Footer() {
         {/* Scroll to Top */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg transition-all hover:scale-110 hover:shadow-xl bg-white text-amber-700 border border-slate-100"
+          className="flex items-center justify-center w-14 h-14 rounded-full shadow-xl transition-all hover:scale-110 hover:shadow-2xl group ml-auto"
+          style={{
+            background: "var(--sw-orange)",
+            color: "#fff",
+            boxShadow: "0 8px 24px rgba(238,116,41,0.45)",
+          }}
           aria-label="Scroll to top"
         >
-          <ChevronUp className="w-6 h-6" />
+          <ChevronUp className="w-7 h-7 text-white transition-colors" />
         </button>
         
         {/* WhatsApp */}
         <a
-          href="https://wa.me/919600043002"
+          href="/images/shared/2cf5849d13c2075ac81cd9d3fdf4a688.jpg"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg transition-all hover:scale-110 hover:shadow-xl text-white"
-          style={{ background: "#25D366" }}
+          className="flex items-center justify-center w-14 h-14 rounded-full shadow-xl transition-all hover:scale-110 hover:shadow-2xl"
+          style={{
+            background: "#25D366",
+            color: "#fff",
+            boxShadow: "0 8px 24px rgba(37, 211, 102, 0.45)",
+          }}
           aria-label="Contact on WhatsApp"
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.662-2.06-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
           </svg>
         </a>
