@@ -33,7 +33,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-type UserRole = "user" | "vendor" | "admin";
+type UserRole = "user" | "vendor";
 
 const categories = [
   "Venues",
@@ -61,19 +61,12 @@ const ROLES: { id: UserRole; label: string; icon: React.ReactNode; subtitle: str
     icon: <Store className="w-4 h-4" />,
     subtitle: "List your services and start receiving booking inquiries",
   },
-  {
-    id: "admin",
-    label: "Admin",
-    icon: <ShieldCheck className="w-4 h-4" />,
-    subtitle: "Restricted — authorized personnel only",
-  },
 ];
 
 // Per-role accent palette — identical to the login page
 const ACCENT: Record<UserRole, { from: string; to: string; glow: string }> = {
   user:   { from: "#f97316", to: "#ea580c", glow: "rgba(249,115,22,0.25)" },
   vendor: { from: "#0ea5e9", to: "#0284c7", glow: "rgba(14,165,233,0.25)" },
-  admin:  { from: "#7c3aed", to: "#6d28d9", glow: "rgba(124,58,237,0.25)" },
 };
 
 export default function SignupPage() {
@@ -90,7 +83,7 @@ function SignupContent() {
 
   const initialRole = (): UserRole => {
     const p = searchParams.get("role");
-    return p === "vendor" || p === "admin" || p === "user" ? p : "user";
+    return p === "vendor" || p === "user" ? p : "user";
   };
 
   const [role, setRole] = useState<UserRole>(initialRole);
@@ -107,19 +100,24 @@ function SignupContent() {
   const [category, setCategory]         = useState(categories[0]);
   const [city, setCity]                 = useState(cities[0]);
 
-  // Admin-only
-  const [accessCode, setAccessCode] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [shake, setShake]     = useState(false);
 
+  // Sync URL changes to state
+  useEffect(() => {
+    const p = searchParams.get("role");
+    if (p === "vendor" || p === "user") {
+      setRole(p);
+    }
+  }, [searchParams]);
+
   // Reset fields on role change
   useEffect(() => {
     setName(""); setEmail(""); setPassword(""); setPhone("");
     setBusinessName(""); setCategory(categories[0]); setCity(cities[0]);
-    setAccessCode(""); setError(null); setSuccess(false); setShowPassword(false);
+    setError(null); setSuccess(false); setShowPassword(false);
   }, [role]);
 
   useLayoutEffect(() => {
@@ -148,18 +146,12 @@ function SignupContent() {
       triggerShake();
       return;
     }
-    if (role === "admin" && !accessCode) {
-      setError("Admin registration requires an Access Code.");
-      triggerShake();
-      return;
-    }
 
     setLoading(true);
     try {
       let payload: Record<string, string> = { role, name, email, password };
       if (role === "user")   payload = { ...payload, phone };
       if (role === "vendor") payload = { ...payload, businessName, phone, category, city };
-      if (role === "admin")  payload = { ...payload, accessCode };
 
       const res = await fetch("/api/auth/signup", {
         method: "POST",
@@ -243,7 +235,12 @@ function SignupContent() {
               <button
                 key={r.id}
                 type="button"
-                onClick={() => setRole(r.id)}
+                onClick={() => {
+                  setRole(r.id);
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set("role", r.id);
+                  router.replace(`?${params.toString()}`, { scroll: false });
+                }}
                 className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-bold transition-all cursor-pointer relative ${
                   role === r.id ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
                 }`}
@@ -279,16 +276,6 @@ function SignupContent() {
                 {currentRole.subtitle}
               </motion.p>
             </AnimatePresence>
-
-            {/* Admin security banner */}
-            {role === "admin" && (
-              <div
-                className="mb-4 px-4 py-2 rounded-xl text-xs font-semibold text-center"
-                style={{ background: "#fdf4ff", border: "1px solid #e9d5ff", color: "#7c3aed" }}
-              >
-                All access attempts are logged and monitored
-              </div>
-            )}
 
             <AnimatePresence mode="wait">
               {success ? (
@@ -376,8 +363,7 @@ function SignupContent() {
                   )}
 
                   {/* Phone (user + vendor) */}
-                  {role !== "admin" && (
-                    <Field label="Phone Number">
+                  <Field label="Phone Number">
                       <input
                         type="tel"
                         placeholder="Enter phone number"
@@ -389,7 +375,6 @@ function SignupContent() {
                       />
                       <Phone className={ICON_CLS} />
                     </Field>
-                  )}
 
                   {/* Email */}
                   <Field label="Email Address">
@@ -404,21 +389,6 @@ function SignupContent() {
                     />
                     <Mail className={ICON_CLS} />
                   </Field>
-
-                  {/* Admin Access Code */}
-                  {role === "admin" && (
-                    <Field label="Admin Access Code">
-                      <input
-                        type="password"
-                        placeholder="Enter authorization code"
-                        value={accessCode}
-                        onChange={(e) => setAccessCode(e.target.value)}
-                        className={INPUT_CLS}
-                        required
-                      />
-                      <KeyRound className={ICON_CLS} />
-                    </Field>
-                  )}
 
                   {/* Password with show/hide */}
                   <Field label="Password">
@@ -460,8 +430,7 @@ function SignupContent() {
                   </button>
 
                   {/* Google SSO (cosmetic) */}
-                  {role !== "admin" && (
-                    <>
+                  
                       <div className="relative flex items-center py-1">
                         <div className="flex-grow border-t border-slate-200" />
                         <span className="flex-shrink-0 mx-4 text-slate-400 text-[11px] font-semibold uppercase tracking-wider">or</span>
@@ -480,8 +449,7 @@ function SignupContent() {
                         </svg>
                         Continue with Google
                       </button>
-                    </>
-                  )}
+                    
 
                   {/* Already have an account */}
                   <p className="text-center text-slate-500 text-xs mt-1">

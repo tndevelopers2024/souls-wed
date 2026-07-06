@@ -81,6 +81,14 @@ function LoginContent() {
   const [success, setSuccess] = useState(false);
   const [shake, setShake] = useState(false);
 
+  // Sync URL changes to state
+  useEffect(() => {
+    const p = searchParams.get("role");
+    if (p === "vendor" || p === "admin" || p === "user") {
+      setRole(p);
+    }
+  }, [searchParams]);
+
   // Reset form when switching roles
   useEffect(() => {
     setEmail("");
@@ -222,7 +230,12 @@ function LoginContent() {
               <button
                 key={r.id}
                 type="button"
-                onClick={() => setRole(r.id)}
+                onClick={() => {
+                  setRole(r.id);
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set("role", r.id);
+                  router.replace(`?${params.toString()}`, { scroll: false });
+                }}
                 className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-bold transition-all cursor-pointer relative ${
                   role === r.id ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
                 }`}
