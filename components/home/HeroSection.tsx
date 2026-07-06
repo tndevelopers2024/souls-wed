@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { ChevronDown, MapPin, Calendar, Users, Layers } from "lucide-react";
+import { ChevronDown, MapPin, Calendar, Users, Layers, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 const destinations = [
   "Paris",
@@ -157,55 +157,64 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.9, ease: [0.4, 0, 0.2, 1] }}
           className="w-full max-w-5xl xl:max-w-6xl"
         >
-          <div className="">
-            <div className="flex flex-col lg:flex-row gap-3">
-              {/* Destination */}
-              <div className="flex-1 min-w-0 flex items-center gap-3 glass-input px-4 py-3">
-                <MapPin className="w-5 h-5 flex-shrink-0" style={{ color: "var(--sw-orange)" }} />
-                <select defaultValue="" className="bg-transparent w-full text-gray-900 text-sm font-semibold outline-none truncate appearance-none cursor-pointer">
-                  <option value="" disabled hidden className="text-gray-500">Destination</option>
-                  {destinations.map((d) => (
-                    <option key={d} value={d} className="text-gray-900">{d}</option>
-                  ))}
-                </select>
-              </div>
+          <div className="bg-white/95 backdrop-blur-md rounded-[32px] md:rounded-full p-2 md:p-2.5 shadow-2xl border border-white/30 flex flex-col md:flex-row items-center relative z-20 w-full">
+            
+            {/* Destination */}
+            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center group relative">
+              <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-gray-800 cursor-pointer mb-0.5">Destination</label>
+              <select defaultValue="" className="bg-transparent w-full text-gray-900 text-[15px] font-semibold outline-none truncate appearance-none cursor-pointer p-0 m-0 leading-tight">
+                <option value="" disabled hidden className="text-gray-400 font-normal">Where to?</option>
+                {destinations.map((d) => (
+                  <option key={d} value={d} className="text-gray-900">{d}</option>
+                ))}
+              </select>
+            </div>
 
-              {/* Date */}
-              <div className="flex-1 min-w-0 flex items-center gap-3 glass-input px-4 py-3">
-                <Calendar className="w-5 h-5 flex-shrink-0" style={{ color: "var(--sw-gold)" }} />
-                <input
-                  type="text"
-                  placeholder="Date"
-                  className="bg-transparent w-full text-gray-900 placeholder-gray-500 text-sm font-semibold outline-none truncate"
-                  onFocus={(e) => (e.target.type = "date")}
-                  onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
-                />
-              </div>
+            <div className="hidden md:block w-px h-10 bg-gray-200" />
 
-              {/* Guests */}
-              <div className="flex-1 min-w-0 flex items-center gap-3 glass-input px-4 py-3">
-                <Users className="w-5 h-5 flex-shrink-0" style={{ color: "var(--sw-steel)" }} />
-                <input
-                  type="number"
-                  placeholder="Guests"
-                  min={1}
-                  className="bg-transparent w-full text-gray-900 placeholder-gray-500 text-sm font-semibold outline-none truncate"
-                />
-              </div>
+            {/* Date */}
+            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center group relative">
+              <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-gray-800 cursor-pointer mb-0.5">Date</label>
+              <input
+                type="text"
+                placeholder="Add dates"
+                className="bg-transparent w-full text-gray-900 placeholder-gray-400 text-[15px] font-semibold outline-none truncate p-0 m-0 cursor-pointer leading-tight"
+                onFocus={(e) => (e.target.type = "date")}
+                onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
+              />
+            </div>
 
-              {/* Category */}
-              <div className="flex-1 min-w-0 flex items-center gap-3 glass-input px-4 py-3">
-                <Layers className="w-5 h-5 flex-shrink-0" style={{ color: "var(--sw-steel)" }} />
-                <select className="bg-transparent w-full text-gray-900 text-sm font-semibold outline-none truncate appearance-none">
-                  {categories.map((c) => (
-                    <option key={c} value={c} className="text-gray-900">{c}</option>
-                  ))}
-                </select>
-              </div>
+            <div className="hidden md:block w-px h-10 bg-gray-200" />
 
-              {/* CTA */}
-              <button className="btn-glass whitespace-nowrap !rounded-full">
-                Search Vendors
+            {/* Guests */}
+            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center group relative">
+              <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-gray-800 cursor-pointer mb-0.5">Guests</label>
+              <input
+                type="number"
+                placeholder="Add guests"
+                min={1}
+                className="bg-transparent w-full text-gray-900 placeholder-gray-400 text-[15px] font-semibold outline-none truncate p-0 m-0 cursor-pointer leading-tight"
+              />
+            </div>
+
+            <div className="hidden md:block w-px h-10 bg-gray-200" />
+
+            {/* Category */}
+            <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center group relative">
+              <label className="text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-gray-800 cursor-pointer mb-0.5">Category</label>
+              <select className="bg-transparent w-full text-gray-900 text-[15px] font-semibold outline-none truncate appearance-none cursor-pointer p-0 m-0 leading-tight">
+                <option value="" disabled hidden className="text-gray-400 font-normal">All Categories</option>
+                {categories.map((c) => (
+                  <option key={c} value={c} className="text-gray-900">{c}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* CTA */}
+            <div className="w-full md:w-auto mt-2 md:mt-0 md:ml-2">
+              <button className="w-full md:w-auto flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 md:py-3.5 rounded-full font-bold transition-all duration-300 shadow-lg shadow-orange-500/25 h-[52px]">
+                <Search className="w-4 h-4 text-white font-bold" strokeWidth={3} />
+                <span className="text-[15px]">Search</span>
               </button>
             </div>
 
