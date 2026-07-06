@@ -33,7 +33,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-type UserRole = "user" | "vendor";
+type UserRole = "user" | "vendor" | "admin";
 
 const categories = [
   "Venues",
@@ -61,12 +61,20 @@ const ROLES: { id: UserRole; label: string; icon: React.ReactNode; subtitle: str
     icon: <Store className="w-4 h-4" />,
     subtitle: "List your services and start receiving booking inquiries",
   },
+
+  {
+    id: "admin",
+    label: "Admin",
+    icon: <ShieldCheck className="w-4 h-4" />,
+    subtitle: "Restricted — authorized personnel only",
+  },
 ];
 
 // Per-role accent palette — identical to the login page
 const ACCENT: Record<UserRole, { from: string; to: string; glow: string }> = {
   user:   { from: "#f97316", to: "#ea580c", glow: "rgba(249,115,22,0.25)" },
   vendor: { from: "#0ea5e9", to: "#0284c7", glow: "rgba(14,165,233,0.25)" },
+  admin:  { from: "#7c3aed", to: "#6d28d9", glow: "rgba(124,58,237,0.25)" },
 };
 
 export default function SignupPage() {
@@ -83,7 +91,7 @@ function SignupContent() {
 
   const initialRole = (): UserRole => {
     const p = searchParams.get("role");
-    return p === "vendor" || p === "user" ? p : "user";
+    return p === "vendor" || p === "admin" || p === "user" ? p : "user";
   };
 
   const [role, setRole] = useState<UserRole>(initialRole);
@@ -108,7 +116,7 @@ function SignupContent() {
   // Sync URL changes to state
   useEffect(() => {
     const p = searchParams.get("role");
-    if (p === "vendor" || p === "user") {
+    if (p === "vendor" || p === "admin" || p === "user") {
       setRole(p);
     }
   }, [searchParams]);
@@ -290,6 +298,33 @@ function SignupContent() {
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 mb-1">Registration Complete!</h3>
                   <p className="text-sm text-slate-500">Redirecting to sign in…</p>
+                </motion.div>
+              ) : role === "admin" ? (
+                <motion.div
+                  key="admin-redirect"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex flex-col items-center justify-center py-6 text-center"
+                >
+                  <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 mb-6 text-2xl">
+                    <ShieldCheck className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">Admin Portal</h3>
+                  <p className="text-sm text-slate-500 mb-8 px-2">
+                    New admin accounts cannot be created publicly. Please log in to the admin console if you have access.
+                  </p>
+                  <Link
+                    href="/login?role=admin"
+                    className="w-full py-3.5 rounded-2xl font-bold text-sm tracking-wide text-white flex items-center justify-center transition-all cursor-pointer"
+                    style={{
+                      background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
+                      boxShadow: `0 8px 24px ${accent.glow}`,
+                    }}
+                  >
+                    Go to Admin Login
+                  </Link>
                 </motion.div>
               ) : (
                 <motion.form
