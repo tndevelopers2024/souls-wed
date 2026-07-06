@@ -97,15 +97,14 @@ export default function WeddingCategoriesSection() {
               key={cat.slug}
               href={`/category/${cat.slug}`}
               variants={itemVariants}
-              whileHover={{ y: -6 }}
-              className="relative h-44 md:h-56 rounded-[32px] overflow-hidden cursor-pointer group"
+              className="relative h-44 md:h-56 rounded-[32px] overflow-hidden cursor-pointer"
             >
               <Image
                 src={cat.image}
                 alt={cat.name}
                 fill
                 sizes="(max-width: 640px) 50vw, 33vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                className="object-cover"
               />
               {/* Gradient */}
               <div
@@ -114,11 +113,6 @@ export default function WeddingCategoriesSection() {
                   background:
                     "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(47,56,67,0.78) 100%)",
                 }}
-              />
-              {/* Orange accent on hover */}
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: "rgba(238,116,41,0.18)" }}
               />
               {/* Text */}
               <div className="absolute bottom-0 left-0 right-0 p-5">
