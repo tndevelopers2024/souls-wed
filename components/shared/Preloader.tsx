@@ -19,7 +19,7 @@ export default function Preloader() {
     const timer = setTimeout(() => {
       setIsLoading(false);
       sessionStorage.setItem("hasSeenPreloader", "true");
-    }, 2500); // 2.5 seconds display
+    }, 5000); // 5 seconds display
 
     return () => clearTimeout(timer);
   }, []);
