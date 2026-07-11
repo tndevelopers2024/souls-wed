@@ -24,17 +24,8 @@ export default function UserDashboard() {
   const [loadingData, setLoadingData] = useState(false);
   const [bookings, setBookings] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => 
-    typeof window !== "undefined" && localStorage.getItem("darkMode") === "true"
-  );
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const toggleDarkMode = () => {
-    const next = !isDarkMode;
-    setIsDarkMode(next);
-    localStorage.setItem("darkMode", String(next));
-  };
+
 
   const fetchBookings = async () => {
     setLoadingData(true);
@@ -82,7 +73,8 @@ export default function UserDashboard() {
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
-        window.location.href = "/";
+        setUser(null);
+        router.push("/");
       }
     } catch (err) {
       console.error("Logout failed", err);
@@ -106,36 +98,43 @@ export default function UserDashboard() {
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
-  // Theme styling CSS classes
-  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#fafaf9] text-stone-800";
-  const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200 bg-white/70 text-stone-600";
-  const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800 text-stone-300" : "bg-white/70 border-stone-200 text-stone-600";
-  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800 text-white" : "bg-white/70 border-stone-200 text-stone-800";
-  const headingText = isDarkMode ? "text-white" : "text-stone-900";
-  const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
+  // Clean & Simple UI Theme Classes
+  const containerBg = "bg-slate-50/50 text-slate-800";
+  const sidebarClass = "border-slate-100 bg-white text-slate-600 shadow-[0_2px_10px_rgba(0,0,0,0.02)]";
+  const cardClass = "bg-white border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-slate-700";
+  const headerClass = "bg-white border-slate-100 text-slate-800";
+  const headingText = "text-slate-900";
+  const dividerClass = "border-slate-100";
 
   return (
-    <div className={`h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
-      
-      {/* Ambient backgrounds */}
-      <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[120px]" />
-      <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[120px]" />
- 
-      {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
-      <aside className={`hidden lg:flex flex-col border rounded-3xl m-3 h-[calc(100vh-2rem)] sticky top-4 shrink-0 z-30 shadow-none transition-all duration-300 ${sidebarClass} ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
-        {/* Branding header with collapse button */}
-        <div className={`p-6 border-b flex items-center justify-between ${dividerClass}`}>
-          {!sidebarCollapsed ? (
-            <div className="flex flex-col gap-1">
-              <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SoulsWed</h2>
-              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest">Couple Portal</p>
-            </div>
-          ) : (
-            <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SW</h2>
-          )}
+    <div className="min-h-screen bg-slate-50/50 font-body pt-32 pb-16 px-4">
+      {/* Ambient Background Glows */}
+      <div className="fixed w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.02] pointer-events-none rounded-full bg-orange-500 blur-[120px]" />
+      <div className="fixed w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.02] pointer-events-none rounded-full bg-amber-500 blur-[120px]" />
+
+      <div className="max-w-5xl mx-auto relative z-10">
+        
+        {/* Header section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 className="text-3xl font-extrabold text-slate-900 font-serif tracking-tight">
+              {activeTab === "overview" ? `Welcome, ${user.name}!` : menuItems.find(i=>i.id===activeTab)?.label}
+            </h1>
+            <p className="text-sm text-slate-500 font-medium mt-1">
+              {activeTab === "overview" ? "Plan your dream wedding, track bookings, and connect with partners." : "Manage your couple portal options."}
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="self-start md:self-auto flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-sm font-bold text-red-600 hover:bg-red-50 hover:border-red-100 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            Sign Out
+          </button>
         </div>
- 
-        <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5">
+
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-6 border-b border-slate-200 mb-8 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
           {menuItems.map((item) => {
             const isActive = activeTab === item.id;
             const Icon = item.icon;
@@ -143,182 +142,21 @@ export default function UserDashboard() {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id as TabType)}
-                className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-                  isActive 
-                    ? "bg-orange-500 text-white" 
-                    : isDarkMode
-                      ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
+                className={`flex items-center gap-2 pb-3 px-1 border-b-2 font-bold text-sm whitespace-nowrap transition-colors ${
+                  isActive ? "border-orange-500 text-orange-600" : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
                 }`}
-                title={item.label}
               >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-[18px] h-[18px] shrink-0" />
-                  {!sidebarCollapsed && <span>{item.label}</span>}
-                </div>
-                {!sidebarCollapsed && item.count !== undefined && item.count !== null && (
-                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                    isActive 
-                      ? "bg-white/20 text-white" 
-                      : isDarkMode 
-                        ? "bg-stone-800 text-stone-400 border border-stone-700"
-                        : "bg-stone-100 text-stone-500 border border-stone-200"
-                  }`}>
-                    {item.count}
-                  </span>
-                )}
-                {sidebarCollapsed && item.count !== undefined && item.count !== null && (
-                  <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${
-                    isActive 
-                      ? "bg-white text-orange-600" 
-                      : isDarkMode 
-                        ? "bg-stone-800 text-stone-400 border border-stone-700"
-                        : "bg-stone-100 text-stone-500 border border-stone-200"
-                  }`}>
+                <Icon className="w-4 h-4 shrink-0" />
+                {item.label}
+                {item.count !== undefined && item.count !== null && (
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] ml-1 ${isActive ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'}`}>
                     {item.count}
                   </span>
                 )}
               </button>
             );
           })}
-        </nav>
- 
-        <div className={`p-4 border-t flex flex-col gap-1.5 ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : 'bg-stone-50/50'} rounded-b-3xl`}>
-          <button 
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-              isDarkMode 
-                ? "text-stone-400 hover:text-white hover:bg-stone-800/60" 
-                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
-            }`}
-            title={sidebarCollapsed ? "Expand sidebar" : "Hide sidebar"}
-          >
-            <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-            </svg>
-            {!sidebarCollapsed && <span>Hide sidebar</span>}
-          </button>
-
-          <button 
-            onClick={toggleDarkMode}
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-              isDarkMode 
-                ? "text-stone-400 hover:text-white hover:bg-stone-800/60" 
-                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
-            }`}
-            title={isDarkMode ? "Switch to Light mode" : "Switch to Dark mode"}
-          >
-            {isDarkMode ? (
-              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            ) : (
-              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            )}
-            {!sidebarCollapsed && <span>{isDarkMode ? "Light mode" : "Dark mode"}</span>}
-          </button>
-
-          <div className="my-1 border-t border-transparent" />
-
-          <div className={`flex items-center justify-between p-2 rounded-xl transition-colors ${isDarkMode ? 'bg-stone-900/50 hover:bg-stone-800' : 'bg-white hover:bg-stone-50 border border-stone-100'}`}>
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs uppercase">
-                {user.name.charAt(0)}
-              </div>
-              {!sidebarCollapsed && (
-                <div className="min-w-0 flex-1 pr-2">
-                  <h4 className={`font-bold text-xs truncate ${headingText}`}>{user.name}</h4>
-                  <p className="text-[10px] font-medium text-stone-500 truncate">{user.email}</p>
-                </div>
-              )}
-            </div>
-            
-            <button 
-              onClick={handleLogout} 
-              title="Sign Out" 
-              className={`shrink-0 p-1.5 rounded-lg transition-colors cursor-pointer ${sidebarCollapsed ? 'mx-auto' : ''} ${isDarkMode ? 'text-stone-400 hover:text-red-400 hover:bg-red-950/30' : 'text-stone-500 hover:text-red-500 hover:bg-red-50'}`}
-            >
-              <svg className="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
-          </div>
         </div>
-      </aside>
- 
-      {/* ─── MAIN CONTENT AREA ─── */}
-      <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
-        
-        {/* Floating Top Header */}
-        <header className={`border rounded-2xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-300 ${headerClass}`}>
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
-                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
-              }`}
-            >
-              {mobileMenuOpen ? "[Close]" : "[Menu]"}
-            </button>
-            <div>
-              <h1 className={`font-extrabold text-lg tracking-tight font-serif capitalize ${headingText}`}>
-                {activeTab === "overview" ? `Welcome, ${user.name}!` : menuItems.find(i=>i.id===activeTab)?.label}
-              </h1>
-              <p className="text-[10px] text-stone-500 font-semibold mt-0.5">
-                {activeTab === "overview" ? "Plan your dream wedding, track bookings, and connect with partners." : "Manage your couple portal options."}
-              </p>
-            </div>
-          </div>
-        </header>
-
-        {/* Mobile menu panel */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className={`lg:hidden border rounded-2xl p-4 shadow-none flex flex-col gap-2 z-20 ${
-                isDarkMode ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-stone-200 text-stone-800"
-              }`}
-            >
-              {menuItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id as TabType);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
-                    activeTab === item.id 
-                      ? "bg-orange-500 text-white" 
-                      : isDarkMode
-                        ? "text-stone-300 hover:bg-stone-800"
-                        : "text-stone-600 hover:bg-stone-50"
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  {item.count !== undefined && item.count !== null && (
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                      activeTab === item.id ? "bg-white/20 text-white" : isDarkMode ? "bg-stone-800 text-stone-400" : "bg-stone-100 text-stone-600"
-                    }`}>
-                      {item.count}
-                    </span>
-                  )}
-                </button>
-              ))}
-              <hr className={`my-2 ${dividerClass}`} />
-              <button 
-                onClick={handleLogout}
-                className="flex items-center justify-center gap-2 p-3 bg-red-50 text-red-700 font-bold rounded-xl text-xs"
-              >
-                Sign Out
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Tab contents */}
         <AnimatePresence mode="wait">
@@ -327,47 +165,45 @@ export default function UserDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.15 }}
-            className="flex-1"
+            transition={{ duration: 0.2 }}
           >
             
             {/* OVERVIEW SECTION */}
             {activeTab === "overview" && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                {/* Profile Card & Wedding Prep */}
+                {/* Left Column: Profile & Wedding Prep */}
                 <div className="lg:col-span-1 flex flex-col gap-6">
-                  
                   {/* Details card */}
-                  <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
-                    <h3 className={`font-extrabold text-sm mb-4 ${headingText}`}>My Account Profile</h3>
-                    <div className={`flex flex-col gap-4 border-t pt-4 text-xs ${dividerClass}`}>
+                  <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                    <h3 className="font-extrabold text-sm mb-4 text-slate-900">My Account Profile</h3>
+                    <div className="flex flex-col gap-4 border-t border-slate-100 pt-4 text-xs">
                       <div>
-                        <span className="text-[10px] text-stone-400 block font-bold uppercase">Name</span>
-                        <span className={`font-semibold ${headingText}`}>{user.name}</span>
+                        <span className="text-[10px] text-slate-400 block font-bold uppercase">Name</span>
+                        <span className="font-semibold text-slate-900">{user.name}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-stone-400 block font-bold uppercase">Email Address</span>
-                        <span className={`font-semibold ${headingText}`}>{user.email}</span>
+                        <span className="text-[10px] text-slate-400 block font-bold uppercase">Email Address</span>
+                        <span className="font-semibold text-slate-900">{user.email}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-stone-400 block font-bold uppercase">Phone Number</span>
-                        <span className={`font-semibold ${headingText}`}>{user.phone || "No phone added"}</span>
+                        <span className="text-[10px] text-slate-400 block font-bold uppercase">Phone Number</span>
+                        <span className="font-semibold text-slate-900">{user.phone || "No phone added"}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Prep status card */}
-                  <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
-                    <h4 className={`font-extrabold text-sm mb-4 ${headingText}`}>Your Wedding Prep</h4>
-                    <div className="flex justify-between text-xs font-semibold text-stone-400 mb-2">
+                  <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                    <h4 className="font-extrabold text-sm mb-4 text-slate-900">Your Wedding Prep</h4>
+                    <div className="flex justify-between text-xs font-semibold text-slate-400 mb-2">
                       <span>Profile Completion</span>
                       <span className="text-orange-600 font-bold">65%</span>
                     </div>
-                    <div className="w-full h-2.5 rounded-full overflow-hidden mb-5 border bg-stone-100 border-stone-200">
+                    <div className="w-full h-2.5 rounded-full overflow-hidden mb-5 bg-slate-100 border border-slate-200">
                       <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full w-[65%]" />
                     </div>
-                    <ul className="text-xs text-stone-500 flex flex-col gap-2.5">
+                    <ul className="text-xs text-slate-500 flex flex-col gap-3">
                       <li className="flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Verify Email Address
                       </li>
@@ -378,17 +214,16 @@ export default function UserDashboard() {
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Save 3 wedding venues
                       </li>
                       <li className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-stone-300" /> Book your first vendor
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-300" /> Book your first vendor
                       </li>
                     </ul>
                   </div>
                 </div>
 
-                {/* Performance stats & Bookings grid */}
+                {/* Right Column: Performance stats & Bookings */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
-                  
                   {/* Floating Stats */}
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
                       { label: "Saved Venues", count: "0" },
                       { label: "Bookings", count: bookings.length },
@@ -396,21 +231,21 @@ export default function UserDashboard() {
                     ].map((stat, i) => (
                       <div
                         key={i}
-                        className={`p-5 rounded-3xl border flex flex-col gap-3 relative overflow-hidden group shadow-none transition-all duration-200 ${cardClass}`}
+                        className="bg-white p-5 rounded-3xl border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col gap-2"
                       >
-                        <span className={`text-2xl font-black ${headingText}`}>{stat.count}</span>
-                        <span className="text-xs font-bold text-stone-400">{stat.label}</span>
+                        <span className="text-3xl font-black text-slate-900">{stat.count}</span>
+                        <span className="text-xs font-bold text-slate-400">{stat.label}</span>
                       </div>
                     ))}
                   </div>
 
                   {/* Upcoming bookings list */}
-                  <div className={`rounded-3xl p-6 border shadow-none flex flex-col gap-5 min-h-[300px] ${cardClass}`}>
-                    <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
-                      <h3 className={`font-extrabold text-sm ${headingText}`}>Upcoming Bookings</h3>
+                  <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col gap-5 min-h-[300px]">
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                      <h3 className="font-extrabold text-sm text-slate-900">Upcoming Bookings</h3>
                       <button 
                         onClick={() => setActiveTab("bookings")}
-                        className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 cursor-pointer"
+                        className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 transition-colors"
                       >
                         View All
                       </button>
@@ -418,21 +253,21 @@ export default function UserDashboard() {
 
                     {bookings.length === 0 ? (
                       <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                        <h4 className="font-bold text-sm text-stone-700">No upcoming bookings yet</h4>
-                        <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
+                        <h4 className="font-bold text-sm text-slate-700">No upcoming bookings yet</h4>
+                        <p className="text-xs text-slate-400 max-w-xs mt-1 font-medium">
                           Start by browsing our premium verified venues directory.
                         </p>
                         <Link
                           href="/venues"
-                          className="mt-4 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-bold transition-all shadow-none"
+                          className="mt-5 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-bold transition-all shadow-sm"
                         >
                           Browse Venues
                         </Link>
                       </div>
                     ) : (
-                      <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-                        {bookings.slice(0, 6).map((booking) => (
-                          <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pb-2">
+                        {bookings.slice(0, 4).map((booking) => (
+                          <div key={booking._id} className="w-full">
                             <BookingCard booking={booking} />
                           </div>
                         ))}
@@ -445,25 +280,25 @@ export default function UserDashboard() {
 
             {/* BOOKINGS LIST SECTION */}
             {activeTab === "bookings" && (
-              <div className={`rounded-3xl p-6 border shadow-none min-h-[400px] flex flex-col gap-5 ${cardClass}`}>
-                <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
-                  <h3 className={`font-extrabold text-base ${headingText}`}>Booking History</h3>
-                  <span className="text-[10px] font-black border px-2.5 py-1 rounded-full uppercase tracking-wider bg-stone-100 border-stone-200 text-stone-600">
-                    {bookings.length} reservations total
+              <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] min-h-[400px] flex flex-col gap-6">
+                <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+                  <h3 className="font-extrabold text-lg text-slate-900">Booking History</h3>
+                  <span className="text-[10px] font-black border px-3 py-1 rounded-full uppercase tracking-wider bg-slate-50 border-slate-200 text-slate-600">
+                    {bookings.length} reservations
                   </span>
                 </div>
 
                 {bookings.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center py-16">
-                    <h4 className="font-bold text-stone-700 text-sm">No bookings recorded</h4>
-                    <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
+                    <h4 className="font-bold text-slate-700 text-sm">No bookings recorded</h4>
+                    <p className="text-xs text-slate-400 max-w-xs mt-1 font-medium">
                       Checkouts and active vendor deposits will show here.
                     </p>
                   </div>
                 ) : (
-                  <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-4">
                     {bookings.map((booking) => (
-                      <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
+                      <div key={booking._id} className="w-full">
                         <BookingCard booking={booking} />
                       </div>
                     ))}
@@ -474,39 +309,39 @@ export default function UserDashboard() {
 
             {/* SETTINGS SECTION */}
             {activeTab === "settings" && (
-              <div className={`rounded-3xl p-6 border shadow-none min-h-[400px] ${cardClass}`}>
-                <h3 className={`font-extrabold text-base pb-3 border-b mb-6 ${dividerClass} ${headingText}`}>Account Settings</h3>
+              <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] min-h-[400px]">
+                <h3 className="font-extrabold text-lg pb-4 border-b mb-8 border-slate-100 text-slate-900">Account Settings</h3>
                 
-                <div className="max-w-md flex flex-col gap-5 text-xs">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-bold text-stone-500 uppercase tracking-wider">Full Name</label>
+                <div className="max-w-md flex flex-col gap-6 text-sm">
+                  <div className="flex flex-col gap-2">
+                    <label className="font-bold text-slate-500 uppercase tracking-wider text-[11px]">Full Name</label>
                     <input 
                       type="text" 
                       defaultValue={user.name} 
-                      className="border rounded-xl px-4 py-2.5 outline-none font-semibold bg-white border-stone-200 text-stone-800" 
+                      className="border rounded-xl px-4 py-3 outline-none font-semibold bg-slate-50 border-slate-200 text-slate-800" 
                       disabled
                     />
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-bold text-stone-500 uppercase tracking-wider">Email Address</label>
+                  <div className="flex flex-col gap-2">
+                    <label className="font-bold text-slate-500 uppercase tracking-wider text-[11px]">Email Address</label>
                     <input 
                       type="email" 
                       defaultValue={user.email} 
-                      className="border rounded-xl px-4 py-2.5 outline-none font-semibold bg-white border-stone-200 text-stone-800" 
+                      className="border rounded-xl px-4 py-3 outline-none font-semibold bg-slate-50 border-slate-200 text-slate-800" 
                       disabled
                     />
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-bold text-stone-500 uppercase tracking-wider">Phone</label>
+                  <div className="flex flex-col gap-2">
+                    <label className="font-bold text-slate-500 uppercase tracking-wider text-[11px]">Phone</label>
                     <input 
                       type="text" 
                       placeholder="Add phone number" 
                       defaultValue={user.phone} 
-                      className="border rounded-xl px-4 py-2.5 outline-none font-semibold bg-white border-stone-200 text-stone-800" 
+                      className="border rounded-xl px-4 py-3 outline-none font-semibold bg-slate-50 border-slate-200 text-slate-800" 
                       disabled
                     />
                   </div>
-                  <p className="text-[10px] text-stone-400 font-medium">Profile parameters are currently managed by the administrator directory sync.</p>
+                  <p className="text-xs text-slate-400 font-medium mt-2">Profile parameters are currently managed by the administrator directory sync.</p>
                 </div>
               </div>
             )}

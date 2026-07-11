@@ -14,6 +14,8 @@ const VendorSchema = new Schema({
   rating:       { type: Number, default: 0 },
   reviewCount:  { type: Number, default: 0 },
   priceFrom:    { type: Number },
+  advancePercentage: { type: Number, default: 30 }, // Default 30% advance
+  unavailableDates: [{ type: Date }],
   images:       [{ type: String }],
   featured:     { type: Boolean, default: false },
   verified:     { type: Boolean, default: false },

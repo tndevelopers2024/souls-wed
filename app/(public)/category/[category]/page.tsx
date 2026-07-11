@@ -1,13 +1,7 @@
 import { redirect } from "next/navigation";
+import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 
-const vendorCategories = new Set([
-  "planners",
-  "photographers",
-  "decorators",
-  "makeup",
-  "caterers",
-  "djs",
-]);
+const vendorCategories = new Set(VENDOR_CATEGORIES.map(c => c.slug));
 
 export default async function CategoryRedirectPage({
   params,
@@ -21,8 +15,8 @@ export default async function CategoryRedirectPage({
   }
 
   if (vendorCategories.has(category)) {
-    redirect(`/vendors/${category}`);
+    redirect(`/${category}`);
   }
 
-  redirect("/vendors");
+  redirect("/");
 }

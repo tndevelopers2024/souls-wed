@@ -50,8 +50,8 @@ export async function POST(req: Request) {
     // ─── Step 2: Parse request body ───
     const body = await req.json();
     const {
-      venueId,
-      venueName,
+      providerId,
+      providerName,
       bookingType,
       eventDate,
       checkIn,
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     } = body;
 
     // ─── Step 3: Validate required fields ───
-    if (!venueId || !venueName || !bookingType || !totalAmount) {
+    if (!providerId || !providerName || !bookingType || !totalAmount) {
       return NextResponse.json(
         { message: "Missing required booking fields." },
         { status: 400 }
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
     await connectDB();
 
     let conflictQuery: Record<string, unknown> = {
-      venueId,
+      providerId,
       status: { $in: ["pending", "confirmed"] },
     };
 
@@ -133,8 +133,8 @@ export async function POST(req: Request) {
       userName: session.name,
       userEmail: session.email,
       userPhone: userPhone || "",
-      venueId,
-      venueName,
+      providerId,
+      providerName,
       bookingType,
       eventDate: bookingType === "venue" ? new Date(eventDate) : undefined,
       checkIn: bookingType === "room" ? new Date(checkIn) : undefined,

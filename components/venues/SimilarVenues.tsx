@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, ArrowRight, Crown } from "lucide-react";
 import type { Venue } from "@/lib/venues-data";

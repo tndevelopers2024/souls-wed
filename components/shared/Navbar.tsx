@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { CURRENCIES } from "@/lib/currency";
 
@@ -25,9 +26,10 @@ const ChevronDown = ({ className, style }: { className?: string; style?: React.C
   </svg>
 );
 
-const DollarSign = ({ className }: { className?: string }) => (
+const ChevronRight = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg
     className={className}
+    style={style}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
@@ -36,8 +38,7 @@ const DollarSign = ({ className }: { className?: string }) => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <line x1="12" x2="12" y1="2" y2="22" />
-    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    <path d="m9 18 6-6-6-6" />
   </svg>
 );
 
@@ -144,44 +145,106 @@ const Menu = ({ className }: { className?: string }) => (
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "Venues", href: "/venues" },
-  { label: "Planners", href: "/vendors/planners" },
-  { label: "Photographers", href: "/vendors/photographers" },
   {
-    label: "Other Services",
+    label: "The Collection",
     href: "#",
-    children: [
-      { label: "Decorators", href: "/vendors/decorators" },
-      { label: "Makeup Artists", href: "/vendors/makeup" },
-      { label: "Sakhi Service", href: "/services/sakhi" },
+    megaMenu: [
+      {
+        title: "VENUES & DESTINATIONS",
+        items: [
+          { label: "Luxury Venues", href: "/venues" },
+          { label: "Destination Weddings", href: "/destinations" },
+          { label: "Chartered Flights", href: "/chartered-airlines" },
+        ]
+      },
+      {
+        title: "PLANNING & DESIGN",
+        items: [
+          { label: "Expert Planners", href: "/planners" },
+          { label: "Event Decorators", href: "/decorators" },
+          { label: "Bespoke Florals", href: "/florists" },
+        ]
+      },
+      {
+        title: "STYLE & BEAUTY",
+        items: [
+          { label: "Bridal Makeup", href: "/makeup" },
+          { label: "Henna & Mehndi Artists", href: "/mehndi" },
+          { label: "Bridal Hair Styling", href: "/hairstylists" },
+        ]
+      },
+      {
+        title: "MEMORIES & CELEBRATION",
+        items: [
+          { label: "Photography & Video", href: "/photographers" },
+          { label: "Fine Catering", href: "/caterers" },
+          { label: "Dance & Choreography", href: "/choreographers" },
+        ]
+      }
     ],
   },
-  { label: "Destinations", href: "/destinations" },
-  { label: "About", href: "/about" },
+  { label: "Inspiration", href: "/inspiration" },
+  { label: "Our Story", href: "/about" },
+  { label: "Inquire", href: "/contact" },
 ];
 
-function DropdownMenu({ items }: { items: { label: string; href: string }[] }) {
+function DropdownMenu({ columns }: { columns: { title: string; items: { label: string; href: string }[] }[] }) {
+  const pathname = usePathname();
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
   return (
-    <div
-      className="absolute top-full left-0 mt-3 w-52 rounded-[24px] overflow-hidden z-50 animate-navbar-dropdown"
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 10, scale: 0.98 }}
+      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-6 w-max min-w-[800px] rounded-[32px] z-50 p-8 flex gap-12 before:absolute before:-top-8 before:left-0 before:w-full before:h-8 before:bg-transparent"
       style={{
-        background: "rgba(255,255,255,0.95)",
+        background: "rgba(255,244,230,0.98)",
         backdropFilter: "blur(20px)",
-        border: "1px solid rgba(0,0,0,0.07)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+        border: "1px solid rgba(238,116,41,0.15)",
+        boxShadow: "0 24px 60px rgba(238,116,41,0.12)",
       }}
+      onMouseLeave={() => setHoveredItem(null)}
     >
-      {items.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className="block px-5 py-3 text-sm font-medium transition-colors hover:bg-orange-50"
-          style={{ color: "var(--sw-navy)" }}
-        >
-          {item.label}
-        </Link>
+      {columns.map((column, colIdx) => (
+        <div key={colIdx} className="flex-1 flex flex-col gap-4 min-w-[180px]">
+          <h4 className="text-xs font-black text-orange-600 uppercase tracking-widest pb-3 mb-1 border-b border-orange-600/20">{column.title}</h4>
+          <div className="flex flex-col gap-2.5">
+            {column.items.map((item) => {
+              const isActive = pathname === item.href;
+              const isHovered = hoveredItem === item.href;
+              const showPill = isHovered || (!hoveredItem && isActive);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10"
+                  style={{ color: showPill ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                  onMouseEnter={() => setHoveredItem(item.href)}
+                >
+                  {showPill && (
+                    <motion.div
+                      layoutId="mega-menu-pill"
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                        border: "1px solid rgba(238, 116, 41, 0.2)",
+                        backdropFilter: "blur(12px)",
+                        zIndex: -1,
+                      }}
+                      transition={{ type: "spring", stiffness: 150, damping: 20 }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 
@@ -190,6 +253,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+  const [hoveredCurrency, setHoveredCurrency] = useState<string | null>(null);
   const { currency, setCurrency } = useCurrency();
 
   const currencyRef = useRef<HTMLDivElement>(null);
@@ -252,10 +317,10 @@ export default function Navbar() {
         setOpenDropdown(null);
       }
     };
-    
+
     // Initial check
     handleScroll();
-    
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     document.addEventListener("mousedown", handleOutsideClick);
     document.addEventListener("touchstart", handleOutsideClick);
@@ -276,195 +341,213 @@ export default function Navbar() {
   if (isAuthPage) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:px-6 sm:pt-5">
+    <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6">
       {/* Floating capsule bar */}
       <div
-        className="overflow-visible max-w-7xl mx-auto w-full transition-all duration-300 ease-in-out"
+        className="overflow-visible w-full md:w-fit mx-auto transition-all duration-300 ease-in-out"
         style={{
-          background: mobileOpen ? "rgba(255,255,255,0.98)" : (scrolled ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.95)"),
+          background: mobileOpen ? "rgba(255,244,230,0.98)" : (scrolled ? "rgba(255,244,230,0.85)" : "rgba(255,244,230,0.95)"),
           backdropFilter: "blur(24px) saturate(180%)",
-          border: "1px solid rgba(255,255,255,0.8)",
-          boxShadow: scrolled ? "0 10px 40px rgba(0,0,0,0.08)" : "0 4px 20px rgba(0,0,0,0.04)",
+          border: "1px solid rgba(238,116,41,0.15)",
+          boxShadow: scrolled ? "0 10px 40px rgba(238,116,41,0.08)" : "0 4px 20px rgba(238,116,41,0.04)",
           transform: scrolled ? "translateY(2px)" : "translateY(0)",
           borderRadius: mobileOpen ? "28px" : "9999px"
         }}
       >
-        <div className="px-5 sm:px-3">
-          <div className="flex items-center justify-between h-16 md:h-18" style={{ minHeight: '68px' }}>
+        <div className="px-3 py-2 sm:px-4 sm:py-2.5">
+          <div className="flex items-center justify-between gap-4 md:gap-8">
             {/* Logo */}
-            <Link href="/" className="flex items-center group flex-shrink-0">
-              <Image 
+            <Link href="/" className="flex items-center flex-shrink-0">
+              <Image
                 src="/logo/logo-by-soulswed.png"
                 alt="SoulsWed Logo"
                 width={160}
                 height={48}
-                className="h-6 md:h-8 w-auto transition-transform group-hover:scale-105"
+                className="h-6 md:h-8 w-auto"
                 priority
               />
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <div
-                  key={link.href}
-                  className="relative"
-                  onMouseEnter={() => link.children && setOpenDropdown(link.label)}
-                  onMouseLeave={() => setOpenDropdown(null)}
-                >
-                  <Link
-                    href={link.href}
-                    className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-orange-600 group"
-                    style={{ color: "var(--sw-navy)" }}
+            <div
+              className="hidden md:flex items-center gap-1"
+              onMouseLeave={() => setHoveredPath(null)}
+            >
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href));
+                const isHovered = hoveredPath === link.href;
+                const showPill = isHovered || (!hoveredPath && isActive);
+
+                return (
+                  <div
+                    key={link.href}
+                    className="relative"
+                    onMouseEnter={() => {
+                      if (link.megaMenu) setOpenDropdown(link.label);
+                      setHoveredPath(link.href);
+                    }}
+                    onMouseLeave={() => {
+                      setOpenDropdown(null);
+                    }}
                   >
-                    {link.label}
-                    {link.children && (
-                      <ChevronDown
-                        className="w-3.5 h-3.5 transition-transform duration-300 group-hover:text-orange-500"
-                        style={{
-                          transform: openDropdown === link.label ? "rotate(180deg)" : "rotate(0deg)",
-                        }}
-                      />
-                    )}
-                    {/* Hover micro-animation underline */}
-                    <span className="absolute bottom-1.5 left-4 right-4 h-0.5 bg-orange-500 rounded-full scale-x-0 opacity-0 transition-all duration-300 group-hover:scale-x-100 group-hover:opacity-100" />
-                  </Link>
-                  {link.children && openDropdown === link.label && (
-                    <DropdownMenu items={link.children} />
-                  )}
-                </div>
-              ))}
+                    <Link
+                      href={link.href}
+                      className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-orange-600 group z-10"
+                      style={{ color: showPill ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                    >
+                      {showPill && (
+                        <motion.div
+                          layoutId="nav-active-pill"
+                          className="absolute inset-0 rounded-full"
+                          style={{
+                            background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                            border: "1px solid rgba(238, 116, 41, 0.1)",
+                            backdropFilter: "blur(12px) saturate(150%)",
+                            boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                            zIndex: -1,
+                          }}
+                          transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                        />
+                      )}
+                      <span className="relative z-10 flex items-center gap-1">
+                        {link.label}
+                        {link.megaMenu && (
+                          <ChevronDown
+                            className="w-3.5 h-3.5 transition-transform duration-300 group-hover:text-orange-500"
+                            style={{
+                              transform: openDropdown === link.label ? "rotate(180deg)" : "rotate(0deg)",
+                            }}
+                          />
+                        )}
+                      </span>
+                    </Link>
+                    <AnimatePresence>
+                      {link.megaMenu && openDropdown === link.label && (
+                        <DropdownMenu columns={link.megaMenu} />
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )
+              })}
             </div>
 
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-3">
 
-              {/* ── Icon cluster pill ── */}
-              <div className="flex items-center gap-1 p-1 rounded-full" style={{ background: "rgba(0,0,0,0.05)", border: "1px solid rgba(0,0,0,0.06)" }}>
-
-                {/* Currency toggle */}
-                <div ref={currencyRef} className="relative z-50">
-                  <button
-                    onClick={() => {
-                      setOpenDropdown(openDropdown === "currencyMenu" ? null : "currencyMenu");
-                    }}
-                    className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500 text-white transition-all duration-200 outline-none cursor-pointer hover:bg-orange-600 hover:scale-105"
-                    title="Change currency"
-                  >
-                    <DollarSign className="w-4 h-4" />
-                  </button>
-                  {openDropdown === "currencyMenu" && (
-                    <div
-                      className="absolute right-0 top-full mt-3 w-52 rounded-3xl overflow-hidden z-50 origin-top-right animate-navbar-menu"
+              <div 
+                className="relative" 
+                ref={currencyRef}
+                onMouseEnter={() => {
+                  setOpenDropdown('currency');
+                  setHoveredPath('currency');
+                }}
+                onMouseLeave={() => {
+                  setOpenDropdown(null);
+                  setHoveredPath(null);
+                }}
+              >
+                <button
+                  onClick={() => setOpenDropdown(openDropdown === 'currency' ? null : 'currency')}
+                  className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-orange-600 group z-10"
+                  style={{ color: hoveredPath === 'currency' || openDropdown === 'currency' ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                  title="Change Currency"
+                >
+                  {(hoveredPath === 'currency' || openDropdown === 'currency') && (
+                    <motion.div
+                      layoutId="nav-active-pill"
+                      className="absolute inset-0 rounded-full"
                       style={{
-                        background: "#ffffff",
-                        border: "1px solid rgba(0,0,0,0.08)",
-                        boxShadow: "0 20px 60px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.06)",
+                        background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                        border: "1px solid rgba(238, 116, 41, 0.1)",
+                        backdropFilter: "blur(12px) saturate(150%)",
+                        boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                        zIndex: -1,
+                      }}
+                      transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-1">
+                    <span className="text-[16px] leading-none">{CURRENCIES[currency]?.symbol || currency}</span>
+                    <ChevronDown
+                      className="w-3.5 h-3.5 transition-transform duration-300 group-hover:text-orange-500"
+                      style={{
+                        transform: openDropdown === 'currency' ? "rotate(180deg)" : "rotate(0deg)",
+                      }}
+                    />
+                  </span>
+                </button>
+                <AnimatePresence>
+                  {openDropdown === 'currency' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                      className="absolute top-full right-0 mt-6 min-w-[140px] rounded-[28px] p-2 z-50 flex flex-col before:absolute before:-top-6 before:left-0 before:w-full before:h-6 before:bg-transparent"
+                      style={{
+                        background: "rgba(255,244,230,0.98)",
+                        backdropFilter: "blur(20px)",
+                        border: "1px solid rgba(238,116,41,0.15)",
+                        boxShadow: "0 24px 60px rgba(238,116,41,0.12)",
                       }}
                     >
-                      {/* Currency list */}
-                      <div className="p-2 flex flex-col gap-0.5 max-h-72 overflow-y-auto custom-scrollbar">
-                        {Object.keys(CURRENCIES).map((code) => {
-                          const isSelected = currency === code;
-                          const sym = CURRENCIES[code].symbol;
+                      <div 
+                        className="flex flex-col gap-1"
+                        onMouseLeave={() => setHoveredCurrency(null)}
+                      >
+                        {Object.entries(CURRENCIES).map(([code, details]) => {
+                          const isActive = currency === code;
+                          const isHovered = hoveredCurrency === code;
+                          const showPill = isHovered || (!hoveredCurrency && isActive);
+
                           return (
                             <button
                               key={code}
-                              onClick={() => { setCurrency(code); setOpenDropdown(null); }}
-                              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 text-left cursor-pointer ${
-                                isSelected
-                                  ? "bg-orange-50 text-orange-600"
-                                  : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
-                              }`}
+                              onClick={() => {
+                                setCurrency(code);
+                                setOpenDropdown(null);
+                              }}
+                              onMouseEnter={() => setHoveredCurrency(code)}
+                              className="relative flex items-center px-4 py-2.5 text-sm font-medium transition-colors z-10 w-full text-left rounded-full"
+                              style={{ color: isActive || showPill ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                             >
-                              <span className={`flex items-center justify-center w-8 h-8 rounded-full text-[12px] font-bold flex-shrink-0 ${
-                                isSelected ? "bg-orange-500 text-white" : "bg-slate-100 text-slate-600"
-                              }`}>
-                                {sym.trim()}
+                              {showPill && (
+                                <motion.div
+                                  layoutId="currency-menu-pill"
+                                  className="absolute inset-0 rounded-full"
+                                  style={{
+                                    background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                                    border: "1px solid rgba(238, 116, 41, 0.2)",
+                                    backdropFilter: "blur(12px)",
+                                    zIndex: -1,
+                                  }}
+                                  transition={{ type: "spring", stiffness: 150, damping: 20 }}
+                                />
+                              )}
+                              <span className="relative z-10 w-full flex justify-between items-center font-bold">
+                                <span>{code}</span>
+                                <span className="opacity-70 font-normal">{details.symbol}</span>
                               </span>
-                              <span className="flex-1">{code}</span>
-                              {isSelected && <Check className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />}
                             </button>
                           );
                         })}
                       </div>
-                    </div>
+                    </motion.div>
                   )}
-                </div>
-
-                {/* Divider */}
-                <div className="w-px h-4 bg-black/10 mx-0.5" />
-
-                {/* User avatar / Sign in */}
-                {loading ? (
-                  <div className="w-8 h-8 rounded-full bg-orange-200 animate-pulse" />
-                ) : user ? (
-                  <div ref={userRef} className="relative">
-                    <button
-                      onClick={() => {
-                        setOpenDropdown(openDropdown === "userMenu" ? null : "userMenu");
-                      }}
-                      className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500 text-white font-extrabold text-[12px] uppercase transition-all duration-200 outline-none cursor-pointer hover:bg-orange-600 hover:scale-105"
-                      title={user.name}
-                    >
-                      {user.name.charAt(0)}
-                    </button>
-                    {openDropdown === "userMenu" && (
-                      <div
-                        className="absolute right-0 top-full mt-3 w-60 rounded-3xl overflow-hidden z-50 animate-navbar-menu"
-                        style={{
-                          background: "#ffffff",
-                          border: "1px solid rgba(0,0,0,0.08)",
-                          boxShadow: "0 20px 60px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.06)",
-                        }}
-                      >
-                        {/* Menu items */}
-                        <div className="p-2">
-                          <Link
-                            href={user.role === "admin" ? "/admin/dashboard" : user.role === "vendor" ? "/vendor/dashboard" : "/dashboard"}
-                            className="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-sm font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-colors group/link"
-                          >
-                            <span className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center group-hover/link:bg-orange-500 transition-colors">
-                              <LayoutDashboard className="w-4 h-4 text-orange-500 group-hover/link:text-white transition-colors" />
-                            </span>
-                            <span>My Dashboard</span>
-                          </Link>
-                          <div className="my-1.5 mx-1 h-px bg-slate-100" />
-                          <button
-                            onClick={handleLogout}
-                            className="w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-sm font-semibold text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors text-left cursor-pointer group/logout"
-                          >
-                            <span className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center group-hover/logout:bg-red-500 transition-colors">
-                              <LogOut className="w-4 h-4 text-red-400 group-hover/logout:text-white transition-colors" />
-                            </span>
-                            <span>Sign Out</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    href="/login"
-                    className="flex items-center justify-center w-8 h-8 rounded-full text-slate-600 text-sm font-semibold transition-colors hover:bg-orange-500 hover:text-white cursor-pointer"
-                    title="Sign In"
-                  >
-                    <User className="w-4 h-4" />
-                  </Link>
-                )}
+                </AnimatePresence>
               </div>
 
-              {/* Book Now */}
+              {/* Login / My Account */}
               <Link
-                href="/venues"
-                className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 hover:scale-105 overflow-hidden group"
+                href={user ? (user.role === "admin" ? "/admin/dashboard" : user.role === "vendor" ? "/vendor/dashboard" : "/dashboard") : "/login"}
+                className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 overflow-hidden group"
                 style={{ background: "var(--sw-orange)" }}
               >
-                <span className="relative z-10">Book Now</span>
+                <span className="relative z-10">{user ? "My Account" : "Login"}</span>
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-[navbar-shimmer_1.5s_infinite] z-0" />
               </Link>
             </div>
-            
+
             {/* Mobile hamburger */}
             <button
               className="md:hidden p-2 rounded-full transition-colors hover:bg-orange-50"
@@ -478,23 +561,61 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden overflow-hidden border-t transition-all duration-300 ease-in-out ${
-            mobileOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
-          }`}
+          className={`md:hidden overflow-hidden border-t transition-all duration-300 ease-in-out ${mobileOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+            }`}
           style={{ borderColor: "rgba(0,0,0,0.06)" }}
         >
           <div className="px-4 py-3 flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="font-medium py-2.5 px-3 rounded-full text-sm transition-colors hover:bg-orange-50"
-                style={{ color: "var(--sw-navy)" }}
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href));
+              return (
+                <div key={link.href} className="flex flex-col">
+                  <Link
+                    href={link.href}
+                    className={`font-bold py-2.5 px-3 rounded-full text-sm transition-colors hover:bg-orange-50 ${isActive ? 'bg-orange-50' : ''}`}
+                    style={{ color: isActive ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                    onClick={() => !link.megaMenu && setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                  {link.megaMenu && (
+                    <div className="pl-6 flex flex-col gap-1 mt-1 border-l-2 ml-4 border-orange-100">
+                      {link.megaMenu.flatMap(col => col.items).map(item => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="py-1.5 text-sm font-bold text-slate-600 hover:text-orange-500"
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            <div className="flex items-center justify-between px-3 py-2 mt-2 border-t border-orange-100">
+              <span className="text-sm font-bold text-slate-800">Currency</span>
+              <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
+                {Object.keys(CURRENCIES).map(code => (
+                  <button
+                    key={code}
+                    onClick={() => {
+                      setCurrency(code);
+                      setMobileOpen(false);
+                    }}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors whitespace-nowrap ${
+                      currency === code 
+                        ? 'bg-orange-500 text-white' 
+                        : 'bg-slate-100 text-slate-600 hover:bg-orange-100'
+                    }`}
+                  >
+                    {code}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="pt-2 mt-1 border-t flex flex-col gap-2" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
               {loading ? (
                 <div className="h-10 bg-slate-100 rounded-full animate-pulse" />

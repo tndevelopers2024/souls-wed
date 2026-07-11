@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { MapPin, Star, Users, BedDouble, Crown, Heart } from "lucide-react";
 import type { Venue } from "@/lib/venues-data";
@@ -25,7 +25,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
   const { currency } = useCurrency();
   if (view === "list") {
     return (
-      <Link href={`/venues/${venue.id}`} className="group block">
+      <Link href={`/venues/${venue.id}?type=venue`} className="group block">
         <div className="bg-white rounded-[32px] border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row">
           <div className="relative w-full sm:w-[280px] h-[220px] sm:h-auto flex-shrink-0">
             <Image src={venue.image} alt={venue.name} fill sizes="(max-width: 640px) 100vw, 280px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -85,7 +85,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
 
   /* ── Grid view: full-bleed image + bottom frosted-glass overlay ── */
   return (
-    <Link href={`/venues/${venue.id}`} className="block group">
+    <Link href={`/venues/${venue.id}?type=venue`} className="block group">
       <div className="h-[460px] sm:h-[500px] lg:h-[540px]">
         <VendorCard
           id={venue.id}

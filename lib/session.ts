@@ -31,17 +31,7 @@ export interface SessionData {
   isLoggedIn: boolean;
 }
 
-/**
- * Default session values — used when no session exists yet.
- * This prevents "undefined" errors when checking session.isLoggedIn
- */
-export const defaultSession: SessionData = {
-  userId: "",
-  name: "",
-  email: "",
-  role: "user",
-  isLoggedIn: false,
-};
+
 
 /**
  * Session configuration options.

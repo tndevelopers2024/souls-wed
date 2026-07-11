@@ -67,7 +67,7 @@ export async function POST(req: Request) {
           price_data: {
             currency: currency.toLowerCase(),
             product_data: {
-              name: `Booking Advance for ${booking.venueName}`,
+              name: `Booking Advance for ${booking.providerName}`,
             },
             unit_amount: Math.round(convertedAmount * 100), // cents
           },
@@ -75,8 +75,8 @@ export async function POST(req: Request) {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/venues/${booking.venueId}?success=true&session_id={CHECKOUT_SESSION_ID}&booking_id=${booking._id}`,
-      cancel_url: `${origin}/venues/${booking.venueId}?canceled=true`,
+      success_url: `${origin}/${booking.bookingType === "venue" || booking.bookingType === "room" ? "venues" : "vendors"}/${booking.providerId}?success=true&session_id={CHECKOUT_SESSION_ID}&booking_id=${booking._id}`,
+      cancel_url: `${origin}/${booking.bookingType === "venue" || booking.bookingType === "room" ? "venues" : "vendors"}/${booking.providerId}?canceled=true`,
       metadata: {
         bookingId: booking._id.toString(),
       },

@@ -78,7 +78,7 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         message: "Booking is already confirmed.",
-        booking: { id: booking._id, status: booking.status, venueName: booking.venueName },
+        booking: { id: booking._id, status: booking.status, providerName: booking.providerName },
       });
     }
 
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       booking: {
         id: booking._id,
         status: booking.status,
-        venueName: booking.venueName,
+        providerName: booking.providerName,
       },
     });
   } catch (error: unknown) {

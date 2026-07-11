@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import { X, ChevronLeft, ChevronRight, Images } from "lucide-react";
 
 interface VenueGalleryProps {

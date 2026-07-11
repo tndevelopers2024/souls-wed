@@ -43,15 +43,13 @@ const BookingSchema = new Schema({
   userPhone: { type: String },
 
   // ─── WHAT is being booked? ────────────────────────────────
-  // venueId matches the `id` field in our venues-data.ts
-  venueId:   { type: String, required: true },
-  venueName: { type: String, required: true },
+  // providerId matches the `id` field in venues-data.ts or Vendor `_id`
+  providerId:   { type: String, required: true },
+  providerName: { type: String, required: true },
 
-  // "venue" = booking the banquet hall / venue for an event
-  // "room"  = booking rooms for overnight stays
+  // The category of the booking (e.g. "venue", "room", "planner", "photographer")
   bookingType: {
     type: String,
-    enum: ["venue", "room"],
     required: true,
   },
 

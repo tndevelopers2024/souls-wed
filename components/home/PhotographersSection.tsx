@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, Camera, Film, ArrowRight, Heart } from "lucide-react";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { convertPriceString } from "@/lib/currency";

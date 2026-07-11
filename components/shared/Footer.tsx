@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import { usePathname } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Phone, Mail, MessageCircle, ChevronUp } from "lucide-react";
+import { useCurrency } from "@/lib/CurrencyContext";
+import { CURRENCIES } from "@/lib/currency";
 
 function IconInstagram({ className }: { className?: string }) {
   return (
@@ -45,14 +49,13 @@ const aboutLinks = [
 ];
 
 const services = [
-  { label: "Venues & Banquet Halls", href: "/category/venues" },
-  { label: "Wedding Planners", href: "/category/planners" },
-  { label: "Photographers", href: "/category/photographers" },
-  { label: "Decorators", href: "/category/decorators" },
-  { label: "Make-up Artists", href: "/category/makeup" },
-  { label: "Caterers", href: "/category/caterers" },
-  { label: "DJs", href: "/category/djs" },
-  { label: "Cruises", href: "/category/cruises" },
+  { label: "Venues & Banquet Halls", href: "/venues" },
+  { label: "Wedding Planners", href: "/planners" },
+  { label: "Decorators", href: "/decorators" },
+  { label: "Photographers", href: "/photographers" },
+  { label: "Caterers", href: "/caterers" },
+  { label: "Make-up Artists", href: "/makeup" },
+  { label: "Chartered Airlines", href: "/chartered-airlines" },
 ];
 
 const contactItems = [
@@ -79,13 +82,32 @@ const contactItems = [
 ];
 
 const socialLinks = [
-  { icon: IconInstagram, href: "/images/shared/73a78acdfa5d8547664ba493c089879d.jpg", label: "Instagram" },
-  { icon: IconFacebook, href: "https://facebook.com/soulswed", label: "Facebook" },
-  { icon: IconLinkedIn, href: "https://linkedin.com/company/soulswed", label: "LinkedIn" },
+  { icon: IconInstagram, href: "https://www.instagram.com/soulswed/", label: "Instagram" },
+  { icon: IconFacebook, href: "https://www.facebook.com/soulswed/", label: "Facebook" },
+  { icon: IconLinkedIn, href: "https://www.linkedin.com/company/soulswed/", label: "LinkedIn" },
 ];
 
 export default function Footer() {
   const pathname = usePathname();
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const { currency, setCurrency } = useCurrency();
+  const [currencyOpen, setCurrencyOpen] = useState(false);
+  const currencyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      if (currencyRef.current && !currencyRef.current.contains(e.target as Node)) {
+        setCurrencyOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, []);
+
   const isAuthPage = pathname?.startsWith("/login") || pathname?.startsWith("/signup");
   
   if (isAuthPage) return null;
@@ -118,32 +140,15 @@ export default function Footer() {
       `}} />
 
       {/* Floating capsule footer with increased dynamic width */}
-      <div className="max-w-[94%] md:max-w-[90%] lg:max-w-[1200px] xl:max-w-[1300px] mx-auto px-4 pb-6 w-full">
+      <div className="max-w-[94%] md:max-w-[90%] lg:max-w-[1200px] xl:max-w-[1300px] mx-auto px-4 py-10 lg:py-16 w-full">
       <footer
-        className="relative overflow-hidden rounded-[48px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)] noise-texture transition-all duration-500 hover:shadow-[0_32px_80px_rgba(252,203,17,0.18)]"
+        className="relative overflow-hidden rounded-[48px] transition-all duration-500"
         style={{
-          background: "linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 253, 245, 0.97) 100%)",
+          background: "rgba(255,244,230,0.95)",
+          backdropFilter: "blur(24px) saturate(180%)",
+          border: "1px solid rgba(238,116,41,0.15)",
         }}
       >
-
-
-        {/* Animated glowing decorative gradient orbs */}
-        <div className="absolute -right-32 -bottom-32 w-[450px] h-[450px] rounded-full bg-gradient-to-br from-yellow-300/20 via-amber-200/15 to-orange-200/5 blur-3xl pointer-events-none z-0 animate-float-1" />
-        <div className="absolute -left-28 -top-28 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-yellow-200/15 via-amber-100/10 to-transparent blur-3xl pointer-events-none z-0 animate-float-2" />
-        <div className="absolute left-1/3 top-1/4 w-[450px] h-[450px] rounded-full bg-gradient-to-br from-yellow-100/10 via-amber-50/5 to-transparent blur-3xl pointer-events-none z-0 animate-float-3" />
-
-        {/* Background image overlay */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/shared/9368d5bcfe07eea016da3567805d57c9.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover object-center pointer-events-none"
-            style={{ opacity: 0.02, mixBlendMode: "multiply" }}
-          />
-        </div>
-
         <div className="relative z-10 w-full mx-auto px-6 sm:px-10 lg:px-16 py-10 md:py-12">
           
           {/* Top Row: Newsletter Subscription */}
@@ -159,16 +164,20 @@ export default function Footer() {
                 Subscribe to receive curated destination wedding inspiration, venue guides, and exclusive partner promotions.
               </p>
             </div>
-            <div className="lg:col-span-5 flex items-center">
-              <form onSubmit={(e) => e.preventDefault()} className="relative w-full flex items-center">
+            <div className="lg:col-span-5 flex items-center lg:justify-end mt-4 lg:mt-0">
+              <form onSubmit={(e) => e.preventDefault()} className="relative w-full lg:max-w-[400px]">
                 <input
+                  id="newsletterEmail"
+                  name="newsletterEmail"
                   type="email"
-                  placeholder="Enter your email address"
-                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-5 py-3 pr-36 outline-none transition-all text-sm text-slate-800 shadow-inner font-medium placeholder-slate-400"
+                  placeholder="Your Email Address"
+                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-6 py-4 pr-36 outline-none transition-all text-base text-slate-800 shadow-inner font-medium placeholder-slate-400"
+                  required
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-2 bottom-2 px-7 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 text-white font-bold text-xs tracking-wider uppercase hover:shadow-[0_4px_15px_rgba(238,116,41,0.35)] hover:from-amber-600 hover:to-orange-600 transition-all duration-300 hover:scale-102 cursor-pointer"
+                  className="absolute right-2 top-2 bottom-2 px-7 rounded-full text-white font-bold text-[13px] tracking-wider uppercase transition-all duration-300 cursor-pointer"
+                  style={{ background: "var(--sw-orange)" }}
                 >
                   Subscribe
                 </button>
@@ -181,20 +190,20 @@ export default function Footer() {
 
             {/* Col 1 — Brand (Spans 2 columns on lg for gorgeous breathing room) */}
             <div className="lg:col-span-2 lg:pr-12">
-              <Link href="/" className="flex items-center mb-5 group inline-flex">
+              <Link href="/" className="flex items-center mb-5 inline-flex">
                 <Image 
                   src="/logo/logo-by-soulswed.png"
                   alt="SoulsWed Logo"
                   width={200}
                   height={60}
-                  className="h-7 md:h-8 w-auto transition-transform duration-300 group-hover:scale-105"
+                  className="h-7 md:h-8 w-auto"
                 />
               </Link>
               <p className="text-sm leading-relaxed mb-1.5 font-bold text-slate-700">
                 Flawless Moves. Perfect Events.
               </p>
               <p className="text-xs leading-relaxed mb-5 text-slate-500 font-medium max-w-sm">
-                India&apos;s premium wedding marketplace for destination weddings across India and beyond. Providing luxury planners, venues, and media.
+                Say &apos;I do&apos; in a dreamy destination! Transforming couples&apos; visions into amazing international wedding celebrations with ease.
               </p>
               <div className="flex gap-3">
                 {socialLinks.map(({ icon: Icon, href, label }) => (
@@ -214,75 +223,136 @@ export default function Footer() {
 
             {/* Col 2 — About Us */}
             <div>
-              <h4 className="text-xs font-extrabold mb-6 uppercase tracking-widest text-slate-400">
+              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
                 About Us
               </h4>
-              <ul className="flex flex-col gap-3">
-                {aboutLinks.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="group text-sm font-semibold text-slate-600 hover:text-amber-600 transition-all duration-200 flex items-center gap-1.5"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 opacity-0 scale-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
-                      <span className="group-hover:translate-x-1.5 transition-transform duration-200 flex items-center gap-0.5">
-                        {item.label}
-                        <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-amber-500 font-light">→</span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
+              <ul className="flex flex-col gap-1">
+                {aboutLinks.map((item) => {
+                  const isHovered = hoveredLink === item.href;
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ? 'text-amber-600' : 'text-slate-600'}`}
+                        onMouseEnter={() => setHoveredLink(item.href)}
+                        onMouseLeave={() => setHoveredLink(null)}
+                      >
+                        <AnimatePresence>
+                          {isHovered && (
+                            <motion.div
+                              layoutId="footer-about-pill"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="absolute inset-0 rounded-full"
+                              style={{
+                                background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                                border: "1px solid rgba(238, 116, 41, 0.1)",
+                                backdropFilter: "blur(12px) saturate(150%)",
+                                boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                zIndex: -1,
+                              }}
+                              transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                            />
+                          )}
+                        </AnimatePresence>
+                        <span className="relative z-10">{item.label}</span>
+                      </Link>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
 
             {/* Col 3 — Our Services */}
             <div>
-              <h4 className="text-xs font-extrabold mb-6 uppercase tracking-widest text-slate-400">
+              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
                 Our Services
               </h4>
-              <ul className="flex flex-col gap-3">
-                {services.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="group text-sm font-semibold text-slate-600 hover:text-amber-600 transition-all duration-200 flex items-center gap-1.5"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 opacity-0 scale-50 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100" />
-                      <span className="group-hover:translate-x-1.5 transition-transform duration-200 flex items-center gap-0.5">
-                        {item.label}
-                        <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-amber-500 font-light">→</span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
+              <ul className="flex flex-col gap-1">
+                {services.map((item) => {
+                  const isHovered = hoveredLink === item.href;
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ? 'text-amber-600' : 'text-slate-600'}`}
+                        onMouseEnter={() => setHoveredLink(item.href)}
+                        onMouseLeave={() => setHoveredLink(null)}
+                      >
+                        <AnimatePresence>
+                          {isHovered && (
+                            <motion.div
+                              layoutId="footer-services-pill"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="absolute inset-0 rounded-full"
+                              style={{
+                                background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                                border: "1px solid rgba(238, 116, 41, 0.1)",
+                                backdropFilter: "blur(12px) saturate(150%)",
+                                boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                zIndex: -1,
+                              }}
+                              transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                            />
+                          )}
+                        </AnimatePresence>
+                        <span className="relative z-10">{item.label}</span>
+                      </Link>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
 
-            {/* Col 4 — Contact Info (Bento interactive cards) */}
+            {/* Col 4 — Contact Info */}
             <div>
-              <h4 className="text-xs font-extrabold mb-6 uppercase tracking-widest text-slate-400">
+              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
                 Contact Info
               </h4>
-              <ul className="flex flex-col gap-3.5">
+              <ul className="flex flex-col gap-1.5">
                 {contactItems.map((item) => {
                   const Icon = item.icon;
+                  const isHovered = hoveredLink === item.label;
                   return (
-                    <li key={item.label} className="flex items-start gap-3 group bg-white/40 hover:bg-white/90 border border-amber-100/30 hover:border-amber-200/60 rounded-full pl-3 pr-5 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xs">
-                      <div
-                        className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110 border border-amber-100"
-                        style={{ background: "rgba(252, 203, 17, 0.12)" }}
+                    <li key={item.label}>
+                      <div 
+                        className="relative block py-2 px-4 -ml-4 z-10 transition-colors cursor-pointer"
+                        onMouseEnter={() => setHoveredLink(item.label)}
+                        onMouseLeave={() => setHoveredLink(null)}
                       >
-                        <Icon className="w-4 h-4 text-amber-700" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-800">
-                          {item.label}
-                        </p>
-                        {item.lines.map((line) => (
-                          <p key={line} className="text-[11px] text-slate-500 font-semibold mt-0.5">
-                            {line}
-                          </p>
-                        ))}
+                        <AnimatePresence>
+                          {isHovered && (
+                            <motion.div
+                              layoutId="footer-contact-pill"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="absolute inset-0 rounded-3xl"
+                              style={{
+                                background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                                border: "1px solid rgba(238, 116, 41, 0.1)",
+                                backdropFilter: "blur(12px) saturate(150%)",
+                                boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                zIndex: -1,
+                              }}
+                              transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                            />
+                          )}
+                        </AnimatePresence>
+                        <div className="relative z-10 flex items-start gap-3">
+                           <Icon className={`w-4 h-4 mt-0.5 ${isHovered ? 'text-amber-600' : 'text-amber-500'} transition-colors`} />
+                           <div>
+                             <p className={`text-[13px] font-bold ${isHovered ? 'text-amber-700' : 'text-slate-800'} transition-colors`}>{item.label}</p>
+                             <div className="flex flex-col gap-0.5 mt-0.5">
+                               {item.lines.map((line) => (
+                                 <p key={line} className="text-[12px] text-slate-500 font-medium">{line}</p>
+                               ))}
+                             </div>
+                           </div>
+                        </div>
                       </div>
                     </li>
                   );
@@ -294,7 +364,7 @@ export default function Footer() {
 
         <div
           className="relative z-10 border-t py-4 px-6"
-          style={{ borderColor: "rgba(252, 203, 17, 0.12)" }}
+          style={{ borderColor: "rgba(238, 116, 41, 0.15)" }}
         >
           <div className="max-w-none mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs text-slate-400 font-semibold">
@@ -312,6 +382,43 @@ export default function Footer() {
                 <Heart className="w-3 h-3 fill-current mx-0.5 text-red-500 animate-pulse" />
                 in India
               </span>
+              <div className="relative" ref={currencyRef}>
+                <button 
+                  onClick={() => setCurrencyOpen(!currencyOpen)}
+                  className="px-3 py-1.5 ml-2 text-xs font-bold rounded-full bg-slate-800 text-slate-200 hover:bg-orange-500 hover:text-white transition-all duration-300 cursor-pointer flex items-center gap-1 shadow-sm border border-slate-700 hover:border-orange-500"
+                  title="Change Currency"
+                >
+                  <span className="opacity-70 text-[10px]">Currency:</span> {currency}
+                  <ChevronUp className={`w-3 h-3 transition-transform duration-300 ${currencyOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {currencyOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute bottom-full right-0 mb-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden min-w-[140px] z-50 flex flex-col"
+                    >
+                      {Object.entries(CURRENCIES).map(([code, details]) => (
+                        <button
+                          key={code}
+                          onClick={() => {
+                            setCurrency(code);
+                            setCurrencyOpen(false);
+                          }}
+                          className={`flex flex-col items-start px-4 py-3 hover:bg-orange-50 transition-colors border-b border-slate-50 last:border-0 ${
+                            currency === code ? 'bg-orange-50/50' : ''
+                          }`}
+                        >
+                          <span className={`text-sm font-bold ${currency === code ? 'text-orange-600' : 'text-slate-800'}`}>
+                            {code} ({details.symbol})
+                          </span>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>

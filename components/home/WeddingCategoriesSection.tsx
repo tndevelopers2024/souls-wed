@@ -1,47 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import { ArrowRight } from "lucide-react";
-
-const categories = [
-  {
-    name: "Venues",
-    tagline: "Dreamy halls & destinations",
-    slug: "venues",
-    image: "/soulswed/acc_Venue.jpg",
-  },
-  {
-    name: "Planners",
-    tagline: "Experts who handle it all",
-    slug: "planners",
-    image: "/soulswed/acc_Planners.jpg",
-  },
-  {
-    name: "Photographers",
-    tagline: "From moments to memories",
-    slug: "photographers",
-    image: "/soulswed/acc_Photographers.jpg",
-  },
-  {
-    name: "Makeup Artists",
-    tagline: "Beauty and the brushes",
-    slug: "makeup",
-    image: "/soulswed/Makeupartists.jpg",
-  },
-  {
-    name: "Decorators",
-    tagline: "Bring your vision to life",
-    slug: "decorators",
-    image: "/soulswed/acc_decorators1.jpg",
-  },
-  {
-    name: "Sakhi Service",
-    tagline: "Your personal wedding guide",
-    slug: "sakhi",
-    image: "/soulswed/sakhi4.png",
-  },
-];
+import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 
 const containerVariants = {
   hidden: {},
@@ -76,7 +38,7 @@ export default function WeddingCategoriesSection() {
             <p className="section-subtext">Find every vendor you need for the perfect day</p>
           </div>
           <a
-            href="/categories"
+            href="/vendors"
             className="hidden md:inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:gap-3"
             style={{ color: "var(--sw-navy)", border: "1.5px solid var(--sw-navy)" }}
           >
@@ -84,47 +46,75 @@ export default function WeddingCategoriesSection() {
           </a>
         </motion.div>
 
-        {/* 3×2 Grid */}
+        {/* Grid for categories */}
         <motion.div
-          className="grid grid-cols-2 sm:grid-cols-3 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {categories.map((cat) => (
+          {VENDOR_CATEGORIES.map((cat) => (
             <motion.a
               key={cat.slug}
               href={`/category/${cat.slug}`}
               variants={itemVariants}
-              className="relative h-44 md:h-56 rounded-[32px] overflow-hidden cursor-pointer"
+              className="relative h-56 md:h-64 rounded-[32px] overflow-hidden cursor-pointer group shadow-sm hover:shadow-xl transition-all duration-500"
             >
               <Image
                 src={cat.image}
                 alt={cat.name}
                 fill
-                sizes="(max-width: 640px) 50vw, 33vw"
-                className="object-cover"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              {/* Gradient */}
-              <div
-                className="absolute inset-0 transition-opacity duration-300"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(47,56,67,0.78) 100%)",
-                }}
-              />
-              {/* Text */}
-              <div className="absolute bottom-0 left-0 right-0 p-5">
-                <h3
-                  className="text-lg md:text-xl font-bold text-white leading-tight"
-                  style={{ fontFamily: "var(--font-heading)" }}
-                >
-                  {cat.name}
-                </h3>
-                <p className="text-xs md:text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>
-                  {cat.tagline}
-                </p>
+              {/* Progressive frosted blur (Liquid Glass) */}
+              <div className="absolute inset-x-0 bottom-0 h-[69%] z-10 pointer-events-none group-hover:h-[72%] transition-all duration-500">
+                {[
+                  { blur: 1, solid: 55, fade: 100 },
+                  { blur: 3, solid: 42, fade: 78 },
+                  { blur: 6, solid: 28, fade: 58 },
+                  { blur: 12, solid: 16, fade: 40 },
+                  { blur: 24, solid: 6, fade: 24 },
+                ].map((l, idx) => (
+                  <div
+                    key={idx}
+                    className="absolute inset-0"
+                    style={{
+                      backdropFilter: `blur(${l.blur}px)`,
+                      WebkitBackdropFilter: `blur(${l.blur}px)`,
+                      maskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)`,
+                      WebkitMaskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)`,
+                    }}
+                  />
+                ))}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to top, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.8) 32%, rgba(255,255,255,0.45) 58%, rgba(255,255,255,0.12) 78%, rgba(255,255,255,0) 92%)",
+                  }}
+                />
+              </div>
+
+              {/* Content */}
+              <div className="absolute inset-x-0 bottom-0 z-20 px-4 pt-5 pb-4 flex flex-col">
+                <div className="flex items-center gap-3 transform transition-all duration-500 group-hover:-translate-y-1">
+                  <div className="bg-white/90 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] text-slate-800 flex-shrink-0 transition-colors duration-500 group-hover:text-[var(--sw-orange)]">
+                    <cat.icon className="w-5 h-5 stroke-[1.5]" />
+                  </div>
+                  <div className="flex flex-col">
+                    <h3
+                      className="text-[22px] font-bold text-slate-900 leading-snug"
+                      style={{ fontFamily: "var(--font-heading)" }}
+                    >
+                      {cat.name}
+                    </h3>
+                    <p className="text-[11px] mt-0.5 text-slate-500 font-bold tracking-wide uppercase">
+                      {cat.tagline}
+                    </p>
+                  </div>
+                </div>
               </div>
             </motion.a>
           ))}

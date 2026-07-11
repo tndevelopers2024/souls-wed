@@ -2,7 +2,7 @@
 
 import React, { Suspense, useState, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {

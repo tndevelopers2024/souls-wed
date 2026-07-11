@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { MapPin, Star, BadgeCheck, ChevronLeft, Phone, Image as ImageIcon, Heart, PenSquare, Share2 } from "lucide-react";
 import type { Venue } from "@/lib/venues-data";
@@ -23,76 +23,76 @@ export default function VenueHero({ venue }: VenueHeroProps) {
         </Link>
       </div>
 
-      {/* Hero Image */}
-      <div className="relative w-full h-[400px] rounded-t-3xl overflow-hidden">
+      {/* Hero Image Container */}
+      <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-[32px] overflow-hidden shadow-sm mb-8">
         <Image
           src={venue.image}
           alt={venue.name}
           fill
           priority
           className="object-cover"
-          sizes="(max-width: 1024px) 100vw, 800px"
+          sizes="(max-width: 1024px) 100vw, 1200px"
         />
+        <div className="absolute inset-0 bg-black/5 pointer-events-none" />
         {venue.verified && (
-          <div className="absolute top-4 left-4 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-white text-slate-800 shadow-sm">
+          <div className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-full bg-white/95 backdrop-blur-md text-slate-800 shadow-lg">
             <BadgeCheck className="w-4 h-4 text-green-600" />
             Verified
           </div>
         )}
       </div>
 
-      {/* Info Card (Slight overlap) */}
-      <div className="bg-white border border-slate-200 rounded-b-3xl rounded-t-xl -mt-6 relative z-10 p-6 shadow-sm flex flex-col gap-5">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-          <div className="space-y-2">
-            <h1
-              className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {venue.name}
-            </h1>
-            
-            <div className="flex items-center gap-1.5 text-slate-600 text-sm font-medium">
-              <MapPin className="w-4 h-4 text-slate-400" />
-              {venue.location}, {venue.country}
-              <a href="#" className="text-orange-600 font-semibold ml-1 hover:underline text-xs">
-                (View on Map)
-              </a>
-            </div>
-            
-            <p className="text-xs text-slate-500 max-w-lg mt-1">
-              {`${venue.location}, ${venue.country}`}
-            </p>
+      {/* Info Section - Editorial Style */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200">
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-800 px-2.5 py-1 rounded-md shadow-sm">
+              Venue & Estate
+            </span>
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md">
+              2 bookings recently
+            </span>
           </div>
+          
+          <h1
+            className="text-4xl sm:text-5xl font-bold text-slate-900 leading-tight"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            {venue.name}
+          </h1>
+          
+          <div className="flex items-center gap-2 text-slate-500 text-sm font-medium pt-1">
+            <MapPin className="w-4 h-4 text-slate-400" />
+            {venue.location}, {venue.country}
+            <a href="#" className="text-orange-600 font-semibold ml-2 hover:underline text-xs">
+              (View on Map)
+            </a>
+          </div>
+        </div>
 
-          {/* Rating Badge */}
+        {/* Rating and Contact */}
+        <div className="flex flex-col items-start md:items-end gap-4 min-w-[200px]">
           {venue.rating > 0 && (
-            <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm">
-                <Star className="w-4 h-4 fill-current" />
-                <span className="font-bold">{venue.rating.toFixed(1)}</span>
+            <div className="flex flex-col items-start md:items-end gap-1.5">
+              <div className="flex items-center gap-1.5 bg-sw-navy text-white px-4 py-2 rounded-xl shadow-md">
+                <Star className="w-4 h-4 text-sw-gold fill-sw-gold" />
+                <span className="font-bold text-lg leading-none">{venue.rating.toFixed(1)}</span>
               </div>
               <span className="text-xs font-semibold text-slate-500 underline decoration-slate-300 underline-offset-2">
-                {venue.reviewCount} reviews
+                Based on {venue.reviewCount} reviews
               </span>
             </div>
           )}
-        </div>
-
-        {/* Contact Strip */}
-        <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
-          <button className="flex items-center gap-2 text-green-600 font-semibold text-sm hover:text-green-700 transition-colors">
+          
+          <button className="flex items-center justify-center gap-2 w-full md:w-auto bg-green-50 hover:bg-green-100 text-green-700 font-bold px-6 py-2.5 rounded-xl transition-colors border border-green-200">
             <Phone className="w-4 h-4" />
-            Contact
+            Contact Venue
           </button>
-          <span className="text-[10px] font-bold uppercase tracking-wider bg-orange-500 text-white px-2 py-0.5 rounded shadow-sm">
-            2 bookings recently
-          </span>
         </div>
       </div>
 
       {/* Action Bar */}
-      <div className="flex items-center justify-between border-b border-slate-200 py-4 px-2 mt-2">
+      <div className="flex items-center justify-start gap-8 py-5">
         <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
           <ImageIcon className="w-4 h-4" />
           102 Photos

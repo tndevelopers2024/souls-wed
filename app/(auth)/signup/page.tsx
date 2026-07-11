@@ -13,7 +13,7 @@ const ICON_CLS = "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-40
 
 import React, { Suspense, useState, useLayoutEffect, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -35,16 +35,9 @@ import {
 
 type UserRole = "user" | "vendor" | "admin";
 
-const categories = [
-  "Venues",
-  "Photographers",
-  "Decorators",
-  "Caterers",
-  "Make-up Artists",
-  "Planners",
-  "Singers & Bands",
-  "DJs",
-];
+import { VENDOR_CATEGORIES } from "@/lib/config/categories";
+
+const categories = VENDOR_CATEGORIES.map(c => c.name);
 
 const cities = ["Mumbai", "Goa", "Udaipur", "Jaipur", "Delhi", "Dubai", "Bali", "Maldives"];
 

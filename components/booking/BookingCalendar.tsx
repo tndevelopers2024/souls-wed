@@ -40,8 +40,8 @@ interface BookingCalendarProps {
   onRangeSelect?: (checkIn: string, checkOut: string) => void;
   /** Called when month changes — parent fetches new availability data */
   onMonthChange?: (yearMonth: string) => void;
-  /** Venue ID — used for fetching availability */
-  venueId: string;
+  /** Provider ID — used for fetching availability */
+  providerId: string;
 }
 
 // Day names for the header row
@@ -100,7 +100,7 @@ export default function BookingCalendar({
   onDateSelect,
   onRangeSelect,
   onMonthChange,
-  venueId,
+  providerId,
 }: BookingCalendarProps) {
   // Current month being displayed
   const [currentMonth, setCurrentMonth] = useState(new Date());

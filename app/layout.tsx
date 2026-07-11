@@ -1,33 +1,39 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Geist } from "next/font/google";
+import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { CurrencyProvider } from "@/lib/CurrencyContext";
 import Preloader from "@/components/shared/Preloader";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-outfit',
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+});
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://soulswed.com"),
   title: "SoulsWed — Flawless Moves. Perfect Events.",
   description:
-    "Book your Dream Hall in Exciting Destinations, Effortlessly. India's premium wedding marketplace for venues, vendors, and destination weddings.",
+    "Say 'I do' in a dreamy destination! Transforming couples' visions into amazing international wedding celebrations with ease.",
   openGraph: {
-    title: "SoulsWed — Flawless Moves. Perfect Events.",
+    title: "Book your Dream Hall in Exciting Destinations, Effortlessly",
     description:
-      "Discover 24+ categories — venues, photographers, flights, cruises & more for your dream wedding.",
+      "Explore Venues, Anywhere, Anytime",
     siteName: "SoulsWed",
+    url: "https://soulswed.com",
     images: [
       {
-        url: "/openGraph/image.png",
-        width: 1200,
-        height: 630,
-        alt: "SoulsWed",
+        url: "/soulswed/sw_share.png",
+        width: 1080,
+        height: 1080,
+        alt: "SoulsWed — Flawless Moves. Perfect Events.",
       },
     ],
   },
@@ -39,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(plusJakarta.variable, "font-sans", geist.variable)}>
+    <html lang="en" className={cn(inter.variable, "font-sans", outfit.variable)}>
       <body className="min-h-screen antialiased">
         <CurrencyProvider>
           <Preloader />

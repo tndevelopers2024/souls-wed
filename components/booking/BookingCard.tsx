@@ -30,7 +30,7 @@ interface BookingCardProps {
 
 export default function BookingCard({ booking, isVendor = false }: BookingCardProps) {
   const router = useRouter();
-  const venueDetails = getVenueById(booking.venueId);
+  const venueDetails = getVenueById(booking.providerId);
   const venueImage = venueDetails?.image;
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -47,16 +47,17 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
 
   // ─── Format Dates ───
   const renderDate = () => {
-    if (booking.bookingType === "venue") {
+    if (booking.bookingType === "room") {
       return (
         <div className="flex items-center gap-1.5 text-sm text-slate-600">
           <CalendarDays className="w-4 h-4 text-orange-500" />
           <span className="font-medium">
-            {format(new Date(booking.eventDate), "EEE, MMM d, yyyy")}
+            {booking.checkIn && booking.checkOut ? (
+              `${format(new Date(booking.checkIn), "MMM d")} → ${format(new Date(booking.checkOut), "MMM d, yyyy")}`
+            ) : (
+              "Dates pending"
+            )}
           </span>
-          {booking.functionTime && (
-            <span className="text-slate-400 capitalize">({booking.functionTime})</span>
-          )}
         </div>
       );
     } else {
@@ -64,8 +65,15 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
         <div className="flex items-center gap-1.5 text-sm text-slate-600">
           <CalendarDays className="w-4 h-4 text-orange-500" />
           <span className="font-medium">
-            {format(new Date(booking.checkIn), "MMM d")} → {format(new Date(booking.checkOut), "MMM d, yyyy")}
+            {booking.eventDate ? (
+              format(new Date(booking.eventDate), "EEE, MMM d, yyyy")
+            ) : (
+              "Date pending"
+            )}
           </span>
+          {booking.functionTime && (
+            <span className="text-slate-400 capitalize"> ({booking.functionTime})</span>
+          )}
         </div>
       );
     }
@@ -139,11 +147,11 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
       {venueImage ? (
         <img
           src={venueImage}
-          alt={booking.venueName}
+          alt={booking.providerName}
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
-        <div className="absolute inset-0 w-full h-full bg-slate-800" />
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-orange-50 to-orange-100/50" />
       )}
 
       {/* Status Badge top-left */}
@@ -170,22 +178,30 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
         <div className="mb-3">
           <p className="text-xs text-slate-600 font-mono mb-1 bg-white/50 w-fit px-2 py-0.5 rounded-md">ID: {booking._id.substring(18)}</p>
           <h3 className="text-2xl font-bold leading-snug text-slate-900 line-clamp-2" style={{ fontFamily: "var(--font-heading)" }}>
-            {booking.venueName}
+            {booking.providerName}
           </h3>
         </div>
 
         <div className="flex flex-col gap-2.5 mb-4 bg-white/60 backdrop-blur-sm rounded-xl p-3 border border-white/40 shadow-sm">
           {renderDate()}
           <div className="flex items-center gap-4">
-            {booking.bookingType === "venue" ? (
+            {booking.bookingType === "venue" && booking.guestCount && (
               <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium">
                 <Users className="w-4 h-4 text-orange-500" />
                 <span>{booking.guestCount} Guests</span>
               </div>
-            ) : (
+            )}
+            {booking.bookingType === "room" && booking.roomCount && (
               <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium">
                 <BedDouble className="w-4 h-4 text-orange-500" />
                 <span>{booking.roomCount} Rooms</span>
+              </div>
+            )}
+            {booking.bookingType !== "venue" && booking.bookingType !== "room" && (
+              <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium capitalize">
+                <span className="bg-slate-100 text-slate-700 text-[10.5px] font-bold px-2 py-0.5 rounded border border-slate-200 shadow-sm">
+                  {booking.bookingType}
+                </span>
               </div>
             )}
             {booking.functionType && (
@@ -266,7 +282,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
             </div>
             <h3 className="text-base font-bold text-slate-800 mb-1">Cancel Booking?</h3>
             <p className="text-xs text-slate-500 mb-6 leading-relaxed">
-              Are you sure you want to cancel and delete this booking for <span className="font-bold text-slate-700">{booking.venueName}</span>? This action cannot be undone.
+              Are you sure you want to cancel and delete this booking for <span className="font-bold text-slate-700">{booking.providerName}</span>? This action cannot be undone.
             </p>
             <div className="flex gap-3 w-full">
               <button

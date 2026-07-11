@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import { MapPin, Star, Heart } from "lucide-react";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { convertPriceString } from "@/lib/currency";
@@ -62,7 +62,7 @@ export default function VendorCard({
       </button>
 
       {/* Progressive frosted blur */}
-      <div className="absolute inset-x-0 bottom-0 h-[72%] z-10 pointer-events-none">
+      <div className="absolute inset-x-0 bottom-0 h-[69%] z-10 pointer-events-none">
         {[
           { blur: 1, solid: 55, fade: 100 },
           { blur: 3, solid: 42, fade: 78 },
@@ -106,11 +106,11 @@ export default function VendorCard({
           <div className="flex items-center mb-3 mt-1">
             <div className="flex items-center gap-0.5 mr-1.5">
               {[...Array(5)].map((_, idx) => (
-                <Star 
-                  key={idx} 
-                  className="w-3.5 h-3.5" 
-                  style={{ color: "var(--sw-gold)" }} 
-                  fill={idx < Math.round(rating) ? "var(--sw-gold)" : "transparent"} 
+                <Star
+                  key={idx}
+                  className="w-3.5 h-3.5"
+                  style={{ color: "var(--sw-gold)" }}
+                  fill={idx < Math.round(rating) ? "var(--sw-gold)" : "transparent"}
                 />
               ))}
             </div>

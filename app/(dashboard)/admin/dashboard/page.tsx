@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -42,16 +42,9 @@ export default function AdminDashboard() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("darkMode") === "true";
-    setIsDarkMode(saved);
-  }, []);
 
-  const toggleDarkMode = () => {
-    const next = !isDarkMode;
-    setIsDarkMode(next);
-    localStorage.setItem("darkMode", String(next));
-  };
+
+
 
   const fetchAllData = async () => {
     setLoadingData(true);
@@ -551,28 +544,7 @@ export default function AdminDashboard() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
             </svg>
             {!sidebarCollapsed && <span>Hide sidebar</span>}
-          </button>
-
-          <button 
-            onClick={toggleDarkMode}
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-              isDarkMode 
-                ? "text-stone-400 hover:text-white hover:bg-stone-800/60" 
-                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
-            }`}
-            title={isDarkMode ? "Switch to Light mode" : "Switch to Dark mode"}
-          >
-            {isDarkMode ? (
-              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            ) : (
-              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            )}
-            {!sidebarCollapsed && <span>{isDarkMode ? "Light mode" : "Dark mode"}</span>}
-          </button>
+            </button>
 
           <div className="my-1 border-t border-transparent" />
 

@@ -48,7 +48,7 @@ export function formatAsCurrency(amountInINR: number, targetCurrency: string): s
 /**
  * Parses an INR price string like "₹3,35,840" or "₹335840" into a plain number.
  */
-export function parseINRString(priceStr: string | undefined | null): number {
+function parseINRString(priceStr: string | undefined | null): number {
   if (!priceStr) return 0;
   const cleaned = priceStr.replace(/[₹,\s]/g, "");
   return parseFloat(cleaned) || 0;

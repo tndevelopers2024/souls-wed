@@ -6,6 +6,7 @@ import PhotographersSection from "@/components/home/PhotographersSection";
 import MakeupArtistsSection from "@/components/home/MakeupArtistsSection";
 import DecoratorsPlannersSection from "@/components/home/DecoratorsPlannersSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
+import FaqSection from "@/components/home/FaqSection";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
         <MakeupArtistsSection />
         <DecoratorsPlannersSection />
         <TestimonialsSection />
+        <FaqSection />
       </main>
 
     </>

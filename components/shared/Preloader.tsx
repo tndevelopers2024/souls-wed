@@ -2,27 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import Image from "@/components/shared/CustomImage";
+import { usePathname } from "next/navigation";
 
 export default function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Only show preloader once per session
-    const hasSeenPreloader = sessionStorage.getItem("hasSeenPreloader");
-    
-    if (hasSeenPreloader) {
-      setIsLoading(false);
-      return;
-    }
+    // Show preloader on every page change
+    setIsLoading(true);
 
     const timer = setTimeout(() => {
       setIsLoading(false);
-      sessionStorage.setItem("hasSeenPreloader", "true");
     }, 1500); // 1.5 seconds display
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [pathname]);
 
   return (
     <AnimatePresence>
@@ -69,7 +65,7 @@ export default function Preloader() {
               className="flex flex-col items-center"
             >
               <p className="text-amber-600 font-bold uppercase tracking-[0.3em] text-xs md:text-sm mb-6">
-                Flawless Moves. Perfect Events.
+                Your Destination, Our Expertice
               </p>
 
               {/* Elegant thin loading bar */}

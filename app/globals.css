@@ -5,10 +5,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-plus-jakarta), system-ui, sans-serif;
-  --font-serif: var(--font-plus-jakarta), system-ui, sans-serif;
-  --font-heading: var(--font-plus-jakarta), system-ui, sans-serif;
-  --font-body: var(--font-plus-jakarta), system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-outfit), system-ui, sans-serif;
+  --font-heading: var(--font-outfit), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
 }
 
 /* ===================== BRAND VARIABLES ===================== */
@@ -30,8 +30,8 @@
   --glass-blur: 24px;
   --glass-saturate: 180%;
 
-  --font-heading: var(--font-plus-jakarta), system-ui, sans-serif;
-  --font-body: var(--font-plus-jakarta), system-ui, sans-serif;
+  --font-heading: var(--font-outfit), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -73,6 +73,7 @@ body {
   /* A beautiful, premium, minimal soft-peach/pearl gradient for the entire site */
   background: linear-gradient(145deg, #FFFCFA 0%, #FDF5EF 40%, #F7E9DE 100%);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 h1,
@@ -240,7 +241,7 @@ h6 {
 /* ===================== SECTION HEADINGS ===================== */
 .section-heading {
   font-family: var(--font-heading);
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   font-weight: 700;
   color: var(--sw-navy);
   line-height: 1.2;
@@ -248,7 +249,7 @@ h6 {
 
 .section-subtext {
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: 15px;
   color: var(--sw-steel);
   margin-top: 0.75rem;
 }
