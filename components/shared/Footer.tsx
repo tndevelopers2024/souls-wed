@@ -142,14 +142,14 @@ export default function Footer() {
       {/* Floating capsule footer with increased dynamic width */}
       <div className="max-w-[94%] md:max-w-[90%] lg:max-w-[1200px] xl:max-w-[1300px] mx-auto px-4 py-10 lg:py-16 w-full">
       <footer
-        className="relative overflow-hidden rounded-[48px] transition-all duration-500"
+        className="relative overflow-hidden rounded-3xl md:rounded-[48px] transition-all duration-500"
         style={{
           background: "rgba(255,244,230,0.95)",
           backdropFilter: "blur(24px) saturate(180%)",
           border: "1px solid rgba(238,116,41,0.15)",
         }}
       >
-        <div className="relative z-10 w-full mx-auto px-6 sm:px-10 lg:px-16 py-10 md:py-12">
+        <div className="relative z-10 w-full mx-auto px-5 sm:px-10 lg:px-16 py-8 md:py-12">
           
           {/* Top Row: Newsletter Subscription */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-8 mb-8 border-b border-amber-100/50">
@@ -171,12 +171,12 @@ export default function Footer() {
                   name="newsletterEmail"
                   type="email"
                   placeholder="Your Email Address"
-                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-6 py-4 pr-36 outline-none transition-all text-base text-slate-800 shadow-inner font-medium placeholder-slate-400"
+                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-5 py-3.5 pr-28 md:px-6 md:py-4 md:pr-36 outline-none transition-all text-sm md:text-base text-slate-800 shadow-inner font-medium placeholder-slate-400"
                   required
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-2 bottom-2 px-7 rounded-full text-white font-bold text-[13px] tracking-wider uppercase transition-all duration-300 cursor-pointer"
+                  className="absolute right-1.5 top-1.5 bottom-1.5 px-5 md:right-2 md:top-2 md:bottom-2 md:px-7 rounded-full text-white font-bold text-[11px] md:text-[13px] tracking-wider uppercase transition-all duration-300 cursor-pointer"
                   style={{ background: "var(--sw-orange)" }}
                 >
                   Subscribe
@@ -443,7 +443,7 @@ export default function Footer() {
         
         {/* WhatsApp */}
         <a
-          href="/images/shared/2cf5849d13c2075ac81cd9d3fdf4a688.jpg"
+          href="#"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center w-14 h-14 rounded-full shadow-xl transition-all hover:scale-110 hover:shadow-2xl"

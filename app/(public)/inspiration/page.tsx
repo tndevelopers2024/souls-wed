@@ -4,12 +4,12 @@ import Image from "@/components/shared/CustomImage";
 import { motion } from "framer-motion";
 
 const INSPIRATION_ITEMS = [
-  { id: 1, title: "Tuscan Sunsets", category: "Destination", img: "/images/shared/2cf5849d13c2075ac81cd9d3fdf4a688.jpg" },
-  { id: 2, title: "Modern Minimalist", category: "Decor & Design", img: "/images/shared/73a78acdfa5d8547664ba493c089879d.jpg" },
+  { id: 1, title: "Tuscan Sunsets", category: "Destination", img: "/soulswed/venue.jpg" },
+  { id: 2, title: "Modern Minimalist", category: "Decor & Design", img: "/soulswed/decorators.jpg" },
   { id: 3, title: "Royal Heritage", category: "Luxury Venues", img: "/images/shared/9368d5bcfe07eea016da3567805d57c9.jpg" },
-  { id: 4, title: "Boho Chic Beach", category: "Style", img: "/images/shared/2cf5849d13c2075ac81cd9d3fdf4a688.jpg" },
+  { id: 4, title: "Boho Chic Beach", category: "Style", img: "/soulswed/venue.jpg" },
   { id: 5, title: "Enchanted Forest", category: "Real Weddings", img: "/images/shared/9368d5bcfe07eea016da3567805d57c9.jpg" },
-  { id: 6, title: "Classic Elegance", category: "Style", img: "/images/shared/73a78acdfa5d8547664ba493c089879d.jpg" },
+  { id: 6, title: "Classic Elegance", category: "Style", img: "/soulswed/decorators.jpg" },
 ];
 
 export default function InspirationPage() {
@@ -51,6 +51,7 @@ export default function InspirationPage() {
                   src={item.img}
                   alt={item.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

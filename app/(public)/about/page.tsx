@@ -21,7 +21,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
           <div className="relative h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border border-amber-100/50">
             <Image 
-              src="/images/shared/2cf5849d13c2075ac81cd9d3fdf4a688.jpg" 
+              src="/soulswed/venue.jpg" 
               alt="Beautiful Destination Wedding"
               fill
               className="object-cover hover:scale-105 transition-transform duration-700"

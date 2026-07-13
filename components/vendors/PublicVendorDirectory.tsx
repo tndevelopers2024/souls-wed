@@ -550,9 +550,9 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
 
   if (view === "list") {
     return (
-      <article className="group flex gap-5 rounded-[24px] overflow-hidden border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-        <div className="relative w-44 h-44 rounded-[18px] overflow-hidden flex-shrink-0">
-          <Image src={image} alt={vendor.businessName || vendor.name} fill sizes="176px" className="object-cover" />
+      <article className="group flex flex-col sm:flex-row gap-4 sm:gap-5 rounded-[24px] overflow-hidden border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow p-3 sm:p-4">
+        <div className="relative w-full sm:w-44 h-52 sm:h-44 rounded-[18px] overflow-hidden flex-shrink-0">
+          <Image src={image} alt={vendor.businessName || vendor.name} fill sizes="(max-width: 640px) 100vw, 176px" className="object-cover" />
           {vendor.featured && (
             <span className="absolute top-2 left-2 rounded-full bg-orange-500 px-2.5 py-1 text-[9px] font-black uppercase text-white">Featured</span>
           )}

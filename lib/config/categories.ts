@@ -48,7 +48,7 @@ export const VENDOR_CATEGORIES: VendorCategory[] = [
     name: "Caterers",
     tagline: "Cuisines that steal the show",
     slug: "caterers",
-    image: "/soulswed/acc_caterers.jpg",
+    image: "/soulswed/caterers.jpg",
     icon: UtensilsCrossed,
   },
   {

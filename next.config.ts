@@ -30,7 +30,9 @@ const nextConfig: NextConfig = {
         hostname: "**",
       },
     ],
+    unoptimized: true,
   },
+  allowedDevOrigins: ["192.0.0.2"],
 };
 
 export default nextConfig;

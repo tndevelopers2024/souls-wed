@@ -46,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn(inter.variable, "font-sans", outfit.variable)}>
-      <body className="min-h-screen antialiased">
+      <body className="min-h-screen antialiased overflow-x-hidden w-full">
         <CurrencyProvider>
           <Preloader />
           {children}

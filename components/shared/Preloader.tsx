@@ -52,7 +52,9 @@ export default function Preloader() {
                 src="/logo/logo-by-soulswed.png" // Using the main logo
                 alt="SoulsWed"
                 fill
+                sizes="(max-width: 768px) 192px, 256px"
                 className="object-contain" // Original dark logo
+                loading="eager"
                 priority
               />
             </div>

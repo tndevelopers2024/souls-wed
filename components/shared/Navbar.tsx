@@ -364,6 +364,7 @@ export default function Navbar() {
                 width={160}
                 height={48}
                 className="h-6 md:h-8 w-auto"
+                loading="eager"
                 priority
               />
             </Link>
@@ -561,7 +562,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden overflow-hidden border-t transition-all duration-300 ease-in-out ${mobileOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+          className={`md:hidden overflow-hidden border-t transition-all duration-300 ease-in-out ${mobileOpen ? "max-h-[85vh] overflow-y-auto custom-scrollbar opacity-100" : "max-h-0 opacity-0 pointer-events-none"
             }`}
           style={{ borderColor: "rgba(0,0,0,0.06)" }}
         >
