@@ -435,8 +435,8 @@ export default function Navbar() {
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-3">
 
-              <div 
-                className="relative" 
+              <div
+                className="relative"
                 ref={currencyRef}
                 onMouseEnter={() => {
                   setOpenDropdown('currency');
@@ -492,7 +492,7 @@ export default function Navbar() {
                         boxShadow: "0 24px 60px rgba(238,116,41,0.12)",
                       }}
                     >
-                      <div 
+                      <div
                         className="flex flex-col gap-1"
                         onMouseLeave={() => setHoveredCurrency(null)}
                       >
@@ -606,11 +606,10 @@ export default function Navbar() {
                       setCurrency(code);
                       setMobileOpen(false);
                     }}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors whitespace-nowrap ${
-                      currency === code 
-                        ? 'bg-primary-500 text-white' 
+                    className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors whitespace-nowrap ${currency === code
+                        ? 'bg-primary-500 text-white'
                         : 'bg-slate-100 text-slate-600 hover:bg-primary-100'
-                    }`}
+                      }`}
                   >
                     {code}
                   </button>

@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import { Booking } from "@/lib/models/Booking";
+import { Venue } from "@/lib/models/Venue";
 import { getStripe } from "@/lib/stripe";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
@@ -60,6 +61,20 @@ export async function POST(req: Request) {
     const stripe = getStripe();
     const convertedAmount = convertINRTo(booking.advanceAmount, currency);
 
+    // Determine if the provider is a Venue or Vendor to set the correct redirect URL
+    let returnUrlPath = "";
+    try {
+      const isVenue = await Venue.exists({
+        $or: [
+          { venueId: booking.providerId },
+          ...(booking.providerId.match(/^[0-9a-fA-F]{24}$/) ? [{ _id: booking.providerId }] : [])
+        ]
+      });
+      returnUrlPath = isVenue ? `venues/${booking.providerId}` : `${booking.providerId}`;
+    } catch (e) {
+      returnUrlPath = `${booking.providerId}`; // fallback to vendor path
+    }
+
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -75,8 +90,8 @@ export async function POST(req: Request) {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/${booking.bookingType === "venue" || booking.bookingType === "room" ? "venues" : "vendors"}/${booking.providerId}?success=true&session_id={CHECKOUT_SESSION_ID}&booking_id=${booking._id}`,
-      cancel_url: `${origin}/${booking.bookingType === "venue" || booking.bookingType === "room" ? "venues" : "vendors"}/${booking.providerId}?canceled=true`,
+      success_url: `${origin}/${returnUrlPath}?success=true&session_id={CHECKOUT_SESSION_ID}&booking_id=${booking._id}`,
+      cancel_url: `${origin}/${returnUrlPath}?canceled=true`,
       metadata: {
         bookingId: booking._id.toString(),
       },

@@ -48,6 +48,8 @@ export default function CustomImage({
       fill={fill}
       width={width}
       height={height}
+      quality={props.quality || 85}
+      sizes={props.sizes || "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
       onError={() => setError(true)}
       {...props}
     />
