@@ -24,7 +24,7 @@ export default function InspirationPage() {
             className="text-4xl md:text-5xl font-extrabold mb-6"
             style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
           >
-            Real Weddings & <span className="text-orange-500">Inspiration</span>
+            Real Weddings & <span className="text-primary-500">Inspiration</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -57,7 +57,7 @@ export default function InspirationPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
                 <div className="absolute bottom-0 left-0 w-full p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <p className="text-orange-300 text-xs font-bold uppercase tracking-wider mb-2">{item.category}</p>
+                  <p className="text-primary-300 text-xs font-bold uppercase tracking-wider mb-2">{item.category}</p>
                   <h3 className="text-white text-xl font-heading font-bold">{item.title}</h3>
                 </div>
               </div>

@@ -110,7 +110,7 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
 
       {/* Demand badge */}
       <div className="flex items-center justify-center gap-2">
-        <span className="bg-orange-100 text-orange-800 text-[10px] font-bold px-2 py-0.5 rounded border border-orange-200">
+        <span className="bg-primary-100 text-primary-800 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200">
           In High Demand
         </span>
         <span className="text-xs font-semibold text-slate-600">

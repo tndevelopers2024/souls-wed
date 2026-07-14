@@ -43,8 +43,8 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
               <Star
                 key={s}
                 className="w-4 h-4"
-                style={{ color: "var(--sw-gold)" }}
-                fill={s <= Math.round(rating) ? "var(--sw-gold)" : "none"}
+                style={{ color: "var(--sw-secondary)" }}
+                fill={s <= Math.round(rating) ? "var(--sw-secondary)" : "none"}
               />
             ))}
           </div>
@@ -56,13 +56,13 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
           {distribution.map((d) => (
             <div key={d.stars} className="flex items-center gap-3">
               <span className="text-xs font-semibold text-slate-600 w-4">{d.stars}</span>
-              <Star className="w-3 h-3" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+              <Star className="w-3 h-3" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
               <div className="flex-1 h-2 rounded-full bg-white overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
                     width: `${d.pct}%`,
-                    background: "var(--sw-orange)",
+                    background: "var(--sw-primary)",
                   }}
                 />
               </div>
@@ -97,8 +97,8 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
                     <Star
                       key={s}
                       className="w-3 h-3"
-                      style={{ color: "var(--sw-gold)" }}
-                      fill={s <= review.rating ? "var(--sw-gold)" : "none"}
+                      style={{ color: "var(--sw-secondary)" }}
+                      fill={s <= review.rating ? "var(--sw-secondary)" : "none"}
                     />
                   ))}
                 </div>

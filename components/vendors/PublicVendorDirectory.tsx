@@ -162,7 +162,7 @@ export default function PublicVendorDirectory({
       {/* ══════════════════════ HERO ══════════════════════ */}
       <div className="pt-28 pb-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div
-          className="relative overflow-hidden pt-16 pb-16 px-4 text-center rounded-[40px] shadow-sm border border-orange-50/60"
+          className="relative overflow-hidden pt-16 pb-16 px-4 text-center rounded-[40px] shadow-sm border border-primary-50/60"
           style={{
             background: "linear-gradient(150deg, #fdf6f0 0%, #fceee3 40%, #f5dcc9 100%)",
           }}
@@ -202,11 +202,11 @@ export default function PublicVendorDirectory({
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest"
             style={{
               background: "rgba(238,116,41,0.12)",
-              color: "var(--sw-orange)",
+              color: "var(--sw-primary)",
               border: "1px solid rgba(238,116,41,0.25)",
             }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
             {meta.eyebrow}
           </div>
 
@@ -218,7 +218,7 @@ export default function PublicVendorDirectory({
             <span
               className="relative inline-block"
               style={{
-                background: "linear-gradient(135deg, var(--sw-orange) 0%, #f5a623 100%)",
+                background: "linear-gradient(135deg, var(--sw-primary) 0%, #f5a623 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -243,7 +243,7 @@ export default function PublicVendorDirectory({
               style={{
                 background: "white",
                 border: searchFocused
-                  ? "2px solid var(--sw-orange)"
+                  ? "2px solid var(--sw-primary)"
                   : "2px solid rgba(0,0,0,0.08)",
                 boxShadow: searchFocused
                   ? "0 8px 32px rgba(238,116,41,0.18)"
@@ -252,7 +252,7 @@ export default function PublicVendorDirectory({
             >
               <Search
                 className="w-5 h-5 flex-shrink-0 transition-colors duration-300"
-                style={{ color: searchFocused ? "var(--sw-orange)" : "#94a3b8" }}
+                style={{ color: searchFocused ? "var(--sw-primary)" : "#94a3b8" }}
               />
               <input
                 type="text"
@@ -301,7 +301,7 @@ export default function PublicVendorDirectory({
               {activeCity && (
                 <span>
                   {" "}in{" "}
-                  <span className="font-bold" style={{ color: "var(--sw-orange)" }}>
+                  <span className="font-bold" style={{ color: "var(--sw-primary)" }}>
                     {activeCity}
                   </span>
                 </span>
@@ -327,7 +327,7 @@ export default function PublicVendorDirectory({
                       className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all hover:opacity-80"
                       style={{
                         background: "rgba(238,116,41,0.1)",
-                        color: "var(--sw-orange)",
+                        color: "var(--sw-primary)",
                         border: "1px solid rgba(238,116,41,0.25)",
                       }}
                     >
@@ -355,7 +355,7 @@ export default function PublicVendorDirectory({
                 onClick={() => setViewType("grid")}
                 className={`p-1.5 rounded-full transition-all ${
                   viewType === "grid"
-                    ? "bg-white shadow-sm text-[var(--sw-orange)]"
+                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
                     : "text-slate-400 hover:text-slate-600"
                 }`}
                 aria-label="Grid view"
@@ -366,7 +366,7 @@ export default function PublicVendorDirectory({
                 onClick={() => setViewType("list")}
                 className={`p-1.5 rounded-full transition-all ${
                   viewType === "list"
-                    ? "bg-white shadow-sm text-[var(--sw-orange)]"
+                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
                     : "text-slate-400 hover:text-slate-600"
                 }`}
                 aria-label="List view"
@@ -381,7 +381,7 @@ export default function PublicVendorDirectory({
                 onClick={() => setSortOpen(!sortOpen)}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-semibold transition-all hover:shadow-md"
                 style={{
-                  borderColor: sortOpen ? "var(--sw-orange)" : "var(--sw-light-gray)",
+                  borderColor: sortOpen ? "var(--sw-primary)" : "var(--sw-light-gray)",
                   color: "var(--sw-navy)",
                   background: sortOpen ? "rgba(238,116,41,0.05)" : "white",
                   boxShadow: sortOpen ? "0 0 0 3px rgba(238,116,41,0.1)" : "none",
@@ -412,15 +412,15 @@ export default function PublicVendorDirectory({
                       <button
                         key={opt}
                         onClick={() => { setSort(opt); setSortOpen(false); }}
-                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-orange-50 flex items-center justify-between"
+                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-primary-50 flex items-center justify-between"
                         style={{
                           fontWeight: sort === opt ? 700 : 500,
-                          color: sort === opt ? "var(--sw-orange)" : "var(--sw-navy)",
+                          color: sort === opt ? "var(--sw-primary)" : "var(--sw-navy)",
                         }}
                       >
                         {opt}
                         {sort === opt && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary-400" />
                         )}
                       </button>
                     ))}
@@ -442,7 +442,7 @@ export default function PublicVendorDirectory({
               className="w-28 h-28 rounded-full flex items-center justify-center mb-6"
               style={{ background: "linear-gradient(135deg, #fceee3 0%, #fdf6f0 100%)" }}
             >
-              <Users className="w-12 h-12" style={{ color: "var(--sw-orange)", opacity: 0.5 }} />
+              <Users className="w-12 h-12" style={{ color: "var(--sw-primary)", opacity: 0.5 }} />
             </div>
             <p
               className="text-2xl font-bold mb-2"
@@ -457,7 +457,7 @@ export default function PublicVendorDirectory({
               onClick={() => { setSearch(""); setActiveCity(""); setSort("Recommended"); }}
               className="px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:opacity-90"
               style={{
-                background: "var(--sw-orange)",
+                background: "var(--sw-primary)",
                 color: "white",
                 boxShadow: "0 4px 14px rgba(238,116,41,0.35)",
               }}
@@ -554,7 +554,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
         <div className="relative w-full sm:w-44 h-52 sm:h-44 rounded-[18px] overflow-hidden flex-shrink-0">
           <Image src={image} alt={vendor.businessName || vendor.name} fill sizes="(max-width: 640px) 100vw, 176px" className="object-cover" />
           {vendor.featured && (
-            <span className="absolute top-2 left-2 rounded-full bg-orange-500 px-2.5 py-1 text-[9px] font-black uppercase text-white">Featured</span>
+            <span className="absolute top-2 left-2 rounded-full bg-primary-500 px-2.5 py-1 text-[9px] font-black uppercase text-white">Featured</span>
           )}
         </div>
         <div className="flex-1 flex flex-col justify-between py-1">
@@ -574,12 +574,12 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
               )}
             </div>
             <Link href={detailHref}>
-              <h2 className="text-xl font-extrabold text-slate-950 hover:text-orange-600 transition-colors leading-tight">
+              <h2 className="text-xl font-extrabold text-slate-950 hover:text-primary-600 transition-colors leading-tight">
                 {vendor.businessName || vendor.name}
               </h2>
             </Link>
             <div className="flex items-center gap-1.5 text-sm text-slate-500 mt-1">
-              <MapPin className="h-3.5 w-3.5 text-orange-500" />
+              <MapPin className="h-3.5 w-3.5 text-primary-500" />
               <span>{vendor.city}</span>
             </div>
             {vendor.description && (
@@ -593,7 +593,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
                 {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
               </span>
             </div>
-            <Link href={detailHref} className="rounded-full bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-orange-600">
+            <Link href={detailHref} className="rounded-full bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-600">
               View Details
             </Link>
           </div>
@@ -614,7 +614,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
 
       <div className="absolute top-4 left-4 z-20 flex gap-2">
         {vendor.featured && (
-          <span className="rounded-full bg-orange-500 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
+          <span className="rounded-full bg-primary-500 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
             Featured
           </span>
         )}
@@ -646,12 +646,12 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
         </div>
 
         <Link href={detailHref}>
-          <h2 className="line-clamp-2 text-2xl font-extrabold leading-tight text-slate-950 hover:text-orange-600 transition-colors">
+          <h2 className="line-clamp-2 text-2xl font-extrabold leading-tight text-slate-950 hover:text-primary-600 transition-colors">
             {vendor.businessName || vendor.name}
           </h2>
         </Link>
         <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-slate-600">
-          <MapPin className="h-4 w-4 text-orange-500" />
+          <MapPin className="h-4 w-4 text-primary-500" />
           <span>{vendor.city}</span>
         </div>
 
@@ -670,7 +670,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
           </div>
           <Link
             href={detailHref}
-            className="rounded-full bg-slate-900 px-5 py-3 text-xs font-bold text-white transition-colors hover:bg-orange-600"
+            className="rounded-full bg-slate-900 px-5 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600"
           >
             Book
           </Link>

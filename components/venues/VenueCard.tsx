@@ -31,7 +31,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
             <Image src={venue.image} alt={venue.name} fill sizes="(max-width: 640px) 100vw, 280px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
             {venue.featured && (
               <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                <Crown className="w-3.5 h-3.5" style={{ color: "var(--sw-orange)" }} />
+                <Crown className="w-3.5 h-3.5" style={{ color: "var(--sw-primary)" }} />
                 <span className="text-xs font-bold text-slate-800 tracking-wide">Featured</span>
               </div>
             )}
@@ -45,7 +45,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
                 <h3 className="text-xl font-bold text-slate-900 line-clamp-1" style={{ fontFamily: "var(--font-heading)" }}>{venue.name}</h3>
                 {venue.rating > 0 && (
                   <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg">
-                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
                     <span className="text-sm font-bold text-slate-800">{venue.rating.toFixed(1)}</span>
                   </div>
                 )}
@@ -100,7 +100,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
             venue.featured ? (
               <div
                 className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm"
-                style={{ background: "var(--sw-orange)" }}
+                style={{ background: "var(--sw-primary)" }}
               >
                 <Crown className="w-3.5 h-3.5" />
                 Featured
@@ -119,7 +119,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
               </div>
               <div 
                 className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm"
-                style={{ color: "var(--sw-orange)" }}
+                style={{ color: "var(--sw-primary)" }}
               >
                 {venue.type}
               </div>

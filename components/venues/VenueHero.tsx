@@ -46,7 +46,7 @@ export default function VenueHero({ venue }: VenueHeroProps) {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200">
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-800 px-2.5 py-1 rounded-md shadow-sm">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-100 text-primary-800 px-2.5 py-1 rounded-md shadow-sm">
               Venue & Estate
             </span>
             <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md">
@@ -64,7 +64,7 @@ export default function VenueHero({ venue }: VenueHeroProps) {
           <div className="flex items-center gap-2 text-slate-500 text-sm font-medium pt-1">
             <MapPin className="w-4 h-4 text-slate-400" />
             {venue.location}, {venue.country}
-            <a href="#" className="text-orange-600 font-semibold ml-2 hover:underline text-xs">
+            <a href="#" className="text-primary-600 font-semibold ml-2 hover:underline text-xs">
               (View on Map)
             </a>
           </div>
@@ -75,7 +75,7 @@ export default function VenueHero({ venue }: VenueHeroProps) {
           {venue.rating > 0 && (
             <div className="flex flex-col items-start md:items-end gap-1.5">
               <div className="flex items-center gap-1.5 bg-sw-navy text-white px-4 py-2 rounded-xl shadow-md">
-                <Star className="w-4 h-4 text-sw-gold fill-sw-gold" />
+                <Star className="w-4 h-4 text-sw-secondary fill-sw-secondary" />
                 <span className="font-bold text-lg leading-none">{venue.rating.toFixed(1)}</span>
               </div>
               <span className="text-xs font-semibold text-slate-500 underline decoration-slate-300 underline-offset-2">
@@ -93,19 +93,19 @@ export default function VenueHero({ venue }: VenueHeroProps) {
 
       {/* Action Bar */}
       <div className="flex items-center justify-start gap-8 py-5">
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
+        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
           <ImageIcon className="w-4 h-4" />
           102 Photos
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
+        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
           <Heart className="w-4 h-4" />
           Shortlist
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
+        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
           <PenSquare className="w-4 h-4" />
           Write a Review
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
+        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
           <Share2 className="w-4 h-4" />
           Share
         </button>

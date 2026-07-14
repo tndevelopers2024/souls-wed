@@ -23,7 +23,7 @@ export default function VenueGallery({ images, venueName }: VenueGalleryProps) {
     <>
       {/* Tabs */}
       <div className="flex items-center gap-8 border-b border-slate-200 mb-6">
-        <button className="text-sm font-bold text-orange-600 border-b-2 border-orange-600 pb-3 uppercase tracking-wider">
+        <button className="text-sm font-bold text-primary-600 border-b-2 border-primary-600 pb-3 uppercase tracking-wider">
           PORTFOLIO ({allImages.length})
         </button>
         <button className="text-sm font-semibold text-slate-400 hover:text-slate-600 pb-3 uppercase tracking-wider transition-colors">
@@ -65,8 +65,8 @@ export default function VenueGallery({ images, venueName }: VenueGalleryProps) {
         <div className="flex justify-center mt-6">
           <button
             onClick={() => setLightboxIndex(0)}
-            className="px-6 py-2 rounded-full border text-sm font-bold transition-all hover:bg-orange-50"
-            style={{ borderColor: "var(--sw-orange)", color: "var(--sw-orange)" }}
+            className="px-6 py-2 rounded-full border text-sm font-bold transition-all hover:bg-primary-50"
+            style={{ borderColor: "var(--sw-primary)", color: "var(--sw-primary)" }}
           >
             View {allImages.length - 9} more
           </button>

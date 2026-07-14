@@ -48,7 +48,7 @@ export default function VendorCard({
           className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm"
           style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(10px)" }}
         >
-          <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-gold)" }} fill="var(--sw-gold)" />
+          <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
           <span className="text-slate-800">{rating.toFixed(1)}</span>
         </div>
       ) : null}
@@ -109,8 +109,8 @@ export default function VendorCard({
                 <Star
                   key={idx}
                   className="w-3.5 h-3.5"
-                  style={{ color: "var(--sw-gold)" }}
-                  fill={idx < Math.round(rating) ? "var(--sw-gold)" : "transparent"}
+                  style={{ color: "var(--sw-secondary)" }}
+                  fill={idx < Math.round(rating) ? "var(--sw-secondary)" : "transparent"}
                 />
               ))}
             </div>

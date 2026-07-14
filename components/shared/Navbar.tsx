@@ -209,7 +209,7 @@ function DropdownMenu({ columns }: { columns: { title: string; items: { label: s
     >
       {columns.map((column, colIdx) => (
         <div key={colIdx} className="flex-1 flex flex-col gap-4 min-w-[180px]">
-          <h4 className="text-xs font-black text-orange-600 uppercase tracking-widest pb-3 mb-1 border-b border-orange-600/20">{column.title}</h4>
+          <h4 className="text-xs font-black text-primary-600 uppercase tracking-widest pb-3 mb-1 border-b border-primary-600/20">{column.title}</h4>
           <div className="flex flex-col gap-2.5">
             {column.items.map((item) => {
               const isActive = pathname === item.href;
@@ -221,7 +221,7 @@ function DropdownMenu({ columns }: { columns: { title: string; items: { label: s
                   key={item.href}
                   href={item.href}
                   className="relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10"
-                  style={{ color: showPill ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                  style={{ color: showPill ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                   onMouseEnter={() => setHoveredItem(item.href)}
                 >
                   {showPill && (
@@ -393,8 +393,8 @@ export default function Navbar() {
                   >
                     <Link
                       href={link.href}
-                      className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-orange-600 group z-10"
-                      style={{ color: showPill ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                      className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-primary-600 group z-10"
+                      style={{ color: showPill ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                     >
                       {showPill && (
                         <motion.div
@@ -414,7 +414,7 @@ export default function Navbar() {
                         {link.label}
                         {link.megaMenu && (
                           <ChevronDown
-                            className="w-3.5 h-3.5 transition-transform duration-300 group-hover:text-orange-500"
+                            className="w-3.5 h-3.5 transition-transform duration-300 group-hover:text-primary-500"
                             style={{
                               transform: openDropdown === link.label ? "rotate(180deg)" : "rotate(0deg)",
                             }}
@@ -449,8 +449,8 @@ export default function Navbar() {
               >
                 <button
                   onClick={() => setOpenDropdown(openDropdown === 'currency' ? null : 'currency')}
-                  className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-orange-600 group z-10"
-                  style={{ color: hoveredPath === 'currency' || openDropdown === 'currency' ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                  className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-primary-600 group z-10"
+                  style={{ color: hoveredPath === 'currency' || openDropdown === 'currency' ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                   title="Change Currency"
                 >
                   {(hoveredPath === 'currency' || openDropdown === 'currency') && (
@@ -470,7 +470,7 @@ export default function Navbar() {
                   <span className="relative z-10 flex items-center gap-1">
                     <span className="text-[16px] leading-none">{CURRENCIES[currency]?.symbol || currency}</span>
                     <ChevronDown
-                      className="w-3.5 h-3.5 transition-transform duration-300 group-hover:text-orange-500"
+                      className="w-3.5 h-3.5 transition-transform duration-300 group-hover:text-primary-500"
                       style={{
                         transform: openDropdown === 'currency' ? "rotate(180deg)" : "rotate(0deg)",
                       }}
@@ -510,7 +510,7 @@ export default function Navbar() {
                               }}
                               onMouseEnter={() => setHoveredCurrency(code)}
                               className="relative flex items-center px-4 py-2.5 text-sm font-medium transition-colors z-10 w-full text-left rounded-full"
-                              style={{ color: isActive || showPill ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                              style={{ color: isActive || showPill ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                             >
                               {showPill && (
                                 <motion.div
@@ -542,7 +542,7 @@ export default function Navbar() {
               <Link
                 href={user ? (user.role === "admin" ? "/admin/dashboard" : user.role === "vendor" ? "/vendor/dashboard" : "/dashboard") : "/login"}
                 className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 overflow-hidden group"
-                style={{ background: "var(--sw-orange)" }}
+                style={{ background: "var(--sw-primary)" }}
               >
                 <span className="relative z-10">{user ? "My Account" : "Login"}</span>
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-[navbar-shimmer_1.5s_infinite] z-0" />
@@ -551,7 +551,7 @@ export default function Navbar() {
 
             {/* Mobile hamburger */}
             <button
-              className="md:hidden p-2 rounded-full transition-colors hover:bg-orange-50"
+              className="md:hidden p-2 rounded-full transition-colors hover:bg-primary-50"
               onClick={() => setMobileOpen(!mobileOpen)}
               style={{ color: "var(--sw-navy)" }}
             >
@@ -573,19 +573,19 @@ export default function Navbar() {
                 <div key={link.href} className="flex flex-col">
                   <Link
                     href={link.href}
-                    className={`font-bold py-2.5 px-3 rounded-full text-sm transition-colors hover:bg-orange-50 ${isActive ? 'bg-orange-50' : ''}`}
-                    style={{ color: isActive ? "var(--sw-orange)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
+                    className={`font-bold py-2.5 px-3 rounded-full text-sm transition-colors hover:bg-primary-50 ${isActive ? 'bg-primary-50' : ''}`}
+                    style={{ color: isActive ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                     onClick={() => !link.megaMenu && setMobileOpen(false)}
                   >
                     {link.label}
                   </Link>
                   {link.megaMenu && (
-                    <div className="pl-6 flex flex-col gap-1 mt-1 border-l-2 ml-4 border-orange-100">
+                    <div className="pl-6 flex flex-col gap-1 mt-1 border-l-2 ml-4 border-primary-100">
                       {link.megaMenu.flatMap(col => col.items).map(item => (
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="py-1.5 text-sm font-bold text-slate-600 hover:text-orange-500"
+                          className="py-1.5 text-sm font-bold text-slate-600 hover:text-primary-500"
                           onClick={() => setMobileOpen(false)}
                         >
                           {item.label}
@@ -596,7 +596,7 @@ export default function Navbar() {
                 </div>
               );
             })}
-            <div className="flex items-center justify-between px-3 py-2 mt-2 border-t border-orange-100">
+            <div className="flex items-center justify-between px-3 py-2 mt-2 border-t border-primary-100">
               <span className="text-sm font-bold text-slate-800">Currency</span>
               <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
                 {Object.keys(CURRENCIES).map(code => (
@@ -608,8 +608,8 @@ export default function Navbar() {
                     }}
                     className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors whitespace-nowrap ${
                       currency === code 
-                        ? 'bg-orange-500 text-white' 
-                        : 'bg-slate-100 text-slate-600 hover:bg-orange-100'
+                        ? 'bg-primary-500 text-white' 
+                        : 'bg-slate-100 text-slate-600 hover:bg-primary-100'
                     }`}
                   >
                     {code}
@@ -623,7 +623,7 @@ export default function Navbar() {
               ) : user ? (
                 <>
                   <div className="px-3 py-2 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center font-bold text-sm uppercase shadow-sm">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-primary-500 text-white flex items-center justify-center font-bold text-sm uppercase shadow-sm">
                       {user.name.charAt(0)}
                     </div>
                     <div>
@@ -633,11 +633,11 @@ export default function Navbar() {
                   </div>
                   <Link
                     href={user.role === "admin" ? "/admin/dashboard" : user.role === "vendor" ? "/vendor/dashboard" : "/dashboard"}
-                    className="font-semibold text-sm py-2.5 px-4 rounded-full text-center border transition-colors hover:bg-orange-50 flex items-center justify-center gap-2"
+                    className="font-semibold text-sm py-2.5 px-4 rounded-full text-center border transition-colors hover:bg-primary-50 flex items-center justify-center gap-2"
                     style={{ color: "var(--sw-navy)", borderColor: "var(--sw-light-gray)" }}
                     onClick={() => setMobileOpen(false)}
                   >
-                    <LayoutDashboard className="w-4 h-4 text-orange-500" />
+                    <LayoutDashboard className="w-4 h-4 text-primary-500" />
                     <span>Dashboard</span>
                   </Link>
                   <button
@@ -655,7 +655,7 @@ export default function Navbar() {
                 <div className="flex gap-2 w-full">
                   <Link
                     href="/login"
-                    className="flex-1 font-semibold text-sm py-2.5 px-3 rounded-full text-center border transition-colors hover:bg-orange-50"
+                    className="flex-1 font-semibold text-sm py-2.5 px-3 rounded-full text-center border transition-colors hover:bg-primary-50"
                     style={{ color: "var(--sw-navy)", borderColor: "var(--sw-light-gray)" }}
                     onClick={() => setMobileOpen(false)}
                   >
@@ -664,7 +664,7 @@ export default function Navbar() {
                   <Link
                     href="/venues"
                     className="flex-1 font-bold text-sm py-2.5 px-3 rounded-full text-center text-white"
-                    style={{ background: "var(--sw-orange)" }}
+                    style={{ background: "var(--sw-primary)" }}
                     onClick={() => setMobileOpen(false)}
                   >
                     Book Now

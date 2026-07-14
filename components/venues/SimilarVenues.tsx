@@ -26,7 +26,7 @@ export default function SimilarVenues({ venues }: SimilarVenuesProps) {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-end justify-between mb-8">
           <div>
-            <p className="text-sm font-bold uppercase tracking-widest mb-2" style={{ color: "var(--sw-orange)" }}>
+            <p className="text-sm font-bold uppercase tracking-widest mb-2" style={{ color: "var(--sw-primary)" }}>
               You May Also Like
             </p>
             <h2 className="text-3xl md:text-4xl font-bold" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>

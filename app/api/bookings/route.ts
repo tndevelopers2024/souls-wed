@@ -83,9 +83,9 @@ export async function POST(req: Request) {
     }
 
     // Validate booking-type-specific dates
-    if (bookingType === "venue" && !eventDate) {
+    if (bookingType !== "room" && !eventDate) {
       return NextResponse.json(
-        { message: "Event date is required for venue bookings." },
+        { message: "Event date is required for this booking." },
         { status: 400 }
       );
     }
@@ -106,15 +106,15 @@ export async function POST(req: Request) {
       status: { $in: ["pending", "confirmed"] },
     };
 
-    if (bookingType === "venue") {
-      conflictQuery.bookingType = "venue";
-      conflictQuery.eventDate = new Date(eventDate);
-    } else if (bookingType === "room") {
+    if (bookingType === "room") {
       // A room range conflicts if: existing.checkIn < new.checkOut AND existing.checkOut > new.checkIn
       conflictQuery.bookingType = "room";
       conflictQuery.checkIn = { $lt: new Date(checkOut) };
       conflictQuery.checkOut = { $gt: new Date(checkIn) };
+    } else {
+      conflictQuery.eventDate = new Date(eventDate);
     }
+
 
     const existingBooking = await Booking.findOne(conflictQuery);
     if (existingBooking) {
@@ -136,7 +136,7 @@ export async function POST(req: Request) {
       providerId,
       providerName,
       bookingType,
-      eventDate: bookingType === "venue" ? new Date(eventDate) : undefined,
+      eventDate: bookingType !== "room" ? new Date(eventDate) : undefined,
       checkIn: bookingType === "room" ? new Date(checkIn) : undefined,
       checkOut: bookingType === "room" ? new Date(checkOut) : undefined,
       guestCount,

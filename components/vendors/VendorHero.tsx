@@ -94,7 +94,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
               Contact
             </button>
           )}
-          <span className="text-[10px] font-bold uppercase tracking-wider bg-orange-500 text-white px-2 py-0.5 rounded shadow-sm">
+          <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-500 text-white px-2 py-0.5 rounded shadow-sm">
             Highly Requested
           </span>
         </div>
@@ -102,19 +102,19 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
 
       {/* Action Bar */}
       <div className="flex items-center justify-between border-b border-slate-200 py-4 px-2 mt-2">
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
+        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
           <ImageIcon className="w-4 h-4" />
           {vendor.images?.length || 1} Photos
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
+        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
           <Heart className="w-4 h-4" />
           Shortlist
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
+        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
           <PenSquare className="w-4 h-4" />
           Write a Review
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-600 transition-colors">
+        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
           <Share2 className="w-4 h-4" />
           Share
         </button>

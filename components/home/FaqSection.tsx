@@ -44,10 +44,10 @@ export default function FaqSection() {
         >
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-gray-200">
-               <HelpCircle className="w-6 h-6" style={{ color: "var(--sw-orange)" }} />
+               <HelpCircle className="w-6 h-6" style={{ color: "var(--sw-primary)" }} />
             </div>
           </div>
-          <p className="text-sm font-bold uppercase tracking-[0.2em] mb-3" style={{ color: "var(--sw-orange)" }}>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] mb-3" style={{ color: "var(--sw-primary)" }}>
             Got Questions?
           </p>
           <h2 className="section-heading font-extrabold tracking-tight">Frequently Asked Questions</h2>
@@ -68,7 +68,7 @@ export default function FaqSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className={`overflow-hidden transition-all duration-300 rounded-[20px] border ${isOpen ? 'border-orange-200/50 bg-white/80' : 'border-gray-200 bg-white/40 hover:bg-white/60'}`}
+                className={`overflow-hidden transition-all duration-300 rounded-[20px] border ${isOpen ? 'border-primary-200/50 bg-white/80' : 'border-gray-200 bg-white/40 hover:bg-white/60'}`}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
@@ -80,7 +80,7 @@ export default function FaqSection() {
                   <div 
                     className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-transform duration-300 shadow-sm ${isOpen ? 'rotate-180' : ''}`}
                     style={{ 
-                      background: isOpen ? "var(--sw-orange)" : "var(--sw-white)", 
+                      background: isOpen ? "var(--sw-primary)" : "var(--sw-white)", 
                       color: isOpen ? "var(--sw-white)" : "var(--sw-navy)",
                       border: isOpen ? "none" : "1px solid var(--sw-light-gray)"
                     }}

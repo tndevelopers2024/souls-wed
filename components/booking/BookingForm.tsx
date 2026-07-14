@@ -243,7 +243,7 @@ export default function BookingForm({
         <p className="text-xs text-slate-400 mb-6">Pay {formatAsCurrency(priceBreakdown.advance, currency)} advance to confirm.</p>
         <button
           onClick={() => router.push(`/checkout/${bookingId}`)}
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-full text-sm transition-colors shadow-sm"
+          className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-full text-sm transition-colors shadow-sm"
         >
           Proceed to Checkout
         </button>
@@ -274,13 +274,13 @@ export default function BookingForm({
 
       <div className="bg-white border border-slate-100 rounded-2xl p-4">
         <h4 className="text-xs font-bold text-slate-600 mb-3 flex items-center gap-1.5">
-          <CalendarDays className="w-3.5 h-3.5 text-orange-500" />
+          <CalendarDays className="w-3.5 h-3.5 text-primary-500" />
           {bookingType === "room" ? "Select Stay Dates" : "Select Event Date"}
         </h4>
 
         {loadingDates && (
           <div className="flex items-center justify-center py-4">
-            <Loader2 className="w-5 h-5 animate-spin text-orange-500" />
+            <Loader2 className="w-5 h-5 animate-spin text-primary-500" />
           </div>
         )}
 
@@ -302,7 +302,7 @@ export default function BookingForm({
           <>
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-orange-500" /> Guests
+                <Users className="w-3.5 h-3.5 text-primary-500" /> Guests
               </label>
               <input
                 type="number"
@@ -310,7 +310,7 @@ export default function BookingForm({
                 max={maxGuests}
                 value={guestCount}
                 onChange={(e) => setGuestCount(Number(e.target.value))}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-orange-400 transition-colors"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -318,7 +318,7 @@ export default function BookingForm({
               <select
                 value={menuType}
                 onChange={(e) => setMenuType(e.target.value as "veg" | "nonveg")}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-orange-400 transition-colors"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
               >
                 <option value="veg">Vegetarian</option>
                 <option value="nonveg">Non-Vegetarian</option>
@@ -331,7 +331,7 @@ export default function BookingForm({
           <>
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
-                <BedDouble className="w-3.5 h-3.5 text-orange-500" /> Rooms
+                <BedDouble className="w-3.5 h-3.5 text-primary-500" /> Rooms
               </label>
               <input
                 type="number"
@@ -339,7 +339,7 @@ export default function BookingForm({
                 max={totalRooms}
                 value={roomCount}
                 onChange={(e) => setRoomCount(Number(e.target.value))}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-orange-400 transition-colors"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
               />
             </div>
           </>
@@ -348,14 +348,14 @@ export default function BookingForm({
         {hourlyPrice && bookingType !== "venue" && bookingType !== "room" && (
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-orange-500" /> Hours
+              <Clock className="w-3.5 h-3.5 text-primary-500" /> Hours
             </label>
             <input
               type="number"
               min={1}
               value={hours}
               onChange={(e) => setHours(Number(e.target.value))}
-              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-orange-400 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
             />
           </div>
         )}
@@ -363,21 +363,21 @@ export default function BookingForm({
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
-          <Phone className="w-3.5 h-3.5 text-orange-500" /> Contact Phone
+          <Phone className="w-3.5 h-3.5 text-primary-500" /> Contact Phone
         </label>
         <input
           type="tel"
           placeholder="Enter contact number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-orange-400 transition-colors"
+          className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
         />
       </div>
 
-      <div className="bg-orange-50/50 border border-orange-100 rounded-2xl p-4 mt-2">
+      <div className="bg-primary-50/50 border border-primary-100 rounded-2xl p-4 mt-2">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-            <IndianRupee className="w-3.5 h-3.5 text-orange-500" /> Price Breakdown
+            <IndianRupee className="w-3.5 h-3.5 text-primary-500" /> Price Breakdown
           </h4>
         </div>
         <div className="flex flex-col gap-2 text-sm">
@@ -387,9 +387,9 @@ export default function BookingForm({
             </span>
             <span className="font-bold text-slate-800">{formatAsCurrency(priceBreakdown.total, currency)}</span>
           </div>
-          <div className="border-t border-orange-200 pt-2 flex justify-between">
+          <div className="border-t border-primary-200 pt-2 flex justify-between">
             <span className="text-slate-600 font-semibold">Advance ({advancePercentage}%)</span>
-            <span className="font-black text-orange-600 text-base">{formatAsCurrency(priceBreakdown.advance, currency)}</span>
+            <span className="font-black text-primary-600 text-base">{formatAsCurrency(priceBreakdown.advance, currency)}</span>
           </div>
         </div>
       </div>
@@ -405,7 +405,7 @@ export default function BookingForm({
         <button
           type="button"
           onClick={() => router.push("/login")}
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-full text-sm mt-2"
+          className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-full text-sm mt-2"
         >
           Book Now
         </button>
@@ -413,7 +413,7 @@ export default function BookingForm({
         <button
           type="submit"
           disabled={submitting || loadingDates}
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-full text-sm mt-2 disabled:opacity-50"
+          className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-full text-sm mt-2 disabled:opacity-50"
         >
           {submitting ? "Creating Booking..." : `Book Now — Pay ${formatAsCurrency(priceBreakdown.advance, currency)}`}
         </button>

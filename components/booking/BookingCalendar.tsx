@@ -199,17 +199,17 @@ export default function BookingCalendar({
 
     // Single mode selection
     if (mode === "single" && selectedDate === dateStr) {
-      return "bg-orange-500 text-white font-bold shadow-md";
+      return "bg-primary-500 text-white font-bold shadow-md";
     }
 
     // Range mode selection
     if (mode === "range") {
       if (dateStr === rangeStart || dateStr === rangeEnd) {
-        return "bg-orange-500 text-white font-bold shadow-md";
+        return "bg-primary-500 text-white font-bold shadow-md";
       }
       // Dates between start and end
       if (rangeStart && rangeEnd && isInRange(dateStr, rangeStart, rangeEnd)) {
-        return "bg-orange-100 text-orange-800 font-semibold";
+        return "bg-primary-100 text-primary-800 font-semibold";
       }
       // Hover preview (before second click)
       if (rangeStart && !rangeEnd && hoverDate && dateStr > rangeStart && dateStr <= hoverDate) {
@@ -218,16 +218,16 @@ export default function BookingCalendar({
           (bd) => bd > rangeStart && bd < dateStr
         );
         if (!hasBookedBetween) {
-          return "bg-orange-50 text-orange-700";
+          return "bg-primary-50 text-primary-700";
         }
       }
     }
 
     // Today highlight
-    if (isTodayDate) return "ring-2 ring-orange-400 ring-inset font-bold text-orange-600";
+    if (isTodayDate) return "ring-2 ring-primary-400 ring-inset font-bold text-primary-600";
 
     // Default: available date
-    return "hover:bg-orange-50 text-slate-700 cursor-pointer";
+    return "hover:bg-primary-50 text-slate-700 cursor-pointer";
   };
 
   // ─── Build the grid ───
@@ -250,7 +250,7 @@ export default function BookingCalendar({
           className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
             isPrevDisabled 
               ? "text-slate-300 cursor-not-allowed" 
-              : "text-slate-600 hover:bg-orange-50 hover:text-orange-600"
+              : "text-slate-600 hover:bg-primary-50 hover:text-primary-600"
           }`}
         >
           <ChevronLeft className="w-5 h-5" />
@@ -258,7 +258,7 @@ export default function BookingCalendar({
         <h3 className="text-sm font-bold text-slate-800">{monthName}</h3>
         <button
           onClick={goToNextMonth}
-          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -306,7 +306,7 @@ export default function BookingCalendar({
       {/* ─── Legend ─── */}
       <div className="flex items-center gap-4 mt-4 text-[10px] text-slate-500">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-orange-500" />
+          <div className="w-3 h-3 rounded bg-primary-500" />
           <span>Selected</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -314,7 +314,7 @@ export default function BookingCalendar({
           <span>Booked</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded ring-2 ring-orange-400" />
+          <div className="w-3 h-3 rounded ring-2 ring-primary-400" />
           <span>Today</span>
         </div>
       </div>

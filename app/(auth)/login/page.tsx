@@ -58,7 +58,7 @@ export default function UnifiedLoginPage() {
 function LoginSkeleton() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+      <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
     </div>
   );
 }
@@ -167,7 +167,7 @@ function LoginContent() {
       ? { from: "#7c3aed", to: "#6d28d9", glow: "rgba(124,58,237,0.25)", badge: "bg-violet-100 text-violet-700 border-violet-200" }
       : role === "vendor"
       ? { from: "#0ea5e9", to: "#0284c7", glow: "rgba(14,165,233,0.25)", badge: "bg-sky-100 text-sky-700 border-sky-200" }
-      : { from: "#f97316", to: "#ea580c", glow: "rgba(249,115,22,0.25)", badge: "bg-orange-100 text-orange-700 border-orange-200" };
+      : { from: "#f97316", to: "#ea580c", glow: "rgba(249,115,22,0.25)", badge: "bg-primary-100 text-primary-700 border-primary-200" };
 
   return (
     <div

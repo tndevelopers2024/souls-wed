@@ -75,7 +75,7 @@ export default function MakeupArtistsSection() {
           transition={{ duration: 0.6 }}
         >
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-orange)" }}>
+            <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-primary)" }}>
               Look Your Best
             </p>
             <h2 className="section-heading">Makeup Artists</h2>

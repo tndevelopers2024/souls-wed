@@ -4,11 +4,11 @@
 // Keeping them as constants avoids the CSS-specificity clash that caused
 // global .field-input padding to override Tailwind pl-11.
 const INPUT_CLS =
-  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pl-11 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all";
+  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pl-11 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all";
 const INPUT_PR_CLS =
-  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pl-11 pr-12 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all";
+  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pl-11 pr-12 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all";
 const SELECT_CLS =
-  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all appearance-none";
+  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all appearance-none";
 const ICON_CLS = "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none";
 
 import React, { Suspense, useState, useLayoutEffect, useEffect } from "react";
@@ -72,7 +72,7 @@ const ACCENT: Record<UserRole, { from: string; to: string; glow: string }> = {
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-6 h-6 animate-spin text-orange-500" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-6 h-6 animate-spin text-primary-500" /></div>}>
       <SignupContent />
     </Suspense>
   );

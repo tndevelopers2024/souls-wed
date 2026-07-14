@@ -177,8 +177,8 @@ souls-wed/
 
 | Token | Hex | Usage |
 |---|---|---|
-| `--sw-orange` | `#EE7429` | Primary CTA, accents |
-| `--sw-gold` | `#FCCB11` | Secondary CTA, buttons |
+| `--sw-primary` | `#EE7429` | Primary CTA, accents |
+| `--sw-secondary` | `#FCCB11` | Secondary CTA, buttons |
 | `--sw-navy` | `#1A1A1A` | Text, headings |
 | `--sw-peach` | `#EED9C4` | Hero backgrounds, soft accents |
 | `--sw-steel` | `#000000` | Body text |

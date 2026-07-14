@@ -31,8 +31,8 @@ function VendorReviews({ rating, reviewCount }: { rating: number; reviewCount: n
   const displayRating = rating > 0 ? rating : 5;
   const count = reviewCount > 0 ? reviewCount : 2;
   return (
-    <div className="flex flex-col md:flex-row gap-8 items-center bg-orange-50/40 p-6 rounded-2xl mb-8 border border-orange-100">
-      <div className="text-center md:border-r border-orange-200/50 md:pr-10 shrink-0">
+    <div className="flex flex-col md:flex-row gap-8 items-center bg-primary-50/40 p-6 rounded-2xl mb-8 border border-primary-100">
+      <div className="text-center md:border-r border-primary-200/50 md:pr-10 shrink-0">
         <div className="text-5xl font-black text-slate-900 mb-1">{displayRating.toFixed(1)}</div>
         <div className="flex justify-center gap-0.5 mb-1.5">
           {[1, 2, 3, 4, 5].map((s) => (
@@ -63,6 +63,12 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
   const [verifyingPayment, setVerifyingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const cat = vendor.category.toLowerCase();
+  const isVenue = cat.includes("venue") || cat.includes("banquet");
+  const isRoom = cat.includes("room") || cat.includes("accommodation");
+  const isCaterer = cat.includes("cater");
+  const isPerPlate = isVenue || isCaterer;
 
   // ── Stripe payment verification ──
   useEffect(() => {
@@ -100,11 +106,11 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
             {/* Tab Navigation */}
             <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-6 shadow-sm">
               <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-1">
-                <a href="#areas" className="text-sm font-bold text-orange-600 border-b-2 border-orange-600 pb-1 whitespace-nowrap">Areas Available</a>
-                <a href="#about" className="text-sm font-semibold text-slate-600 hover:text-orange-600 pb-1 whitespace-nowrap transition-colors">About</a>
-                <a href="#gallery" className="text-sm font-semibold text-slate-600 hover:text-orange-600 pb-1 whitespace-nowrap transition-colors">Gallery</a>
-                <a href="#pricing" className="text-sm font-semibold text-slate-600 hover:text-orange-600 pb-1 whitespace-nowrap transition-colors">Pricing</a>
-                <a href="#reviews" className="text-sm font-semibold text-slate-600 hover:text-orange-600 pb-1 whitespace-nowrap transition-colors">Reviews</a>
+                <a href="#areas" className="text-sm font-bold text-primary-600 border-b-2 border-primary-600 pb-1 whitespace-nowrap">Areas Available</a>
+                <a href="#about" className="text-sm font-semibold text-slate-600 hover:text-primary-600 pb-1 whitespace-nowrap transition-colors">About</a>
+                <a href="#gallery" className="text-sm font-semibold text-slate-600 hover:text-primary-600 pb-1 whitespace-nowrap transition-colors">Gallery</a>
+                <a href="#pricing" className="text-sm font-semibold text-slate-600 hover:text-primary-600 pb-1 whitespace-nowrap transition-colors">Pricing</a>
+                <a href="#reviews" className="text-sm font-semibold text-slate-600 hover:text-primary-600 pb-1 whitespace-nowrap transition-colors">Reviews</a>
               </div>
             </div>
 
@@ -114,8 +120,8 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                 Areas Available (2)
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 hover:border-orange-200 transition-colors bg-white shadow-sm">
-                  <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0 text-orange-600">
+                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 hover:border-primary-200 transition-colors bg-white shadow-sm">
+                  <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0 text-primary-600">
                     <Package className="w-6 h-6" />
                   </div>
                   <div>
@@ -123,7 +129,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                     <p className="text-xs text-slate-500 mt-1">Indoor • Banquet Hall</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 hover:border-orange-200 transition-colors bg-white shadow-sm">
+                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 hover:border-primary-200 transition-colors bg-white shadow-sm">
                   <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
                     <Package className="w-6 h-6" />
                   </div>
@@ -163,39 +169,66 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
               <VendorGallery images={images} name={vendor.businessName || vendor.name} />
             </section>
 
-            {/* Pricing Table (Mirrors Venues Pricing) */}
+            {/* Pricing Section */}
             <section id="pricing" className="scroll-mt-32">
               <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
                 Pricing
               </h2>
               <div className="rounded-[24px] overflow-hidden border border-slate-100" style={{ background: "white" }}>
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                  <div>
-                    <p className="font-semibold text-slate-800 text-sm">Veg Menu</p>
-                    <p className="text-xs text-slate-400">Per plate, inclusive of taxes</p>
+                
+                {isPerPlate ? (
+                  <>
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                      <div>
+                        <p className="font-semibold text-slate-800 text-sm">Veg Menu</p>
+                        <p className="text-xs text-slate-400">Per plate, inclusive of taxes</p>
+                      </div>
+                      <p className="text-lg font-bold" style={{ color: "var(--sw-navy)" }}>
+                        {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                      <div>
+                        <p className="font-semibold text-slate-800 text-sm">Non-Veg Menu</p>
+                        <p className="text-xs text-slate-400">Per plate, inclusive of taxes</p>
+                      </div>
+                      <p className="text-lg font-bold" style={{ color: "var(--sw-navy)" }}>
+                        {vendor.priceFrom ? formatAsCurrency(Math.round(vendor.priceFrom * 1.2), currency) : "On request"}
+                      </p>
+                    </div>
+                    {isVenue && (
+                      <div className="flex items-center justify-between px-6 py-4">
+                        <div>
+                          <p className="font-semibold text-slate-800 text-sm">Venue Rental</p>
+                          <p className="text-xs text-slate-400">Full-day exclusive use</p>
+                        </div>
+                        <p className="text-lg font-bold text-primary-600">
+                          {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom * 5, currency) : "On request"}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                ) : isRoom ? (
+                  <div className="flex items-center justify-between px-6 py-4">
+                    <div>
+                      <p className="font-semibold text-slate-800 text-sm">Room Rate</p>
+                      <p className="text-xs text-slate-400">Per room per night, inclusive of taxes</p>
+                    </div>
+                    <p className="text-lg font-bold text-primary-600">
+                      {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
+                    </p>
                   </div>
-                  <p className="text-lg font-bold" style={{ color: "var(--sw-navy)" }}>
-                    {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                  <div>
-                    <p className="font-semibold text-slate-800 text-sm">Non-Veg Menu</p>
-                    <p className="text-xs text-slate-400">Per plate, inclusive of taxes</p>
+                ) : (
+                  <div className="flex items-center justify-between px-6 py-4">
+                    <div>
+                      <p className="font-semibold text-slate-800 text-sm">Starting Package</p>
+                      <p className="text-xs text-slate-400">Fixed starting fee for services</p>
+                    </div>
+                    <p className="text-lg font-bold text-primary-600">
+                      {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
+                    </p>
                   </div>
-                  <p className="text-lg font-bold" style={{ color: "var(--sw-navy)" }}>
-                    {vendor.priceFrom ? formatAsCurrency(Math.round(vendor.priceFrom * 1.2), currency) : "On request"}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between px-6 py-4">
-                  <div>
-                    <p className="font-semibold text-slate-800 text-sm">Venue Rental</p>
-                    <p className="text-xs text-slate-400">Full-day exclusive use</p>
-                  </div>
-                  <p className="text-lg font-bold text-orange-600">
-                    {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom * 5, currency) : "On request"}
-                  </p>
-                </div>
+                )}
               </div>
             </section>
 
@@ -243,7 +276,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
           <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl border border-slate-100 flex flex-col items-center">
             {verifyingPayment ? (
               <>
-                <div className="w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-4">
+                <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 mb-4">
                   <Loader2 className="w-8 h-8 animate-spin" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 mb-2">Verifying Payment...</h3>
@@ -256,7 +289,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 mb-2">Payment Confirmed!</h3>
                 <p className="text-sm text-slate-500 mb-6">Your booking is now confirmed. You can view all details in your dashboard.</p>
-                <Link href="/dashboard" className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-full text-sm transition-colors text-center block shadow-md">
+                <Link href="/dashboard" className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-full text-sm transition-colors text-center block shadow-md">
                   Go to Dashboard
                 </Link>
               </>

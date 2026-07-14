@@ -30,7 +30,7 @@ export default function WeddingCategoriesSection() {
           <div>
             <p
               className="text-sm font-semibold uppercase tracking-widest mb-2"
-              style={{ color: "var(--sw-orange)" }}
+              style={{ color: "var(--sw-primary)" }}
             >
               Browse By Category
             </p>
@@ -100,7 +100,7 @@ export default function WeddingCategoriesSection() {
               {/* Content */}
               <div className="absolute inset-x-0 bottom-0 z-20 px-4 pt-5 pb-4 flex flex-col">
                 <div className="flex items-center gap-3 transform transition-all duration-500 group-hover:-translate-y-1">
-                  <div className="bg-white/90 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] text-slate-800 flex-shrink-0 transition-colors duration-500 group-hover:text-[var(--sw-orange)]">
+                  <div className="bg-white/90 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] text-slate-800 flex-shrink-0 transition-colors duration-500 group-hover:text-[var(--sw-primary)]">
                     <cat.icon className="w-5 h-5 stroke-[1.5]" />
                   </div>
                   <div className="flex flex-col">

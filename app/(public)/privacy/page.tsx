@@ -8,7 +8,7 @@ export default function PrivacyPolicyPage() {
     <main className="min-h-screen pt-32 pb-24 relative overflow-hidden">
       {/* Decorative Orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-400/5 blur-[120px] rounded-full" />
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary-400/5 blur-[120px] rounded-full" />
       </div>
 
       <div className="max-w-4xl mx-auto px-6 lg:px-8 relative z-10">

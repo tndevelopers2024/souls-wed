@@ -416,7 +416,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-800 font-body">
-        <div className="w-10 h-10 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin mb-4" />
+        <div className="w-10 h-10 rounded-full border-2 border-primary-500/20 border-t-orange-500 animate-spin mb-4" />
         <p className="font-bold text-sm tracking-wide">SECURE CONSOLE</p>
       </div>
     );
@@ -451,7 +451,7 @@ export default function AdminDashboard() {
     <div className={`h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
       
       {/* Background Decorative Ambient Shapes */}
-      <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[150px]" />
+      <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-primary-500 blur-[150px]" />
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[150px]" />
 
       {/* ─── FLOATING SIDEBAR ─── */}
@@ -470,7 +470,7 @@ export default function AdminDashboard() {
                   priority
                 />
               </Link>
-              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest mt-1">Admin Control</p>
+              <p className="text-[9px] font-bold text-primary-600 uppercase tracking-widest mt-1">Admin Control</p>
             </div>
           ) : (
             <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SW</h2>
@@ -491,7 +491,7 @@ export default function AdminDashboard() {
                 }}
                 className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
-                    ? "bg-orange-500 text-white" 
+                    ? "bg-primary-500 text-white" 
                     : isDarkMode
                       ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
@@ -516,7 +516,7 @@ export default function AdminDashboard() {
                 {sidebarCollapsed && item.count !== null && (
                   <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${
                     isActive 
-                      ? "bg-white text-orange-600" 
+                      ? "bg-white text-primary-600" 
                       : isDarkMode 
                         ? "bg-stone-800 text-stone-400 border border-stone-700"
                         : "bg-stone-100 text-stone-500 border border-stone-200"
@@ -635,7 +635,7 @@ export default function AdminDashboard() {
                   }}
                   className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
                     activeTab === item.id 
-                      ? "bg-orange-500 text-white" 
+                      ? "bg-primary-500 text-white" 
                       : isDarkMode 
                         ? "text-stone-300 hover:bg-stone-800" 
                         : "text-stone-600 hover:bg-stone-50"
@@ -747,8 +747,8 @@ export default function AdminDashboard() {
                           <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Calculated dynamically from last 6 months of billing ledger</p>
                         </div>
                         <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1.5 text-[9px] font-black text-orange-500">
-                            <span className="w-2.5 h-2.5 rounded bg-orange-400 inline-block" /> Bookings
+                          <div className="flex items-center gap-1.5 text-[9px] font-black text-primary-500">
+                            <span className="w-2.5 h-2.5 rounded bg-primary-400 inline-block" /> Bookings
                           </div>
                           <div className="flex items-center gap-1.5 text-[9px] font-black text-amber-500">
                             <span className="w-2.5 h-2.5 rounded bg-amber-500 inline-block" /> Revenue
@@ -762,7 +762,7 @@ export default function AdminDashboard() {
                           <div key={idx} className="flex flex-col items-center flex-1 group relative">
                             {/* Interactive tooltip */}
                             <div className="absolute bottom-full mb-3 bg-stone-950 text-white text-[10px] font-bold py-1.5 px-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20 shadow-none whitespace-nowrap flex flex-col gap-0.5 border border-stone-800">
-                              <span>Month: <span className="text-orange-400">{d.month}</span></span>
+                              <span>Month: <span className="text-primary-400">{d.month}</span></span>
                               <span>Bookings: <span className="text-amber-400">{d.bookings}</span></span>
                               <span>Revenue: <span className="text-emerald-400">{formatAsCurrency(d.revenue, "INR")}</span></span>
                             </div>
@@ -771,7 +771,7 @@ export default function AdminDashboard() {
                             <div className="flex gap-1.5 items-end h-36 w-full justify-center">
                               {/* Bookings bar */}
                               <div 
-                                className="w-4 bg-orange-400 hover:bg-orange-500 rounded-t-lg transition-all duration-305"
+                                className="w-4 bg-primary-400 hover:bg-primary-500 rounded-t-lg transition-all duration-305"
                                 style={{ height: `${(d.bookings / maxBookings) * 100}%` }}
                               />
                               {/* Revenue bar */}
@@ -816,7 +816,7 @@ export default function AdminDashboard() {
                               cx="50"
                               cy="50"
                               r="40"
-                              className="stroke-orange-500 transition-all duration-1000"
+                              className="stroke-primary-500 transition-all duration-1000"
                               strokeWidth="8"
                               strokeDasharray={2 * Math.PI * 40}
                               strokeDashoffset={2 * Math.PI * 40 * (1 - (venuePercentage || 50) / 100)}
@@ -835,7 +835,7 @@ export default function AdminDashboard() {
                       <div className={`flex flex-col gap-2.5 border-t pt-4 ${dividerClass}`}>
                         <div className="flex justify-between items-center text-xs">
                           <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-orange-500" />
+                            <span className="w-2 h-2 rounded-full bg-primary-500" />
                             <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>Venues</span>
                           </div>
                           <span className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{totalVenueBookings} ({venuePercentage}%)</span>
@@ -953,7 +953,7 @@ export default function AdminDashboard() {
                           className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-auto min-h-[380px] cursor-pointer block group bg-gradient-to-br from-slate-800 to-slate-900"
                         >
                           {/* Ambient background decoration */}
-                          <div className="absolute -top-20 -right-20 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl pointer-events-none" />
+                          <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
                           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
 
                           {/* Tag pill top-left */}
@@ -1052,7 +1052,7 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredVendors.map((v) => (
                             <tr key={v._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
                             }`}>
                               <td className="p-4">
                                 <p className={`font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.businessName || "No Business Name"}</p>
@@ -1086,7 +1086,7 @@ export default function AdminDashboard() {
                                   onClick={() => handleUpdateVendorStatus(v._id, undefined, !v.featured)}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.featured
-                                      ? "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900"
+                                      ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
                                       : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
@@ -1141,7 +1141,7 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredBookings.map((b) => (
                             <tr key={b._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
                             }`}>
                               <td className="p-4">
                                 <p className={`font-black text-sm leading-tight ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{b.venueName}</p>
@@ -1250,7 +1250,7 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredUsers.map((u) => (
                             <tr key={u._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
                             }`}>
                               <td className={`p-4 font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{u.name}</td>
                               <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{u.email}</td>
@@ -1319,7 +1319,7 @@ export default function AdminDashboard() {
                         <tbody>
                           {filteredVenuesList.map((v) => (
                             <tr key={v._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-orange-50/20"
+                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
                             }`}>
                               <td className="p-4">
                                 <p className={`font-black text-sm leading-tight ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.name}</p>
@@ -1368,7 +1368,7 @@ export default function AdminDashboard() {
                                   }}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.featured
-                                      ? "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900"
+                                      ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
                                       : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >

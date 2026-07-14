@@ -158,13 +158,13 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 href={item.href}
                 className={`relative shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-extrabold tracking-wide transition-all duration-300 group ${
                   isActive
-                    ? "text-slate-900 bg-orange-50/80"
+                    ? "text-slate-900 bg-primary-50/80"
                     : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
                 <Icon 
                   className={`w-4 h-4 transition-transform duration-300 group-hover:scale-110 ${
-                    isActive ? "text-orange-500" : "text-slate-400 group-hover:text-orange-400"
+                    isActive ? "text-primary-500" : "text-slate-400 group-hover:text-primary-400"
                   }`} 
                   strokeWidth={isActive ? 2.5 : 2}
                 />
@@ -173,7 +173,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 {isActive && (
                   <motion.div 
                     layoutId="activeCategoryBorder"
-                    className="absolute inset-0 rounded-full border-2 border-orange-500 shadow-[0_4px_12px_rgba(238,116,41,0.2)]"
+                    className="absolute inset-0 rounded-full border-2 border-primary-500 shadow-[0_4px_12px_rgba(238,116,41,0.2)]"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -195,7 +195,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
           className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all"
           style={{
             background: activeCount > 0
-              ? "linear-gradient(135deg, var(--sw-orange) 0%, #f5932a 100%)"
+              ? "linear-gradient(135deg, var(--sw-primary) 0%, #f5932a 100%)"
               : "linear-gradient(135deg, var(--sw-navy) 0%, #2a3747 100%)",
             color: "white",
             boxShadow: activeCount > 0
@@ -242,7 +242,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                       : isOpen
                       ? "white"
                       : "rgba(255,255,255,0.6)",
-                    color: isActive ? "var(--sw-orange)" : "var(--sw-navy)",
+                    color: isActive ? "var(--sw-primary)" : "var(--sw-navy)",
                     border: isActive
                       ? "1.5px solid rgba(238,116,41,0.3)"
                       : isOpen
@@ -269,7 +269,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                       className="w-4 h-4 rounded-full flex items-center justify-center cursor-pointer ml-1"
                       style={{ background: "rgba(238,116,41,0.18)" }}
                     >
-                      <X className="w-2.5 h-2.5" style={{ color: "var(--sw-orange)" }} />
+                      <X className="w-2.5 h-2.5" style={{ color: "var(--sw-primary)" }} />
                     </motion.span>
                   ) : (
                     <motion.span
@@ -305,7 +305,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                         className="flex items-center gap-2 px-5 py-3.5"
                         style={{ borderBottom: "1px solid rgba(0,0,0,0.05)", background: "rgba(250,250,250,0.5)" }}
                       >
-                        <Icon className="w-4 h-4" style={{ color: "var(--sw-orange)" }} />
+                        <Icon className="w-4 h-4" style={{ color: "var(--sw-primary)" }} />
                         <span className="text-xs font-black uppercase tracking-widest text-slate-400">
                           {f.label}
                         </span>
@@ -318,9 +318,9 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                             <button
                               key={opt}
                               onClick={() => selectOption(f.label, opt)}
-                              className="w-full flex items-center justify-between px-5 py-3 text-sm transition-all hover:bg-orange-50/80 group"
+                              className="w-full flex items-center justify-between px-5 py-3 text-sm transition-all hover:bg-primary-50/80 group"
                               style={{
-                                color: isSelected ? "var(--sw-orange)" : "var(--sw-navy)",
+                                color: isSelected ? "var(--sw-primary)" : "var(--sw-navy)",
                                 fontWeight: isSelected ? 700 : 500,
                               }}
                             >
@@ -330,7 +330,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                                 animate={{ scale: isSelected ? 1 : 0, opacity: isSelected ? 1 : 0 }}
                                 transition={{ duration: 0.15 }}
                               >
-                                <Check className="w-4 h-4" style={{ color: "var(--sw-orange)" }} />
+                                <Check className="w-4 h-4" style={{ color: "var(--sw-primary)" }} />
                               </motion.span>
                             </button>
                           );
@@ -353,7 +353,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 onClick={() => setActiveFilters({})}
-                className="flex-shrink-0 text-xs font-bold underline underline-offset-4 transition-colors hover:text-orange-500 ml-2"
+                className="flex-shrink-0 text-xs font-bold underline underline-offset-4 transition-colors hover:text-primary-500 ml-2"
                 style={{ color: "var(--sw-navy)", opacity: 0.6 }}
               >
                 Clear all
@@ -390,7 +390,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 borderRadius: "50%",
                 padding: activeCity === "" ? "3px" : "2px",
                 background: activeCity === ""
-                  ? "linear-gradient(135deg, var(--sw-orange), #f5a623)"
+                  ? "linear-gradient(135deg, var(--sw-primary), #f5a623)"
                   : "rgba(55,71,90,0.06)",
                 boxShadow: activeCity === ""
                   ? "0 8px 24px rgba(238,116,41,0.4)"
@@ -419,7 +419,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
             </div>
             <span
               className="text-[11px] font-extrabold transition-colors duration-200 uppercase tracking-wider"
-              style={{ color: activeCity === "" ? "var(--sw-orange)" : "#64748b" }}
+              style={{ color: activeCity === "" ? "var(--sw-primary)" : "#64748b" }}
             >
               All Cities
             </span>
@@ -445,7 +445,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                     borderRadius: "50%",
                     padding: isActive ? "3px" : "2px",
                     background: isActive
-                      ? "linear-gradient(135deg, var(--sw-orange), #f5a623)"
+                      ? "linear-gradient(135deg, var(--sw-primary), #f5a623)"
                       : "rgba(0,0,0,0.04)",
                     boxShadow: isActive
                       ? "0 8px 24px rgba(238,116,41,0.4)"
@@ -478,7 +478,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                       transition={{ type: "spring", stiffness: 400, damping: 20 }}
                       className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center"
                       style={{
-                        background: "var(--sw-orange)",
+                        background: "var(--sw-primary)",
                         border: "2px solid white",
                         boxShadow: "0 4px 12px rgba(238,116,41,0.5)",
                       }}
@@ -492,7 +492,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 <span
                   className="text-[11px] font-extrabold transition-colors duration-200 uppercase tracking-wider text-center"
                   style={{
-                    color: isActive ? "var(--sw-orange)" : "#64748b",
+                    color: isActive ? "var(--sw-primary)" : "#64748b",
                     maxWidth: 76,
                   }}
                 >

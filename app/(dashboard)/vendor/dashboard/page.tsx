@@ -408,7 +408,7 @@ export default function VendorDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-800 font-body">
-        <div className="w-10 h-10 rounded-full border-2 border-orange-500/20 border-t-orange-500 animate-spin mb-4" />
+        <div className="w-10 h-10 rounded-full border-2 border-primary-500/20 border-t-orange-500 animate-spin mb-4" />
         <p className="font-bold text-sm tracking-wide">SECURE WORKSPACE</p>
       </div>
     );
@@ -440,7 +440,7 @@ export default function VendorDashboard() {
     <div className={`h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
       
       {/* Ambient background gradients */}
-      <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-orange-500 blur-[120px]" />
+      <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-primary-500 blur-[120px]" />
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[120px]" />
 
       {/* ─── FLOATING SIDEBAR (Desktop) ─── */}
@@ -459,7 +459,7 @@ export default function VendorDashboard() {
                   priority
                 />
               </Link>
-              <p className="text-[9px] font-bold text-orange-600 uppercase tracking-widest mt-1">Partner Portal</p>
+              <p className="text-[9px] font-bold text-primary-600 uppercase tracking-widest mt-1">Partner Portal</p>
             </div>
           ) : (
             <h2 className={`font-extrabold text-sm tracking-tight uppercase ${isDarkMode ? 'text-white' : 'text-stone-900'}`}>SW</h2>
@@ -476,7 +476,7 @@ export default function VendorDashboard() {
                 onClick={() => setActiveTab(item.id as TabType)}
                 className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                   isActive 
-                    ? "bg-orange-500 text-white" 
+                    ? "bg-primary-500 text-white" 
                     : isDarkMode
                       ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
@@ -496,7 +496,7 @@ export default function VendorDashboard() {
                 )}
                 {sidebarCollapsed && item.count !== undefined && item.count !== null && (
                   <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${
-                    isActive ? "bg-white text-orange-600" : "bg-stone-100 text-stone-500 border border-stone-200"
+                    isActive ? "bg-white text-primary-600" : "bg-stone-100 text-stone-500 border border-stone-200"
                   }`}>
                     {item.count}
                   </span>
@@ -612,7 +612,7 @@ export default function VendorDashboard() {
                   }}
                   className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
                     activeTab === item.id 
-                      ? "bg-orange-500 text-white" 
+                      ? "bg-primary-500 text-white" 
                       : isDarkMode
                         ? "text-stone-300 hover:bg-stone-800"
                         : "text-stone-600 hover:bg-stone-50"
@@ -699,7 +699,7 @@ export default function VendorDashboard() {
                       <h3 className={`font-extrabold text-sm ${headingText}`}>Active Inquiries</h3>
                       <button 
                         onClick={() => setActiveTab("leads")}
-                        className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-0.5 cursor-pointer"
+                        className="text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center gap-0.5 cursor-pointer"
                       >
                         View All Leads
                       </button>
@@ -774,7 +774,7 @@ export default function VendorDashboard() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={openAddVenue}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-[11px] font-bold cursor-pointer transition-all"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-[11px] font-bold cursor-pointer transition-all"
                     >
                       <Plus className="w-3.5 h-3.5" /> Add New Venue
                     </button>
@@ -987,11 +987,11 @@ export default function VendorDashboard() {
                           </div>
                         )}
                         <div className="flex-1 flex flex-col gap-2">
-                          <label className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-orange-500 hover:bg-orange-50/5 text-stone-400 hover:text-orange-500 w-fit ${
+                          <label className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${
                             isDarkMode ? "border-stone-700" : "border-stone-300"
                           }`}>
                             {uploadingVenueImage ? (
-                              <><Loader2 className="w-4 h-4 animate-spin text-orange-500" /> Uploading...</>
+                              <><Loader2 className="w-4 h-4 animate-spin text-primary-500" /> Uploading...</>
                             ) : (
                               <><Upload className="w-4 h-4" /> Upload Photo</>
                             )}
@@ -1020,7 +1020,7 @@ export default function VendorDashboard() {
                             onClick={() => setVenueForm(p => ({ ...p, [key]: !p[key] }))}
                             className={`flex items-center justify-between px-4 py-2.5 rounded-xl border font-bold capitalize cursor-pointer transition-all ${
                               venueForm[key]
-                                ? "bg-orange-500 border-orange-500 text-white"
+                                ? "bg-primary-500 border-primary-500 text-white"
                                 : isDarkMode
                                   ? "border-stone-700 text-stone-400 hover:border-stone-600"
                                   : "border-stone-200 text-stone-500 hover:border-stone-300"
@@ -1053,7 +1053,7 @@ export default function VendorDashboard() {
                       <button
                         onClick={handleSaveVenue}
                         disabled={savingVenue}
-                        className="flex items-center gap-2 px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white text-xs font-bold cursor-pointer transition-all"
+                        className="flex items-center gap-2 px-6 py-3 rounded-full bg-primary-500 hover:bg-primary-600 disabled:opacity-50 text-white text-xs font-bold cursor-pointer transition-all"
                       >
                         {savingVenue ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> :
                          venueView === "add" ? "Submit for Review" : "Save Changes"}
@@ -1083,7 +1083,7 @@ export default function VendorDashboard() {
                       </p>
                       <button
                         onClick={openAddVenue}
-                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold cursor-pointer transition-all"
+                        className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-primary-500 hover:bg-primary-600 text-white text-xs font-bold cursor-pointer transition-all"
                       >
                         <Plus className="w-3.5 h-3.5" /> Add Your First Venue
                       </button>
@@ -1112,7 +1112,7 @@ export default function VendorDashboard() {
 
                             {/* Featured badge top-left */}
                             {venue.featured && (
-                              <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm" style={{ background: "var(--sw-orange)" }}>
+                              <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
                                 ♛ Featured
                               </div>
                             )}
@@ -1182,7 +1182,7 @@ export default function VendorDashboard() {
                                 <span className="flex items-center gap-1 text-[9px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-700 shadow-sm">
                                   🛏 {venue.rooms || 0} Rooms
                                 </span>
-                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white shadow-sm" style={{ color: "var(--sw-orange)" }}>
+                                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white shadow-sm" style={{ color: "var(--sw-primary)" }}>
                                   {venue.type || "Venue"}
                                 </span>
                               </div>
@@ -1211,7 +1211,7 @@ export default function VendorDashboard() {
                                   </button>
                                   <button
                                     onClick={() => openEditVenue(venue)}
-                                    className="text-[12px] font-bold px-4 py-2 rounded-full text-white bg-orange-500 shadow-sm hover:bg-orange-600 transition-all cursor-pointer"
+                                    className="text-[12px] font-bold px-4 py-2 rounded-full text-white bg-primary-500 shadow-sm hover:bg-primary-600 transition-all cursor-pointer"
                                   >
                                     Edit ✎
                                   </button>
@@ -1390,10 +1390,10 @@ export default function VendorDashboard() {
                       ))}
 
                       {showcaseImages.length < 6 && (
-                        <label className="relative aspect-square rounded-3xl border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center cursor-pointer hover:border-orange-500 hover:bg-orange-500/5 transition-all text-stone-400 hover:text-orange-500">
+                        <label className="relative aspect-square rounded-3xl border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center cursor-pointer hover:border-primary-500 hover:bg-primary-500/5 transition-all text-stone-400 hover:text-primary-500">
                           {uploadingImage ? (
                             <>
-                              <Loader2 className="w-5 h-5 animate-spin text-orange-500 mb-1" />
+                              <Loader2 className="w-5 h-5 animate-spin text-primary-500 mb-1" />
                               <span className="text-[9px] font-bold uppercase tracking-wider">Uploading...</span>
                             </>
                           ) : (
@@ -1452,7 +1452,7 @@ export default function VendorDashboard() {
                               if (input) input.value = "";
                             }
                           }}
-                          className="px-4 py-2 bg-stone-900 dark:bg-stone-800 hover:bg-orange-500 text-white rounded-xl font-bold text-[11px] transition-colors cursor-pointer"
+                          className="px-4 py-2 bg-stone-900 dark:bg-stone-800 hover:bg-primary-500 text-white rounded-xl font-bold text-[11px] transition-colors cursor-pointer"
                         >
                           Add URL
                         </button>
@@ -1477,7 +1477,7 @@ export default function VendorDashboard() {
                   <button
                     type="submit"
                     disabled={savingProfile}
-                    className="w-fit rounded-full bg-slate-900 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                    className="w-fit rounded-full bg-slate-900 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
                   >
                     {savingProfile ? "Saving..." : "Save and Request Approval"}
                   </button>

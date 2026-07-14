@@ -49,7 +49,7 @@ export default function FeaturedVenues() {
           transition={{ duration: 0.6 }}
         >
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-orange)" }}>
+            <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-primary)" }}>
               Top Picks
             </p>
             <h2 className="section-heading">Amazing Venues</h2>

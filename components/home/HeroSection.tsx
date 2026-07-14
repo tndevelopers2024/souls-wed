@@ -74,11 +74,11 @@ export default function HeroSection() {
         {/* Floating orbs */}
         <div
           className="orb w-64 h-64 top-20 left-10"
-          style={{ background: "var(--sw-orange)", animationDelay: "0s" }}
+          style={{ background: "var(--sw-primary)", animationDelay: "0s" }}
         />
         <div
           className="orb w-80 h-80 top-10 right-20"
-          style={{ background: "var(--sw-gold)", animationDelay: "2s" }}
+          style={{ background: "var(--sw-secondary)", animationDelay: "2s" }}
         />
         <div
           className="orb w-56 h-56 bottom-32 left-1/3"
@@ -95,7 +95,7 @@ export default function HeroSection() {
             className="glass inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 text-sm font-medium"
             style={{ color: "rgba(255,255,255,0.9)" }}
           >
-            <span style={{ color: "var(--sw-gold)" }}>✦</span>
+            <span style={{ color: "var(--sw-secondary)" }}>✦</span>
             Flawless Moves. Perfect Events.
           </motion.div>
 
@@ -117,7 +117,7 @@ export default function HeroSection() {
           </h1>
 
           {/* Headline Line 2 — gold italic */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold italic leading-tight mb-6" style={{ color: "var(--sw-gold)" }}>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold italic leading-tight mb-6" style={{ color: "var(--sw-secondary)" }}>
             <span className="flex flex-wrap justify-center gap-x-4">
               {words2.map((word, i) => (
                 <motion.span
@@ -206,7 +206,7 @@ export default function HeroSection() {
               {/* CTA */}
               <div className="w-full md:w-auto mt-2 md:mt-0 md:ml-2">
                 <button
-                  className="w-full md:w-auto flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 md:py-3.5 rounded-full font-bold transition-colors duration-300 h-[52px]"
+                  className="w-full md:w-auto flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-8 py-4 md:py-3.5 rounded-full font-bold transition-colors duration-300 h-[52px]"
                   style={{ transform: 'none' }}
                 >
                   <Search className="w-4 h-4 text-white font-bold" strokeWidth={3} />

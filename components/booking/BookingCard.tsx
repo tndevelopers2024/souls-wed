@@ -50,7 +50,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
     if (booking.bookingType === "room") {
       return (
         <div className="flex items-center gap-1.5 text-sm text-slate-600">
-          <CalendarDays className="w-4 h-4 text-orange-500" />
+          <CalendarDays className="w-4 h-4 text-primary-500" />
           <span className="font-medium">
             {booking.checkIn && booking.checkOut ? (
               `${format(new Date(booking.checkIn), "MMM d")} → ${format(new Date(booking.checkOut), "MMM d, yyyy")}`
@@ -63,7 +63,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
     } else {
       return (
         <div className="flex items-center gap-1.5 text-sm text-slate-600">
-          <CalendarDays className="w-4 h-4 text-orange-500" />
+          <CalendarDays className="w-4 h-4 text-primary-500" />
           <span className="font-medium">
             {booking.eventDate ? (
               format(new Date(booking.eventDate), "EEE, MMM d, yyyy")
@@ -151,7 +151,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-orange-50 to-orange-100/50" />
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary-50 to-primary-100/50" />
       )}
 
       {/* Status Badge top-left */}
@@ -187,13 +187,13 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
           <div className="flex items-center gap-4">
             {booking.bookingType === "venue" && booking.guestCount && (
               <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium">
-                <Users className="w-4 h-4 text-orange-500" />
+                <Users className="w-4 h-4 text-primary-500" />
                 <span>{booking.guestCount} Guests</span>
               </div>
             )}
             {booking.bookingType === "room" && booking.roomCount && (
               <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium">
-                <BedDouble className="w-4 h-4 text-orange-500" />
+                <BedDouble className="w-4 h-4 text-primary-500" />
                 <span>{booking.roomCount} Rooms</span>
               </div>
             )}
@@ -206,7 +206,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
             )}
             {booking.functionType && (
               <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium capitalize">
-                <Clock className="w-4 h-4 text-orange-500" />
+                <Clock className="w-4 h-4 text-primary-500" />
                 <span>{booking.functionType}</span>
               </div>
             )}
@@ -215,7 +215,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
 
         {/* User Details (For Vendor View) */}
         {isVendor && (
-          <div className="mb-4 bg-orange-50/80 backdrop-blur-sm rounded-xl p-3 border border-orange-200/50 shadow-sm">
+          <div className="mb-4 bg-primary-50/80 backdrop-blur-sm rounded-xl p-3 border border-primary-200/50 shadow-sm">
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Customer Details</p>
             <p className="text-sm font-bold text-slate-800">{booking.userName}</p>
             <p className="text-xs text-slate-600 font-medium mt-0.5">{booking.userPhone} • {booking.userEmail}</p>

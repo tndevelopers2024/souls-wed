@@ -11,7 +11,7 @@ export default function AboutPage() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-800 mb-6 font-heading">
-            Our <span className="text-orange-500">Story</span>
+            Our <span className="text-primary-500">Story</span>
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Crafting timeless memories across the globe. We transform couples&apos; visions into magnificent international celebrations with unparalleled elegance.
@@ -37,11 +37,11 @@ export default function AboutPage() {
             </p>
             <div className="grid grid-cols-2 gap-6 mt-8 border-t border-amber-200/60 pt-8">
                <div>
-                  <h3 className="text-4xl font-extrabold text-orange-500">500+</h3>
+                  <h3 className="text-4xl font-extrabold text-primary-500">500+</h3>
                   <p className="text-sm font-semibold tracking-wide text-slate-500 mt-2 uppercase">Weddings Planned</p>
                </div>
                <div>
-                  <h3 className="text-4xl font-extrabold text-orange-500">50+</h3>
+                  <h3 className="text-4xl font-extrabold text-primary-500">50+</h3>
                   <p className="text-sm font-semibold tracking-wide text-slate-500 mt-2 uppercase">Destinations</p>
                </div>
             </div>

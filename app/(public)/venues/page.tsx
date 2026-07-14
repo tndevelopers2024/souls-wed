@@ -109,7 +109,7 @@ export default function VenuesPage() {
   if (fetchLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--sw-white)" }}>
-        <Loader2 className="w-10 h-10 animate-spin" style={{ color: "var(--sw-orange)" }} />
+        <Loader2 className="w-10 h-10 animate-spin" style={{ color: "var(--sw-primary)" }} />
         <p className="text-sm text-slate-500 font-medium">Loading venues from database...</p>
       </div>
     );
@@ -125,7 +125,7 @@ export default function VenuesPage() {
         <button
           onClick={() => window.location.reload()}
           className="mt-2 px-6 py-2.5 rounded-full text-sm font-bold text-white transition-all"
-          style={{ background: "var(--sw-orange)" }}
+          style={{ background: "var(--sw-primary)" }}
         >
           Retry
         </button>
@@ -178,11 +178,11 @@ export default function VenuesPage() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest"
             style={{
               background: "rgba(238,116,41,0.12)",
-              color: "var(--sw-orange)",
+              color: "var(--sw-primary)",
               border: "1px solid rgba(238,116,41,0.25)",
             }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
             Explore Dream Venues
           </div>
 
@@ -194,7 +194,7 @@ export default function VenuesPage() {
             <span
               className="relative inline-block"
               style={{
-                background: "linear-gradient(135deg, var(--sw-orange) 0%, #f5a623 100%)",
+                background: "linear-gradient(135deg, var(--sw-primary) 0%, #f5a623 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -219,7 +219,7 @@ export default function VenuesPage() {
               style={{
                 background: "white",
                 border: searchFocused
-                  ? "2px solid var(--sw-orange)"
+                  ? "2px solid var(--sw-primary)"
                   : "2px solid rgba(0,0,0,0.08)",
                 boxShadow: searchFocused
                   ? "0 8px 32px rgba(238,116,41,0.18)"
@@ -228,7 +228,7 @@ export default function VenuesPage() {
             >
               <Search
                 className="w-5 h-5 flex-shrink-0 transition-colors duration-300"
-                style={{ color: searchFocused ? "var(--sw-orange)" : "#94a3b8" }}
+                style={{ color: searchFocused ? "var(--sw-primary)" : "#94a3b8" }}
               />
               <input
                 type="text"
@@ -276,7 +276,7 @@ export default function VenuesPage() {
               {activeCity && (
                 <span>
                   {" "}in{" "}
-                  <span className="font-bold" style={{ color: "var(--sw-orange)" }}>
+                  <span className="font-bold" style={{ color: "var(--sw-primary)" }}>
                     {activeCity}
                   </span>
                 </span>
@@ -302,7 +302,7 @@ export default function VenuesPage() {
                       className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all hover:opacity-80"
                       style={{
                         background: "rgba(238,116,41,0.1)",
-                        color: "var(--sw-orange)",
+                        color: "var(--sw-primary)",
                         border: "1px solid rgba(238,116,41,0.25)",
                       }}
                     >
@@ -330,7 +330,7 @@ export default function VenuesPage() {
                 onClick={() => setViewType("grid")}
                 className={`p-1.5 rounded-full transition-all ${
                   viewType === "grid" 
-                    ? "bg-white shadow-sm text-[var(--sw-orange)]" 
+                    ? "bg-white shadow-sm text-[var(--sw-primary)]" 
                     : "text-slate-400 hover:text-slate-600"
                 }`}
                 aria-label="Grid view"
@@ -341,7 +341,7 @@ export default function VenuesPage() {
                 onClick={() => setViewType("list")}
                 className={`p-1.5 rounded-full transition-all ${
                   viewType === "list" 
-                    ? "bg-white shadow-sm text-[var(--sw-orange)]" 
+                    ? "bg-white shadow-sm text-[var(--sw-primary)]" 
                     : "text-slate-400 hover:text-slate-600"
                 }`}
                 aria-label="List view"
@@ -356,7 +356,7 @@ export default function VenuesPage() {
                 onClick={() => setSortOpen(!sortOpen)}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-semibold transition-all hover:shadow-md"
                 style={{
-                  borderColor: sortOpen ? "var(--sw-orange)" : "var(--sw-light-gray)",
+                  borderColor: sortOpen ? "var(--sw-primary)" : "var(--sw-light-gray)",
                   color: "var(--sw-navy)",
                   background: sortOpen ? "rgba(238,116,41,0.05)" : "white",
                   boxShadow: sortOpen ? "0 0 0 3px rgba(238,116,41,0.1)" : "none",
@@ -387,15 +387,15 @@ export default function VenuesPage() {
                       <button
                         key={opt}
                         onClick={() => { setSort(opt); setSortOpen(false); }}
-                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-orange-50 flex items-center justify-between"
+                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-primary-50 flex items-center justify-between"
                         style={{
                           fontWeight: sort === opt ? 700 : 500,
-                          color: sort === opt ? "var(--sw-orange)" : "var(--sw-navy)",
+                          color: sort === opt ? "var(--sw-primary)" : "var(--sw-navy)",
                         }}
                       >
                         {opt}
                         {sort === opt && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary-400" />
                         )}
                       </button>
                     ))}
@@ -418,7 +418,7 @@ export default function VenuesPage() {
               className="w-28 h-28 rounded-full flex items-center justify-center mb-6"
               style={{ background: "linear-gradient(135deg, #fceee3 0%, #fdf6f0 100%)" }}
             >
-              <Building2 className="w-12 h-12" style={{ color: "var(--sw-orange)", opacity: 0.5 }} />
+              <Building2 className="w-12 h-12" style={{ color: "var(--sw-primary)", opacity: 0.5 }} />
             </div>
             <p
               className="text-2xl font-bold mb-2"
@@ -433,7 +433,7 @@ export default function VenuesPage() {
               onClick={() => { setSearch(""); setActiveCity(""); setSort("Recommended"); }}
               className="px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:opacity-90"
               style={{
-                background: "var(--sw-orange)",
+                background: "var(--sw-primary)",
                 color: "white",
                 boxShadow: "0 4px 14px rgba(238,116,41,0.35)",
               }}

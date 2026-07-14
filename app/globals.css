@@ -13,8 +13,8 @@
 
 /* ===================== BRAND VARIABLES ===================== */
 :root {
-  --sw-orange: #EE7429;
-  --sw-gold: #FCCB11;
+  --sw-primary: #EE7429;
+  --sw-secondary: #FCCB11;
   --sw-navy: #1A1A1A;
   --sw-black: #212529;
   --sw-steel: #000000;
@@ -122,7 +122,7 @@ h6 {
 
 .glass-input {
   background: #FFFFFF;
-  border: 1.5px solid var(--sw-gold);
+  border: 1.5px solid var(--sw-secondary);
   border-radius: 9999px;
   box-shadow: none;
   transition: all 0.2s ease;
@@ -130,7 +130,7 @@ h6 {
 
 .glass-input:focus-within {
   background: #FFFFFF;
-  border-color: var(--sw-orange);
+  border-color: var(--sw-primary);
   box-shadow: 0 4px 16px rgba(252, 203, 17, 0.15);
 }
 
@@ -212,12 +212,15 @@ h6 {
 .snap-scroll {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
 }
 
 .snap-scroll::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 .snap-scroll>* {
@@ -255,17 +258,17 @@ h6 {
 }
 
 @theme inline {
-  --color-orange-50: #fef6f0;
-  --color-orange-100: #fde8da;
-  --color-orange-200: #fad1b7;
-  --color-orange-300: #f6b18d;
-  --color-orange-400: #f28a5d;
-  --color-orange-500: var(--sw-orange);
-  --color-orange-600: #df5a1c;
-  --color-orange-700: #b94317;
-  --color-orange-800: #933519;
-  --color-orange-900: #762d16;
-  --color-orange-950: #401509;
+  --color-primary-50: #fef6f0;
+  --color-primary-100: #fde8da;
+  --color-primary-200: #fad1b7;
+  --color-primary-300: #f6b18d;
+  --color-primary-400: #f28a5d;
+  --color-primary-500: var(--sw-primary);
+  --color-primary-600: #df5a1c;
+  --color-primary-700: #b94317;
+  --color-primary-800: #933519;
+  --color-primary-900: #762d16;
+  --color-primary-950: #401509;
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -345,9 +348,11 @@ h6 {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }

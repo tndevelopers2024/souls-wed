@@ -158,7 +158,7 @@ export default function Footer() {
                 ✨ Exclusive Club
               </span>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-800">
-                Join the <span className="bg-gradient-to-r from-amber-600 to-orange-500 bg-clip-text text-transparent">SoulsWed Circle</span>
+                Join the <span className="bg-gradient-to-r from-amber-600 to-primary-500 bg-clip-text text-transparent">SoulsWed Circle</span>
               </h3>
               <p className="text-xs text-slate-500 mt-2 max-w-xl font-medium leading-relaxed">
                 Subscribe to receive curated destination wedding inspiration, venue guides, and exclusive partner promotions.
@@ -177,7 +177,7 @@ export default function Footer() {
                 <button
                   type="submit"
                   className="absolute right-1.5 top-1.5 bottom-1.5 px-5 md:right-2 md:top-2 md:bottom-2 md:px-7 rounded-full text-white font-bold text-[11px] md:text-[13px] tracking-wider uppercase transition-all duration-300 cursor-pointer"
-                  style={{ background: "var(--sw-orange)" }}
+                  style={{ background: "var(--sw-primary)" }}
                 >
                   Subscribe
                 </button>
@@ -213,7 +213,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-115 hover:-translate-y-1 hover:bg-gradient-to-tr hover:from-amber-400 hover:to-orange-500 text-amber-700 hover:text-white border border-amber-100 hover:border-transparent bg-amber-50/40 shadow-xs"
+                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-115 hover:-translate-y-1 hover:bg-gradient-to-tr hover:from-amber-400 hover:to-primary-500 text-amber-700 hover:text-white border border-amber-100 hover:border-transparent bg-amber-50/40 shadow-xs"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -385,7 +385,7 @@ export default function Footer() {
               <div className="relative" ref={currencyRef}>
                 <button 
                   onClick={() => setCurrencyOpen(!currencyOpen)}
-                  className="px-3 py-1.5 ml-2 text-xs font-bold rounded-full bg-slate-800 text-slate-200 hover:bg-orange-500 hover:text-white transition-all duration-300 cursor-pointer flex items-center gap-1 shadow-sm border border-slate-700 hover:border-orange-500"
+                  className="px-3 py-1.5 ml-2 text-xs font-bold rounded-full bg-slate-800 text-slate-200 hover:bg-primary-500 hover:text-white transition-all duration-300 cursor-pointer flex items-center gap-1 shadow-sm border border-slate-700 hover:border-primary-500"
                   title="Change Currency"
                 >
                   <span className="opacity-70 text-[10px]">Currency:</span> {currency}
@@ -406,11 +406,11 @@ export default function Footer() {
                             setCurrency(code);
                             setCurrencyOpen(false);
                           }}
-                          className={`flex flex-col items-start px-4 py-3 hover:bg-orange-50 transition-colors border-b border-slate-50 last:border-0 ${
-                            currency === code ? 'bg-orange-50/50' : ''
+                          className={`flex flex-col items-start px-4 py-3 hover:bg-primary-50 transition-colors border-b border-slate-50 last:border-0 ${
+                            currency === code ? 'bg-primary-50/50' : ''
                           }`}
                         >
-                          <span className={`text-sm font-bold ${currency === code ? 'text-orange-600' : 'text-slate-800'}`}>
+                          <span className={`text-sm font-bold ${currency === code ? 'text-primary-600' : 'text-slate-800'}`}>
                             {code} ({details.symbol})
                           </span>
                         </button>
@@ -432,7 +432,7 @@ export default function Footer() {
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="flex items-center justify-center w-14 h-14 rounded-full shadow-xl transition-all hover:scale-110 hover:shadow-2xl group ml-auto"
           style={{
-            background: "var(--sw-orange)",
+            background: "var(--sw-primary)",
             color: "#fff",
             boxShadow: "0 8px 24px rgba(238,116,41,0.45)",
           }}

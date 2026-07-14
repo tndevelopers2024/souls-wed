@@ -80,7 +80,7 @@ export default function DecoratorsPlannersSection() {
           transition={{ duration: 0.6 }}
         >
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-orange)" }}>
+            <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "var(--sw-primary)" }}>
               Design &amp; Plan
             </p>
             <h2 className="section-heading">Decorators &amp; Planners</h2>

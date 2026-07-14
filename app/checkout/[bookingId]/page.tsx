@@ -60,7 +60,7 @@ export default function CheckoutPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
       </div>
     );
   }
@@ -93,8 +93,8 @@ export default function CheckoutPage() {
         {/* Left column: Details */}
         <div className="lg:col-span-3 flex flex-col gap-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5 text-orange-600" />
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-primary-600" />
             </div>
             <div>
               <h1 className="text-2xl font-extrabold text-stone-900 tracking-tight">Complete your booking</h1>
@@ -162,7 +162,7 @@ export default function CheckoutPage() {
         <div className="lg:col-span-2">
           <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm sticky top-6">
             <h2 className="text-lg font-bold text-stone-800 mb-6 flex items-center gap-2">
-              <IndianRupee className="w-5 h-5 text-orange-500" />
+              <IndianRupee className="w-5 h-5 text-primary-500" />
               Price Breakdown
             </h2>
 
@@ -181,7 +181,7 @@ export default function CheckoutPage() {
                   <span className="block font-extrabold text-stone-900 text-base">Advance Payment</span>
                   <span className="block text-[11px] text-stone-400 uppercase tracking-wider mt-0.5">Required to confirm</span>
                 </div>
-                <span className="text-2xl font-black text-orange-600">{formatAsCurrency(booking.advanceAmount, booking.currency)}</span>
+                <span className="text-2xl font-black text-primary-600">{formatAsCurrency(booking.advanceAmount, booking.currency)}</span>
               </div>
             </div>
 
@@ -195,7 +195,7 @@ export default function CheckoutPage() {
             <button
               onClick={handlePayment}
               disabled={processing || booking.status !== "pending"}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-2xl text-sm transition-all shadow-md shadow-orange-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+              className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-4 rounded-2xl text-sm transition-all shadow-md shadow-primary-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
             >
               {processing ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>

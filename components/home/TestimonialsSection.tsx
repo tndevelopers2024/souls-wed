@@ -95,11 +95,11 @@ export default function TestimonialsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-sm font-bold uppercase tracking-[0.3em] mb-4" style={{ color: "var(--sw-orange)" }}>
+          <p className="text-sm font-bold uppercase tracking-[0.3em] mb-4" style={{ color: "var(--sw-primary)" }}>
             Real Love Stories
           </p>
           <h2 className="section-heading text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight">
-            Couples <span className="italic font-light" style={{ color: "var(--sw-orange)" }}>Love</span><br />
+            Couples <span className="italic font-light" style={{ color: "var(--sw-primary)" }}>Love</span><br />
             SoulsWed
           </h2>
         </motion.div>
@@ -112,7 +112,7 @@ export default function TestimonialsSection() {
           
           {/* Left Side: Dynamic Text Content */}
           <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1 relative min-h-[350px]">
-            <Quote className="w-20 h-20 mb-8 absolute -top-10 -left-8 opacity-10" style={{ color: "var(--sw-gold)" }} />
+            <Quote className="w-20 h-20 mb-8 absolute -top-10 -left-8 opacity-10" style={{ color: "var(--sw-secondary)" }} />
             
             <AnimatePresence mode="wait">
               <motion.div
@@ -125,7 +125,7 @@ export default function TestimonialsSection() {
               >
                 <div className="flex gap-1.5 mb-8">
                    {[...Array(testimonials[activeIndex].stars)].map((_, i) => (
-                      <Star key={i} className="w-6 h-6 fill-current" style={{ color: "var(--sw-gold)" }} />
+                      <Star key={i} className="w-6 h-6 fill-current" style={{ color: "var(--sw-secondary)" }} />
                    ))}
                 </div>
                 
@@ -134,10 +134,10 @@ export default function TestimonialsSection() {
                 </p>
                 
                 <div className="flex items-center gap-6">
-                  <div className="h-0.5 w-12" style={{ background: "var(--sw-orange)" }} />
+                  <div className="h-0.5 w-12" style={{ background: "var(--sw-primary)" }} />
                   <div>
                     <h4 className="text-2xl font-bold" style={{ color: "var(--sw-navy)" }}>{testimonials[activeIndex].couple}</h4>
-                    <p className="text-sm font-bold tracking-widest uppercase mt-2" style={{ color: "var(--sw-orange)" }}>
+                    <p className="text-sm font-bold tracking-widest uppercase mt-2" style={{ color: "var(--sw-primary)" }}>
                       {testimonials[activeIndex].venue} • {testimonials[activeIndex].date}
                     </p>
                   </div>
@@ -175,7 +175,7 @@ export default function TestimonialsSection() {
                     className={`transition-all duration-300 rounded-full ${
                       idx === activeIndex ? "w-12 h-3" : "w-3 h-3 hover:bg-gray-400"
                     }`}
-                    style={{ background: idx === activeIndex ? "var(--sw-orange)" : "var(--sw-light-gray)" }}
+                    style={{ background: idx === activeIndex ? "var(--sw-primary)" : "var(--sw-light-gray)" }}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}
