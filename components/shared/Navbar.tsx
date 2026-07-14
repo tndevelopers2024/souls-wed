@@ -154,31 +154,31 @@ const navLinks = [
         items: [
           { label: "Luxury Venues", href: "/venues" },
           { label: "Destination Weddings", href: "/destinations" },
-          { label: "Chartered Flights", href: "/chartered-airlines" },
+          { label: "Chartered Flights", href: "/vendors/chartered-airlines" },
         ]
       },
       {
         title: "PLANNING & DESIGN",
         items: [
-          { label: "Expert Planners", href: "/planners" },
-          { label: "Event Decorators", href: "/decorators" },
-          { label: "Bespoke Florals", href: "/florists" },
+          { label: "Expert Planners", href: "/vendors/planners" },
+          { label: "Event Decorators", href: "/vendors/decorators" },
+          { label: "Bespoke Florals", href: "/vendors/florists" },
         ]
       },
       {
         title: "STYLE & BEAUTY",
         items: [
-          { label: "Bridal Makeup", href: "/makeup" },
-          { label: "Henna & Mehndi Artists", href: "/mehndi" },
-          { label: "Bridal Hair Styling", href: "/hairstylists" },
+          { label: "Bridal Makeup", href: "/vendors/makeup" },
+          { label: "Henna & Mehndi Artists", href: "/vendors/mehndi" },
+          { label: "Bridal Hair Styling", href: "/vendors/hairstylists" },
         ]
       },
       {
         title: "MEMORIES & CELEBRATION",
         items: [
-          { label: "Photography & Video", href: "/photographers" },
-          { label: "Fine Catering", href: "/caterers" },
-          { label: "Dance & Choreography", href: "/choreographers" },
+          { label: "Photography & Video", href: "/vendors/photographers" },
+          { label: "Fine Catering", href: "/vendors/caterers" },
+          { label: "Dance & Choreography", href: "/vendors/choreographers" },
         ]
       }
     ],

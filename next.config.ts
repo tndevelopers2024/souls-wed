@@ -3,13 +3,7 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return [
-      {
-        source: '/vendors/:category',
-        destination: '/:category',
-        permanent: true,
-      },
-    ];
+    return [];
   },
   turbopack: {
     root: path.resolve(__dirname),
