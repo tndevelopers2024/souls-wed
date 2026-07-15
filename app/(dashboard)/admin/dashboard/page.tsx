@@ -1079,6 +1079,96 @@ export default function AdminDashboard() {
                       </button>
                     </div>
                   </div>
+
+                  {/* ── 7-Category Real-Time Listing Grid (Admin) ── */}
+                  {(() => {
+                    const venueListings = venuesList;
+                    const roomListings = servicesList.filter((s: any) => s.category === "rooms");
+                    const plannerListings = servicesList.filter((s: any) => s.category === "planners");
+                    const catererListings = servicesList.filter((s: any) => s.category === "caterers");
+                    const decoratorListings = servicesList.filter((s: any) => s.category === "decorators");
+                    const photographerListings = servicesList.filter((s: any) => s.category === "photographers");
+                    const rentalListings = servicesList.filter((s: any) => s.category === "rentals");
+
+                    const minPrice = (arr: any[], key = "priceFrom") => {
+                      const vals = arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0);
+                      return vals.length === 0 ? null : Math.min(...vals);
+                    };
+                    const avgPrice = (arr: any[], key = "priceFrom") => {
+                      const vals = arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0);
+                      return vals.length === 0 ? null : Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+                    };
+
+                    const categories = [
+                      { id: "venues", label: "Venues", emoji: "🏛️", color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", darkBg: "bg-amber-950/20 border-amber-900/30", count: venueListings.length, price: minPrice(venueListings, "price"), avg: avgPrice(venueListings, "price"), unit: "per day", live: venueListings.filter((v: any) => v.active).length },
+                      { id: "rooms", label: "Rooms", emoji: "🛏️", color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", darkBg: "bg-blue-950/20 border-blue-900/30", count: roomListings.length, price: minPrice(roomListings), avg: avgPrice(roomListings), unit: "per night", live: roomListings.filter((s: any) => s.active).length },
+                      { id: "planners", label: "Planners", emoji: "📋", color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", darkBg: "bg-violet-950/20 border-violet-900/30", count: plannerListings.length, price: minPrice(plannerListings), avg: avgPrice(plannerListings), unit: "per event", live: plannerListings.filter((s: any) => s.active).length },
+                      { id: "caterers", label: "Caterers", emoji: "🍽️", color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", darkBg: "bg-emerald-950/20 border-emerald-900/30", count: catererListings.length, price: minPrice(catererListings), avg: avgPrice(catererListings), unit: "per plate", live: catererListings.filter((s: any) => s.active).length },
+                      { id: "decorators", label: "Decorators", emoji: "🎨", color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", darkBg: "bg-pink-950/20 border-pink-900/30", count: decoratorListings.length, price: minPrice(decoratorListings), avg: avgPrice(decoratorListings), unit: "per event", live: decoratorListings.filter((s: any) => s.active).length },
+                      { id: "venues", label: "Photographers", emoji: "📷", color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", darkBg: "bg-stone-900/40 border-stone-700", count: photographerListings.length, price: minPrice(photographerListings), avg: avgPrice(photographerListings), unit: "per day", live: photographerListings.filter((s: any) => s.active).length },
+                      { id: "venues", label: "Rentals", emoji: "🎪", color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", darkBg: "bg-cyan-950/20 border-cyan-900/30", count: rentalListings.length, price: minPrice(rentalListings), avg: avgPrice(rentalListings), unit: "per event", live: rentalListings.filter((s: any) => s.active).length },
+                    ];
+
+                    return (
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className={`font-extrabold text-sm tracking-tight ${headingText}`}>Platform Inventory by Category</h3>
+                          <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Live • {servicesList.length + venuesList.length} total listings</span>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+                          {categories.map((cat, idx) => (
+                            <div
+                              key={idx}
+                              className={`relative group flex flex-col gap-3 p-4 rounded-2xl border text-left transition-all duration-200 hover:-translate-y-0.5 cursor-default ${isDarkMode ? cat.darkBg : cat.lightBg}`}
+                            >
+                              {/* Emoji + live badge */}
+                              <div className="flex items-start justify-between">
+                                <span className="text-2xl leading-none">{cat.emoji}</span>
+                                {cat.live > 0 && (
+                                  <span className="flex items-center gap-1 text-[8px] font-black px-1.5 py-0.5 rounded-full bg-emerald-500 text-white uppercase tracking-wide">
+                                    <span className="w-1 h-1 rounded-full bg-white animate-ping inline-block" />
+                                    {cat.live} live
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Label */}
+                              <p className={`text-[11px] font-extrabold uppercase tracking-wide leading-tight ${isDarkMode ? "text-stone-300" : "text-stone-700"}`}>{cat.label}</p>
+
+                              {/* Count */}
+                              <div className="flex items-baseline gap-1">
+                                <span className={`text-2xl font-black leading-none ${isDarkMode ? "text-white" : "text-stone-900"}`}>{cat.count}</span>
+                                <span className="text-[10px] font-bold text-stone-400">{cat.count === 1 ? "listing" : "listings"}</span>
+                              </div>
+
+                              {/* Price section */}
+                              <div className={`pt-2.5 border-t ${isDarkMode ? "border-stone-700" : "border-stone-200/70"} flex flex-col gap-1`}>
+                                {cat.price !== null && cat.price > 0 ? (
+                                  <>
+                                    <div className="flex flex-col gap-0.5">
+                                      <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">from</span>
+                                      <span className={`text-[13px] font-black leading-none ${isDarkMode ? "text-white" : "text-stone-800"}`}>₹{cat.price.toLocaleString("en-IN")}</span>
+                                      <span className="text-[9px] text-stone-400 font-semibold">{cat.unit}</span>
+                                    </div>
+                                    {cat.avg !== null && cat.avg !== cat.price && (
+                                      <div className="flex items-center gap-1 mt-1">
+                                        <span className="text-[8px] text-stone-400 font-semibold">avg ₹{cat.avg.toLocaleString("en-IN")}</span>
+                                      </div>
+                                    )}
+                                  </>
+                                ) : (
+                                  <span className="text-[10px] text-stone-400 font-semibold">No price set</span>
+                                )}
+                              </div>
+
+                              {/* Gradient bottom line */}
+                              <div className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-b-2xl bg-gradient-to-r ${cat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 
