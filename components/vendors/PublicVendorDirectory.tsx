@@ -52,12 +52,7 @@ const categoryMeta: Record<string, { eyebrow: string; titlePrefix: string; title
   Caterers: { eyebrow: "Exquisite Cuisine", titlePrefix: "Wedding", titleAccent: "Caterers", subtitle: "Multi-cuisine catering with live counters, customized menus, and premium service." },
   Decorators: { eyebrow: "Stunning Decor", titlePrefix: "Wedding", titleAccent: "Decorators", subtitle: "Transform your venue with breathtaking floral installations, lighting, and mandap designs." },
   Photographers: { eyebrow: "Capture Every Moment", titlePrefix: "Wedding", titleAccent: "Photographers", subtitle: "Cinematic photography and videography — candid moments, drone shots, and same-day edits." },
-  "Chartered Airlines": { eyebrow: "Fly In Style", titlePrefix: "Chartered", titleAccent: "Airlines", subtitle: "Private charter flights for destination weddings — luxury amenities, flexible routes." },
-  "Make-up Artists": { eyebrow: "Beauty & Glam", titlePrefix: "Makeup", titleAccent: "Artists", subtitle: "Celebrity bridal makeup — HD, airbrush, and traditional looks with premium products." },
-  Hairstylists: { eyebrow: "Perfect Hair", titlePrefix: "Wedding", titleAccent: "Hairstylists", subtitle: "Bridal hairstyling for all hair types — updos, braids, cascading curls, and more." },
-  "Mehndi Artists": { eyebrow: "Intricate Artistry", titlePrefix: "Mehndi", titleAccent: "Artists", subtitle: "Traditional and modern mehndi designs — Rajasthani, Arabic, and fusion styles." },
-  Florists: { eyebrow: "Blooms & Bouquets", titlePrefix: "Wedding", titleAccent: "Florists", subtitle: "Premium floral arrangements — imported flowers, seasonal bouquets, and venue installations." },
-  Choreographers: { eyebrow: "Dance & Perform", titlePrefix: "Wedding", titleAccent: "Choreographers", subtitle: "Sangeet choreography — Bollywood, contemporary, and fusion dance routines." },
+  Rentals: { eyebrow: "Premium Wedding Rentals", titlePrefix: "Wedding", titleAccent: "Rentals", subtitle: "Rent premium furniture, luxury cars, designer wear, and high-end equipment for your big day." },
 };
 
 export default function PublicVendorDirectory({

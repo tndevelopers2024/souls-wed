@@ -7,8 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   SlidersHorizontal, X, Check,
   Users, Coins, Building2, Layers, Sparkles, Globe2,
-  LayoutGrid, Bed, CalendarHeart, ChefHat, Palette, 
-  Camera, Plane, Brush, Scissors, PenTool, Flower2, Music, 
+  LayoutGrid, BedDouble, CalendarHeart, ChefHat, Palette, 
+  Camera, Package, Building2, ClipboardList, Utensils,
   ChevronRight, ChevronLeft
 } from "lucide-react";
 import { cities } from "@/lib/venues-data";
@@ -18,17 +18,12 @@ import { formatAsCurrency, CURRENCIES } from "@/lib/currency";
 const categoryLinks = [
   { label: "All", href: "/vendors", icon: LayoutGrid },
   { label: "Venues", href: "/venues", icon: Building2 },
-  { label: "Rooms", href: "/rooms", icon: Bed },
-  { label: "Planners", href: "/planners", icon: CalendarHeart },
-  { label: "Caterers", href: "/caterers", icon: ChefHat },
+  { label: "Rooms", href: "/rooms", icon: BedDouble },
+  { label: "Planners", href: "/planners", icon: ClipboardList },
+  { label: "Caterers", href: "/caterers", icon: Utensils },
   { label: "Decorators", href: "/decorators", icon: Palette },
   { label: "Photographers", href: "/photographers", icon: Camera },
-  { label: "Chartered Airlines", href: "/chartered-airlines", icon: Plane },
-  { label: "Makeup", href: "/makeup", icon: Brush },
-  { label: "Hairstylists", href: "/hairstylists", icon: Scissors },
-  { label: "Mehndi", href: "/mehndi", icon: PenTool },
-  { label: "Florists", href: "/florists", icon: Flower2 },
-  { label: "Choreographers", href: "/choreographers", icon: Music },
+  { label: "Rentals", href: "/rentals", icon: Package },
 ];
 
 

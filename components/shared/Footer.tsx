@@ -50,12 +50,12 @@ const aboutLinks = [
 
 const services = [
   { label: "Venues & Banquet Halls", href: "/venues" },
+  { label: "Rooms & Accommodation", href: "/rooms" },
   { label: "Wedding Planners", href: "/planners" },
   { label: "Decorators", href: "/decorators" },
   { label: "Photographers", href: "/photographers" },
   { label: "Caterers", href: "/caterers" },
-  { label: "Make-up Artists", href: "/makeup" },
-  { label: "Chartered Airlines", href: "/chartered-airlines" },
+  { label: "Rentals", href: "/rentals" },
 ];
 
 const contactItems = [
