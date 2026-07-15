@@ -571,9 +571,10 @@ export default function VendorDashboard() {
         { id: "planners", label: "Wedding Planners", count: services.filter(s => s.category === "planners").length || null, icon: ClipboardList },
         { id: "caterers", label: "Caterers", count: services.filter(s => s.category === "caterers").length || null, icon: Utensils },
         { id: "decorators", label: "Decorators", count: services.filter(s => s.category === "decorators").length || null, icon: Brush },
+        { id: "photographers", label: "Photographers", count: services.filter(s => s.category === "photographers").length || null, icon: Camera },
+        { id: "rentals", label: "Rentals", count: services.filter(s => s.category === "rentals").length || null, icon: Package },
       ]
     },
-    { id: "photographers", label: "Photographers", icon: Camera },
     { id: "leads", label: "Booking Inquiries", count: bookings.length || null, icon: Inbox },
     { id: "settings", label: "Business Profile", icon: Settings },
   ];
@@ -1748,17 +1749,8 @@ export default function VendorDashboard() {
               </div>
             )}
 
-            {["photographers"].includes(activeTab) && (
-              <div className={`rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-none ${cardClass} min-h-[400px]`}>
-                <h4 className={`font-bold text-xl mb-2 ${headingText}`}>Coming Soon</h4>
-                <p className="text-sm text-stone-400 max-w-md">
-                  This module is currently under construction.
-                </p>
-              </div>
-            )}
-
-            {/* SERVICES SECTION (Rooms, Planners, Caterers, Decorators) */}
-            {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && (
+            {/* SERVICES SECTION (Rooms, Planners, Caterers, Decorators, Photographers, Rentals) */}
+            {["rooms", "planners", "caterers", "decorators", "photographers", "rentals"].includes(activeTab) && (
               <div className={`rounded-3xl p-0 border-0 shadow-none min-h-[400px]`}>
                 <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
                   <h3 className={`font-extrabold text-lg capitalize ${headingText}`}>My {activeTab}</h3>

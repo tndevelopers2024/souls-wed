@@ -480,6 +480,8 @@ export default function AdminDashboard() {
         { id: "planners", label: "Wedding Planners", count: null, icon: ClipboardList },
         { id: "caterers", label: "Caterers", count: null, icon: UtensilsCrossed },
         { id: "decorators", label: "Decorators", count: null, icon: Flower2 },
+        { id: "photographers", label: "Photographers", count: null, icon: Camera },
+        { id: "rentals", label: "Rentals", count: null, icon: Package },
       ]
     },
     { id: "approvals", label: "Approvals Queue", count: pendingApprovals.length || null, icon: UserCheck },
@@ -1674,7 +1676,7 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-              {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && (() => {
+              {["rooms", "planners", "caterers", "decorators", "photographers", "rentals"].includes(activeTab) && (() => {
                 const filteredServices = servicesList.filter(s => s.category === activeTab && (
                   s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                   s.city.toLowerCase().includes(searchTerm.toLowerCase())
