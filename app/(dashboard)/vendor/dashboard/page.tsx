@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Sparkles, HeartHandshake, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble } from "lucide-react";
+import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 
 interface VendorSession {
@@ -27,7 +27,7 @@ interface VendorSession {
   available?: boolean;
 }
 
-type TabType = "overview" | "leads" | "venues" | "settings" | "planners" | "photographers" | "decorators" | "makeupartists" | "sakhiservice";
+type TabType = "overview" | "leads" | "venues" | "settings" | "planners" | "photographers" | "decorators";
 
 interface DashboardBooking {
   _id: string;
@@ -574,8 +574,6 @@ export default function VendorDashboard() {
       ]
     },
     { id: "photographers", label: "Photographers", icon: Camera },
-    { id: "makeupartists", label: "Makeup Artists", icon: Sparkles },
-    { id: "sakhiservice", label: "Sakhi Service", icon: HeartHandshake },
     { id: "leads", label: "Booking Inquiries", count: bookings.length || null, icon: Inbox },
     { id: "settings", label: "Business Profile", icon: Settings },
   ];
@@ -1657,7 +1655,7 @@ export default function VendorDashboard() {
               </div>
             )}
 
-            {["photographers", "makeupartists", "sakhiservice"].includes(activeTab) && (
+            {["photographers"].includes(activeTab) && (
               <div className={`rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-none ${cardClass} min-h-[400px]`}>
                 <h4 className={`font-bold text-xl mb-2 ${headingText}`}>Coming Soon</h4>
                 <p className="text-sm text-stone-400 max-w-md">
