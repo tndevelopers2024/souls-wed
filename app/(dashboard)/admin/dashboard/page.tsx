@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
-import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2 } from "lucide-react";
+import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2, Wand2, Eye, EyeOff } from "lucide-react";
 
 interface AdminSession {
   id: string;
@@ -46,8 +46,19 @@ export default function AdminDashboard() {
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState({ text: "", type: "" });
+
+  const generateStrongPassword = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+    let pass = "";
+    for (let i = 0; i < 16; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setNewPassword(pass);
+    setShowPassword(true);
+  };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1602,18 +1613,35 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold mb-1 text-stone-500">New Password</label>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="block text-xs font-semibold text-stone-500">New Password</label>
+                        <button
+                          type="button"
+                          onClick={generateStrongPassword}
+                          className="text-[10px] flex items-center gap-1 font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                        >
+                          <Wand2 className="h-3 w-3" />
+                          Generate Strong
+                        </button>
+                      </div>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
                         <input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           required
                           minLength={6}
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
-                          className={`w-full pl-9 pr-4 py-2 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
+                          className={`w-full pl-9 pr-10 py-2 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
                           placeholder="••••••••"
                         />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600 transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
                       </div>
                     </div>
                     
