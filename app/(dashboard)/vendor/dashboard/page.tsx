@@ -947,14 +947,16 @@ export default function VendorDashboard() {
                     const minPrice = (arr: any[], key = "priceFrom") =>
                       arr.length === 0 ? null : Math.min(...arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0));
 
+                    const getTopName = (arr: any[]) => arr.filter(v => v.active)[0]?.name || arr[0]?.name || null;
+
                     const categories = [
-                      { id: "venues", label: "Venues", emoji: "🏛️", color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", count: venueListings.length, price: minPrice(venueListings, "price"), unit: "per day", live: venueListings.filter(v => v.active).length },
-                      { id: "rooms", label: "Rooms", emoji: "🛏️", color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", count: roomListings.length, price: minPrice(roomListings), unit: "per night", live: roomListings.filter(s => s.active).length },
-                      { id: "planners", label: "Planners", emoji: "📋", color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", count: plannerListings.length, price: minPrice(plannerListings), unit: "per event", live: plannerListings.filter(s => s.active).length },
-                      { id: "caterers", label: "Caterers", emoji: "🍽️", color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", count: catererListings.length, price: minPrice(catererListings), unit: "per plate", live: catererListings.filter(s => s.active).length },
-                      { id: "decorators", label: "Decorators", emoji: "🎨", color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", count: decoratorListings.length, price: minPrice(decoratorListings), unit: "per event", live: decoratorListings.filter(s => s.active).length },
-                      { id: "photographers", label: "Photographers", emoji: "📷", color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", count: photographerListings.length, price: minPrice(photographerListings), unit: "per day", live: photographerListings.filter(s => s.active).length },
-                      { id: "rentals", label: "Rentals", emoji: "🎪", color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", count: rentalListings.length, price: minPrice(rentalListings), unit: "per event", live: rentalListings.filter(s => s.active).length },
+                      { id: "venues", label: "Venues", emoji: "🏛️", color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", count: venueListings.length, price: minPrice(venueListings, "price"), unit: "per day", live: venueListings.filter(v => v.active).length, topName: getTopName(venueListings) },
+                      { id: "rooms", label: "Rooms", emoji: "🛏️", color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", count: roomListings.length, price: minPrice(roomListings), unit: "per night", live: roomListings.filter(s => s.active).length, topName: getTopName(roomListings) },
+                      { id: "planners", label: "Planners", emoji: "📋", color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", count: plannerListings.length, price: minPrice(plannerListings), unit: "per event", live: plannerListings.filter(s => s.active).length, topName: getTopName(plannerListings) },
+                      { id: "caterers", label: "Caterers", emoji: "🍽️", color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", count: catererListings.length, price: minPrice(catererListings), unit: "per plate", live: catererListings.filter(s => s.active).length, topName: getTopName(catererListings) },
+                      { id: "decorators", label: "Decorators", emoji: "🎨", color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", count: decoratorListings.length, price: minPrice(decoratorListings), unit: "per event", live: decoratorListings.filter(s => s.active).length, topName: getTopName(decoratorListings) },
+                      { id: "photographers", label: "Photographers", emoji: "📷", color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", count: photographerListings.length, price: minPrice(photographerListings), unit: "per day", live: photographerListings.filter(s => s.active).length, topName: getTopName(photographerListings) },
+                      { id: "rentals", label: "Rentals", emoji: "🎪", color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", count: rentalListings.length, price: minPrice(rentalListings), unit: "per event", live: rentalListings.filter(s => s.active).length, topName: getTopName(rentalListings) },
                     ];
 
                     return (
@@ -968,10 +970,10 @@ export default function VendorDashboard() {
                             <button
                               key={cat.id}
                               onClick={() => setActiveTab(cat.id as TabType)}
-                              className={`relative group flex flex-col gap-3 p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${isDarkMode ? "bg-stone-900/60 border-stone-800" : `${cat.lightBg}`}`}
+                              className={`relative group flex flex-col gap-2 p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${isDarkMode ? "bg-stone-900/60 border-stone-800" : `${cat.lightBg}`}`}
                             >
                               {/* Emoji + live badge */}
-                              <div className="flex items-start justify-between">
+                              <div className="flex items-start justify-between mb-1">
                                 <span className="text-2xl leading-none">{cat.emoji}</span>
                                 {cat.live > 0 && (
                                   <span className="flex items-center gap-1 text-[8px] font-black px-1.5 py-0.5 rounded-full bg-emerald-500 text-white uppercase tracking-wide">
@@ -982,16 +984,27 @@ export default function VendorDashboard() {
                               </div>
 
                               {/* Label */}
-                              <p className={`text-[11px] font-extrabold uppercase tracking-wide leading-tight ${isDarkMode ? "text-stone-300" : "text-stone-700"}`}>{cat.label}</p>
+                              <div>
+                                <p className={`text-[10px] font-extrabold uppercase tracking-wide leading-tight ${isDarkMode ? "text-stone-400" : "text-stone-500"}`}>Top {cat.label}</p>
+                                {cat.topName ? (
+                                  <p className={`text-[13px] font-bold mt-0.5 line-clamp-2 leading-snug ${isDarkMode ? "text-stone-200" : "text-stone-800"}`} title={cat.topName}>
+                                    {cat.topName}
+                                  </p>
+                                ) : (
+                                  <p className={`text-[13px] font-bold mt-0.5 line-clamp-2 leading-snug ${isDarkMode ? "text-stone-500" : "text-stone-400"}`}>
+                                    No {cat.label.toLowerCase()}
+                                  </p>
+                                )}
+                              </div>
 
                               {/* Count */}
-                              <div className="flex items-baseline gap-1">
+                              <div className="flex items-baseline gap-1 mt-1">
                                 <span className={`text-2xl font-black leading-none ${isDarkMode ? "text-white" : "text-stone-900"}`}>{cat.count}</span>
                                 <span className="text-[10px] font-bold text-stone-400">{cat.count === 1 ? "listing" : "listings"}</span>
                               </div>
 
                               {/* Price */}
-                              <div className={`pt-2.5 border-t ${isDarkMode ? "border-stone-700" : "border-stone-200/70"}`}>
+                              <div className={`pt-2.5 mt-auto border-t ${isDarkMode ? "border-stone-700" : "border-stone-200/70"}`}>
                                 {cat.price !== null && cat.price > 0 ? (
                                   <div className="flex flex-col gap-0.5">
                                     <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">from</span>

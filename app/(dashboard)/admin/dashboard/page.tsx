@@ -1090,23 +1090,24 @@ export default function AdminDashboard() {
                     const photographerListings = servicesList.filter((s: any) => s.category === "photographers");
                     const rentalListings = servicesList.filter((s: any) => s.category === "rentals");
 
-                    const minPrice = (arr: any[], key = "priceFrom") => {
-                      const vals = arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0);
-                      return vals.length === 0 ? null : Math.min(...vals);
-                    };
+                    const minPrice = (arr: any[], key = "priceFrom") =>
+                      arr.length === 0 ? null : Math.min(...arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0));
+
                     const avgPrice = (arr: any[], key = "priceFrom") => {
-                      const vals = arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0);
-                      return vals.length === 0 ? null : Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+                      const valid = arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0);
+                      return valid.length === 0 ? null : valid.reduce((a, b) => a + b, 0) / valid.length;
                     };
 
+                    const getTopName = (arr: any[]) => arr.filter(v => v.active)[0]?.name || arr[0]?.name || null;
+
                     const categories = [
-                      { id: "venues", label: "Top Venues", emoji: "🏛️", color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", darkBg: "bg-amber-950/20 border-amber-900/30", count: venueListings.length, price: minPrice(venueListings, "price"), avg: avgPrice(venueListings, "price"), unit: "per day", live: venueListings.filter((v: any) => v.active).length },
-                      { id: "rooms", label: "Top Rooms", emoji: "🛏️", color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", darkBg: "bg-blue-950/20 border-blue-900/30", count: roomListings.length, price: minPrice(roomListings), avg: avgPrice(roomListings), unit: "per night", live: roomListings.filter((s: any) => s.active).length },
-                      { id: "planners", label: "Top Planners", emoji: "📋", color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", darkBg: "bg-violet-950/20 border-violet-900/30", count: plannerListings.length, price: minPrice(plannerListings), avg: avgPrice(plannerListings), unit: "per event", live: plannerListings.filter((s: any) => s.active).length },
-                      { id: "caterers", label: "Top Caterers", emoji: "🍽️", color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", darkBg: "bg-emerald-950/20 border-emerald-900/30", count: catererListings.length, price: minPrice(catererListings), avg: avgPrice(catererListings), unit: "per plate", live: catererListings.filter((s: any) => s.active).length },
-                      { id: "decorators", label: "Top Decorators", emoji: "🎨", color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", darkBg: "bg-pink-950/20 border-pink-900/30", count: decoratorListings.length, price: minPrice(decoratorListings), avg: avgPrice(decoratorListings), unit: "per event", live: decoratorListings.filter((s: any) => s.active).length },
-                      { id: "venues", label: "Top Photographers", emoji: "📷", color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", darkBg: "bg-stone-900/40 border-stone-700", count: photographerListings.length, price: minPrice(photographerListings), avg: avgPrice(photographerListings), unit: "per day", live: photographerListings.filter((s: any) => s.active).length },
-                      { id: "venues", label: "Top Rentals", emoji: "🎪", color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", darkBg: "bg-cyan-950/20 border-cyan-900/30", count: rentalListings.length, price: minPrice(rentalListings), avg: avgPrice(rentalListings), unit: "per event", live: rentalListings.filter((s: any) => s.active).length },
+                      { id: "venues", label: "Venues", emoji: "🏛️", color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", darkBg: "bg-amber-950/20 border-amber-900/30", count: venueListings.length, price: minPrice(venueListings, "price"), avg: avgPrice(venueListings, "price"), unit: "per day", live: venueListings.filter((v: any) => v.active).length, topName: getTopName(venueListings) },
+                      { id: "rooms", label: "Rooms", emoji: "🛏️", color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", darkBg: "bg-blue-950/20 border-blue-900/30", count: roomListings.length, price: minPrice(roomListings), avg: avgPrice(roomListings), unit: "per night", live: roomListings.filter((s: any) => s.active).length, topName: getTopName(roomListings) },
+                      { id: "planners", label: "Planners", emoji: "📋", color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", darkBg: "bg-violet-950/20 border-violet-900/30", count: plannerListings.length, price: minPrice(plannerListings), avg: avgPrice(plannerListings), unit: "per event", live: plannerListings.filter((s: any) => s.active).length, topName: getTopName(plannerListings) },
+                      { id: "caterers", label: "Caterers", emoji: "🍽️", color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", darkBg: "bg-emerald-950/20 border-emerald-900/30", count: catererListings.length, price: minPrice(catererListings), avg: avgPrice(catererListings), unit: "per plate", live: catererListings.filter((s: any) => s.active).length, topName: getTopName(catererListings) },
+                      { id: "decorators", label: "Decorators", emoji: "🎨", color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", darkBg: "bg-pink-950/20 border-pink-900/30", count: decoratorListings.length, price: minPrice(decoratorListings), avg: avgPrice(decoratorListings), unit: "per event", live: decoratorListings.filter((s: any) => s.active).length, topName: getTopName(decoratorListings) },
+                      { id: "photographers", label: "Photographers", emoji: "📷", color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", darkBg: "bg-stone-900/40 border-stone-700", count: photographerListings.length, price: minPrice(photographerListings), avg: avgPrice(photographerListings), unit: "per day", live: photographerListings.filter((s: any) => s.active).length, topName: getTopName(photographerListings) },
+                      { id: "rentals", label: "Rentals", emoji: "🎪", color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", darkBg: "bg-cyan-950/20 border-cyan-900/30", count: rentalListings.length, price: minPrice(rentalListings), avg: avgPrice(rentalListings), unit: "per event", live: rentalListings.filter((s: any) => s.active).length, topName: getTopName(rentalListings) },
                     ];
 
                     return (
@@ -1119,10 +1120,10 @@ export default function AdminDashboard() {
                           {categories.map((cat, idx) => (
                             <div
                               key={idx}
-                              className={`relative group flex flex-col gap-3 p-4 rounded-2xl border text-left transition-all duration-200 hover:-translate-y-0.5 cursor-default ${isDarkMode ? cat.darkBg : cat.lightBg}`}
+                              className={`relative group flex flex-col gap-2 p-4 rounded-2xl border text-left transition-all duration-200 hover:-translate-y-0.5 cursor-default ${isDarkMode ? cat.darkBg : cat.lightBg}`}
                             >
                               {/* Emoji + live badge */}
-                              <div className="flex items-start justify-between">
+                              <div className="flex items-start justify-between mb-1">
                                 <span className="text-2xl leading-none">{cat.emoji}</span>
                                 {cat.live > 0 && (
                                   <span className="flex items-center gap-1 text-[8px] font-black px-1.5 py-0.5 rounded-full bg-emerald-500 text-white uppercase tracking-wide">
@@ -1133,10 +1134,21 @@ export default function AdminDashboard() {
                               </div>
 
                               {/* Label */}
-                              <p className={`text-[11px] font-extrabold uppercase tracking-wide leading-tight ${isDarkMode ? "text-stone-300" : "text-stone-700"}`}>{cat.label}</p>
+                              <div>
+                                <p className={`text-[10px] font-extrabold uppercase tracking-wide leading-tight ${isDarkMode ? "text-stone-400" : "text-stone-500"}`}>Top {cat.label}</p>
+                                {cat.topName ? (
+                                  <p className={`text-[13px] font-bold mt-0.5 line-clamp-2 leading-snug ${isDarkMode ? "text-stone-200" : "text-stone-800"}`} title={cat.topName}>
+                                    {cat.topName}
+                                  </p>
+                                ) : (
+                                  <p className={`text-[13px] font-bold mt-0.5 line-clamp-2 leading-snug ${isDarkMode ? "text-stone-500" : "text-stone-400"}`}>
+                                    No {cat.label.toLowerCase()}
+                                  </p>
+                                )}
+                              </div>
 
                               {/* Count */}
-                              <div className="flex items-baseline gap-1">
+                              <div className="flex items-baseline gap-1 mt-1">
                                 <span className={`text-2xl font-black leading-none ${isDarkMode ? "text-white" : "text-stone-900"}`}>{cat.count}</span>
                                 <span className="text-[10px] font-bold text-stone-400">{cat.count === 1 ? "listing" : "listings"}</span>
                               </div>
