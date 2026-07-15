@@ -8,7 +8,7 @@ import {
   SlidersHorizontal, X, Check,
   Users, Coins, Building2, Layers, Sparkles, Globe2,
   LayoutGrid, BedDouble, CalendarHeart, ChefHat, Palette, 
-  Camera, Package, Building2, ClipboardList, Utensils,
+  Camera, Package, ClipboardList, Utensils,
   ChevronRight, ChevronLeft
 } from "lucide-react";
 import { cities } from "@/lib/venues-data";
