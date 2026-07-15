@@ -517,7 +517,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
       ? `/venues/${vendor.venueId || vendor._id}?type=venue`
       : vendor.category === "Rooms" && vendor.venueId
       ? `/venues/${vendor.venueId}?type=room`
-      : `/${vendor._id}`;
+      : `/vendor/${vendor._id}`;
 
   if (view === "list") {
     return (
