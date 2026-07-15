@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users } from "lucide-react";
+import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 
 interface VendorSession {
@@ -147,6 +147,50 @@ export default function VendorDashboard() {
   const [servicesExpanded, setServicesExpanded] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState({ text: "", type: "" });
+
+  const generateStrongPassword = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+    let pass = "";
+    for (let i = 0; i < 16; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setNewPassword(pass);
+    setShowPassword(true);
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      setPasswordMessage({ text: "New password must be at least 6 characters.", type: "error" });
+      return;
+    }
+    setIsChangingPassword(true);
+    setPasswordMessage({ text: "", type: "" });
+    try {
+      const res = await fetch("/api/auth/settings/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setPasswordMessage({ text: "Password changed successfully!", type: "success" });
+        setCurrentPassword("");
+        setNewPassword("");
+      } else {
+        setPasswordMessage({ text: data.message || "Failed to change password.", type: "error" });
+      }
+    } catch (err) {
+      setPasswordMessage({ text: "An error occurred.", type: "error" });
+    }
+    setIsChangingPassword(false);
+  };
 
   // Showcase gallery states
   const [showcaseImages, setShowcaseImages] = useState<string[]>([]);
@@ -1748,6 +1792,84 @@ export default function VendorDashboard() {
                 </form>
               </div>
             )}
+
+            {/* PASSWORD SETTINGS */}
+            {activeTab === "settings" && (
+                <div className={`mt-8 border rounded-3xl overflow-hidden p-6 shadow-none max-w-2xl ${cardClass}`}>
+                  <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
+                    <div>
+                      <h3 className={`font-extrabold text-base ${headingText}`}>Account Security</h3>
+                      <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Manage your vendor account password</p>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleChangePassword} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold mb-1 text-stone-500">Current Password</label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                        <input
+                          type="password"
+                          required
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          className={`w-full pl-9 pr-4 py-2 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
+                          placeholder="••••••••"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="block text-xs font-semibold text-stone-500">New Password</label>
+                        <button
+                          type="button"
+                          onClick={generateStrongPassword}
+                          className="text-[10px] flex items-center gap-1 font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                        >
+                          <Wand2 className="h-3 w-3" />
+                          Generate Strong
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          required
+                          minLength={6}
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className={`w-full pl-9 pr-10 py-2 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
+                          placeholder="••••••••"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600 transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {passwordMessage.text && (
+                      <p className={`text-xs font-semibold p-2 rounded-lg ${passwordMessage.type === "error" ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"}`}>
+                        {passwordMessage.text}
+                      </p>
+                    )}
+
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        disabled={isChangingPassword}
+                        className="flex items-center gap-2 bg-stone-900 hover:bg-stone-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50"
+                      >
+                        {isChangingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                        Save New Password
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
 
             {/* SERVICES SECTION (Rooms, Planners, Caterers, Decorators, Photographers, Rentals) */}
             {["rooms", "planners", "caterers", "decorators", "photographers", "rentals"].includes(activeTab) && (

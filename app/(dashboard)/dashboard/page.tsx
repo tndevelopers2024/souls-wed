@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, BookHeart, Settings } from "lucide-react";
+import { LayoutDashboard, BookHeart, Settings, Lock, Save, Wand2, Eye, EyeOff, Loader2 } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 
 interface UserSession {
@@ -24,8 +24,49 @@ export default function UserDashboard() {
   const [loadingData, setLoadingData] = useState(false);
   const [bookings, setBookings] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState({ text: "", type: "" });
 
+  const generateStrongPassword = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+    let pass = "";
+    for (let i = 0; i < 16; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setNewPassword(pass);
+    setShowPassword(true);
+  };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      setPasswordMessage({ text: "New password must be at least 6 characters.", type: "error" });
+      return;
+    }
+    setIsChangingPassword(true);
+    setPasswordMessage({ text: "", type: "" });
+    try {
+      const res = await fetch("/api/auth/settings/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setPasswordMessage({ text: "Password changed successfully!", type: "success" });
+        setCurrentPassword("");
+        setNewPassword("");
+      } else {
+        setPasswordMessage({ text: data.message || "Failed to change password.", type: "error" });
+      }
+    } catch (err) {
+      setPasswordMessage({ text: "An error occurred.", type: "error" });
+    }
+    setIsChangingPassword(false);
+  };
 
   const fetchBookings = async () => {
     setLoadingData(true);
@@ -341,7 +382,76 @@ export default function UserDashboard() {
                       disabled
                     />
                   </div>
-                  <p className="text-xs text-slate-400 font-medium mt-2">Profile parameters are currently managed by the administrator directory sync.</p>
+                  <p className="text-xs text-slate-400 font-medium mt-2 mb-4">Profile parameters are currently managed by the administrator directory sync.</p>
+                  
+                  <div className="pt-6 border-t border-slate-100">
+                    <h4 className="font-extrabold text-sm text-slate-900 mb-4">Account Security</h4>
+                    <form onSubmit={handleChangePassword} className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-bold mb-1 text-slate-500">Current Password</label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                          <input
+                            type="password"
+                            required
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            className="w-full pl-9 pr-4 py-2 border rounded-xl text-sm outline-none transition-all bg-slate-50 border-slate-200 focus:border-primary-400 text-slate-800"
+                            placeholder="••••••••"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="block text-xs font-bold text-slate-500">New Password</label>
+                          <button
+                            type="button"
+                            onClick={generateStrongPassword}
+                            className="text-[10px] flex items-center gap-1 font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                          >
+                            <Wand2 className="h-3 w-3" />
+                            Generate Strong
+                          </button>
+                        </div>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            required
+                            minLength={6}
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="w-full pl-9 pr-10 py-2 border rounded-xl text-sm outline-none transition-all bg-slate-50 border-slate-200 focus:border-primary-400 text-slate-800"
+                            placeholder="••••••••"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 transition-colors"
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {passwordMessage.text && (
+                        <p className={`text-xs font-semibold p-2 rounded-lg ${passwordMessage.type === "error" ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"}`}>
+                          {passwordMessage.text}
+                        </p>
+                      )}
+
+                      <div className="pt-2">
+                        <button
+                          type="submit"
+                          disabled={isChangingPassword}
+                          className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                        >
+                          {isChangingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                          Update Password
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </div>
             )}
