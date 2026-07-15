@@ -46,9 +46,10 @@ interface BookingFormProps {
   hourlyPrice?: number;
 }
 
-function parsePrice(priceStr: string | undefined): number {
+function parsePrice(priceStr?: string | number): number {
+  if (typeof priceStr === "number") return priceStr;
   if (!priceStr) return 0;
-  const cleaned = priceStr.replace(/[₹,\s]/g, "");
+  const cleaned = priceStr.toString().replace(/[^0-9]/g, "");
   return parseInt(cleaned, 10) || 0;
 }
 
@@ -135,11 +136,23 @@ export default function BookingForm({
     let nights = 0;
 
     if (bookingType === "venue") {
-      perUnit = menuType === "veg" ? parsePrice(pricePerPlateVeg) : parsePrice(pricePerPlateNonVeg);
-      total = guestCount * perUnit;
-      unitLabel = "per plate";
-      quantity = guestCount;
-      quantityLabel = "guests";
+      const vegPrice = parsePrice(pricePerPlateVeg);
+      const nonVegPrice = parsePrice(pricePerPlateNonVeg);
+      const baseRental = parsePrice(rentalCost);
+      
+      if (vegPrice > 0 || nonVegPrice > 0) {
+        perUnit = menuType === "veg" ? vegPrice : nonVegPrice;
+        total = guestCount * perUnit;
+        unitLabel = "per plate";
+        quantity = guestCount;
+        quantityLabel = "guests";
+      } else {
+        perUnit = baseRental;
+        total = baseRental;
+        unitLabel = "fixed rental fee";
+        quantity = 1;
+        quantityLabel = "venue";
+      }
     } else if (bookingType === "room") {
       perUnit = pricePerRoom || Math.round(parsePrice(rentalCost) / (totalRooms || 1));
       nights = checkIn && checkOut ? calculateNights(checkIn, checkOut) : 1;

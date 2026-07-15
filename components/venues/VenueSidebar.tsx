@@ -97,9 +97,9 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
           bookingTypes={bookingTypes}
           pricePerPlateVeg={venue.pricePerPlateVeg}
           pricePerPlateNonVeg={venue.pricePerPlateNonVeg}
-          rentalCost={venue.rentalCost}
+          rentalCost={venue.rentalCost || venue.price}
           pricePerRoom={Math.round(
-            (parseInt(venue.rentalCost?.replace(/[₹,\s]/g, "") || "0", 10) || 0) /
+            (parseInt((venue.rentalCost || venue.price)?.toString().replace(/[^0-9]/g, "") || "0", 10) || 0) /
             (venue.rooms || 1)
           )}
           minGuests={venue.minGuests}
