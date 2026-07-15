@@ -46,19 +46,20 @@ export function formatAsCurrency(amountInINR: number, targetCurrency: string): s
 }
 
 /**
- * Parses an INR price string like "₹3,35,840" or "₹335840" into a plain number.
+ * Parses an INR price string like "₹3,35,840" or "₹335840" (or a raw number) into a plain number.
  */
-function parseINRString(priceStr: string | undefined | null): number {
+function parseINRString(priceStr: string | number | undefined | null): number {
   if (!priceStr) return 0;
-  const cleaned = priceStr.replace(/[₹,\s]/g, "");
+  if (typeof priceStr === "number") return priceStr;
+  const cleaned = String(priceStr).replace(/[₹,\s]/g, "");
   return parseFloat(cleaned) || 0;
 }
 
 /**
- * Converts an INR price string (e.g. "₹335840") to a display string in the target currency.
+ * Converts an INR price string or number (e.g. "₹335840" or 335840) to a display string in the target currency.
  */
-export function convertPriceString(priceStr: string | undefined | null, targetCurrency: string): string {
+export function convertPriceString(priceStr: string | number | undefined | null, targetCurrency: string): string {
   const inr = parseINRString(priceStr);
-  if (inr === 0) return priceStr || "";
+  if (inr === 0) return priceStr ? String(priceStr) : "";
   return formatAsCurrency(inr, targetCurrency);
 }

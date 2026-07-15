@@ -15,6 +15,9 @@ const VenueFaqSchema = new Schema({
 });
 
 const VenueSchema = new Schema({
+  // Strictly ties this venue to a specific vendor account
+  vendorId:  { type: String, required: true, index: true },
+
   // Stable slug-style ID used throughout the app (e.g. "venue-paris-1")
   venueId:   { type: String, required: true, unique: true, index: true },
 

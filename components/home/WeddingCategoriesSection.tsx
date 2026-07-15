@@ -54,7 +54,7 @@ export default function WeddingCategoriesSection() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {VENDOR_CATEGORIES.map((cat) => (
+          {VENDOR_CATEGORIES.slice(0, 5).map((cat) => (
             <motion.a
               key={cat.slug}
               href={`/category/${cat.slug}`}

@@ -6,14 +6,15 @@ const VendorSchema = new Schema({
   email:        { type: String, unique: true, sparse: true, lowercase: true, trim: true },
   passwordHash: { type: String },
   phone:        { type: String },
-  category:     { type: String, required: true },
+  category:     { type: String }, // Legacy, kept for backwards compatibility during migration
+  categories:   [{ type: String }], // E.g. ["venues", "rooms", "planners", "caterers", "decorators"]
   city:         { type: String, required: true },
   description:  { type: String, default: "" },
   website:      { type: String, default: "" },
   instagram:    { type: String, default: "" },
   rating:       { type: Number, default: 0 },
   reviewCount:  { type: Number, default: 0 },
-  priceFrom:    { type: Number },
+  priceFrom:    { type: Number }, // Base starting price for generic showcase
   advancePercentage: { type: Number, default: 30 }, // Default 30% advance
   unavailableDates: [{ type: Date }],
   images:       [{ type: String }],

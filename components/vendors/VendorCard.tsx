@@ -7,7 +7,7 @@ interface VendorCardProps {
   id: string | number;
   name: string;
   location: string;
-  price: string;
+  price: string | number;
   unit: string;
   rating: number;
   reviewCount?: number;
@@ -37,7 +37,7 @@ export default function VendorCard({
         alt={name}
         fill
         sizes="(max-width: 640px) 85vw, (max-width: 768px) 300px, 340px"
-        className="object-cover transition-transform duration-700"
+        className="object-cover transition-transform duration-700 group-hover:scale-105"
       />
 
       {/* Top Left Badge or Rating */}

@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
-import { Venue } from "@/lib/models/Venue";
+import { ServiceListing } from "@/lib/models/ServiceListing";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
 
     const query: Record<string, unknown> = {};
 
-    // Check auth to determine if we show inactive venues
+    // Check auth to determine if we show inactive services
     const cookieStore = await cookies();
     const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
     
@@ -30,19 +30,22 @@ export async function GET(req: Request) {
       // Admin sees all
     } else if (session.role === "vendor") {
       if (forVendorId === session.userId) {
-        // Vendor sees their own inactive venues
+        // Vendor sees their own inactive services
       } else {
         query.active = true;
       }
     }
 
-    const city     = searchParams.get("city");
-    const featured  = searchParams.get("featured");
-    const verified  = searchParams.get("verified");
-    const search    = searchParams.get("search");
-    const id        = searchParams.get("id");
+    const category = searchParams.get("category");
+    if (category) query.category = category;
+    
+    const id = searchParams.get("id");
+    const city = searchParams.get("city");
+    const featured = searchParams.get("featured");
+    const verified = searchParams.get("verified");
+    const search = searchParams.get("search");
 
-    if (id)       query.venueId  = id;
+    if (id)       query.serviceId  = id;
     if (city)     query.city     = { $regex: city, $options: "i" };
     if (featured) query.featured = true;
     if (verified) query.verified = true;
@@ -51,23 +54,22 @@ export async function GET(req: Request) {
         { name:     { $regex: search, $options: "i" } },
         { city:     { $regex: search, $options: "i" } },
         { location: { $regex: search, $options: "i" } },
-        { type:     { $regex: search, $options: "i" } },
       ];
     }
 
     const limit = parseInt(searchParams.get("limit") ?? "100");
     const skip  = parseInt(searchParams.get("skip")  ?? "0");
 
-    const venues = await Venue.find(query).limit(limit).skip(skip).lean();
-    return NextResponse.json({ success: true, venues, total: venues.length });
+    const services = await ServiceListing.find(query).limit(limit).skip(skip).lean();
+    return NextResponse.json({ success: true, services, total: services.length });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ message: "Failed to fetch venues.", error: msg }, { status: 500 });
+    return NextResponse.json({ message: "Failed to fetch services.", error: msg }, { status: 500 });
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// POST — vendor or admin: create a new venue (starts inactive, pending admin)
+// POST — vendor or admin: create a new service (starts inactive, pending admin)
 // ─────────────────────────────────────────────────────────────────────────────
 export async function POST(req: Request) {
   try {
@@ -79,38 +81,27 @@ export async function POST(req: Request) {
     await connectDB();
     const body = await req.json();
 
-    if (!body.name?.trim() || !body.city?.trim()) {
-      return NextResponse.json({ message: "Venue name and city are required." }, { status: 400 });
+    if (!body.name?.trim() || !body.city?.trim() || !body.category?.trim()) {
+      return NextResponse.json({ message: "Service name, category, and city are required." }, { status: 400 });
     }
 
     const slug = (body.name as string)
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
-    const venueId = `venue-${slug}-${Date.now()}`;
+    const serviceId = `${body.category}-${slug}-${Date.now()}`;
 
-    const venue = new Venue({
+    const service = new ServiceListing({
       vendorId:           session.userId,
-      venueId,
+      serviceId,
+      category:           body.category,
       name:               body.name,
       location:           body.location   || body.city,
       city:               body.city,
-      country:            body.country    || "India",
-      type:               body.type       || "Banquet Hall",
-      price:              body.price      || "0",
-      priceUnit:          body.priceUnit  || "per day",
-      pricePerPlateVeg:   body.pricePerPlateVeg    || "",
-      pricePerPlateNonVeg:body.pricePerPlateNonVeg || "",
-      rentalCost:         body.rentalCost || "",
+      priceFrom:          parseFloat(body.priceFrom) || 0,
+      priceUnit:          body.priceUnit  || "per event",
       image:              body.image      || "",
       gallery:            Array.isArray(body.gallery) ? body.gallery : [],
-      minGuests:          parseInt(body.minGuests) || 50,
-      maxGuests:          parseInt(body.maxGuests) || 500,
-      rooms:              parseInt(body.rooms)     || 0,
-      outdoor:            Boolean(body.outdoor),
-      indoor:             body.indoor !== false,
-      parking:            Boolean(body.parking),
-      catering:           Boolean(body.catering),
       description:        body.description || "",
       features:           Array.isArray(body.features) ? body.features : [],
       verified: false,
@@ -118,16 +109,16 @@ export async function POST(req: Request) {
       active:   false, // admin must activate
     });
 
-    await venue.save();
-    return NextResponse.json({ success: true, venue }, { status: 201 });
+    await service.save();
+    return NextResponse.json({ success: true, service }, { status: 201 });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ message: "Failed to create venue.", error: msg }, { status: 500 });
+    return NextResponse.json({ message: "Failed to create service.", error: msg }, { status: 500 });
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PATCH — admin or vendor: update allowed venue fields
+// PATCH — admin or vendor: update allowed service fields
 // ─────────────────────────────────────────────────────────────────────────────
 export async function PATCH(req: Request) {
   try {
@@ -138,26 +129,24 @@ export async function PATCH(req: Request) {
 
     await connectDB();
     const body = await req.json();
-    const { venueId, ...updates } = body;
+    const { serviceId, ...updates } = body;
 
-    if (!venueId) {
-      return NextResponse.json({ message: "venueId is required." }, { status: 400 });
+    if (!serviceId) {
+      return NextResponse.json({ message: "serviceId is required." }, { status: 400 });
     }
 
     const safeFields = [
       "verified", "featured", "active",
-      "name", "city", "location", "country", "type", "description",
-      "price", "priceUnit", "pricePerPlateVeg", "pricePerPlateNonVeg", "rentalCost",
-      "minGuests", "maxGuests", "rooms",
-      "outdoor", "indoor", "parking", "catering",
+      "name", "city", "location", "category", "description",
+      "priceFrom", "priceUnit",
       "image", "gallery", "features",
     ];
 
-    const existingVenue = await Venue.findOne({ venueId });
-    if (!existingVenue) return NextResponse.json({ message: "Venue not found." }, { status: 404 });
+    const existingService = await ServiceListing.findOne({ serviceId });
+    if (!existingService) return NextResponse.json({ message: "Service not found." }, { status: 404 });
 
-    if (session.role === "vendor" && existingVenue.vendorId !== session.userId) {
-      return NextResponse.json({ message: "Unauthorized to edit this venue." }, { status: 403 });
+    if (session.role === "vendor" && existingService.vendorId !== session.userId) {
+      return NextResponse.json({ message: "Unauthorized to edit this service." }, { status: 403 });
     }
 
     const allowed: Record<string, unknown> = {};
@@ -174,18 +163,19 @@ export async function PATCH(req: Request) {
 
     allowed.updatedAt = new Date();
 
-    const venue = await Venue.findOneAndUpdate({ venueId }, { $set: allowed }, { new: true });
-    if (!venue) return NextResponse.json({ message: "Venue not found." }, { status: 404 });
+    const service = await ServiceListing.findOneAndUpdate({ serviceId }, { $set: allowed }, { new: true });
+    if (!service) return NextResponse.json({ message: "Service not found." }, { status: 404 });
 
-    return NextResponse.json({ success: true, venue });
+    return NextResponse.json({ success: true, service });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ message: "Failed to update venue.", error: msg }, { status: 500 });
+    return NextResponse.json({ message: "Failed to update service.", error: msg }, { status: 500 });
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DELETE — admin or vendor: permanently delete a venue
+// ─────────────────────────────────────────────────────────────────────────────
+// DELETE — admin or vendor: permanently delete a service
 // ─────────────────────────────────────────────────────────────────────────────
 export async function DELETE(req: Request) {
   try {
@@ -196,23 +186,23 @@ export async function DELETE(req: Request) {
 
     await connectDB();
     const { searchParams } = new URL(req.url);
-    const venueId = searchParams.get("venueId");
+    const serviceId = searchParams.get("serviceId");
 
-    if (!venueId) {
-      return NextResponse.json({ message: "venueId query param is required." }, { status: 400 });
+    if (!serviceId) {
+      return NextResponse.json({ message: "serviceId query param is required." }, { status: 400 });
     }
 
-    const existingVenue = await Venue.findOne({ venueId });
-    if (!existingVenue) return NextResponse.json({ message: "Venue not found." }, { status: 404 });
+    const existingService = await ServiceListing.findOne({ serviceId });
+    if (!existingService) return NextResponse.json({ message: "Service not found." }, { status: 404 });
 
-    if (session.role === "vendor" && existingVenue.vendorId !== session.userId) {
-      return NextResponse.json({ message: "Unauthorized to delete this venue." }, { status: 403 });
+    if (session.role === "vendor" && existingService.vendorId !== session.userId) {
+      return NextResponse.json({ message: "Unauthorized to delete this service." }, { status: 403 });
     }
 
-    await Venue.deleteOne({ venueId });
-    return NextResponse.json({ success: true, message: "Venue deleted." });
+    await ServiceListing.deleteOne({ serviceId });
+    return NextResponse.json({ success: true, message: "Service deleted." });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ message: "Failed to delete venue.", error: msg }, { status: 500 });
+    return NextResponse.json({ message: "Failed to delete service.", error: msg }, { status: 500 });
   }
 }

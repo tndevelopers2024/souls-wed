@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "@/components/shared/CustomImage";
 import { MapPin, ChevronLeft, ChevronRight, Star, BadgeCheck, Flower2, ClipboardList, ArrowRight, Heart } from "lucide-react";
@@ -8,47 +8,17 @@ import { useCurrency } from "@/lib/CurrencyContext";
 import { convertPriceString } from "@/lib/currency";
 import VendorCard from "@/components/vendors/VendorCard";
 
-const decorators = [
-  {
-    id: 1, name: "Akiko Kovacs", location: "Honolulu, United States",
-    price: "₹29,223", unit: "per booking", rating: 0, verified: true, tag: "Decorator",
-    image: "/images/home/1cc5d798b520b4ba81f15015612796d0.jpg",
-  },
-      {
-    id: 4, name: "Floraison-31", location: "Auckland, New Zealand",
-    price: "₹12,656", unit: "per engagement", rating: 0, verified: true, tag: "Decorator",
-    image: "/images/home/1dae12c36000143c2636b828426e4cf3.jpg",
-  },
-  {
-    id: 2, name: "French Florist", location: "California, United States",
-    price: "₹25,048", unit: "per booking", rating: 0, verified: true, tag: "Decorator",
-    image: "/images/home/f8648d3e1d587c1c62dec1373c2a1e8e.jpg",
-  },
-  {
-    id: 3, name: "Les Filles d'a cote", location: "Paris, France",
-    price: "₹12,656", unit: "per engagement", rating: 0, verified: true, tag: "Decorator",
-    image: "/images/home/a05874ad857e7eea07ced6a187fa04fe.jpg",
-  },
-
-];
-
-const planners = [
-  {
-    id: 1, name: "Eve Experience", location: "Kollam, India",
-    price: "₹260,000", unit: "per engagement", rating: 0, verified: true, tag: "Planner",
-    image: "/soulswed/vendors/1129.png",
-  },
-  {
-    id: 2, name: "SANS Events", location: "Kochi, India",
-    price: "₹250,000", unit: "per engagement", rating: 0, verified: true, tag: "Planner",
-    image: "/soulswed/vendors/1128.webp",
-  },
-  {
-    id: 3, name: "Bespoke Experiences", location: "Phuket, Thailand",
-    price: "₹183,623", unit: "per engagement", rating: 0, verified: true, tag: "Planner",
-    image: "/soulswed/vendors/1118.jpg",
-  },
-];
+interface ServiceItem {
+  id: string;
+  name: string;
+  location: string;
+  price: string;
+  unit: string;
+  rating: number;
+  verified: boolean;
+  tag: string;
+  image: string;
+}
 
 type Tab = "decorators" | "planners";
 
@@ -61,6 +31,35 @@ export default function DecoratorsPlannersSection() {
   const [activeTab, setActiveTab] = useState<Tab>("decorators");
   const scrollRef = useRef<HTMLDivElement>(null);
   const { currency } = useCurrency();
+  const [decorators, setDecorators] = useState<ServiceItem[]>([]);
+  const [planners, setPlanners] = useState<ServiceItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch decorators and planners
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/services?category=decorators&verified=true&limit=8").then(r => r.json()),
+      fetch("/api/services?category=planners&verified=true&limit=8").then(r => r.json())
+    ])
+    .then(([decorData, plannerData]) => {
+      const mapData = (services: any[], tag: string) => (services || []).map((s: any) => ({
+        id: s.serviceId,
+        name: s.name,
+        location: s.city,
+        price: `₹${s.priceFrom?.toLocaleString("en-IN") || 0}`,
+        unit: s.priceUnit || "per event",
+        rating: s.rating || 0,
+        verified: s.verified,
+        tag,
+        image: s.image || "",
+      }));
+      setDecorators(mapData(decorData.services, "Decorator"));
+      setPlanners(mapData(plannerData.services, "Planner"));
+    })
+    .catch(console.error)
+    .finally(() => setLoading(false));
+  }, []);
+
   const items = activeTab === "decorators" ? decorators : planners;
 
   const scroll = (dir: "left" | "right") => {
@@ -123,50 +122,69 @@ export default function DecoratorsPlannersSection() {
           ))}
         </div>
 
+        {/* Loading skeleton */}
+        {loading && (
+          <div className="flex gap-5 overflow-hidden pb-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] h-[460px] sm:h-[500px] lg:h-[540px] rounded-[32px] animate-pulse"
+                style={{ background: "var(--sw-light-gray, #f1f5f9)" }}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Scroll row */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div ref={scrollRef} className="flex gap-5 overflow-x-auto snap-scroll pb-4" style={{ scrollbarWidth: "none" }}>
-              {items.map((item, i) => (
-                <motion.div
-                  key={item.id}
-                  className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] h-[460px] sm:h-[500px] lg:h-[540px] cursor-pointer block group"
-                  initial={{ opacity: 0, x: 40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.07 }}
-                  style={{ scrollSnapAlign: "start" }}
-                >
-                  <VendorCard
-                    id={item.id}
-                    name={item.name}
-                    location={item.location}
-                    price={item.price}
-                    unit={item.unit}
-                    rating={item.rating}
-                    image={item.image}
-                    tags={
-                      <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
-                        {item.tag === "Decorator" ? (
-                          <Flower2 className="w-3.5 h-3.5 text-slate-500" />
-                        ) : (
-                          <ClipboardList className="w-3.5 h-3.5 text-slate-500" />
-                        )}
-                        {item.tag}
-                      </div>
-                    }
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </AnimatePresence>
+        {!loading && (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div ref={scrollRef} className="flex gap-5 overflow-x-auto snap-scroll pb-4" style={{ scrollbarWidth: "none" }}>
+                {items.length === 0 ? (
+                  <div className="w-full text-center py-20 text-slate-500 font-medium">No {activeTab} available at the moment.</div>
+                ) : (
+                  items.map((item, i) => (
+                    <motion.div
+                      key={item.id}
+                      className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] h-[460px] sm:h-[500px] lg:h-[540px] cursor-pointer block group"
+                      initial={{ opacity: 0, x: 40 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: i * 0.07 }}
+                      style={{ scrollSnapAlign: "start" }}
+                    >
+                      <VendorCard
+                        id={item.id}
+                        name={item.name}
+                        location={item.location}
+                        price={item.price}
+                        unit={item.unit}
+                        rating={item.rating}
+                        image={item.image}
+                        tags={
+                          <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
+                            {item.tag === "Decorator" ? (
+                              <Flower2 className="w-3.5 h-3.5 text-slate-500" />
+                            ) : (
+                              <ClipboardList className="w-3.5 h-3.5 text-slate-500" />
+                            )}
+                            {item.tag}
+                          </div>
+                        }
+                      />
+                    </motion.div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
     </section>
   );

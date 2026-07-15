@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
-import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake } from "lucide-react";
+import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Briefcase, ChevronDown, ChevronRight } from "lucide-react";
 
 interface AdminSession {
   id: string;
@@ -16,7 +16,7 @@ interface AdminSession {
   role: string;
 }
 
-type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "venues" | "planners" | "photographers" | "decorators" | "makeupartists" | "sakhiservice";
+type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "venues" | "rooms" | "planners" | "caterers" | "decorators";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -36,11 +36,13 @@ export default function AdminDashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [venuesList, setVenuesList] = useState<any[]>([]);
+  const [servicesList, setServicesList] = useState<any[]>([]);
   
   // Copy state for feedback
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [servicesExpanded, setServicesExpanded] = useState(false);
 
 
 
@@ -50,12 +52,13 @@ export default function AdminDashboard() {
     setLoadingData(true);
     setError(null);
     try {
-      const [statsRes, vendorsRes, bookingsRes, usersRes, venuesRes] = await Promise.all([
+      const [statsRes, vendorsRes, bookingsRes, usersRes, venuesRes, servicesRes] = await Promise.all([
         fetch("/api/admin/stats"),
         fetch("/api/admin/vendors"),
         fetch("/api/admin/bookings"),
         fetch("/api/admin/users"),
         fetch("/api/venues?limit=100"),
+        fetch("/api/services?limit=500"),
       ]);
 
       if (statsRes.ok) {
@@ -83,6 +86,11 @@ export default function AdminDashboard() {
       if (venuesRes.ok) {
         const data = await venuesRes.json();
         setVenuesList(data.venues || []);
+      }
+
+      if (servicesRes.ok) {
+        const data = await servicesRes.json();
+        setServicesList(data.services || []);
       }
     } catch (err: any) {
       console.error("Failed to load admin dashboard data:", err);
@@ -159,6 +167,25 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleUpdateServiceStatus = async (serviceId: string, verified?: boolean, featured?: boolean, active?: boolean) => {
+    try {
+      const res = await fetch("/api/services", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ serviceId, verified, featured, active }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        fetchAllData();
+      } else {
+        alert(data.message || "Failed to update service.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred during update.");
+    }
+  };
+
   const handleDeleteVendor = async (vendorId: string) => {
     if (!confirm("Are you sure you want to permanently delete this vendor?")) return;
     try {
@@ -170,6 +197,23 @@ export default function AdminDashboard() {
         fetchAllData();
       } else {
         alert(data.message || "Failed to delete vendor.");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteService = async (serviceId: string) => {
+    if (!confirm("Are you sure you want to permanently delete this service?")) return;
+    try {
+      const res = await fetch(`/api/services?serviceId=${serviceId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        fetchAllData();
+      } else {
+        alert(data.message || "Failed to delete service.");
       }
     } catch (err) {
       console.error(err);
@@ -344,8 +388,8 @@ export default function AdminDashboard() {
     bookings.slice(0, 4).forEach(b => {
       activities.push({
         type: "booking",
-        title: `Booking Order: ${b.status.toUpperCase()}`,
-        desc: `${b.userName} booked ${b.venueName} (${formatAsCurrency(b.advanceAmount, "INR")} advance)`,
+        title: `Booking Order: ${(b.status || "pending").toUpperCase()}`,
+        desc: `${b.userName || "Guest"} booked ${b.providerName || b.venueName || "Service"} (${formatAsCurrency(b.advanceAmount || 0, "INR")} advance)`,
         time: b.createdAt,
         bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200",
       });
@@ -363,7 +407,7 @@ export default function AdminDashboard() {
     const val = searchTerm.toLowerCase();
     return (
       (v.businessName || "").toLowerCase().includes(val) ||
-      v.name.toLowerCase().includes(val) ||
+      (v.name || "").toLowerCase().includes(val) ||
       (v.city || "").toLowerCase().includes(val) ||
       (v.category || "").toLowerCase().includes(val)
     );
@@ -373,7 +417,7 @@ export default function AdminDashboard() {
     const val = searchTerm.toLowerCase();
     return (
       (v.businessName || "").toLowerCase().includes(val) ||
-      v.name.toLowerCase().includes(val) ||
+      (v.name || "").toLowerCase().includes(val) ||
       (v.city || "").toLowerCase().includes(val) ||
       (v.category || "").toLowerCase().includes(val)
     );
@@ -382,22 +426,22 @@ export default function AdminDashboard() {
   const filteredBookings = bookings.filter(b => {
     const val = searchTerm.toLowerCase();
     return (
-      b.venueName.toLowerCase().includes(val) ||
-      b.userName.toLowerCase().includes(val) ||
-      b.userEmail.toLowerCase().includes(val) ||
+      (b.providerName || b.venueName || "").toLowerCase().includes(val) ||
+      (b.userName || "").toLowerCase().includes(val) ||
+      (b.userEmail || "").toLowerCase().includes(val) ||
       (b.userPhone || "").toLowerCase().includes(val) ||
-      b.status.toLowerCase().includes(val) ||
-      b._id.includes(val)
+      (b.status || "").toLowerCase().includes(val) ||
+      (b._id || "").toLowerCase().includes(val)
     );
   });
 
   const filteredUsers = users.filter(u => {
     const val = searchTerm.toLowerCase();
     return (
-      u.name.toLowerCase().includes(val) ||
-      u.email.toLowerCase().includes(val) ||
+      (u.name || "").toLowerCase().includes(val) ||
+      (u.email || "").toLowerCase().includes(val) ||
       (u.phone || "").toLowerCase().includes(val) ||
-      u.role.toLowerCase().includes(val)
+      (u.role || "").toLowerCase().includes(val)
     );
   });
 
@@ -424,18 +468,24 @@ export default function AdminDashboard() {
 
   if (!admin) return null;
 
-  const menuItems = [
+  const menuItems: any[] = [
     { id: "overview", label: "Overview", count: null, icon: LayoutDashboard },
+    { 
+      id: "services", 
+      label: "Booking Categories", 
+      icon: Briefcase,
+      subItems: [
+        { id: "venues", label: "Venue", count: venuesList.length || null, icon: Map },
+        { id: "rooms", label: "Rooms", count: null, icon: BedDouble },
+        { id: "planners", label: "Wedding Planners", count: null, icon: ClipboardList },
+        { id: "caterers", label: "Caterers", count: null, icon: UtensilsCrossed },
+        { id: "decorators", label: "Decorators", count: null, icon: Flower2 },
+      ]
+    },
     { id: "approvals", label: "Approvals Queue", count: pendingApprovals.length || null, icon: UserCheck },
     { id: "vendors", label: "Vendors Directory", count: vendors.length || null, icon: Building2 },
     { id: "bookings", label: "Bookings Ledger", count: bookings.length || null, icon: BookOpen },
     { id: "users", label: "Client Registry", count: users.length || null, icon: Users },
-    { id: "venues", label: "Venues Directory", count: venuesList.length || null, icon: Map },
-    { id: "planners", label: "Planners", count: null, icon: ClipboardList },
-    { id: "photographers", label: "Photographers", count: null, icon: Camera },
-    { id: "decorators", label: "Decorators", count: null, icon: Brush },
-    { id: "makeupartists", label: "Makeup Artists", count: null, icon: Sparkles },
-    { id: "sakhiservice", label: "Sakhi Service", count: null, icon: HeartHandshake },
   ];
 
   // Standard theme variables for consistency (corrected colors from non-standard)
@@ -478,53 +528,113 @@ export default function AdminDashboard() {
         </div>
 
         {/* Navigation Link list */}
-        <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5">
+        <nav className="flex-1 px-4 py-6 flex flex-col gap-1.5 overflow-y-auto">
           {menuItems.map((item) => {
-            const isActive = activeTab === item.id;
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            const isSubActive = hasSubItems && item.subItems.some((sub: any) => sub.id === activeTab);
+            const isActive = activeTab === item.id || isSubActive;
             const Icon = item.icon;
+            
             return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id as TabType);
-                  setSearchTerm("");
-                }}
-                className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-                  isActive 
-                    ? "bg-primary-500 text-white" 
-                    : isDarkMode
-                      ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
-                }`}
-                title={item.label}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon className="w-[18px] h-[18px] shrink-0" />
-                  {!sidebarCollapsed && <span>{item.label}</span>}
-                </div>
-                {!sidebarCollapsed && item.count !== null && (
-                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+              <div key={item.id} className="w-full">
+                <button
+                  onClick={() => {
+                    if (hasSubItems) {
+                      setServicesExpanded(!servicesExpanded);
+                      if (sidebarCollapsed) setSidebarCollapsed(false);
+                    } else {
+                      setActiveTab(item.id as TabType);
+                      setSearchTerm("");
+                    }
+                  }}
+                  className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isActive 
-                      ? "bg-white/20 text-white" 
-                      : isDarkMode 
-                        ? "bg-stone-800 text-stone-400 border border-stone-700"
-                        : "bg-stone-100 text-stone-500 border border-stone-200"
-                  }`}>
-                    {item.count}
-                  </span>
-                )}
-                {sidebarCollapsed && item.count !== null && (
-                  <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${
-                    isActive 
-                      ? "bg-white text-primary-600" 
-                      : isDarkMode 
-                        ? "bg-stone-800 text-stone-400 border border-stone-700"
-                        : "bg-stone-100 text-stone-500 border border-stone-200"
-                  }`}>
-                    {item.count}
-                  </span>
-                )}
-              </button>
+                      ? "bg-primary-500 text-white" 
+                      : isDarkMode
+                        ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
+                  }`}
+                  title={item.label}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-[18px] h-[18px] shrink-0" />
+                    {!sidebarCollapsed && <span>{item.label}</span>}
+                  </div>
+                  {!sidebarCollapsed && item.count !== undefined && item.count !== null && !hasSubItems && (
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                      isActive 
+                        ? "bg-white/20 text-white" 
+                        : isDarkMode 
+                          ? "bg-stone-800 text-stone-400 border border-stone-700"
+                          : "bg-stone-100 text-stone-500 border border-stone-200"
+                    }`}>
+                      {item.count}
+                    </span>
+                  )}
+                  {!sidebarCollapsed && hasSubItems && (
+                    servicesExpanded ? <ChevronDown className="w-4 h-4 opacity-70" /> : <ChevronRight className="w-4 h-4 opacity-70" />
+                  )}
+                  {sidebarCollapsed && item.count !== undefined && item.count !== null && !hasSubItems && (
+                    <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${
+                      isActive 
+                        ? "bg-white text-primary-600" 
+                        : isDarkMode 
+                          ? "bg-stone-800 text-stone-400 border border-stone-700"
+                          : "bg-stone-100 text-stone-500 border border-stone-200"
+                    }`}>
+                      {item.count}
+                    </span>
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {hasSubItems && servicesExpanded && !sidebarCollapsed && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="flex flex-col gap-1 ml-4 mt-1 pl-2 border-l-2 border-stone-100 dark:border-stone-800 overflow-hidden"
+                    >
+                      {item.subItems.map((subItem: any) => {
+                        const SubIcon = subItem.icon;
+                        const isSubItemActive = activeTab === subItem.id;
+                        return (
+                          <button
+                            key={subItem.id}
+                            onClick={() => {
+                              setActiveTab(subItem.id as TabType);
+                              setSearchTerm("");
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                              isSubItemActive 
+                                ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
+                                : isDarkMode
+                                  ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                                  : "text-stone-500 hover:text-stone-900 hover:bg-stone-50"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <SubIcon className="w-[15px] h-[15px] shrink-0" />
+                              <span>{subItem.label}</span>
+                            </div>
+                            {subItem.count !== undefined && subItem.count !== null && (
+                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                                isSubItemActive 
+                                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300" 
+                                  : isDarkMode 
+                                    ? "bg-stone-800 text-stone-400 border border-stone-700"
+                                    : "bg-stone-100 text-stone-500 border border-stone-200"
+                              }`}>
+                                {subItem.count}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             );
           })}
         </nav>
@@ -591,7 +701,7 @@ export default function AdminDashboard() {
             
             <div>
               <h1 className={`font-extrabold text-lg md:text-xl font-serif tracking-tight capitalize ${headingText}`}>
-                {activeTab === "overview" ? "Analytics Command Room" : menuItems.find(i=>i.id===activeTab)?.label}
+                {activeTab === "overview" ? "Analytics Command Room" : (menuItems.find(i=>i.id===activeTab) || menuItems.find(i=>i.subItems?.some((s: any)=>s.id===activeTab))?.subItems?.find((s: any)=>s.id===activeTab))?.label}
               </h1>
               <p className="text-[10px] text-stone-500 font-semibold mt-0.5">
                 {loadingData ? "Syncing..." : `Status: Active • Operator: ${admin.name}`}
@@ -625,32 +735,79 @@ export default function AdminDashboard() {
                 isDarkMode ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-stone-200 text-stone-800"
               }`}
             >
-              {menuItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id as TabType);
-                    setSearchTerm("");
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
-                    activeTab === item.id 
-                      ? "bg-primary-500 text-white" 
-                      : isDarkMode 
-                        ? "text-stone-300 hover:bg-stone-800" 
-                        : "text-stone-600 hover:bg-stone-50"
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  {item.count !== null && (
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                      activeTab === item.id ? "bg-white/20 text-white" : "bg-stone-105 text-stone-600"
-                    }`}>
-                      {item.count}
-                    </span>
-                  )}
-                </button>
-              ))}
+              {menuItems.map((item) => {
+                const hasSubItems = item.subItems && item.subItems.length > 0;
+                
+                return (
+                  <div key={item.id} className="flex flex-col gap-1">
+                    <button
+                      onClick={() => {
+                        if (hasSubItems) {
+                          setServicesExpanded(!servicesExpanded);
+                        } else {
+                          setActiveTab(item.id as TabType);
+                          setSearchTerm("");
+                          setMobileMenuOpen(false);
+                        }
+                      }}
+                      className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
+                        activeTab === item.id || (hasSubItems && item.subItems.some((s: any)=>s.id === activeTab))
+                          ? "bg-primary-500 text-white" 
+                          : isDarkMode 
+                            ? "text-stone-300 hover:bg-stone-800" 
+                            : "text-stone-600 hover:bg-stone-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>{item.label}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {item.count !== null && item.count !== undefined && !hasSubItems && (
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                            activeTab === item.id ? "bg-white/20 text-white" : "bg-stone-105 text-stone-600"
+                          }`}>
+                            {item.count}
+                          </span>
+                        )}
+                        {hasSubItems && (
+                          servicesExpanded ? <ChevronDown className="w-4 h-4 opacity-70" /> : <ChevronRight className="w-4 h-4 opacity-70" />
+                        )}
+                      </div>
+                    </button>
+
+                    {hasSubItems && servicesExpanded && (
+                      <div className="flex flex-col gap-1 pl-4 ml-2 border-l border-stone-200 dark:border-stone-700">
+                        {item.subItems.map((subItem: any) => (
+                          <button
+                            key={subItem.id}
+                            onClick={() => {
+                              setActiveTab(subItem.id as TabType);
+                              setSearchTerm("");
+                              setMobileMenuOpen(false);
+                            }}
+                            className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all ${
+                              activeTab === subItem.id 
+                                ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
+                                : isDarkMode 
+                                  ? "text-stone-400 hover:bg-stone-800" 
+                                  : "text-stone-500 hover:bg-stone-50"
+                            }`}
+                          >
+                            <span>{subItem.label}</span>
+                            {subItem.count !== null && subItem.count !== undefined && (
+                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
+                                activeTab === subItem.id ? "bg-primary-100 text-primary-600" : "bg-stone-105 text-stone-500"
+                              }`}>
+                                {subItem.count}
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
               <hr className={`my-2 ${dividerClass}`} />
               <button 
                 onClick={handleLogout}
@@ -950,7 +1107,7 @@ export default function AdminDashboard() {
                       {filteredApprovals.map((v) => (
                         <div 
                           key={v._id}
-                          className="relative rounded-[24px] overflow-hidden shadow-sm border border-slate-100 w-full h-auto min-h-[380px] cursor-pointer block group bg-gradient-to-br from-slate-800 to-slate-900"
+                          className="relative rounded-[24px] overflow-hidden shadow-none border border-slate-100 w-full h-auto min-h-[380px] cursor-pointer block group bg-gradient-to-br from-slate-800 to-slate-900"
                         >
                           {/* Ambient background decoration */}
                           <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -963,7 +1120,7 @@ export default function AdminDashboard() {
                           </div>
 
                           {/* Status pill top-right */}
-                          <div className="absolute top-4 right-4 z-20 px-3 py-1.5 rounded-full text-[10px] font-bold text-amber-800 bg-amber-100 uppercase tracking-widest shadow-sm">
+                          <div className="absolute top-4 right-4 z-20 px-3 py-1.5 rounded-full text-[10px] font-bold text-amber-800 bg-amber-100 uppercase tracking-widest shadow-none">
                             Pending
                           </div>
 
@@ -979,7 +1136,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
 
-                            <div className="flex flex-col gap-2.5 mb-5 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-sm">
+                            <div className="flex flex-col gap-2.5 mb-5 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-none">
                               <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Rep:</span> {v.name}</p>
                               <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Email:</span> {v.email}</p>
                               <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Phone:</span> {v.phone || "N/A"}</p>
@@ -1002,7 +1159,7 @@ export default function AdminDashboard() {
                             <div className="flex gap-3 mt-1">
                               <button
                                 onClick={() => handleUpdateVendorStatus(v._id, true)}
-                                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 rounded-full text-xs transition-colors shadow-sm cursor-pointer"
+                                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 rounded-full text-xs transition-colors shadow-none cursor-pointer"
                               >
                                 Approve
                               </button>
@@ -1415,14 +1572,90 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-              {["planners", "photographers", "decorators", "makeupartists", "sakhiservice"].includes(activeTab) && (
-                <div className={`rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-none ${cardClass} min-h-[400px]`}>
-                  <h4 className={`font-bold text-xl mb-2 ${headingText}`}>Coming Soon</h4>
-                  <p className="text-sm text-stone-400 max-w-md">
-                    This module is currently under construction.
-                  </p>
-                </div>
-              )}
+              {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && (() => {
+                const filteredServices = servicesList.filter(s => s.category === activeTab && (
+                  s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                  s.city.toLowerCase().includes(searchTerm.toLowerCase())
+                ));
+                return (
+                  <div className={`border rounded-3xl overflow-hidden p-6 shadow-none ${cardClass}`}>
+                    <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
+                      <div>
+                        <h3 className={`font-extrabold text-base capitalize ${headingText}`}>{activeTab} Directory</h3>
+                        <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Toggle live status, verified flags, and details on all listings</p>
+                      </div>
+                      <span className="text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1.5 rounded-full uppercase tracking-wider dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900">
+                        {filteredServices.length} {activeTab} total
+                      </span>
+                    </div>
+
+                    {filteredServices.length === 0 ? (
+                      <div className="py-20 text-center text-stone-500 text-sm font-semibold">
+                        No {activeTab} matching "{searchTerm}"
+                      </div>
+                    ) : (
+                      <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead className={`${isDarkMode ? 'bg-stone-900/50 text-stone-400' : 'bg-stone-50 text-stone-500'} font-bold border-b ${dividerClass}`}>
+                            <tr>
+                              <th className="p-4 tracking-wider uppercase">Name & Location</th>
+                              <th className="p-4 tracking-wider uppercase">Provider</th>
+                              <th className="p-4 tracking-wider uppercase text-center">Status (Verified)</th>
+                              <th className="p-4 tracking-wider uppercase text-center">Visibility (Live)</th>
+                              <th className="p-4 tracking-wider uppercase text-center">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                            {filteredServices.map(s => (
+                              <tr key={s._id} className={`hover:bg-stone-50 dark:hover:bg-stone-800/30 transition-colors ${!s.active ? 'opacity-60 grayscale' : ''}`}>
+                                <td className="p-4">
+                                  <p className={`font-bold text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-900'}`}>{s.name}</p>
+                                  <p className="text-[10px] text-stone-400 font-semibold mt-0.5">{s.city}</p>
+                                </td>
+                                <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
+                                  Vendor ID: {s.vendorId}
+                                </td>
+                                <td className="p-4 text-center">
+                                  <button
+                                    onClick={() => handleUpdateServiceStatus(s.serviceId, !s.verified, s.featured, s.active)}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
+                                      s.verified
+                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900"
+                                        : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900"
+                                    }`}
+                                  >
+                                    {s.verified ? "Verified" : "Pending"}
+                                  </button>
+                                </td>
+                                <td className="p-4 text-center">
+                                  <button
+                                    onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, s.featured, !s.active)}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
+                                      s.active
+                                        ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900"
+                                        : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900"
+                                    }`}
+                                  >
+                                    {s.active ? "Live" : "Hidden"}
+                                  </button>
+                                </td>
+                                <td className="p-4 text-center">
+                                  <button
+                                    onClick={() => handleDeleteService(s.serviceId)}
+                                    className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
+                                  >
+                                    [Delete]
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
             </motion.div>
           </AnimatePresence>

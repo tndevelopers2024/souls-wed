@@ -42,13 +42,34 @@ export default function VendorCategoryPage() {
   useEffect(() => {
     setFetchLoading(true);
     setFetchError(null);
-    fetch(`/api/vendors?category=${categoryParam}`)
+    const isService = ["planners", "caterers", "decorators"].includes(categoryParam);
+    const apiPath = isService ? "/api/services" : "/api/vendors";
+
+    fetch(`${apiPath}?category=${categoryParam}`)
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to load vendors");
+        if (!res.ok) throw new Error("Failed to load listings");
         return res.json();
       })
       .then((data) => {
-        setAllVendors(data.vendors || []);
+        if (isService) {
+          // Map ServiceListing to Vendor structure for VendorCard
+          const mapped = (data.services || []).map((s: any) => ({
+            _id: s.serviceId,
+            name: s.name,
+            businessName: s.name,
+            category: s.category,
+            city: s.city,
+            priceFrom: s.priceFrom,
+            rating: s.rating || 0,
+            reviewCount: s.reviewCount || 0,
+            images: s.image ? [s.image] : [],
+            featured: s.featured,
+            verified: s.verified,
+          }));
+          setAllVendors(mapped);
+        } else {
+          setAllVendors(data.vendors || []);
+        }
       })
       .catch((err) => setFetchError(err.message))
       .finally(() => setFetchLoading(false));

@@ -23,7 +23,7 @@ export default async function proxy(request: NextRequest) {
     ) {
       return NextResponse.next();
     }
-    
+
     // Redirect all other requests to the maintenance page
     return NextResponse.redirect(new URL('/maintenance', request.url));
   }
