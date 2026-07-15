@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, Loader2, Building2 } from "lucide-react";
 import VendorCard from "@/components/vendors/VendorCard";
-import VenueFilterBar from "@/components/venues/VenueFilterBar"; // We can reuse this since it just sets activeCity
+import VenueFilterBar from "@/components/venues/VenueFilterBar";
+import Link from "next/link";
 
 interface Vendor {
   _id: string;
@@ -201,21 +202,23 @@ export default function VendorCategoryPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {visible.map((vendor, i) => (
               <motion.div key={vendor._id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.4) }} className="h-[400px]">
-                <VendorCard
-                  id={vendor._id}
-                  name={vendor.businessName || vendor.name}
-                  location={vendor.city}
-                  price={vendor.priceFrom ? vendor.priceFrom.toString() : "On Request"}
-                  unit="starting price"
-                  rating={vendor.rating}
-                  reviewCount={vendor.reviewCount}
-                  image={vendor.images?.[0] || "/images/placeholder-vendor.jpg"}
-                  tags={
-                    <div className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm text-[var(--sw-primary)]">
-                      {displayCategory}
-                    </div>
-                  }
-                />
+                <Link href={`/vendor/${vendor._id}`} className="block h-full">
+                  <VendorCard
+                    id={vendor._id}
+                    name={vendor.businessName || vendor.name}
+                    location={vendor.city}
+                    price={vendor.priceFrom ? vendor.priceFrom.toString() : "On Request"}
+                    unit="starting price"
+                    rating={vendor.rating}
+                    reviewCount={vendor.reviewCount}
+                    image={vendor.images?.[0] || "/images/placeholder-vendor.jpg"}
+                    tags={
+                      <div className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm text-[var(--sw-primary)]">
+                        {displayCategory}
+                      </div>
+                    }
+                  />
+                </Link>
               </motion.div>
             ))}
           </div>

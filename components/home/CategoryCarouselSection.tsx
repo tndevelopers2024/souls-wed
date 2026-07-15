@@ -152,7 +152,7 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
                 transition={{ duration: 0.4, delay: i * 0.07 }}
                 style={{ scrollSnapAlign: "start" }}
               >
-                <Link href={`/vendor/${item.vendorId}`} className="block w-full h-full">
+                <Link href={`/vendor/${item.id}`} className="block w-full h-full">
                   <VendorCard
                     id={item.id}
                     name={item.name}

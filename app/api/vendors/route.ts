@@ -1,5 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
+import mongoose from "mongoose";
 import { Vendor } from "@/lib/models/Vendor";
+import { ServiceListing } from "@/lib/models/ServiceListing";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
@@ -16,7 +18,33 @@ export async function GET(req: Request) {
     const id = searchParams.get("id");
 
     if (id) {
-      const vendor = await Vendor.findById(id).select("-passwordHash").lean();
+      let vendor: any = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        vendor = await Vendor.findById(id).select("-passwordHash").lean();
+      }
+
+      if (!vendor) {
+        // Fallback to check if this is a serviceId
+        const service = await ServiceListing.findOne({ serviceId: id }).lean();
+        if (service) {
+          vendor = {
+            _id: service.serviceId,
+            name: service.name,
+            businessName: service.name,
+            category: service.category,
+            city: service.city,
+            priceFrom: service.priceFrom,
+            rating: service.rating || 5.0,
+            reviewCount: service.reviewCount || 10,
+            images: service.image ? [service.image, ...(Array.isArray(service.gallery) ? service.gallery : [])] : [],
+            featured: service.featured,
+            verified: service.verified,
+            description: service.description,
+            features: service.features
+          };
+        }
+      }
+
       if (!vendor) {
         return NextResponse.json({ success: false, message: "Vendor not found." }, { status: 404 });
       }
