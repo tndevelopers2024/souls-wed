@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { useCurrency } from "@/lib/CurrencyContext";
 import VendorCard from "@/components/vendors/VendorCard";
+import Link from "next/link";
 
 interface ServiceItem {
   id: string;
+  vendorId: string;
   name: string;
   location: string;
   price: string;
@@ -39,6 +41,7 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
         const mapData = (services: any[]) =>
           (services || []).map((s: any) => ({
             id: s.serviceId,
+            vendorId: s.vendorId,
             name: s.name,
             location: s.city,
             price: `₹${s.priceFrom?.toLocaleString("en-IN") || 0}`,
@@ -149,21 +152,23 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
                 transition={{ duration: 0.4, delay: i * 0.07 }}
                 style={{ scrollSnapAlign: "start" }}
               >
-                <VendorCard
-                  id={item.id}
-                  name={item.name}
-                  location={item.location}
-                  price={item.price}
-                  unit={item.unit}
-                  rating={item.rating}
-                  image={item.image}
-                  tags={
-                    <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
-                      {icon}
-                      {item.tag}
-                    </div>
-                  }
-                />
+                <Link href={`/vendor/${item.vendorId}`} className="block w-full h-full">
+                  <VendorCard
+                    id={item.id}
+                    name={item.name}
+                    location={item.location}
+                    price={item.price}
+                    unit={item.unit}
+                    rating={item.rating}
+                    image={item.image}
+                    tags={
+                      <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
+                        {icon}
+                        {item.tag}
+                      </div>
+                    }
+                  />
+                </Link>
               </motion.div>
             ))}
           </div>
