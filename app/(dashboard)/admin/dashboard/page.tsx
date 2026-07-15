@@ -476,12 +476,12 @@ export default function AdminDashboard() {
       icon: Briefcase,
       subItems: [
         { id: "venues", label: "Venue", count: venuesList.length || null, icon: Map },
-        { id: "rooms", label: "Rooms", count: null, icon: BedDouble },
-        { id: "planners", label: "Wedding Planners", count: null, icon: ClipboardList },
-        { id: "caterers", label: "Caterers", count: null, icon: UtensilsCrossed },
-        { id: "decorators", label: "Decorators", count: null, icon: Flower2 },
-        { id: "photographers", label: "Photographers", count: null, icon: Camera },
-        { id: "rentals", label: "Rentals", count: null, icon: Package },
+        { id: "rooms", label: "Rooms", count: servicesList.filter(s => s.category === "rooms").length || null, icon: BedDouble },
+        { id: "planners", label: "Wedding Planners", count: servicesList.filter(s => s.category === "planners").length || null, icon: ClipboardList },
+        { id: "caterers", label: "Caterers", count: servicesList.filter(s => s.category === "caterers").length || null, icon: UtensilsCrossed },
+        { id: "decorators", label: "Decorators", count: servicesList.filter(s => s.category === "decorators").length || null, icon: Flower2 },
+        { id: "photographers", label: "Photographers", count: servicesList.filter(s => s.category === "photographers").length || null, icon: Camera },
+        { id: "rentals", label: "Rentals", count: servicesList.filter(s => s.category === "rentals").length || null, icon: Package },
       ]
     },
     { id: "approvals", label: "Approvals Queue", count: pendingApprovals.length || null, icon: UserCheck },
