@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, MapPin, Star, Heart, BadgeCheck,
   ChevronDown, LayoutGrid, List, Loader2, Users,
-  SlidersHorizontal,
+  SlidersHorizontal, Sparkles,
 } from "lucide-react";
 import { formatAsCurrency } from "@/lib/currency";
 import { useCurrency } from "@/lib/CurrencyContext";
@@ -33,33 +33,7 @@ export interface PublicVendor {
   advancePercentage?: number;
 }
 
-const categoryLinks = [
-  { label: "All", href: "/vendors", icon: "✦" },
-  { label: "Venues", href: "/venues" },
-  { label: "Rooms", href: "/rooms" },
-  { label: "Planners", href: "/planners" },
-  { label: "Caterers", href: "/caterers" },
-  { label: "Decorators", href: "/decorators" },
-  { label: "Photographers", href: "/photographers" },
-  { label: "Chartered Airlines", href: "/chartered-airlines" },
-  { label: "Makeup", href: "/makeup" },
-  { label: "Hairstylists", href: "/hairstylists" },
-  { label: "Mehndi", href: "/mehndi" },
-  { label: "Florists", href: "/florists" },
-  { label: "Choreographers", href: "/choreographers" },
-];
 
-const cityFilters = [
-  { name: "All Cities", image: "" },
-  { name: "Mumbai", image: "/soulswed/vendors/1213.jpg" },
-  { name: "Delhi", image: "/soulswed/vendors/1207.jpg" },
-  { name: "Goa", image: "/soulswed/vendors/1206.jpg" },
-  { name: "Jaipur", image: "/soulswed/acc_Photographers.jpg" },
-  { name: "Udaipur", image: "/soulswed/pageimg_venues.jpg" },
-  { name: "Dubai", image: "/soulswed/vendors/1118.jpg" },
-  { name: "Bali", image: "/soulswed/acc_decorators1.jpg" },
-  { name: "Maldives", image: "/soulswed/vendors/1128.webp" },
-];
 
 const sortOptions = ["Recommended", "Price: Low to High", "Price: High to Low", "Highest Rated"];
 
@@ -525,9 +499,11 @@ export default function PublicVendorDirectory({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center mt-12 text-xs text-slate-400 font-medium"
+            className="text-center mt-12 flex items-center justify-center gap-2 text-xs text-slate-400 font-medium"
           >
-            ✦ You&apos;ve seen all {filtered.length} vendors ✦
+            <Sparkles className="w-3.5 h-3.5" />
+            You&apos;ve seen all {filtered.length} vendors
+            <Sparkles className="w-3.5 h-3.5" />
           </motion.div>
         )}
       </div>

@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "@/components/shared/CustomImage";
-import { ChevronDown, MapPin, Calendar, Users, Layers, Search } from "lucide-react";
+import { ChevronDown, MapPin, Calendar, Users, Layers, Search, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 
@@ -95,7 +95,7 @@ export default function HeroSection() {
             className="glass inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 text-sm font-medium"
             style={{ color: "rgba(255,255,255,0.9)" }}
           >
-            <span style={{ color: "var(--sw-secondary)" }}>✦</span>
+            <Sparkles className="w-4 h-4 inline-block mr-1" style={{ color: "var(--sw-secondary)" }} />
             Flawless Moves. Perfect Events.
           </motion.div>
 

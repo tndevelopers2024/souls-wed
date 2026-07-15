@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble } from "lucide-react";
+import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 
 interface VendorSession {
@@ -950,13 +950,13 @@ export default function VendorDashboard() {
                     const getTopName = (arr: any[]) => arr.filter(v => v.active)[0]?.name || arr[0]?.name || null;
 
                     const categories = [
-                      { id: "venues", label: "Venues", emoji: "🏛️", color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", count: venueListings.length, price: minPrice(venueListings, "price"), unit: "per day", live: venueListings.filter(v => v.active).length, topName: getTopName(venueListings) },
-                      { id: "rooms", label: "Rooms", emoji: "🛏️", color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", count: roomListings.length, price: minPrice(roomListings), unit: "per night", live: roomListings.filter(s => s.active).length, topName: getTopName(roomListings) },
-                      { id: "planners", label: "Planners", emoji: "📋", color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", count: plannerListings.length, price: minPrice(plannerListings), unit: "per event", live: plannerListings.filter(s => s.active).length, topName: getTopName(plannerListings) },
-                      { id: "caterers", label: "Caterers", emoji: "🍽️", color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", count: catererListings.length, price: minPrice(catererListings), unit: "per plate", live: catererListings.filter(s => s.active).length, topName: getTopName(catererListings) },
-                      { id: "decorators", label: "Decorators", emoji: "🎨", color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", count: decoratorListings.length, price: minPrice(decoratorListings), unit: "per event", live: decoratorListings.filter(s => s.active).length, topName: getTopName(decoratorListings) },
-                      { id: "photographers", label: "Photographers", emoji: "📷", color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", count: photographerListings.length, price: minPrice(photographerListings), unit: "per day", live: photographerListings.filter(s => s.active).length, topName: getTopName(photographerListings) },
-                      { id: "rentals", label: "Rentals", emoji: "🎪", color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", count: rentalListings.length, price: minPrice(rentalListings), unit: "per event", live: rentalListings.filter(s => s.active).length, topName: getTopName(rentalListings) },
+                      { id: "venues", label: "Venues", icon: Building2, color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", count: venueListings.length, price: minPrice(venueListings, "price"), unit: "per day", live: venueListings.filter(v => v.active).length, topName: getTopName(venueListings) },
+                      { id: "rooms", label: "Rooms", icon: BedDouble, color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", count: roomListings.length, price: minPrice(roomListings), unit: "per night", live: roomListings.filter(s => s.active).length, topName: getTopName(roomListings) },
+                      { id: "planners", label: "Planners", icon: ClipboardList, color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", count: plannerListings.length, price: minPrice(plannerListings), unit: "per event", live: plannerListings.filter(s => s.active).length, topName: getTopName(plannerListings) },
+                      { id: "caterers", label: "Caterers", icon: Utensils, color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", count: catererListings.length, price: minPrice(catererListings), unit: "per plate", live: catererListings.filter(s => s.active).length, topName: getTopName(catererListings) },
+                      { id: "decorators", label: "Decorators", icon: Palette, color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", count: decoratorListings.length, price: minPrice(decoratorListings), unit: "per event", live: decoratorListings.filter(s => s.active).length, topName: getTopName(decoratorListings) },
+                      { id: "photographers", label: "Photographers", icon: Camera, color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", count: photographerListings.length, price: minPrice(photographerListings), unit: "per day", live: photographerListings.filter(s => s.active).length, topName: getTopName(photographerListings) },
+                      { id: "rentals", label: "Rentals", icon: Package, color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", count: rentalListings.length, price: minPrice(rentalListings), unit: "per event", live: rentalListings.filter(s => s.active).length, topName: getTopName(rentalListings) },
                     ];
 
                     return (
@@ -972,9 +972,9 @@ export default function VendorDashboard() {
                               onClick={() => setActiveTab(cat.id as TabType)}
                               className={`relative group flex flex-col gap-2 p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${isDarkMode ? "bg-stone-900/60 border-stone-800" : `${cat.lightBg}`}`}
                             >
-                              {/* Emoji + live badge */}
+                              {/* Icon + live badge */}
                               <div className="flex items-start justify-between mb-1">
-                                <span className="text-2xl leading-none">{cat.emoji}</span>
+                                <div className="text-2xl mb-2 opacity-90"><cat.icon className="w-8 h-8 text-stone-700" /></div>
                                 {cat.live > 0 && (
                                   <span className="flex items-center gap-1 text-[8px] font-black px-1.5 py-0.5 rounded-full bg-emerald-500 text-white uppercase tracking-wide">
                                     <span className="w-1 h-1 rounded-full bg-white animate-ping inline-block" />
@@ -1134,7 +1134,7 @@ export default function VendorDashboard() {
                           onClick={() => setVenueView("grid")}
                           className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 transition-colors z-10 cursor-pointer"
                         >
-                          ✕
+                          <X className="w-3.5 h-3.5" />
                         </button>
                         <h3 className={`font-extrabold text-lg mb-6 ${headingText}`}>
                           {venueView === "add" ? "Add New Venue" : `Edit Venue: ${editingVenue?.name}`}
@@ -1389,7 +1389,7 @@ export default function VendorDashboard() {
                   <div className={`rounded-3xl border p-12 flex flex-col items-center justify-center text-center shadow-none ${cardClass}`}>
                     <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${isDarkMode ? "bg-stone-800" : "bg-stone-100"
                       }`}>
-                      <span className="text-2xl">🏛️</span>
+                      <Building2 className="w-6 h-6" />
                     </div>
                     <h4 className={`font-bold text-sm mb-1 ${headingText}`}>No venues yet</h4>
                     <p className="text-[11px] text-stone-400 max-w-xs mb-5">
@@ -1427,7 +1427,7 @@ export default function VendorDashboard() {
 
                             {venue.featured && (
                               <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-none" style={{ background: "var(--sw-primary)" }}>
-                                ♛ Featured
+                                <Star className="w-3 h-3 mr-1 inline-block" /> Featured
                               </div>
                             )}
 
@@ -1449,10 +1449,10 @@ export default function VendorDashboard() {
                             {/* Pills row */}
                             <div className="flex flex-wrap gap-1.5 mb-3">
                               <span className="flex items-center gap-1 text-[9px] font-bold px-2 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100 shadow-none">
-                                👥 {venue.minGuests || 50}–{venue.maxGuests || 500} pax
+                                <Users className="w-3 h-3 mr-1 inline-block" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax
                               </span>
                               <span className="flex items-center gap-1 text-[9px] font-bold px-2 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100 shadow-none">
-                                🛏 {venue.rooms || 0} Rooms
+                                <BedDouble className="w-3 h-3 mr-1 inline-block" /> {venue.rooms || 0} Rooms
                               </span>
                               <span className="text-[9px] font-bold px-2 py-1 rounded-md bg-orange-50 text-orange-600 border border-orange-100 shadow-none">
                                 {venue.type || "Venue"}
@@ -1487,7 +1487,7 @@ export default function VendorDashboard() {
                                   onClick={() => openEditVenue(venue)}
                                   className="text-[11px] font-bold px-4 py-2 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-none"
                                 >
-                                  Edit ✎
+                                  Edit <Edit2 className="w-3 h-3 ml-1 inline-block" />
                                 </button>
                               </div>
                             </div>
@@ -1906,7 +1906,7 @@ export default function VendorDashboard() {
 
                             {service.featured && (
                               <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-none" style={{ background: "var(--sw-primary)" }}>
-                                ♛ Featured
+                                <Star className="w-3 h-3 mr-1 inline-block" /> Featured
                               </div>
                             )}
 
@@ -1952,7 +1952,7 @@ export default function VendorDashboard() {
                                   onClick={() => openEditService(service)}
                                   className="text-[11px] font-bold px-4 py-2 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-none"
                                 >
-                                  Edit ✎
+                                  Edit <Edit2 className="w-3 h-3 ml-1 inline-block" />
                                 </button>
                               </div>
                             </div>

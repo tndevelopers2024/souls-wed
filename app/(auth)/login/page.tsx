@@ -16,6 +16,7 @@ import {
   User,
   Store,
   ShieldCheck,
+  Check,
 } from "lucide-react";
 
 type UserRole = "user" | "vendor" | "admin";
@@ -296,7 +297,7 @@ function LoginContent() {
                     className="w-16 h-16 rounded-full flex items-center justify-center mb-4 text-2xl"
                     style={{ background: "#dcfce7" }}
                   >
-                    ✓
+                    <Check className="w-8 h-8 text-emerald-600" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 mb-1">Access Granted</h3>
                   <p className="text-sm text-slate-500">Redirecting to your dashboard…</p>

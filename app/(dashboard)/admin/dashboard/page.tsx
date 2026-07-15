@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
-import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Briefcase, ChevronDown, ChevronRight } from "lucide-react";
+import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight } from "lucide-react";
 
 interface AdminSession {
   id: string;
@@ -1101,13 +1101,13 @@ export default function AdminDashboard() {
                     const getTopName = (arr: any[]) => arr.filter(v => v.active)[0]?.name || arr[0]?.name || null;
 
                     const categories = [
-                      { id: "venues", label: "Venues", emoji: "🏛️", color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", darkBg: "bg-amber-950/20 border-amber-900/30", count: venueListings.length, price: minPrice(venueListings, "price"), avg: avgPrice(venueListings, "price"), unit: "per day", live: venueListings.filter((v: any) => v.active).length, topName: getTopName(venueListings) },
-                      { id: "rooms", label: "Rooms", emoji: "🛏️", color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", darkBg: "bg-blue-950/20 border-blue-900/30", count: roomListings.length, price: minPrice(roomListings), avg: avgPrice(roomListings), unit: "per night", live: roomListings.filter((s: any) => s.active).length, topName: getTopName(roomListings) },
-                      { id: "planners", label: "Planners", emoji: "📋", color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", darkBg: "bg-violet-950/20 border-violet-900/30", count: plannerListings.length, price: minPrice(plannerListings), avg: avgPrice(plannerListings), unit: "per event", live: plannerListings.filter((s: any) => s.active).length, topName: getTopName(plannerListings) },
-                      { id: "caterers", label: "Caterers", emoji: "🍽️", color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", darkBg: "bg-emerald-950/20 border-emerald-900/30", count: catererListings.length, price: minPrice(catererListings), avg: avgPrice(catererListings), unit: "per plate", live: catererListings.filter((s: any) => s.active).length, topName: getTopName(catererListings) },
-                      { id: "decorators", label: "Decorators", emoji: "🎨", color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", darkBg: "bg-pink-950/20 border-pink-900/30", count: decoratorListings.length, price: minPrice(decoratorListings), avg: avgPrice(decoratorListings), unit: "per event", live: decoratorListings.filter((s: any) => s.active).length, topName: getTopName(decoratorListings) },
-                      { id: "photographers", label: "Photographers", emoji: "📷", color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", darkBg: "bg-stone-900/40 border-stone-700", count: photographerListings.length, price: minPrice(photographerListings), avg: avgPrice(photographerListings), unit: "per day", live: photographerListings.filter((s: any) => s.active).length, topName: getTopName(photographerListings) },
-                      { id: "rentals", label: "Rentals", emoji: "🎪", color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", darkBg: "bg-cyan-950/20 border-cyan-900/30", count: rentalListings.length, price: minPrice(rentalListings), avg: avgPrice(rentalListings), unit: "per event", live: rentalListings.filter((s: any) => s.active).length, topName: getTopName(rentalListings) },
+                      { id: "venues", label: "Venues", icon: Building2, color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", darkBg: "bg-amber-950/20 border-amber-900/30", count: venueListings.length, price: minPrice(venueListings, "price"), avg: avgPrice(venueListings, "price"), unit: "per day", live: venueListings.filter((v: any) => v.active).length, topName: getTopName(venueListings) },
+                      { id: "rooms", label: "Rooms", icon: BedDouble, color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", darkBg: "bg-blue-950/20 border-blue-900/30", count: roomListings.length, price: minPrice(roomListings), avg: avgPrice(roomListings), unit: "per night", live: roomListings.filter((s: any) => s.active).length, topName: getTopName(roomListings) },
+                      { id: "planners", label: "Planners", icon: ClipboardList, color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", darkBg: "bg-violet-950/20 border-violet-900/30", count: plannerListings.length, price: minPrice(plannerListings), avg: avgPrice(plannerListings), unit: "per event", live: plannerListings.filter((s: any) => s.active).length, topName: getTopName(plannerListings) },
+                      { id: "caterers", label: "Caterers", icon: Utensils, color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", darkBg: "bg-emerald-950/20 border-emerald-900/30", count: catererListings.length, price: minPrice(catererListings), avg: avgPrice(catererListings), unit: "per plate", live: catererListings.filter((s: any) => s.active).length, topName: getTopName(catererListings) },
+                      { id: "decorators", label: "Decorators", icon: Palette, color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", darkBg: "bg-pink-950/20 border-pink-900/30", count: decoratorListings.length, price: minPrice(decoratorListings), avg: avgPrice(decoratorListings), unit: "per event", live: decoratorListings.filter((s: any) => s.active).length, topName: getTopName(decoratorListings) },
+                      { id: "photographers", label: "Photographers", icon: Camera, color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", darkBg: "bg-stone-900/40 border-stone-700", count: photographerListings.length, price: minPrice(photographerListings), avg: avgPrice(photographerListings), unit: "per day", live: photographerListings.filter((s: any) => s.active).length, topName: getTopName(photographerListings) },
+                      { id: "rentals", label: "Rentals", icon: Package, color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", darkBg: "bg-cyan-950/20 border-cyan-900/30", count: rentalListings.length, price: minPrice(rentalListings), avg: avgPrice(rentalListings), unit: "per event", live: rentalListings.filter((s: any) => s.active).length, topName: getTopName(rentalListings) },
                     ];
 
                     return (
@@ -1124,7 +1124,7 @@ export default function AdminDashboard() {
                             >
                               {/* Emoji + live badge */}
                               <div className="flex items-start justify-between mb-1">
-                                <span className="text-2xl leading-none">{cat.emoji}</span>
+                                <div className="text-2xl mb-2 opacity-90"><cat.icon className="w-8 h-8 text-stone-700" /></div>
                                 {cat.live > 0 && (
                                   <span className="flex items-center gap-1 text-[8px] font-black px-1.5 py-0.5 rounded-full bg-emerald-500 text-white uppercase tracking-wide">
                                     <span className="w-1 h-1 rounded-full bg-white animate-ping inline-block" />

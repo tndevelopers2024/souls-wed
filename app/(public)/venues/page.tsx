@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronDown, X, MapPin, Star, Building2, Globe, LayoutGrid, List, Loader2 } from "lucide-react";
+import { Search, ChevronDown, X, MapPin, Star, Building2, Globe, LayoutGrid, List, Loader2, Sparkles } from "lucide-react";
 import VenueCard from "@/components/venues/VenueCard";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
 import type { Venue } from "@/lib/venues-data";
@@ -504,9 +504,11 @@ export default function VenuesPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center mt-12 text-xs text-slate-400 font-medium"
+            className="text-center mt-12 flex items-center justify-center gap-2 text-xs text-slate-400 font-medium"
           >
-            ✦ You've seen all {filtered.length} venues ✦
+            <Sparkles className="w-3.5 h-3.5" />
+            You've seen all {filtered.length} venues
+            <Sparkles className="w-3.5 h-3.5" />
           </motion.div>
         )}
       </div>

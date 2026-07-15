@@ -31,28 +31,7 @@ const categoryLinks = [
   { label: "Choreographers", href: "/choreographers", icon: Music },
 ];
 
-// City emojis — venue-type/landscape based, not country-specific
-const cityEmojis: Record<string, string> = {
-  // India
-  "Delhi NCR": "🏛️",
-  "Mumbai": "🌊",
-  "Bangalore": "🌸",
-  "Goa": "🌴",
-  "Jaipur": "🏰",
-  "Udaipur": "⛵",
-  "Kerala": "🌿",
-  "Chennai": "🌅",
-  // International
-  "Paris": "🗼",
-  "New York": "🗽",
-  "London": "🎡",
-  "Tokyo": "⛩️",
-  "Dubai": "✨",
-  "Rome": "🏛️",
-  "Bali": "🌺",
-  "Sydney": "🌉",
-  "Istanbul": "🕌",
-};
+
 
 interface Props {
   activeCity: string;

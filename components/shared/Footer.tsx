@@ -5,7 +5,7 @@ import Image from "@/components/shared/CustomImage";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Phone, Mail, MessageCircle, ChevronUp } from "lucide-react";
+import { Heart, Phone, Mail, MessageCircle, ChevronUp, Sparkles } from "lucide-react";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { CURRENCIES } from "@/lib/currency";
 
@@ -155,7 +155,8 @@ export default function Footer() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-8 mb-8 border-b border-amber-100/50">
             <div className="lg:col-span-7">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest text-amber-700 bg-amber-50 border border-amber-100/60 mb-3 uppercase">
-                ✨ Exclusive Club
+                <Sparkles className="w-3.5 h-3.5 inline-block mr-1 text-amber-500" />
+                Exclusive Club
               </span>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-800">
                 Join the <span className="bg-gradient-to-r from-amber-600 to-primary-500 bg-clip-text text-transparent">SoulsWed Circle</span>
