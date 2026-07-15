@@ -160,9 +160,6 @@ async function seedInternational() {
     await Venue.create({
       vendorId: VENDOR_ID,
       venueId,
-      verified: true,
-      featured: true,
-      active: true,
       gallery: [],
       ...v,
     });
