@@ -5,6 +5,7 @@ import PublicVendorDetailPage from "@/components/vendors/PublicVendorDetailPage"
 import { connectDB } from "@/lib/mongodb";
 import { Vendor } from "@/lib/models/Vendor";
 import { Venue } from "@/lib/models/Venue";
+import { ServiceListing } from "@/lib/models/ServiceListing";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ const categoryMap: Record<string, string> = {
   caterers: "Caterers",
   decorators: "Decorators",
   photographers: "Photographers",
+  rentals: "Rentals",
   airlines: "Chartered Airlines",
   "chartered-airlines": "Chartered Airlines",
   makeup: "Make-up Artists",
@@ -149,6 +151,10 @@ async function getRoomsAsPublicVendors(): Promise<PublicVendor[]> {
 async function getPublicVendors(category: string): Promise<PublicVendor[]> {
   await connectDB();
 
+  // Listings for every non-venue/room category live in the ServiceListing
+  // collection (created & approved via the vendor/admin dashboards), so the
+  // public directory must read from there — not the Vendor account collection.
+  //
   // Build flexible category matching — handle variations like
   // "Photography" vs "Photographers", "Planner" vs "Planners",
   // "Make-up Artists" vs "Makeup Artists" vs "MakeupArtists" etc.
@@ -157,6 +163,7 @@ async function getPublicVendors(category: string): Promise<PublicVendor[]> {
     "Caterers": /cater/i,
     "Decorators": /decor/i,
     "Photographers": /photo/i,
+    "Rentals": /rental|rent/i,
     "Chartered Airlines": /charter|airline/i,
     "Make-up Artists": /make.?up|makeup/i,
     "Hairstylists": /hair/i,
@@ -167,25 +174,33 @@ async function getPublicVendors(category: string): Promise<PublicVendor[]> {
   };
 
   const regex = categoryVariants[category];
-  const filter: Record<string, unknown> = {
-    verified: true,
-    available: true,
-  };
+  const filter: Record<string, unknown> = { active: true };
 
   if (regex) {
     filter.category = { $regex: regex };
   } else {
-    filter.category = category;
+    filter.category = { $regex: new RegExp(category, "i") };
   }
 
-  const vendors = await Vendor.find(filter)
-    .select("-passwordHash")
+  const services = await ServiceListing.find(filter)
     .sort({ featured: -1, rating: -1, createdAt: -1 })
     .limit(60)
     .lean();
 
-  return vendors.map((vendor) => ({
-    ...vendor,
-    _id: vendor._id.toString(),
+  return services.map((s: any) => ({
+    // Use serviceId so the card's `/vendor/{_id}` link resolves via the
+    // ServiceListing fallback in /api/vendors.
+    _id: s.serviceId,
+    businessName: s.name,
+    name: s.name,
+    category,
+    city: s.city,
+    description: s.description || "",
+    rating: s.rating || 0,
+    reviewCount: s.reviewCount || 0,
+    priceFrom: s.priceFrom,
+    images: s.image ? [s.image, ...(s.gallery || [])] : (s.gallery || []),
+    featured: s.featured || false,
+    verified: s.verified || false,
   })) as PublicVendor[];
 }
