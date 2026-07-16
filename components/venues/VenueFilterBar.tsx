@@ -8,7 +8,7 @@ import {
   SlidersHorizontal, X, Check,
   Users, Coins, Building2, Layers, Sparkles, Globe2,
   LayoutGrid, BedDouble, CalendarHeart, ChefHat, Palette, 
-  Camera, Package, ClipboardList, Utensils,
+  ClipboardList, Utensils,
   ChevronRight, ChevronLeft
 } from "lucide-react";
 import { cities } from "@/lib/venues-data";
@@ -22,8 +22,6 @@ const categoryLinks = [
   { label: "Planners", href: "/planners", icon: ClipboardList },
   { label: "Caterers", href: "/caterers", icon: Utensils },
   { label: "Decorators", href: "/decorators", icon: Palette },
-  { label: "Photographers", href: "/photographers", icon: Camera },
-  { label: "Rentals", href: "/rentals", icon: Package },
 ];
 
 

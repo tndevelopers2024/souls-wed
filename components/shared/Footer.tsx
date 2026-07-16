@@ -52,10 +52,8 @@ const services = [
   { label: "Venues & Banquet Halls", href: "/venues" },
   { label: "Rooms & Accommodation", href: "/rooms" },
   { label: "Wedding Planners", href: "/planners" },
-  { label: "Decorators", href: "/decorators" },
-  { label: "Photographers", href: "/photographers" },
   { label: "Caterers", href: "/caterers" },
-  { label: "Rentals", href: "/rentals" },
+  { label: "Decorators", href: "/decorators" },
 ];
 
 const contactItems = [

@@ -16,18 +16,6 @@ const categoryMap: Record<string, string> = {
   planners: "Planners",
   caterers: "Caterers",
   decorators: "Decorators",
-  photographers: "Photographers",
-  rentals: "Rentals",
-  airlines: "Chartered Airlines",
-  "chartered-airlines": "Chartered Airlines",
-  makeup: "Make-up Artists",
-  "make-up-artists": "Make-up Artists",
-  hairstylists: "Hairstylists",
-  mehndi: "Mehndi Artists",
-  "mehndi-artists": "Mehndi Artists",
-  florists: "Florists",
-  choreographers: "Choreographers",
-  djs: "DJs",
 };
 
 export default async function VendorCategoryPage({
@@ -156,21 +144,11 @@ async function getPublicVendors(category: string): Promise<PublicVendor[]> {
   // public directory must read from there — not the Vendor account collection.
   //
   // Build flexible category matching — handle variations like
-  // "Photography" vs "Photographers", "Planner" vs "Planners",
-  // "Make-up Artists" vs "Makeup Artists" vs "MakeupArtists" etc.
+  // "Planner" vs "Planners", "Cater" vs "Caterers", etc.
   const categoryVariants: Record<string, RegExp> = {
     "Planners": /planner/i,
     "Caterers": /cater/i,
     "Decorators": /decor/i,
-    "Photographers": /photo/i,
-    "Rentals": /rental|rent/i,
-    "Chartered Airlines": /charter|airline/i,
-    "Make-up Artists": /make.?up|makeup/i,
-    "Hairstylists": /hair/i,
-    "Mehndi Artists": /mehndi|mehendi|henna/i,
-    "Florists": /flor/i,
-    "Choreographers": /choreo/i,
-    "DJs": /dj/i,
   };
 
   const regex = categoryVariants[category];

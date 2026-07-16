@@ -28,7 +28,7 @@ interface VendorSession {
   unavailableDates?: string[];
 }
 
-type TabType = "overview" | "leads" | "venues" | "rooms" | "settings" | "planners" | "caterers" | "photographers" | "decorators";
+type TabType = "overview" | "leads" | "venues" | "rooms" | "settings" | "planners" | "caterers" | "decorators";
 
 interface DashboardBooking {
   _id: string;
@@ -655,8 +655,6 @@ export default function VendorDashboard() {
         { id: "planners", label: "Wedding Planners", count: services.filter(s => s.category === "planners").length || null, icon: ClipboardList },
         { id: "caterers", label: "Caterers", count: services.filter(s => s.category === "caterers").length || null, icon: Utensils },
         { id: "decorators", label: "Decorators", count: services.filter(s => s.category === "decorators").length || null, icon: Brush },
-        { id: "photographers", label: "Photographers", count: services.filter(s => s.category === "photographers").length || null, icon: Camera },
-        { id: "rentals", label: "Rentals", count: services.filter(s => s.category === "rentals").length || null, icon: Package },
       ]
     },
     { id: "leads", label: "Booking Inquiries", count: bookings.length || null, icon: Inbox },
@@ -1019,15 +1017,13 @@ export default function VendorDashboard() {
                     ))}
                   </div>
 
-                  {/* ── 7-Category Real-Time Listing Grid ── */}
+                  {/* ── Real-Time Listing Grid ── */}
                   {(() => {
                     const venueListings = venues;
                     const roomListings = services.filter(s => s.category === "rooms");
                     const plannerListings = services.filter(s => s.category === "planners");
                     const catererListings = services.filter(s => s.category === "caterers");
                     const decoratorListings = services.filter(s => s.category === "decorators");
-                    const photographerListings = services.filter(s => s.category === "photographers");
-                    const rentalListings = services.filter(s => s.category === "rentals");
 
                     const minPrice = (arr: any[], key = "priceFrom") =>
                       arr.length === 0 ? null : Math.min(...arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0));
@@ -1040,8 +1036,6 @@ export default function VendorDashboard() {
                       { id: "planners", label: "Planners", icon: ClipboardList, color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", count: plannerListings.length, price: minPrice(plannerListings), unit: "per event", live: plannerListings.filter(s => s.active).length, topName: getTopName(plannerListings) },
                       { id: "caterers", label: "Caterers", icon: Utensils, color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", count: catererListings.length, price: minPrice(catererListings), unit: "per plate", live: catererListings.filter(s => s.active).length, topName: getTopName(catererListings) },
                       { id: "decorators", label: "Decorators", icon: Palette, color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", count: decoratorListings.length, price: minPrice(decoratorListings), unit: "per event", live: decoratorListings.filter(s => s.active).length, topName: getTopName(decoratorListings) },
-                      { id: "photographers", label: "Photographers", icon: Camera, color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", count: photographerListings.length, price: minPrice(photographerListings), unit: "per day", live: photographerListings.filter(s => s.active).length, topName: getTopName(photographerListings) },
-                      { id: "rentals", label: "Rentals", icon: Package, color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", count: rentalListings.length, price: minPrice(rentalListings), unit: "per event", live: rentalListings.filter(s => s.active).length, topName: getTopName(rentalListings) },
                     ];
 
                     return (
@@ -1643,7 +1637,7 @@ export default function VendorDashboard() {
                         className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                           }`}
                       >
-                        {["Venues", "Rooms", "Planners", "Caterers", "Decorators", "Photographers", "Chartered Airlines", "Make-up Artists", "Hairstylists", "Mehndi Artists", "Florists", "Choreographers"].map((category) => (
+                        {["Venues", "Rooms", "Planners", "Caterers", "Decorators"].map((category) => (
                           <option key={category} value={category}>{category}</option>
                         ))}
                       </select>
@@ -1980,8 +1974,8 @@ export default function VendorDashboard() {
                 </div>
               )}
 
-            {/* SERVICES SECTION (Rooms, Planners, Caterers, Decorators, Photographers, Rentals) */}
-            {["rooms", "planners", "caterers", "decorators", "photographers", "rentals"].includes(activeTab) && (
+            {/* SERVICES SECTION (Rooms, Planners, Caterers, Decorators) */}
+            {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && (
               <div className={`rounded-3xl p-0 border-0 shadow-none min-h-[400px]`}>
                 <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
                   <h3 className={`font-extrabold text-lg capitalize ${headingText}`}>My {activeTab}</h3>

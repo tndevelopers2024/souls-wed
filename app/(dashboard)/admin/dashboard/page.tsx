@@ -16,7 +16,7 @@ interface AdminSession {
   role: string;
 }
 
-type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "venues" | "rooms" | "planners" | "caterers" | "decorators" | "photographers" | "rentals" | "settings";
+type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "venues" | "rooms" | "planners" | "caterers" | "decorators" | "settings";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -521,8 +521,6 @@ export default function AdminDashboard() {
         { id: "planners", label: "Wedding Planners", count: servicesList.filter(s => s.category === "planners").length || null, icon: ClipboardList },
         { id: "caterers", label: "Caterers", count: servicesList.filter(s => s.category === "caterers").length || null, icon: UtensilsCrossed },
         { id: "decorators", label: "Decorators", count: servicesList.filter(s => s.category === "decorators").length || null, icon: Flower2 },
-        { id: "photographers", label: "Photographers", count: servicesList.filter(s => s.category === "photographers").length || null, icon: Camera },
-        { id: "rentals", label: "Rentals", count: servicesList.filter(s => s.category === "rentals").length || null, icon: Package },
       ]
     },
     { id: "approvals", label: "Approvals Queue", count: pendingApprovals.length || null, icon: UserCheck },
@@ -1131,8 +1129,6 @@ export default function AdminDashboard() {
                     const plannerListings = servicesList.filter((s: any) => s.category === "planners");
                     const catererListings = servicesList.filter((s: any) => s.category === "caterers");
                     const decoratorListings = servicesList.filter((s: any) => s.category === "decorators");
-                    const photographerListings = servicesList.filter((s: any) => s.category === "photographers");
-                    const rentalListings = servicesList.filter((s: any) => s.category === "rentals");
 
                     const minPrice = (arr: any[], key = "priceFrom") =>
                       arr.length === 0 ? null : Math.min(...arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0));
@@ -1150,8 +1146,6 @@ export default function AdminDashboard() {
                       { id: "planners", label: "Planners", icon: ClipboardList, color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", darkBg: "bg-violet-950/20 border-violet-900/30", count: plannerListings.length, price: minPrice(plannerListings), avg: avgPrice(plannerListings), unit: "per event", live: plannerListings.filter((s: any) => s.active).length, topName: getTopName(plannerListings) },
                       { id: "caterers", label: "Caterers", icon: Utensils, color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", darkBg: "bg-emerald-950/20 border-emerald-900/30", count: catererListings.length, price: minPrice(catererListings), avg: avgPrice(catererListings), unit: "per plate", live: catererListings.filter((s: any) => s.active).length, topName: getTopName(catererListings) },
                       { id: "decorators", label: "Decorators", icon: Palette, color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", darkBg: "bg-pink-950/20 border-pink-900/30", count: decoratorListings.length, price: minPrice(decoratorListings), avg: avgPrice(decoratorListings), unit: "per event", live: decoratorListings.filter((s: any) => s.active).length, topName: getTopName(decoratorListings) },
-                      { id: "photographers", label: "Photographers", icon: Camera, color: "from-stone-600 to-stone-800", lightBg: "bg-stone-50 border-stone-200", darkBg: "bg-stone-900/40 border-stone-700", count: photographerListings.length, price: minPrice(photographerListings), avg: avgPrice(photographerListings), unit: "per day", live: photographerListings.filter((s: any) => s.active).length, topName: getTopName(photographerListings) },
-                      { id: "rentals", label: "Rentals", icon: Package, color: "from-cyan-500 to-sky-500", lightBg: "bg-cyan-50 border-cyan-100", darkBg: "bg-cyan-950/20 border-cyan-900/30", count: rentalListings.length, price: minPrice(rentalListings), avg: avgPrice(rentalListings), unit: "per event", live: rentalListings.filter((s: any) => s.active).length, topName: getTopName(rentalListings) },
                     ];
 
                     return (
@@ -1796,7 +1790,7 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-              {["rooms", "planners", "caterers", "decorators", "photographers", "rentals"].includes(activeTab) && (() => {
+              {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && (() => {
                 const filteredServices = servicesList.filter(s => s.category === activeTab && (
                   s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                   s.city.toLowerCase().includes(searchTerm.toLowerCase())

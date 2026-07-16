@@ -51,8 +51,6 @@ const categoryMeta: Record<string, { eyebrow: string; titlePrefix: string; title
   Planners: { eyebrow: "Expert Event Planning", titlePrefix: "Wedding", titleAccent: "Planners", subtitle: "From intimate ceremonies to grand celebrations — let experts handle every detail." },
   Caterers: { eyebrow: "Exquisite Cuisine", titlePrefix: "Wedding", titleAccent: "Caterers", subtitle: "Multi-cuisine catering with live counters, customized menus, and premium service." },
   Decorators: { eyebrow: "Stunning Decor", titlePrefix: "Wedding", titleAccent: "Decorators", subtitle: "Transform your venue with breathtaking floral installations, lighting, and mandap designs." },
-  Photographers: { eyebrow: "Capture Every Moment", titlePrefix: "Wedding", titleAccent: "Photographers", subtitle: "Cinematic photography and videography — candid moments, drone shots, and same-day edits." },
-  Rentals: { eyebrow: "Premium Wedding Rentals", titlePrefix: "Wedding", titleAccent: "Rentals", subtitle: "Rent premium furniture, luxury cars, designer wear, and high-end equipment for your big day." },
 };
 
 export default function PublicVendorDirectory({

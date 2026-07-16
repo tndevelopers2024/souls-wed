@@ -150,35 +150,18 @@ const navLinks = [
     href: "#",
     megaMenu: [
       {
-        title: "VENUES & DESTINATIONS",
+        title: "VENUES & STAYS",
         items: [
-          { label: "Luxury Venues", href: "/venues" },
-          { label: "Destination Weddings", href: "/destinations" },
-          { label: "Chartered Flights", href: "/vendors/chartered-airlines" },
+          { label: "Venues & Banquet Halls", href: "/venues" },
+          { label: "Rooms & Accommodation", href: "/rooms" },
         ]
       },
       {
         title: "PLANNING & DESIGN",
         items: [
-          { label: "Expert Planners", href: "/vendors/planners" },
-          { label: "Event Decorators", href: "/vendors/decorators" },
-          { label: "Bespoke Florals", href: "/vendors/florists" },
-        ]
-      },
-      {
-        title: "STYLE & BEAUTY",
-        items: [
-          { label: "Bridal Makeup", href: "/vendors/makeup" },
-          { label: "Henna & Mehndi Artists", href: "/vendors/mehndi" },
-          { label: "Bridal Hair Styling", href: "/vendors/hairstylists" },
-        ]
-      },
-      {
-        title: "MEMORIES & CELEBRATION",
-        items: [
-          { label: "Photography & Video", href: "/vendors/photographers" },
-          { label: "Fine Catering", href: "/vendors/caterers" },
-          { label: "Dance & Choreography", href: "/vendors/choreographers" },
+          { label: "Wedding Planners", href: "/planners" },
+          { label: "Caterers", href: "/caterers" },
+          { label: "Decorators", href: "/decorators" },
         ]
       }
     ],
