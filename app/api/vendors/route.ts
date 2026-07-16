@@ -117,6 +117,10 @@ export async function PATCH(req: Request) {
       allowed.available = Boolean(body.available);
     }
 
+    if (body.unavailableDates !== undefined) {
+      allowed.unavailableDates = sanitizeUnavailableDates(body.unavailableDates);
+    }
+
     const hasListingChanges = listingFields.some((field) => body[field] !== undefined);
     if (hasListingChanges) {
       allowed.verified = false;
@@ -163,6 +167,14 @@ function sanitizeVendorField(field: string, value: unknown) {
   }
 
   return typeof value === "string" ? value.trim().slice(0, field === "description" ? 600 : 120) : value;
+}
+
+function sanitizeUnavailableDates(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => new Date(item as string))
+    .filter((date) => !Number.isNaN(date.getTime()))
+    .slice(0, 200);
 }
 
 function escapeRegex(value: string) {

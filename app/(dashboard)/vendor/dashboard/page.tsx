@@ -25,6 +25,7 @@ interface VendorSession {
   verified?: boolean;
   featured?: boolean;
   available?: boolean;
+  unavailableDates?: string[];
 }
 
 type TabType = "overview" | "leads" | "venues" | "rooms" | "settings" | "planners" | "caterers" | "photographers" | "decorators";
@@ -196,6 +197,11 @@ export default function VendorDashboard() {
   const [showcaseImages, setShowcaseImages] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
+  const [newUnavailableDate, setNewUnavailableDate] = useState("");
+  const [savingUnavailableDates, setSavingUnavailableDates] = useState(false);
+  const [unavailableDatesMessage, setUnavailableDatesMessage] = useState<string | null>(null);
 
   // Venues managed by this vendor account
   const [venues, setVenues] = useState<VenueItem[]>([]);
@@ -450,6 +456,9 @@ export default function VendorDashboard() {
             setVendor(data.user);
             setShowcaseImages(data.user.images || []);
             setAvailable(data.user.available !== false);
+            setUnavailableDates(
+              (data.user.unavailableDates || []).map((d: string) => new Date(d).toISOString().split("T")[0])
+            );
             fetchBookings();
             fetchVenues(data.user.id);
             fetchServices(data.user.id);
@@ -499,6 +508,37 @@ export default function VendorDashboard() {
     } catch (err) {
       setAvailable(previous);
       setProfileMessage(err instanceof Error ? err.message : "Failed to update availability.");
+    }
+  };
+
+  const addUnavailableDate = () => {
+    if (!newUnavailableDate) return;
+    setUnavailableDates((prev) =>
+      prev.includes(newUnavailableDate) ? prev : [...prev, newUnavailableDate].sort()
+    );
+    setNewUnavailableDate("");
+  };
+
+  const removeUnavailableDate = (date: string) => {
+    setUnavailableDates((prev) => prev.filter((d) => d !== date));
+  };
+
+  const handleSaveUnavailableDates = async () => {
+    setSavingUnavailableDates(true);
+    setUnavailableDatesMessage(null);
+    try {
+      const res = await fetch("/api/vendors", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ unavailableDates }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to save unavailable dates.");
+      setUnavailableDatesMessage("Unavailable dates saved.");
+    } catch (err) {
+      setUnavailableDatesMessage(err instanceof Error ? err.message : "Failed to save unavailable dates.");
+    } finally {
+      setSavingUnavailableDates(false);
     }
   };
 
@@ -1790,6 +1830,75 @@ export default function VendorDashboard() {
                     {savingProfile ? "Saving..." : "Save and Request Approval"}
                   </button>
                 </form>
+              </div>
+            )}
+
+            {/* UNAVAILABLE DATES */}
+            {activeTab === "settings" && (
+              <div className={`mt-8 border rounded-3xl overflow-hidden p-6 shadow-none max-w-2xl ${cardClass}`}>
+                <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
+                  <div>
+                    <h3 className={`font-extrabold text-base ${headingText}`}>Unavailable Dates</h3>
+                    <p className="text-[10px] text-stone-400 font-semibold mt-0.5">
+                      Block dates you're already booked outside the platform. Customers won't be able to book these dates.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="date"
+                      value={newUnavailableDate}
+                      onChange={(e) => setNewUnavailableDate(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
+                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={addUnavailableDate}
+                      disabled={!newUnavailableDate}
+                      className="rounded-full bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
+                    >
+                      Add
+                    </button>
+                  </div>
+
+                  {unavailableDates.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {unavailableDates.map((date) => (
+                        <span
+                          key={date}
+                          className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-stone-50 border-stone-200 text-stone-700"}`}
+                        >
+                          {date}
+                          <button
+                            type="button"
+                            onClick={() => removeUnavailableDate(date)}
+                            className="text-stone-400 hover:text-red-500"
+                            aria-label={`Remove ${date}`}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-stone-400 font-semibold">No unavailable dates set.</p>
+                  )}
+
+                  {unavailableDatesMessage && (
+                    <p className="text-[11px] font-bold text-primary-600">{unavailableDatesMessage}</p>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleSaveUnavailableDates}
+                    disabled={savingUnavailableDates}
+                    className="w-fit rounded-full bg-slate-900 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
+                  >
+                    {savingUnavailableDates ? "Saving..." : "Save Unavailable Dates"}
+                  </button>
+                </div>
               </div>
             )}
 

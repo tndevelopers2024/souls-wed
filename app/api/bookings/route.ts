@@ -20,6 +20,7 @@
 
 import { connectDB } from "@/lib/mongodb";
 import { Booking } from "@/lib/models/Booking";
+import { Vendor } from "@/lib/models/Vendor";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
@@ -122,6 +123,37 @@ export async function POST(req: Request) {
         { message: "This date is already booked. Please select a different date." },
         { status: 409 }
       );
+    }
+
+    // Also check the vendor's own unavailableDates (days blocked outside the platform)
+    try {
+      const vendor = await Vendor.findById(providerId);
+      if (vendor?.unavailableDates?.length) {
+        const blocked = new Set(
+          vendor.unavailableDates.map((d: Date) => new Date(d).toISOString().split("T")[0])
+        );
+
+        let requestedDates: string[] = [];
+        if (bookingType === "room") {
+          let currentDate = new Date(checkIn);
+          const endDate = new Date(checkOut);
+          while (currentDate <= endDate) {
+            requestedDates.push(currentDate.toISOString().split("T")[0]);
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+        } else {
+          requestedDates = [new Date(eventDate).toISOString().split("T")[0]];
+        }
+
+        if (requestedDates.some((d) => blocked.has(d))) {
+          return NextResponse.json(
+            { message: "This date is unavailable. Please select a different date." },
+            { status: 409 }
+          );
+        }
+      }
+    } catch {
+      // providerId might be a static venue string id, not an ObjectId — ignore
     }
 
     // ─── Step 5: Calculate advance amount ───
