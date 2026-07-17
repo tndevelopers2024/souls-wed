@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/lib/ThemeContext";
 import Preloader from "@/components/shared/Preloader";
 
 // Runs before paint to set the theme class and avoid a flash of the wrong theme.
-const themeInitScript = `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}var d=document.documentElement;d.classList.toggle('dark',t==='dark');d.style.colorScheme=t;}catch(e){}})();`;
+const themeInitScript = `(function(){try{var p=window.location.pathname;var isPriv=p.startsWith('/admin')||p.startsWith('/vendor/dashboard');if(!isPriv){document.documentElement.classList.remove('dark');document.documentElement.style.colorScheme='light';return;}var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}var d=document.documentElement;d.classList.toggle('dark',t==='dark');d.style.colorScheme=t;}catch(e){}})();`;
 
 const outfit = Outfit({
   subsets: ['latin'],

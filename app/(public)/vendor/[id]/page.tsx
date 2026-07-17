@@ -73,7 +73,7 @@ export default function VendorDetailPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--sw-white)" }}>
         <Loader2 className="w-10 h-10 animate-spin" style={{ color: "var(--sw-primary)" }} />
-        <p className="text-sm text-slate-500 dark:text-stone-400 font-medium">Loading vendor details...</p>
+        <p className="text-sm text-slate-500 font-medium">Loading vendor details...</p>
       </div>
     );
   }
@@ -103,11 +103,11 @@ export default function VendorDetailPage() {
             {/* Hero Section */}
             <div className="flex flex-col gap-6">
               <Link
-                href={`/vendors/${vendor.category.toLowerCase()}`}
-                className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 transition-colors w-fit"
+                href={`/vendors/${(vendor.category || 'all').toLowerCase()}`}
+                className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors w-fit"
               >
                 <ChevronLeft className="w-4 h-4" />
-                Back to {vendor.category}
+                Back to {vendor.category || 'All Vendors'}
               </Link>
               
               <div className="relative w-full h-[500px] rounded-[32px] overflow-hidden group">
@@ -122,9 +122,9 @@ export default function VendorDetailPage() {
                 
                 {/* Badges on image */}
                 <div className="absolute top-6 left-6 flex flex-wrap gap-2">
-                  <span className="bg-white/95 dark:bg-[var(--sw-surface)]/95 backdrop-blur-sm text-slate-900 dark:text-stone-100 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-1">
+                  <span className="bg-white/95 backdrop-blur-sm text-slate-900 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-1">
                     <Sparkles className="w-3.5 h-3.5 text-primary-500" />
-                    {vendor.category}
+                    {vendor.category || 'Vendor'}
                   </span>
                   {vendor.verified && (
                     <span className="bg-emerald-500/95 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
@@ -138,28 +138,28 @@ export default function VendorDetailPage() {
               <div>
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div>
-                    <h1 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-stone-100 mb-3 tracking-tight" style={{ fontFamily: "var(--font-heading)" }}>
+                    <h1 className="text-4xl sm:text-5xl font-black text-slate-900 mb-3 tracking-tight"style={{ fontFamily:"var(--font-heading)"}}>
                       {name}
                     </h1>
-                    <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-sm font-medium text-slate-600 dark:text-stone-300">
+                    <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-sm font-medium text-slate-600">
                       <span className="flex items-center gap-1">
                         <MapPin className="w-4 h-4 text-primary-500" />
                         {vendor.city}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Building2 className="w-4 h-4 text-slate-400 dark:text-stone-500" />
-                        {vendor.category}
+                        <Building2 className="w-4 h-4 text-slate-400"/>
+                        {vendor.category || 'Vendor'}
                       </span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-3 bg-white dark:bg-[var(--sw-surface)] border border-slate-100 dark:border-white/10 shadow-sm rounded-2xl p-3 shrink-0">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-500/10 text-yellow-500">
+                  <div className="flex items-center gap-3 bg-white border border-slate-100 shadow-sm rounded-2xl p-3 shrink-0">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-50 text-yellow-500">
                       <Star className="w-6 h-6 fill-yellow-400" />
                     </div>
                     <div>
-                      <div className="text-xl font-bold text-slate-900 dark:text-stone-100">{rating.toFixed(1)}</div>
-                      <div className="text-[11px] font-bold text-slate-400 dark:text-stone-500 uppercase tracking-wider">{reviewCount} reviews</div>
+                      <div className="text-xl font-bold text-slate-900">{rating.toFixed(1)}</div>
+                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{reviewCount} reviews</div>
                     </div>
                   </div>
                 </div>
@@ -167,10 +167,10 @@ export default function VendorDetailPage() {
             </div>
 
             {/* Tab Navigation */}
-            <div className="sticky top-20 z-40 bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-xl border-b border-slate-100 dark:border-white/10 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
+            <div className="sticky top-20 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-100 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
               <div className="flex items-center gap-8 overflow-x-auto no-scrollbar pb-1">
-                <a href="#about" className="text-sm font-bold text-slate-900 dark:text-stone-100 border-b-2 border-slate-900 pb-1.5 whitespace-nowrap">About</a>
-                <a href="#gallery" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Portfolio</a>
+                <a href="#about"className="text-sm font-bold text-slate-900 border-b-2 border-slate-900 pb-1.5 whitespace-nowrap">About</a>
+                <a href="#gallery"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">Portfolio</a>
               </div>
             </div>
 
@@ -179,10 +179,10 @@ export default function VendorDetailPage() {
               <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
                 About {name}
               </h2>
-              <div className="bg-slate-50 dark:bg-[var(--sw-surface)]/5 rounded-[24px] p-6 sm:p-8 border border-slate-100 dark:border-white/10 relative">
+              <div className="bg-slate-50 rounded-[24px] p-6 sm:p-8 border border-slate-100 relative">
                 <Quote className="absolute top-6 left-6 w-10 h-10 text-slate-200 -z-10" />
-                <p className="text-slate-600 dark:text-stone-300 leading-loose text-base font-medium max-w-4xl relative z-10 whitespace-pre-wrap">
-                  {vendor.description || `${name} is a premier ${vendor.category.toLowerCase()} based in ${vendor.city}. We specialize in bringing your dream wedding to life with flawless execution and an eye for perfection. Contact us to learn more about our services and how we can make your special day truly unforgettable.`}
+                <p className="text-slate-600 leading-loose text-base font-medium max-w-4xl relative z-10 whitespace-pre-wrap">
+                  {vendor.description || `${name} is a premier ${(vendor.category || 'vendor').toLowerCase()} based in ${vendor.city}. We specialize in bringing your dream wedding to life with flawless execution and an eye for perfection. Contact us to learn more about our services and how we can make your special day truly unforgettable.`}
                 </p>
               </div>
             </section>
@@ -207,7 +207,7 @@ export default function VendorDetailPage() {
       {/* Post-booking Success Toast */}
       {paymentSuccess && (
         <div className="fixed bottom-10 right-10 bg-emerald-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 animate-in slide-in-from-bottom-5 z-50">
-          <div className="w-10 h-10 bg-white/20 dark:bg-[var(--sw-surface)]/20 rounded-full flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center shrink-0">
             <Check className="w-5 h-5 text-white" />
           </div>
           <div>

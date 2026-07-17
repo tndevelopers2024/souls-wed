@@ -195,7 +195,7 @@ export default function BookingCalendar({
 
     // Base states
     if (isPast) return "text-slate-300 cursor-not-allowed";
-    if (isBooked) return "bg-slate-100 dark:bg-[var(--sw-surface)]/10 text-slate-400 dark:text-stone-500 cursor-not-allowed line-through";
+    if (isBooked) return"bg-slate-100 text-slate-400 cursor-not-allowed line-through";
 
     // Single mode selection
     if (mode === "single" && selectedDate === dateStr) {
@@ -209,7 +209,7 @@ export default function BookingCalendar({
       }
       // Dates between start and end
       if (rangeStart && rangeEnd && isInRange(dateStr, rangeStart, rangeEnd)) {
-        return "bg-primary-100 dark:bg-primary-500/15 text-primary-800 dark:text-primary-300 font-semibold";
+        return"bg-primary-100 text-primary-800 font-semibold";
       }
       // Hover preview (before second click)
       if (rangeStart && !rangeEnd && hoverDate && dateStr > rangeStart && dateStr <= hoverDate) {
@@ -218,7 +218,7 @@ export default function BookingCalendar({
           (bd) => bd > rangeStart && bd < dateStr
         );
         if (!hasBookedBetween) {
-          return "bg-primary-50 dark:bg-primary-500/10 text-primary-700";
+          return"bg-primary-50 text-primary-700";
         }
       }
     }
@@ -227,7 +227,7 @@ export default function BookingCalendar({
     if (isTodayDate) return "ring-2 ring-primary-400 ring-inset font-bold text-primary-600";
 
     // Default: available date
-    return "hover:bg-primary-50 dark:hover:bg-primary-500/10 text-slate-700 dark:text-stone-300 cursor-pointer";
+    return"hover:bg-primary-50 text-slate-700 cursor-pointer";
   };
 
   // ─── Build the grid ───
@@ -250,15 +250,15 @@ export default function BookingCalendar({
           className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
             isPrevDisabled 
               ? "text-slate-300 cursor-not-allowed" 
-              : "text-slate-600 dark:text-stone-300 hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:text-primary-600"
+              :"text-slate-600 hover:bg-primary-50 hover:text-primary-600"
           }`}
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <h3 className="text-sm font-bold text-slate-800 dark:text-stone-200">{monthName}</h3>
+        <h3 className="text-sm font-bold text-slate-800">{monthName}</h3>
         <button
           onClick={goToNextMonth}
-          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 dark:text-stone-300 hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:text-primary-600 transition-colors"
+          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -267,7 +267,7 @@ export default function BookingCalendar({
       {/* ─── Day name headers ─── */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {DAY_NAMES.map((day) => (
-          <div key={day} className="text-center text-[11px] font-bold text-slate-400 dark:text-stone-500 uppercase tracking-wider py-1">
+          <div key={day} className="text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider py-1">
             {day}
           </div>
         ))}
@@ -304,13 +304,13 @@ export default function BookingCalendar({
       </div>
 
       {/* ─── Legend ─── */}
-      <div className="flex items-center gap-4 mt-4 text-[10px] text-slate-500 dark:text-stone-400">
+      <div className="flex items-center gap-4 mt-4 text-[10px] text-slate-500">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded bg-primary-500" />
           <span>Selected</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-slate-100 dark:bg-[var(--sw-surface)]/10 border border-slate-200 dark:border-white/10" />
+          <div className="w-3 h-3 rounded bg-slate-100 border border-slate-200"/>
           <span>Booked</span>
         </div>
         <div className="flex items-center gap-1.5">

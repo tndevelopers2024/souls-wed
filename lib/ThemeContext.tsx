@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { usePathname } from "next/navigation";
 
 type Theme = "light" | "dark";
 
@@ -12,6 +13,15 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
+
+/**
+ * Dark mode exists only in the admin and vendor dashboards. Everything a
+ * customer can reach is light-only. `/vendor/dashboard` rather than `/vendor`
+ * because `/vendor/[id]` is a public listing page.
+ */
+function isThemedPath(pathname: string | null | undefined) {
+  return !!pathname && (pathname.startsWith("/admin") || pathname.startsWith("/vendor/dashboard"));
+}
 
 /**
  * Applies/removes the `.dark` class on <html> and syncs `color-scheme`.
@@ -26,9 +36,16 @@ function applyTheme(theme: Theme) {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light");
+  const pathname = usePathname();
 
   // On mount, read what the anti-FOUC script already decided (localStorage or system).
   useEffect(() => {
+    if (!isThemedPath(pathname)) {
+      setThemeState("light");
+      applyTheme("light");
+      return;
+    }
+
     const stored = (typeof localStorage !== "undefined" && localStorage.getItem("theme")) as Theme | null;
     const initial: Theme =
       stored === "light" || stored === "dark"
@@ -38,10 +55,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         : "light";
     setThemeState(initial);
     applyTheme(initial);
-  }, []);
+  }, [pathname]);
 
   // Follow system changes only until the user makes an explicit choice.
   useEffect(() => {
+    if (!isThemedPath(pathname)) return;
+
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = (e: MediaQueryListEvent) => {
       if (!localStorage.getItem("theme")) {
@@ -52,9 +71,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
-  }, []);
+  }, [pathname]);
 
   const setTheme = useCallback((t: Theme) => {
+    if (t === "dark" && !isThemedPath(window.location.pathname)) return;
+
     setThemeState(t);
     applyTheme(t);
     try {

@@ -43,7 +43,7 @@ export default function FaqSection() {
           transition={{ duration: 0.6 }}
         >
           <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white dark:bg-[var(--sw-surface)] border border-gray-200">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-gray-200">
                <HelpCircle className="w-6 h-6" style={{ color: "var(--sw-primary)" }} />
             </div>
           </div>
@@ -68,7 +68,7 @@ export default function FaqSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className={`overflow-hidden transition-all duration-300 rounded-[20px] border ${isOpen ? 'border-primary-200/50 dark:border-primary-500/25 bg-white/80 dark:bg-[var(--sw-surface)]/80' : 'border-gray-200 bg-white/40 dark:bg-[var(--sw-surface)]/40 hover:bg-white/60 dark:bg-[var(--sw-surface)]/60'}`}
+                className={`overflow-hidden transition-all duration-300 rounded-[20px] border ${isOpen ?'border-primary-200/50 bg-white/80':'border-gray-200 bg-white/40 hover:bg-white/60'}`}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}

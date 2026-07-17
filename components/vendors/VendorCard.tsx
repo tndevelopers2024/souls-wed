@@ -44,7 +44,7 @@ export default function VendorCard({
       badge={badge}
       topRight={
         <button
-          className="p-2 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-sm text-slate-400 dark:text-stone-500 hover:text-red-500 hover:bg-white dark:hover:bg-[var(--sw-surface)] transition-colors shadow-sm"
+          className="p-2 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 hover:text-red-500 hover:bg-white transition-colors shadow-sm"
           onClick={(e) => e.preventDefault()}
           aria-label="Shortlist"
         >
@@ -52,7 +52,7 @@ export default function VendorCard({
         </button>
       }
       action={
-        <span className="text-[14px] font-bold px-5 py-2.5 rounded-full text-slate-900 dark:text-stone-100 bg-white dark:bg-[var(--sw-surface)] shadow-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors whitespace-nowrap">
+        <span className="text-[14px] font-bold px-5 py-2.5 rounded-full text-slate-900 bg-white shadow-sm hover:bg-slate-50 transition-colors whitespace-nowrap">
           Book +
         </span>
       }

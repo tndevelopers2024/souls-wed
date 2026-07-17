@@ -109,7 +109,7 @@ export default function VenueDetailPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: "var(--sw-white)" }}>
         <Loader2 className="w-10 h-10 animate-spin" style={{ color: "var(--sw-primary)" }} />
-        <p className="text-sm text-slate-500 dark:text-stone-400 font-medium">Loading venue details...</p>
+        <p className="text-sm text-slate-500 font-medium">Loading venue details...</p>
       </div>
     );
   }
@@ -129,13 +129,13 @@ export default function VenueDetailPage() {
             <VenueHero venue={venue} />
 
             {/* Tab Navigation */}
-            <div className="sticky top-20 z-40 bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-xl border-b border-slate-100 dark:border-white/10 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
+            <div className="sticky top-20 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-100 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
               <div className="flex items-center gap-8 overflow-x-auto no-scrollbar pb-1">
-                <a href="#areas" className="text-sm font-bold text-slate-900 dark:text-stone-100 border-b-2 border-slate-900 pb-1.5 whitespace-nowrap">Areas Available</a>
-                <a href="#about" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">About</a>
-                <a href="#gallery" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Gallery</a>
-                <a href="#pricing" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Pricing</a>
-                <a href="#reviews" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Reviews</a>
+                <a href="#areas"className="text-sm font-bold text-slate-900 border-b-2 border-slate-900 pb-1.5 whitespace-nowrap">Areas Available</a>
+                <a href="#about"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">About</a>
+                <a href="#gallery"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">Gallery</a>
+                <a href="#pricing"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">Pricing</a>
+                <a href="#reviews"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">Reviews</a>
               </div>
             </div>
 
@@ -149,26 +149,26 @@ export default function VenueDetailPage() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {venue.indoor && (
-                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 dark:border-white/10 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 dark:bg-[var(--sw-surface)]/50 backdrop-blur-sm">
-                    <div className="w-14 h-14 rounded-2xl bg-primary-50/80 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0 text-primary-600">
+                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+                    <div className="w-14 h-14 rounded-2xl bg-primary-50/80 flex items-center justify-center flex-shrink-0 text-primary-600">
                       <Building className="w-6 h-6 stroke-[1.5]" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-stone-100 text-lg mb-1">Indoor Banquet</h4>
-                      <p className="text-sm text-slate-500 dark:text-stone-400 leading-relaxed">
+                      <h4 className="font-bold text-slate-900 text-lg mb-1">Indoor Banquet</h4>
+                      <p className="text-sm text-slate-500 leading-relaxed">
                         Capacity for {venue.minGuests} seated or {venue.maxGuests} floating guests.
                       </p>
                     </div>
                   </div>
                 )}
                 {venue.outdoor && (
-                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 dark:border-white/10 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 dark:bg-[var(--sw-surface)]/50 backdrop-blur-sm">
-                    <div className="w-14 h-14 rounded-2xl bg-green-50/80 dark:bg-green-500/10 flex items-center justify-center flex-shrink-0 text-green-600 dark:text-green-400">
+                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+                    <div className="w-14 h-14 rounded-2xl bg-green-50/80 flex items-center justify-center flex-shrink-0 text-green-600">
                       <TreePine className="w-6 h-6 stroke-[1.5]" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-stone-100 text-lg mb-1">Outdoor Lawn</h4>
-                      <p className="text-sm text-slate-500 dark:text-stone-400 leading-relaxed">
+                      <h4 className="font-bold text-slate-900 text-lg mb-1">Outdoor Lawn</h4>
+                      <p className="text-sm text-slate-500 leading-relaxed">
                         Capacity for {Math.floor(venue.maxGuests * 0.8)} seated or {Math.floor(venue.maxGuests * 1.5)} floating guests.
                       </p>
                     </div>
@@ -181,7 +181,7 @@ export default function VenueDetailPage() {
                 {venue.features.map((f) => (
                   <span
                     key={f}
-                    className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 dark:border-white/10 text-slate-600 dark:text-stone-300"
+                    className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 text-slate-600"
                   >
                     <Check className="w-3.5 h-3.5 text-green-500" />
                     {f}
@@ -198,7 +198,7 @@ export default function VenueDetailPage() {
               >
                 About {venue.name}
               </h2>
-              <p className="text-slate-600 dark:text-stone-300 leading-loose text-base font-medium max-w-4xl">{venue.description}</p>
+              <p className="text-slate-600 leading-loose text-base font-medium max-w-4xl">{venue.description}</p>
             </section>
 
             {/* Gallery */}
@@ -222,31 +222,31 @@ export default function VenueDetailPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {venue.pricePerPlateVeg && (
-                  <div className="p-6 rounded-[24px] border border-slate-100 dark:border-white/10 bg-white/50 dark:bg-[var(--sw-surface)]/50">
-                    <p className="font-semibold text-slate-500 dark:text-stone-400 text-xs tracking-widest uppercase mb-2">Veg Menu</p>
-                    <p className="text-3xl font-bold text-slate-900 dark:text-stone-100 mb-1">
+                  <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50">
+                    <p className="font-semibold text-slate-500 text-xs tracking-widest uppercase mb-2">Veg Menu</p>
+                    <p className="text-3xl font-bold text-slate-900 mb-1">
                       {convertPriceString(venue.pricePerPlateVeg, currency)}
                     </p>
-                    <p className="text-sm text-slate-400 dark:text-stone-500">Per plate, inclusive of taxes</p>
+                    <p className="text-sm text-slate-400">Per plate, inclusive of taxes</p>
                   </div>
                 )}
                 {venue.pricePerPlateNonVeg && (
-                  <div className="p-6 rounded-[24px] border border-slate-100 dark:border-white/10 bg-white/50 dark:bg-[var(--sw-surface)]/50">
-                    <p className="font-semibold text-slate-500 dark:text-stone-400 text-xs tracking-widest uppercase mb-2">Non-Veg Menu</p>
-                    <p className="text-3xl font-bold text-slate-900 dark:text-stone-100 mb-1">
+                  <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50">
+                    <p className="font-semibold text-slate-500 text-xs tracking-widest uppercase mb-2">Non-Veg Menu</p>
+                    <p className="text-3xl font-bold text-slate-900 mb-1">
                       {convertPriceString(venue.pricePerPlateNonVeg, currency)}
                     </p>
-                    <p className="text-sm text-slate-400 dark:text-stone-500">Per plate, inclusive of taxes</p>
+                    <p className="text-sm text-slate-400">Per plate, inclusive of taxes</p>
                   </div>
                 )}
                 {venue.rentalCost && (
-                  <div className="p-6 rounded-[24px] border border-primary-100 dark:border-primary-500/20 bg-primary-50/30 dark:bg-primary-500/10 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="p-6 rounded-[24px] border border-primary-100 bg-primary-50/30 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <p className="font-semibold text-primary-600/80 text-xs tracking-widest uppercase mb-2">Venue Rental</p>
-                      <p className="text-3xl font-bold text-slate-900 dark:text-stone-100 mb-1">
+                      <p className="text-3xl font-bold text-slate-900 mb-1">
                         {convertPriceString(venue.rentalCost, currency)}
                       </p>
-                      <p className="text-sm text-slate-500 dark:text-stone-400">Full-day exclusive use of the property</p>
+                      <p className="text-sm text-slate-500">Full-day exclusive use of the property</p>
                     </div>
                     <button className="bg-slate-900 text-white font-bold px-8 py-3 rounded-xl hover:bg-slate-800 transition-colors">
                       Request Quote
@@ -262,7 +262,7 @@ export default function VenueDetailPage() {
                 className="text-2xl font-bold mb-6"
                 style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
               >
-                Reviews{venue.reviewCount > 0 && <span className="text-slate-400 dark:text-stone-500 ml-2 text-xl">({venue.reviewCount})</span>}
+                Reviews{venue.reviewCount > 0 && <span className="text-slate-400 ml-2 text-xl">({venue.reviewCount})</span>}
               </h2>
               <VenueReviews
                 rating={venue.rating}
@@ -284,22 +284,22 @@ export default function VenueDetailPage() {
                   {venue.faqs.map((faq, i) => (
                     <div
                       key={i}
-                      className="rounded-[20px] overflow-hidden border border-slate-100 dark:border-white/10"
+                      className="rounded-[20px] overflow-hidden border border-slate-100"
                       style={{ background: "white" }}
                     >
                       <button
                         className="w-full flex items-center justify-between px-5 py-4 text-left gap-3"
                         onClick={() => setOpenFaq(openFaq === i ? null : i)}
                       >
-                        <span className="font-semibold text-sm text-slate-800 dark:text-stone-200">{faq.question}</span>
+                        <span className="font-semibold text-sm text-slate-800">{faq.question}</span>
                         <ChevronDown
-                          className="w-4 h-4 flex-shrink-0 text-slate-400 dark:text-stone-500 transition-transform"
+                          className="w-4 h-4 flex-shrink-0 text-slate-400 transition-transform"
                           style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0)" }}
                         />
                       </button>
                       {openFaq === i && (
                         <div className="px-5 pb-4">
-                          <p className="text-sm text-slate-600 dark:text-stone-300 leading-relaxed">{faq.answer}</p>
+                          <p className="text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
                         </div>
                       )}
                     </div>
@@ -322,22 +322,22 @@ export default function VenueDetailPage() {
       {/* Stripe Payment Verification Modal Overlay */}
       {(verifyingPayment || paymentSuccess) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-[var(--sw-surface)] rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl border border-slate-100 dark:border-white/10 flex flex-col items-center">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl border border-slate-100 flex flex-col items-center">
             {verifyingPayment ? (
               <>
-                <div className="w-16 h-16 rounded-full bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center text-primary-600 mb-4">
+                <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 mb-4">
                   <Loader2 className="w-8 h-8 animate-spin" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-stone-200 mb-2">Verifying Payment...</h3>
-                <p className="text-sm text-slate-500 dark:text-stone-400">Please do not close this window or click back.</p>
+                <h3 className="text-lg font-bold text-slate-800 mb-2">Verifying Payment...</h3>
+                <p className="text-sm text-slate-500">Please do not close this window or click back.</p>
               </>
             ) : (
               <>
-                <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 animate-bounce">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 animate-bounce">
                   <Check className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-stone-200 mb-2">Payment Confirmed!</h3>
-                <p className="text-sm text-slate-500 dark:text-stone-400 mb-6">Your booking is now confirmed. You can view all details in your dashboard.</p>
+                <h3 className="text-lg font-bold text-slate-800 mb-2">Payment Confirmed!</h3>
+                <p className="text-sm text-slate-500 mb-6">Your booking is now confirmed. You can view all details in your dashboard.</p>
                 <Link
                   href="/dashboard"
                   className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-full text-sm transition-colors text-center block shadow-md"

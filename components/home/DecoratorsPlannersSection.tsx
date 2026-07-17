@@ -147,7 +147,7 @@ export default function DecoratorsPlannersSection() {
             >
               <div ref={scrollRef} className="flex gap-5 overflow-x-auto snap-scroll pb-4" style={{ scrollbarWidth: "none" }}>
                 {items.length === 0 ? (
-                  <div className="w-full text-center py-20 text-slate-500 dark:text-stone-400 font-medium">No {activeTab} available at the moment.</div>
+                  <div className="w-full text-center py-20 text-slate-500 font-medium">No {activeTab} available at the moment.</div>
                 ) : (
                   items.map((item, i) => (
                     <motion.div
@@ -168,11 +168,11 @@ export default function DecoratorsPlannersSection() {
                         rating={item.rating}
                         image={item.image}
                         tags={
-                          <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white dark:bg-[var(--sw-surface)] text-slate-700 dark:text-stone-300 shadow-sm">
+                          <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
                             {item.tag === "Decorator" ? (
-                              <Flower2 className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />
+                              <Flower2 className="w-3.5 h-3.5 text-slate-500"/>
                             ) : (
-                              <ClipboardList className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />
+                              <ClipboardList className="w-3.5 h-3.5 text-slate-500"/>
                             )}
                             {item.tag}
                           </div>

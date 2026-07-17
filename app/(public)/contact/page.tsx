@@ -27,7 +27,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-sm text-slate-600 dark:text-stone-300 max-w-2xl mx-auto font-medium"
+            className="text-sm text-slate-600 max-w-2xl mx-auto font-medium"
           >
             Begin your journey towards a flawless celebration. Reach out to schedule a bespoke consultation with our luxury wedding experts.
           </motion.p>
@@ -60,7 +60,7 @@ export default function ContactPage() {
             ].map((info, idx) => (
               <div 
                 key={idx}
-                className="group bg-white/70 dark:bg-[var(--sw-surface)]/70 backdrop-blur-xl rounded-[28px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 flex items-start gap-5 hover:shadow-[0_20px_40px_rgba(238,116,41,0.08)] transition-all duration-300 hover:-translate-y-1"
+                className="group bg-white/70 backdrop-blur-xl rounded-[28px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 flex items-start gap-5 hover:shadow-[0_20px_40px_rgba(238,116,41,0.08)] transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary-100 to-amber-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <info.icon className="w-6 h-6 text-primary-500" />
@@ -69,7 +69,7 @@ export default function ContactPage() {
                   <h3 className="text-base font-extrabold mb-1" style={{ color: "var(--sw-navy)", fontFamily: "var(--font-heading)" }}>
                     {info.title}
                   </h3>
-                  <div className="text-xs text-slate-600 dark:text-stone-300 font-medium">
+                  <div className="text-xs text-slate-600 font-medium">
                     {info.content}
                   </div>
                 </div>
@@ -84,28 +84,28 @@ export default function ContactPage() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="lg:col-span-2"
           >
-            <div className="bg-white/80 dark:bg-[var(--sw-surface)]/80 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 shadow-[0_24px_60px_rgba(238,116,41,0.08)] border border-white dark:border-white/10">
+            <div className="bg-white/80 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 shadow-[0_24px_60px_rgba(238,116,41,0.08)] border border-white">
               <h2 className="text-xl font-extrabold mb-6" style={{ color: "var(--sw-navy)", fontFamily: "var(--font-heading)" }}>
                 Request a Consultation
               </h2>
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
                   <div className="space-y-2">
-                    <label htmlFor="firstName" className="block text-[10px] font-bold tracking-widest text-slate-500 dark:text-stone-400 uppercase ml-2 mb-1">First Name</label>
-                    <input id="firstName" name="firstName" type="text" className="w-full text-sm bg-white/50 dark:bg-[var(--sw-surface)]/50 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="Your First Name" required />
+                    <label htmlFor="firstName"className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase ml-2 mb-1">First Name</label>
+                    <input id="firstName"name="firstName"type="text"className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm"placeholder="Your First Name"required />
                   </div>
                   <div className="space-y-1">
-                    <label htmlFor="lastName" className="block text-[10px] font-bold tracking-widest text-slate-500 dark:text-stone-400 uppercase ml-2 mb-1">Last Name</label>
-                    <input id="lastName" name="lastName" type="text" className="w-full text-sm bg-white/50 dark:bg-[var(--sw-surface)]/50 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="Your Last Name" required />
+                    <label htmlFor="lastName"className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase ml-2 mb-1">Last Name</label>
+                    <input id="lastName"name="lastName"type="text"className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm"placeholder="Your Last Name"required />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="email" className="block text-[10px] font-bold tracking-widest text-slate-500 dark:text-stone-400 uppercase ml-2 mb-1">Email Address</label>
-                  <input id="email" name="email" type="email" className="w-full text-sm bg-white/50 dark:bg-[var(--sw-surface)]/50 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="your@email.com" required />
+                  <label htmlFor="email"className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase ml-2 mb-1">Email Address</label>
+                  <input id="email"name="email"type="email"className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm"placeholder="your@email.com"required />
                 </div>
                 <div className="space-y-1">
-                  <label htmlFor="message" className="block text-[10px] font-bold tracking-widest text-slate-500 dark:text-stone-400 uppercase ml-2 mb-1">Message</label>
-                  <textarea id="message" name="message" rows={4} className="w-full text-sm bg-white/50 dark:bg-[var(--sw-surface)]/50 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium resize-none shadow-sm" placeholder="Tell us about your vision, preferred destinations, or any dates you have in mind..." required></textarea>
+                  <label htmlFor="message"className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase ml-2 mb-1">Message</label>
+                  <textarea id="message"name="message"rows={4} className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium resize-none shadow-sm"placeholder="Tell us about your vision, preferred destinations, or any dates you have in mind..."required></textarea>
                 </div>
                 <button 
                   type="button" 

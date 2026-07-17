@@ -7,7 +7,6 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Phone, Mail, MessageCircle, ChevronUp, Sparkles } from "lucide-react";
 import { useCurrency } from "@/lib/CurrencyContext";
-import ThemeToggle from "@/components/shared/ThemeToggle";
 import { CURRENCIES } from "@/lib/currency";
 
 function IconInstagram({ className }: { className?: string }) {
@@ -151,16 +150,16 @@ export default function Footer() {
         <div className="relative z-10 w-full mx-auto px-5 sm:px-10 lg:px-16 py-8 md:py-12">
           
           {/* Top Row: Newsletter Subscription */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-8 mb-8 border-b border-amber-100/50 dark:border-amber-500/20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-8 mb-8 border-b border-amber-100/50">
             <div className="lg:col-span-7">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 border border-amber-100/60 dark:border-amber-500/20 mb-3 uppercase">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest text-amber-700 bg-amber-50 border border-amber-100/60 mb-3 uppercase">
                 <Sparkles className="w-3.5 h-3.5 inline-block mr-1 text-amber-500" />
                 Exclusive Club
               </span>
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-800 dark:text-stone-200">
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-800">
                 Join the <span className="bg-gradient-to-r from-amber-600 to-primary-500 bg-clip-text text-transparent">SoulsWed Circle</span>
               </h3>
-              <p className="text-xs text-slate-500 dark:text-stone-400 mt-2 max-w-xl font-medium leading-relaxed">
+              <p className="text-xs text-slate-500 mt-2 max-w-xl font-medium leading-relaxed">
                 Subscribe to receive curated destination wedding inspiration, venue guides, and exclusive partner promotions.
               </p>
             </div>
@@ -171,7 +170,7 @@ export default function Footer() {
                   name="newsletterEmail"
                   type="email"
                   placeholder="Your Email Address"
-                  className="w-full bg-white/80 dark:bg-[var(--sw-surface)]/80 border border-amber-200/60 dark:border-amber-500/25 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-5 py-3.5 pr-28 md:px-6 md:py-4 md:pr-36 outline-none transition-all text-sm md:text-base text-slate-800 dark:text-stone-200 shadow-inner font-medium placeholder-slate-400"
+                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-5 py-3.5 pr-28 md:px-6 md:py-4 md:pr-36 outline-none transition-all text-sm md:text-base text-slate-800 shadow-inner font-medium placeholder-slate-400"
                   required
                 />
                 <button
@@ -199,10 +198,10 @@ export default function Footer() {
                   className="h-7 md:h-8 w-auto"
                 />
               </Link>
-              <p className="text-sm leading-relaxed mb-1.5 font-bold text-slate-700 dark:text-stone-300">
+              <p className="text-sm leading-relaxed mb-1.5 font-bold text-slate-700">
                 Flawless Moves. Perfect Events.
               </p>
-              <p className="text-xs leading-relaxed mb-5 text-slate-500 dark:text-stone-400 font-medium max-w-sm">
+              <p className="text-xs leading-relaxed mb-5 text-slate-500 font-medium max-w-sm">
                 Say &apos;I do&apos; in a dreamy destination! Transforming couples&apos; visions into amazing international wedding celebrations with ease.
               </p>
               <div className="flex gap-3">
@@ -213,7 +212,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-115 hover:-translate-y-1 hover:bg-gradient-to-tr hover:from-amber-400 hover:to-primary-500 text-amber-700 dark:text-amber-400 hover:text-white border border-amber-100 dark:border-amber-500/20 hover:border-transparent bg-amber-50/40 dark:bg-amber-500/10 shadow-xs"
+                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-115 hover:-translate-y-1 hover:bg-gradient-to-tr hover:from-amber-400 hover:to-primary-500 text-amber-700 hover:text-white border border-amber-100 hover:border-transparent bg-amber-50/40 shadow-xs"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -223,7 +222,7 @@ export default function Footer() {
 
             {/* Col 2 — About Us */}
             <div>
-              <h4 className="text-xs font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
+              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
                 About Us
               </h4>
               <ul className="flex flex-col gap-1">
@@ -233,7 +232,7 @@ export default function Footer() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ? 'text-amber-600 dark:text-amber-400' : 'text-slate-600 dark:text-stone-300'}`}
+                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ?'text-amber-600':'text-slate-600'}`}
                         onMouseEnter={() => setHoveredLink(item.href)}
                         onMouseLeave={() => setHoveredLink(null)}
                       >
@@ -266,7 +265,7 @@ export default function Footer() {
 
             {/* Col 3 — Our Services */}
             <div>
-              <h4 className="text-xs font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
+              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
                 Our Services
               </h4>
               <ul className="flex flex-col gap-1">
@@ -276,7 +275,7 @@ export default function Footer() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ? 'text-amber-600 dark:text-amber-400' : 'text-slate-600 dark:text-stone-300'}`}
+                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ?'text-amber-600':'text-slate-600'}`}
                         onMouseEnter={() => setHoveredLink(item.href)}
                         onMouseLeave={() => setHoveredLink(null)}
                       >
@@ -309,7 +308,7 @@ export default function Footer() {
 
             {/* Col 4 — Contact Info */}
             <div>
-              <h4 className="text-xs font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
+              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
                 Contact Info
               </h4>
               <ul className="flex flex-col gap-1.5">
@@ -343,12 +342,12 @@ export default function Footer() {
                           )}
                         </AnimatePresence>
                         <div className="relative z-10 flex items-start gap-3">
-                           <Icon className={`w-4 h-4 mt-0.5 ${isHovered ? 'text-amber-600 dark:text-amber-400' : 'text-amber-500'} transition-colors`} />
+                           <Icon className={`w-4 h-4 mt-0.5 ${isHovered ?'text-amber-600':'text-amber-500'} transition-colors`} />
                            <div>
-                             <p className={`text-[13px] font-bold ${isHovered ? 'text-amber-700 dark:text-amber-400' : 'text-slate-800 dark:text-stone-200'} transition-colors`}>{item.label}</p>
+                             <p className={`text-[13px] font-bold ${isHovered ?'text-amber-700':'text-slate-800'} transition-colors`}>{item.label}</p>
                              <div className="flex flex-col gap-0.5 mt-0.5">
                                {item.lines.map((line) => (
-                                 <p key={line} className="text-[12px] text-slate-500 dark:text-stone-400 font-medium">{line}</p>
+                                 <p key={line} className="text-[12px] text-slate-500 font-medium">{line}</p>
                                ))}
                              </div>
                            </div>
@@ -367,17 +366,17 @@ export default function Footer() {
           style={{ borderColor: "rgba(238, 116, 41, 0.15)" }}
         >
           <div className="max-w-none mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-slate-400 dark:text-stone-500 font-semibold">
+            <p className="text-xs text-slate-400 font-semibold">
               © 2026 SoulsWed. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <Link href="/privacy" className="text-xs text-slate-400 dark:text-stone-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors font-semibold">
+              <Link href="/privacy"className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-xs text-slate-400 dark:text-stone-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors font-semibold">
+              <Link href="/terms"className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
                 Terms of Service
               </Link>
-              <span className="text-xs flex items-center gap-1 text-slate-400 dark:text-stone-500 font-semibold">
+              <span className="text-xs flex items-center gap-1 text-slate-400 font-semibold">
                 Made with
                 <Heart className="w-3 h-3 fill-current mx-0.5 text-red-500 animate-pulse" />
                 in India
@@ -397,7 +396,7 @@ export default function Footer() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute bottom-full right-0 mb-2 bg-white dark:bg-[var(--sw-surface)] rounded-2xl shadow-xl border border-slate-100 dark:border-white/10 overflow-hidden min-w-[140px] z-50 flex flex-col"
+                      className="absolute bottom-full right-0 mb-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden min-w-[140px] z-50 flex flex-col"
                     >
                       {Object.entries(CURRENCIES).map(([code, details]) => (
                         <button
@@ -406,11 +405,11 @@ export default function Footer() {
                             setCurrency(code);
                             setCurrencyOpen(false);
                           }}
-                          className={`flex flex-col items-start px-4 py-3 hover:bg-primary-50 dark:hover:bg-primary-500/10 transition-colors border-b border-slate-50 last:border-0 ${
-                            currency === code ? 'bg-primary-50/50 dark:bg-primary-500/10' : ''
+                          className={`flex flex-col items-start px-4 py-3 hover:bg-primary-50 transition-colors border-b border-slate-50 last:border-0 ${
+                            currency === code ?'bg-primary-50/50':''
                           }`}
                         >
-                          <span className={`text-sm font-bold ${currency === code ? 'text-primary-600' : 'text-slate-800 dark:text-stone-200'}`}>
+                          <span className={`text-sm font-bold ${currency === code ?'text-primary-600':'text-slate-800'}`}>
                             {code} ({details.symbol})
                           </span>
                         </button>
@@ -425,10 +424,8 @@ export default function Footer() {
       </footer>
       </div>
 
-      {/* Floating Action Buttons (Theme, Scroll to Top & WhatsApp) */}
+      {/* Floating Action Buttons (Scroll to Top & WhatsApp) */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-4">
-        {/* Light / dark theme */}
-        <ThemeToggle variant="fab" className="ml-auto" />
 
         {/* Scroll to Top */}
         <button

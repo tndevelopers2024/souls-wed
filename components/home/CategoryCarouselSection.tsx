@@ -124,12 +124,12 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
 
         {/* Empty State */}
         {!loading && items.length === 0 && (
-          <div className="py-12 flex flex-col items-center justify-center text-center bg-slate-50 dark:bg-[var(--sw-surface)]/5 rounded-3xl border border-slate-100 dark:border-white/10 border-dashed">
-            <div className="w-16 h-16 bg-white dark:bg-[var(--sw-surface)] rounded-full flex items-center justify-center shadow-sm mb-4">
+          <div className="py-12 flex flex-col items-center justify-center text-center bg-slate-50 rounded-3xl border border-slate-100 border-dashed">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
               {icon}
             </div>
-            <h3 className="font-bold text-slate-800 dark:text-stone-200 text-lg mb-1">No {title.toLowerCase()} found</h3>
-            <p className="text-slate-500 dark:text-stone-400 text-sm max-w-sm">
+            <h3 className="font-bold text-slate-800 text-lg mb-1">No {title.toLowerCase()} found</h3>
+            <p className="text-slate-500 text-sm max-w-sm">
               We are currently updating our listings for {title}. Check back soon!
             </p>
           </div>
@@ -162,7 +162,7 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
                     rating={item.rating}
                     image={item.image}
                     tags={
-                      <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white dark:bg-[var(--sw-surface)] text-slate-700 dark:text-stone-300 shadow-sm">
+                      <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
                         {icon}
                         {item.tag}
                       </div>

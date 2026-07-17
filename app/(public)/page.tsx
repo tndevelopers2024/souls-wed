@@ -22,7 +22,7 @@ export default function Home() {
           title="Rooms & Accommodations"
           subtitle="Luxury stays for you and your guests"
           tagLabel="Rooms"
-          icon={<BedDouble className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />}
+          icon={<BedDouble className="w-3.5 h-3.5 text-slate-500"/>}
         />
         
         {/* 3. Wedding planners/Event managers */}
@@ -31,7 +31,7 @@ export default function Home() {
           title="Wedding Planners & Event Managers"
           subtitle="Experts who handle it all"
           tagLabel="Planner"
-          icon={<ClipboardList className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />}
+          icon={<ClipboardList className="w-3.5 h-3.5 text-slate-500"/>}
         />
         
         {/* 4. Caterers */}
@@ -40,7 +40,7 @@ export default function Home() {
           title="Caterers"
           subtitle="Cuisines that steal the show"
           tagLabel="Caterer"
-          icon={<UtensilsCrossed className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />}
+          icon={<UtensilsCrossed className="w-3.5 h-3.5 text-slate-500"/>}
         />
         
         {/* 5. Decorators */}
@@ -49,7 +49,7 @@ export default function Home() {
           title="Decorators"
           subtitle="Bring your vision to life"
           tagLabel="Decorator"
-          icon={<Flower2 className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />}
+          icon={<Flower2 className="w-3.5 h-3.5 text-slate-500"/>}
         />
         
         <TestimonialsSection />

@@ -44,7 +44,7 @@ export default function HeroSection() {
 
   return (
     <div className="w-full px-3 md:px-2 lg:px-2 pt-3">
-      <section className="relative min-h-[calc(100vh-2.5rem)] flex flex-col items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[35px] border border-amber-100/60 dark:border-amber-500/20 shadow-[0_24px_70px_rgba(252,203,17,0.12)]">
+      <section className="relative min-h-[calc(100vh-2.5rem)] flex flex-col items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[35px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)]">
         {/* Background image carousel */}
         <div className="absolute inset-0 z-0">
           <AnimatePresence>
@@ -150,7 +150,7 @@ export default function HeroSection() {
             transition={{ duration: 0.7, delay: 0.9, ease: [0.4, 0, 0.2, 1] }}
             className="w-full max-w-5xl xl:max-w-6xl"
           >
-            <div className="bg-white/95 dark:bg-[var(--sw-surface)]/95 backdrop-blur-md rounded-[32px] md:rounded-full p-2 md:p-2.5 shadow-2xl border border-white/30 flex flex-col md:flex-row items-center relative z-20 w-full">
+            <div className="bg-white/95 backdrop-blur-md rounded-[32px] md:rounded-full p-2 md:p-2.5 shadow-2xl border border-white/30 flex flex-col md:flex-row items-center relative z-20 w-full">
 
               {/* Destination */}
               <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center items-start text-left group relative">

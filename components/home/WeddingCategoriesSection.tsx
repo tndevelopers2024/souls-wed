@@ -100,17 +100,17 @@ export default function WeddingCategoriesSection() {
               {/* Content */}
               <div className="absolute inset-x-0 bottom-0 z-20 px-4 pt-5 pb-4 flex flex-col">
                 <div className="flex items-center gap-3 transform transition-all duration-500 group-hover:-translate-y-1">
-                  <div className="bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] text-slate-800 dark:text-stone-200 flex-shrink-0 transition-colors duration-500 group-hover:text-[var(--sw-primary)]">
+                  <div className="bg-white/90 backdrop-blur-md rounded-full w-10 h-10 flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] text-slate-800 flex-shrink-0 transition-colors duration-500 group-hover:text-[var(--sw-primary)]">
                     <cat.icon className="w-5 h-5 stroke-[1.5]" />
                   </div>
                   <div className="flex flex-col">
                     <h3
-                      className="text-[22px] font-bold text-slate-900 dark:text-stone-100 leading-snug"
+                      className="text-[22px] font-bold text-slate-900 leading-snug"
                       style={{ fontFamily: "var(--font-heading)" }}
                     >
                       {cat.name}
                     </h3>
-                    <p className="text-[11px] mt-0.5 text-slate-500 dark:text-stone-400 font-bold tracking-wide uppercase">
+                    <p className="text-[11px] mt-0.5 text-slate-500 font-bold tracking-wide uppercase">
                       {cat.tagline}
                     </p>
                   </div>

@@ -110,7 +110,7 @@ export default function VendorCategoryPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[var(--sw-white)]">
         <Loader2 className="w-10 h-10 animate-spin text-[var(--sw-primary)]" />
-        <p className="text-sm text-slate-500 dark:text-stone-400 font-medium">Finding the best {displayCategory}...</p>
+        <p className="text-sm text-slate-500 font-medium">Finding the best {displayCategory}...</p>
       </div>
     );
   }
@@ -119,7 +119,7 @@ export default function VendorCategoryPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4 bg-[var(--sw-white)]">
         <Building2 className="w-12 h-12 text-red-400" />
-        <p className="text-base font-bold text-slate-700 dark:text-stone-300">Failed to load vendors</p>
+        <p className="text-base font-bold text-slate-700">Failed to load vendors</p>
         <button
           onClick={() => window.location.reload()}
           className="mt-2 px-6 py-2.5 rounded-full text-sm font-bold text-white bg-[var(--sw-primary)]"
@@ -144,14 +144,14 @@ export default function VendorCategoryPage() {
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-5 leading-[1.1] text-[var(--sw-navy)] font-heading">
             Wedding <span className="text-transparent bg-clip-text bg-gradient-to-br from-[var(--sw-primary)] to-[#f5a623]">{displayCategory}</span>
           </h1>
-          <p className="text-base sm:text-lg text-slate-500 dark:text-stone-400 mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
             Discover the finest {displayCategory.toLowerCase()} curated to make your special day perfect.
           </p>
 
           {/* Search bar */}
           <motion.div className="max-w-2xl mx-auto relative" animate={{ scale: searchFocused ? 1.02 : 1 }}>
-            <div className={`flex items-center rounded-full px-5 py-3 gap-3 transition-all duration-300 bg-white dark:bg-[var(--sw-surface)] ${searchFocused ? "border-2 border-[var(--sw-primary)] shadow-[0_8px_32px_rgba(238,116,41,0.18)]" : "border-2 border-[rgba(0,0,0,0.08)] shadow-sm"}`}>
-              <Search className={`w-5 h-5 flex-shrink-0 transition-colors ${searchFocused ? "text-[var(--sw-primary)]" : "text-slate-400 dark:text-stone-500"}`} />
+            <div className={`flex items-center rounded-full px-5 py-3 gap-3 transition-all duration-300 bg-white ${searchFocused ?"border-2 border-[var(--sw-primary)] shadow-[0_8px_32px_rgba(238,116,41,0.18)]":"border-2 border-[rgba(0,0,0,0.08)] shadow-sm"}`}>
+              <Search className={`w-5 h-5 flex-shrink-0 transition-colors ${searchFocused ?"text-[var(--sw-primary)]":"text-slate-400"}`} />
               <input
                 type="text"
                 placeholder={`Search ${displayCategory.toLowerCase()} by name or city...`}
@@ -168,7 +168,7 @@ export default function VendorCategoryPage() {
                     onClick={() => setSearch("")}
                     className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-black/5"
                   >
-                    <X className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />
+                    <X className="w-3.5 h-3.5 text-slate-500"/>
                   </motion.button>
                 )}
               </AnimatePresence>
@@ -183,8 +183,8 @@ export default function VendorCategoryPage() {
       {/* ══════════════════════ MAIN CONTENT ══════════════════════ */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8">
-          <p className="text-sm text-slate-500 dark:text-stone-400">
-            Showing <span className="font-bold text-slate-800 dark:text-stone-200">{filtered.length}</span> {displayCategory.toLowerCase()}
+          <p className="text-sm text-slate-500">
+            Showing <span className="font-bold text-slate-800">{filtered.length}</span> {displayCategory.toLowerCase()}
             {activeCity && <span> in <span className="font-bold text-[var(--sw-primary)]">{activeCity}</span></span>}
           </p>
         </div>
@@ -193,7 +193,7 @@ export default function VendorCategoryPage() {
         {visible.length === 0 ? (
           <div className="text-center py-20 flex flex-col items-center">
             <p className="text-2xl font-bold mb-2 text-[var(--sw-navy)] font-heading">No {displayCategory.toLowerCase()} found</p>
-            <p className="text-slate-400 dark:text-stone-500 text-sm mb-6 max-w-xs">We couldn't find any {displayCategory.toLowerCase()} matching your criteria.</p>
+            <p className="text-slate-400 text-sm mb-6 max-w-xs">We couldn't find any {displayCategory.toLowerCase()} matching your criteria.</p>
             <button onClick={() => { setSearch(""); setActiveCity(""); }} className="px-6 py-2.5 rounded-full text-sm font-bold text-white bg-[var(--sw-primary)] shadow-[0_4px_14px_rgba(238,116,41,0.35)]">
               Clear All Filters
             </button>
@@ -213,7 +213,7 @@ export default function VendorCategoryPage() {
                     reviewCount={vendor.reviewCount}
                     image={vendor.images?.[0] || "/images/placeholder-vendor.jpg"}
                     tags={
-                      <div className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white dark:bg-[var(--sw-surface)] shadow-sm text-[var(--sw-primary)]">
+                      <div className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm text-[var(--sw-primary)]">
                         {displayCategory}
                       </div>
                     }
