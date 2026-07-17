@@ -130,7 +130,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 href={item.href}
                 className={`relative shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-extrabold tracking-wide transition-all duration-300 group ${
                   isActive
-                    ? "text-slate-900 dark:text-stone-100 bg-primary-50/80"
+                    ? "text-slate-900 dark:text-stone-100 bg-primary-50/80 dark:bg-primary-500/10"
                     : "text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 hover:bg-slate-50 dark:hover:bg-white/5"
                 }`}
               >
@@ -290,7 +290,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                             <button
                               key={opt}
                               onClick={() => selectOption(f.label, opt)}
-                              className="w-full flex items-center justify-between px-5 py-3 text-sm transition-all hover:bg-primary-50/80 group"
+                              className="w-full flex items-center justify-between px-5 py-3 text-sm transition-all hover:bg-primary-50/80 dark:bg-primary-500/10 group"
                               style={{
                                 color: isSelected ? "var(--sw-primary)" : "var(--sw-navy)",
                                 fontWeight: isSelected ? 700 : 500,

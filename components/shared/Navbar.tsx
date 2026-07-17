@@ -537,7 +537,7 @@ export default function Navbar() {
 
             {/* Mobile hamburger */}
             <button
-              className="md:hidden p-2 rounded-full transition-colors hover:bg-primary-50"
+              className="md:hidden p-2 rounded-full transition-colors hover:bg-primary-50 dark:hover:bg-primary-500/10"
               onClick={() => setMobileOpen(!mobileOpen)}
               style={{ color: "var(--sw-navy)" }}
             >
@@ -559,14 +559,14 @@ export default function Navbar() {
                 <div key={link.href} className="flex flex-col">
                   <Link
                     href={link.href}
-                    className={`font-bold py-2.5 px-3 rounded-full text-sm transition-colors hover:bg-primary-50 ${isActive ? 'bg-primary-50' : ''}`}
+                    className={`font-bold py-2.5 px-3 rounded-full text-sm transition-colors hover:bg-primary-50 dark:hover:bg-primary-500/10 ${isActive ? 'bg-primary-50 dark:bg-primary-500/10' : ''}`}
                     style={{ color: isActive ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                     onClick={() => !link.megaMenu && setMobileOpen(false)}
                   >
                     {link.label}
                   </Link>
                   {link.megaMenu && (
-                    <div className="pl-6 flex flex-col gap-1 mt-1 border-l-2 ml-4 border-primary-100">
+                    <div className="pl-6 flex flex-col gap-1 mt-1 border-l-2 ml-4 border-primary-100 dark:border-primary-500/20">
                       {link.megaMenu.flatMap(col => col.items).map(item => (
                         <Link
                           key={item.href}
@@ -598,7 +598,7 @@ export default function Navbar() {
                     }}
                     className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors whitespace-nowrap ${currency === code
                         ? 'bg-primary-500 text-white'
-                        : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-stone-300 hover:bg-primary-100'
+                        : 'bg-slate-100 dark:bg-[var(--sw-surface)]/10 text-slate-600 dark:text-stone-300 hover:bg-primary-100 dark:hover:bg-primary-500/15'
                       }`}
                   >
                     {code}
@@ -608,7 +608,7 @@ export default function Navbar() {
             </div>
             <div className="pt-2 mt-1 border-t flex flex-col gap-2" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
               {loading ? (
-                <div className="h-10 bg-slate-100 dark:bg-white/10 rounded-full animate-pulse" />
+                <div className="h-10 bg-slate-100 dark:bg-[var(--sw-surface)]/10 rounded-full animate-pulse" />
               ) : user ? (
                 <>
                   <div className="px-3 py-2 flex items-center gap-3">
@@ -622,7 +622,7 @@ export default function Navbar() {
                   </div>
                   <Link
                     href={user.role === "admin" ? "/admin/dashboard" : user.role === "vendor" ? "/vendor/dashboard" : "/dashboard"}
-                    className="font-semibold text-sm py-2.5 px-4 rounded-full text-center border transition-colors hover:bg-primary-50 flex items-center justify-center gap-2"
+                    className="font-semibold text-sm py-2.5 px-4 rounded-full text-center border transition-colors hover:bg-primary-50 dark:hover:bg-primary-500/10 flex items-center justify-center gap-2"
                     style={{ color: "var(--sw-navy)", borderColor: "var(--sw-light-gray)" }}
                     onClick={() => setMobileOpen(false)}
                   >
@@ -644,7 +644,7 @@ export default function Navbar() {
                 <div className="flex gap-2 w-full">
                   <Link
                     href="/login"
-                    className="flex-1 font-semibold text-sm py-2.5 px-3 rounded-full text-center border transition-colors hover:bg-primary-50"
+                    className="flex-1 font-semibold text-sm py-2.5 px-3 rounded-full text-center border transition-colors hover:bg-primary-50 dark:hover:bg-primary-500/10"
                     style={{ color: "var(--sw-navy)", borderColor: "var(--sw-light-gray)" }}
                     onClick={() => setMobileOpen(false)}
                   >

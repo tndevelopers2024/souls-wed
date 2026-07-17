@@ -31,8 +31,8 @@ function VendorReviews({ rating, reviewCount }: { rating: number; reviewCount: n
   const displayRating = rating > 0 ? rating : 5;
   const count = reviewCount > 0 ? reviewCount : 2;
   return (
-    <div className="flex flex-col md:flex-row gap-8 items-center bg-primary-50/40 p-6 rounded-2xl mb-8 border border-primary-100">
-      <div className="text-center md:border-r border-primary-200/50 md:pr-10 shrink-0">
+    <div className="flex flex-col md:flex-row gap-8 items-center bg-primary-50/40 dark:bg-primary-500/10 p-6 rounded-2xl mb-8 border border-primary-100 dark:border-primary-500/20">
+      <div className="text-center md:border-r border-primary-200/50 dark:border-primary-500/25 md:pr-10 shrink-0">
         <div className="text-5xl font-black text-slate-900 dark:text-stone-100 mb-1">{displayRating.toFixed(1)}</div>
         <div className="flex justify-center gap-0.5 mb-1.5">
           {[1, 2, 3, 4, 5].map((s) => (
@@ -120,8 +120,8 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                 Areas Available (2)
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 dark:border-white/10 hover:border-primary-200 transition-colors bg-white dark:bg-[var(--sw-surface)] shadow-sm">
-                  <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0 text-primary-600">
+                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 dark:border-white/10 hover:border-primary-200 dark:border-primary-500/25 transition-colors bg-white dark:bg-[var(--sw-surface)] shadow-sm">
+                  <div className="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0 text-primary-600">
                     <Package className="w-6 h-6" />
                   </div>
                   <div>
@@ -129,8 +129,8 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                     <p className="text-xs text-slate-500 dark:text-stone-400 mt-1">Indoor • Banquet Hall</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 dark:border-white/10 hover:border-primary-200 transition-colors bg-white dark:bg-[var(--sw-surface)] shadow-sm">
-                  <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
+                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 dark:border-white/10 hover:border-primary-200 dark:border-primary-500/25 transition-colors bg-white dark:bg-[var(--sw-surface)] shadow-sm">
+                  <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-500/10 flex items-center justify-center flex-shrink-0 text-green-600 dark:text-green-400">
                     <Package className="w-6 h-6" />
                   </div>
                   <div>
@@ -276,7 +276,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
           <div className="bg-white dark:bg-[var(--sw-surface)] rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl border border-slate-100 dark:border-white/10 flex flex-col items-center">
             {verifyingPayment ? (
               <>
-                <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 mb-4">
+                <div className="w-16 h-16 rounded-full bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center text-primary-600 mb-4">
                   <Loader2 className="w-8 h-8 animate-spin" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 dark:text-stone-200 mb-2">Verifying Payment...</h3>
@@ -284,7 +284,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
               </>
             ) : (
               <>
-                <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 animate-bounce">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 animate-bounce">
                   <Check className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 dark:text-stone-200 mb-2">Payment Confirmed!</h3>

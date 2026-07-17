@@ -94,7 +94,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
       
       {/* Destination Price (Only for Venues) */}
       {isVenue && (
-        <div className="bg-primary-50/50 p-5 border-t border-slate-100 dark:border-white/10 border border-slate-200 dark:border-white/10 rounded-xl mt-4 shadow-sm">
+        <div className="bg-primary-50/50 dark:bg-primary-500/10 p-5 border-t border-slate-100 dark:border-white/10 border border-slate-200 dark:border-white/10 rounded-xl mt-4 shadow-sm">
           <h3 className="font-bold text-slate-800 dark:text-stone-200 mb-2">Venue Rental</h3>
           <div className="flex items-center justify-between">
             <span className="text-xl font-bold text-slate-800 dark:text-stone-200">
@@ -123,7 +123,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
 
       {/* Demand badge */}
       <div className="flex items-center justify-center gap-2">
-        <span className="bg-primary-100 text-primary-800 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200">
+        <span className="bg-primary-100 dark:bg-primary-500/15 text-primary-800 dark:text-primary-300 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200 dark:border-primary-500/25">
           In High Demand
         </span>
         <span className="text-xs font-semibold text-slate-600 dark:text-stone-300">
@@ -131,7 +131,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
         </span>
       </div>
 
-      <button className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-600 transition-colors">
+      <button className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-600 dark:text-red-400 transition-colors">
         <AlertTriangle className="w-3.5 h-3.5" />
         Report an Issue
       </button>

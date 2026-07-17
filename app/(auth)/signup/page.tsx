@@ -72,7 +72,7 @@ const ACCENT: Record<UserRole, { from: string; to: string; glow: string }> = {
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-white/5"><Loader2 className="w-6 h-6 animate-spin text-primary-500" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[var(--sw-surface)]/5"><Loader2 className="w-6 h-6 animate-spin text-primary-500" /></div>}>
       <SignupContent />
     </Suspense>
   );
@@ -231,7 +231,7 @@ function SignupContent() {
           }}
         >
           {/* ── Role Tabs ── */}
-          <div className="flex border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5/60">
+          <div className="flex border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-[var(--sw-surface)]/5">
             {ROLES.map((r) => (
               <button
                 key={r.id}
@@ -286,7 +286,7 @@ function SignupContent() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="flex flex-col items-center text-center py-6"
                 >
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 text-2xl animate-bounce">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 text-2xl animate-bounce">
                     <Sparkles className="w-7 h-7" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-stone-200 mb-1">Registration Complete!</h3>
@@ -332,7 +332,7 @@ function SignupContent() {
                 >
                   {/* Error */}
                   {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-2xl p-3.5 flex gap-3 items-start text-red-700 text-xs">
+                    <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/25 rounded-2xl p-3.5 flex gap-3 items-start text-red-700 dark:text-red-400 text-xs">
                       <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                       <span className="font-medium">{error}</span>
                     </div>

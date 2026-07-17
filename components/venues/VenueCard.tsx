@@ -44,7 +44,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
               <div className="flex justify-between items-start mb-2">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-stone-100 line-clamp-1" style={{ fontFamily: "var(--font-heading)" }}>{venue.name}</h3>
                 {venue.rating > 0 && (
-                  <div className="flex items-center gap-1 bg-slate-50 dark:bg-white/5 px-2 py-1 rounded-lg">
+                  <div className="flex items-center gap-1 bg-slate-50 dark:bg-[var(--sw-surface)]/5 px-2 py-1 rounded-lg">
                     <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
                     <span className="text-sm font-bold text-slate-800 dark:text-stone-200">{venue.rating.toFixed(1)}</span>
                   </div>
@@ -73,7 +73,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
                   <span className="text-sm text-slate-500 dark:text-stone-400 capitalize">{venue.priceUnit}</span>
                 </div>
               </div>
-              <span className="px-5 py-2.5 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-900 dark:text-stone-100 text-sm font-bold rounded-full transition-colors border border-slate-200 dark:border-white/10">
+              <span className="px-5 py-2.5 bg-slate-50 dark:bg-[var(--sw-surface)]/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-900 dark:text-stone-100 text-sm font-bold rounded-full transition-colors border border-slate-200 dark:border-white/10">
                 Book +
               </span>
             </div>

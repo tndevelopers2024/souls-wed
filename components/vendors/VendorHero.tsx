@@ -40,7 +40,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
         />
         {vendor.verified && (
           <div className="absolute top-4 left-4 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-white dark:bg-[var(--sw-surface)] text-slate-800 dark:text-stone-200 shadow-sm">
-            <BadgeCheck className="w-4 h-4 text-green-600" />
+            <BadgeCheck className="w-4 h-4 text-green-600 dark:text-green-400" />
             Verified Partner
           </div>
         )}
@@ -84,12 +84,12 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
         {/* Contact Strip */}
         <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100 dark:border-white/10">
           {vendor.phone ? (
-            <a href={`tel:${vendor.phone}`} className="flex items-center gap-2 text-green-600 font-semibold text-sm hover:text-green-700 transition-colors">
+            <a href={`tel:${vendor.phone}`} className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm hover:text-green-700 dark:text-green-400 transition-colors">
               <Phone className="w-4 h-4" />
               Contact
             </a>
           ) : (
-            <button className="flex items-center gap-2 text-green-600 font-semibold text-sm hover:text-green-700 transition-colors">
+            <button className="flex items-center gap-2 text-green-600 dark:text-green-400 font-semibold text-sm hover:text-green-700 dark:text-green-400 transition-colors">
               <Phone className="w-4 h-4" />
               Contact
             </button>

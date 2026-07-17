@@ -36,7 +36,7 @@ export default function VenueHero({ venue }: VenueHeroProps) {
         <div className="absolute inset-0 bg-black/5 pointer-events-none" />
         {venue.verified && (
           <div className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-full bg-white/95 dark:bg-[var(--sw-surface)]/95 backdrop-blur-md text-slate-800 dark:text-stone-200 shadow-lg">
-            <BadgeCheck className="w-4 h-4 text-green-600" />
+            <BadgeCheck className="w-4 h-4 text-green-600 dark:text-green-400" />
             Verified
           </div>
         )}
@@ -46,10 +46,10 @@ export default function VenueHero({ venue }: VenueHeroProps) {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200 dark:border-white/10">
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-100 text-primary-800 px-2.5 py-1 rounded-md shadow-sm">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-100 dark:bg-primary-500/15 text-primary-800 dark:text-primary-300 px-2.5 py-1 rounded-md shadow-sm">
               Venue & Estate
             </span>
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-stone-300 px-2.5 py-1 rounded-md">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-[var(--sw-surface)]/10 text-slate-600 dark:text-stone-300 px-2.5 py-1 rounded-md">
               2 bookings recently
             </span>
           </div>
@@ -84,7 +84,7 @@ export default function VenueHero({ venue }: VenueHeroProps) {
             </div>
           )}
           
-          <button className="flex items-center justify-center gap-2 w-full md:w-auto bg-green-50 hover:bg-green-100 text-green-700 font-bold px-6 py-2.5 rounded-xl transition-colors border border-green-200">
+          <button className="flex items-center justify-center gap-2 w-full md:w-auto bg-green-50 dark:bg-green-500/10 hover:bg-green-100 dark:hover:bg-green-500/15 text-green-700 dark:text-green-400 font-bold px-6 py-2.5 rounded-xl transition-colors border border-green-200 dark:border-green-500/25">
             <Phone className="w-4 h-4" />
             Contact Venue
           </button>

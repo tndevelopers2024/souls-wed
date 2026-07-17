@@ -66,12 +66,12 @@ export default function Preloader() {
               transition={{ delay: 0.8, duration: 0.8 }}
               className="flex flex-col items-center"
             >
-              <p className="text-amber-600 font-bold uppercase tracking-[0.3em] text-xs md:text-sm mb-6">
+              <p className="text-amber-600 dark:text-amber-400 font-bold uppercase tracking-[0.3em] text-xs md:text-sm mb-6">
                 Your Destination, Our Expertice
               </p>
 
               {/* Elegant thin loading bar */}
-              <div className="w-48 h-[2px] bg-amber-100 rounded-full overflow-hidden relative">
+              <div className="w-48 h-[2px] bg-amber-100 dark:bg-amber-500/15 rounded-full overflow-hidden relative">
                 <motion.div
                   initial={{ x: "-100%" }}
                   animate={{ x: "100%" }}

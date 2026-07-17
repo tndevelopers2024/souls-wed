@@ -44,7 +44,7 @@ export default function HeroSection() {
 
   return (
     <div className="w-full px-3 md:px-2 lg:px-2 pt-3">
-      <section className="relative min-h-[calc(100vh-2.5rem)] flex flex-col items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[35px] border border-amber-100/60 shadow-[0_24px_70px_rgba(252,203,17,0.12)]">
+      <section className="relative min-h-[calc(100vh-2.5rem)] flex flex-col items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[35px] border border-amber-100/60 dark:border-amber-500/20 shadow-[0_24px_70px_rgba(252,203,17,0.12)]">
         {/* Background image carousel */}
         <div className="absolute inset-0 z-0">
           <AnimatePresence>

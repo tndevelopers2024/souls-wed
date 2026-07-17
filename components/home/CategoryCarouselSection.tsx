@@ -124,7 +124,7 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
 
         {/* Empty State */}
         {!loading && items.length === 0 && (
-          <div className="py-12 flex flex-col items-center justify-center text-center bg-slate-50 dark:bg-white/5 rounded-3xl border border-slate-100 dark:border-white/10 border-dashed">
+          <div className="py-12 flex flex-col items-center justify-center text-center bg-slate-50 dark:bg-[var(--sw-surface)]/5 rounded-3xl border border-slate-100 dark:border-white/10 border-dashed">
             <div className="w-16 h-16 bg-white dark:bg-[var(--sw-surface)] rounded-full flex items-center justify-center shadow-sm mb-4">
               {icon}
             </div>

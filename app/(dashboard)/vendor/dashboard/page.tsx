@@ -959,7 +959,7 @@ export default function VendorDashboard() {
               <hr className={`my-2 ${dividerClass}`} />
               <button
                 onClick={handleLogout}
-                className="flex items-center justify-center gap-2 p-3 bg-red-50 text-red-700 font-bold rounded-xl text-xs"
+                className="flex items-center justify-center gap-2 p-3 bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 font-bold rounded-xl text-xs"
               >
                 Sign Out
               </button>
@@ -984,7 +984,7 @@ export default function VendorDashboard() {
 
                 {/* Account verification warning banner */}
                 <div className={`border rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-none ${vendor.verified
-                    ? isDarkMode ? "bg-emerald-950/10 border-emerald-900/50" : "bg-emerald-50/60 border-emerald-200"
+                    ? isDarkMode ? "bg-emerald-950/10 border-emerald-900/50" : "bg-emerald-50/60 border-emerald-200 dark:border-emerald-500/25"
                     : isDarkMode ? "bg-amber-950/10 border-amber-900/50" : "bg-amber-50/60 border-amber-200"
                   }`}>
                   <div className="flex gap-3 text-xs font-semibold">
@@ -1149,7 +1149,7 @@ export default function VendorDashboard() {
               <div className={`rounded-3xl p-6 border shadow-none min-h-[400px] flex flex-col gap-5 ${cardClass}`}>
                 <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
                   <h3 className={`font-extrabold text-base ${headingText}`}>Booking Inquiries</h3>
-                  <span className={`text-[10px] font-black border px-2.5 py-1 rounded-full uppercase tracking-wider ${isDarkMode ? "bg-emerald-950/20 text-emerald-400 border-emerald-900" : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  <span className={`text-[10px] font-black border px-2.5 py-1 rounded-full uppercase tracking-wider ${isDarkMode ? "bg-emerald-950/20 text-emerald-400 border-emerald-900" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25"
                     }`}>
                     {bookings.length} active leads
                   </span>
@@ -1214,7 +1214,7 @@ export default function VendorDashboard() {
                       >
                         <button
                           onClick={() => setVenueView("grid")}
-                          className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 transition-colors z-10 cursor-pointer"
+                          className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 transition-colors z-10 cursor-pointer"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -1223,8 +1223,8 @@ export default function VendorDashboard() {
                         </h3>
                         {venueMessage && (
                           <div className={`mb-5 rounded-3xl px-4 py-3 text-xs font-bold border ${venueMessage.includes("Failed") || venueMessage.includes("required")
-                              ? "bg-red-50 text-red-700 border-red-200"
-                              : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25"
+                              : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25"
                             }`}>{venueMessage}</div>
                         )}
 
@@ -1491,10 +1491,10 @@ export default function VendorDashboard() {
                       const price = venue.price || venue.pricePerPlateVeg || "—";
                       const rating = venue.rating || 0;
                       return (
-                        <div key={venue._id} className="group relative rounded-3xl overflow-hidden border border-slate-200 shadow-none flex flex-col h-[380px] bg-white transition-shadow hover:shadow-none">
+                        <div key={venue._id} className="group relative rounded-3xl overflow-hidden border border-slate-200 dark:border-stone-800 shadow-none flex flex-col h-[380px] bg-white dark:bg-stone-900/60 transition-shadow hover:shadow-none">
 
                           {/* Image Section (Top half) */}
-                          <div className="relative h-[200px] w-full bg-slate-100 overflow-hidden shrink-0">
+                          <div className="relative h-[200px] w-full bg-slate-100 dark:bg-stone-800 overflow-hidden shrink-0">
                             {thumb ? (
                               <img
                                 src={thumb}
@@ -1560,7 +1560,7 @@ export default function VendorDashboard() {
                                       setVenues(prev => prev.filter(v => v._id !== venue._id));
                                     }
                                   }}
-                                  className="flex items-center justify-center w-8 h-8 rounded-full text-red-500 bg-red-50 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-none"
+                                  className="flex items-center justify-center w-8 h-8 rounded-full text-red-500 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-none"
                                   title="Delete Venue"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -1591,7 +1591,7 @@ export default function VendorDashboard() {
                 <form onSubmit={handleSaveProfile} className="max-w-2xl flex flex-col gap-5 text-xs">
                   {profileMessage && (
                     <div className={`rounded-3xl border px-4 py-3 font-bold ${profileMessage.includes("Failed")
-                        ? "bg-red-50 text-red-700 border-red-200"
+                        ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25"
                         : "bg-amber-50 text-amber-800 border-amber-200"
                       }`}>
                       {profileMessage}
@@ -1958,7 +1958,7 @@ export default function VendorDashboard() {
                     </div>
                     
                     {passwordMessage.text && (
-                      <p className={`text-xs font-semibold p-2 rounded-lg ${passwordMessage.type === "error" ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"}`}>
+                      <p className={`text-xs font-semibold p-2 rounded-lg ${passwordMessage.type === "error" ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"}`}>
                         {passwordMessage.text}
                       </p>
                     )}
@@ -2005,8 +2005,8 @@ export default function VendorDashboard() {
 
                     {serviceMessage && (
                       <div className={`mb-6 rounded-2xl border px-4 py-3 text-xs font-bold ${serviceMessage.includes("Failed") || serviceMessage.includes("required")
-                          ? "bg-red-50 text-red-700 border-red-100"
-                          : "bg-emerald-50 text-emerald-700 border-emerald-100"
+                          ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-100"
+                          : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100"
                         }`}>
                         {serviceMessage}
                       </div>
@@ -2112,7 +2112,7 @@ export default function VendorDashboard() {
                       </div>
                     ) : (
                       services.filter(s => s.category === activeTab).map((service) => (
-                        <div key={service.serviceId} className="group relative rounded-3xl overflow-hidden border border-slate-200 shadow-none flex flex-col h-[340px] bg-white transition-shadow hover:shadow-none">
+                        <div key={service.serviceId} className="group relative rounded-3xl overflow-hidden border border-slate-200 dark:border-stone-800 shadow-none flex flex-col h-[340px] bg-white dark:bg-stone-900/60 transition-shadow hover:shadow-none">
                           
                           {/* Image Section (Top half) */}
                           <div className="relative h-[180px] w-full bg-slate-100 overflow-hidden shrink-0">
@@ -2163,7 +2163,7 @@ export default function VendorDashboard() {
                                       setServices(prev => prev.filter(v => v.serviceId !== service.serviceId));
                                     }
                                   }}
-                                  className="flex items-center justify-center w-8 h-8 rounded-full text-red-500 bg-red-50 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-none"
+                                  className="flex items-center justify-center w-8 h-8 rounded-full text-red-500 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-none"
                                   title="Delete Service"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />

@@ -856,7 +856,7 @@ export default function AdminDashboard() {
               <hr className={`my-2 ${dividerClass}`} />
               <button 
                 onClick={handleLogout}
-                className="flex items-center justify-center gap-2 p-3 bg-red-50 text-red-700 font-bold rounded-xl text-xs"
+                className="flex items-center justify-center gap-2 p-3 bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 font-bold rounded-xl text-xs"
               >
                 Sign Out
               </button>
@@ -866,10 +866,10 @@ export default function AdminDashboard() {
 
         {/* Global Error Notice */}
         {error && (
-          <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex gap-3 items-start">
+          <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/25 text-red-700 dark:text-red-400 flex gap-3 items-start">
             <div>
               <p className="text-xs font-black">Sync Failure Encountered</p>
-              <p className="text-[11px] text-red-600 mt-0.5">{error}</p>
+              <p className="text-[11px] text-red-600 dark:text-red-400 mt-0.5">{error}</p>
             </div>
           </div>
         )}
@@ -932,7 +932,7 @@ export default function AdminDashboard() {
                           <span className="text-[10px] font-black uppercase tracking-wider text-stone-400">{card.title}</span>
                           <h3 className={`text-xl md:text-2xl font-black tracking-tight leading-none mt-2.5 ${isDarkMode ? 'text-white' : 'text-stone-905'}`}>{card.value}</h3>
                         </div>
-                        <span className={`text-[10px] font-bold mt-2.5 inline-block ${card.isUp ? 'text-emerald-600' : 'text-amber-600'}`}>
+                        <span className={`text-[10px] font-bold mt-2.5 inline-block ${card.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600'}`}>
                           {card.change}
                         </span>
                       </div>
@@ -1374,8 +1374,8 @@ export default function AdminDashboard() {
                                   onClick={() => handleUpdateVendorStatus(v._id, !v.verified)}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.verified
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
-                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
+                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
                                   {v.verified ? "Verified" : "Pending"}
@@ -1386,8 +1386,8 @@ export default function AdminDashboard() {
                                   onClick={() => handleUpdateVendorStatus(v._id, undefined, !v.featured)}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.featured
-                                      ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
-                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:hover:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
+                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
                                   {v.featured ? "Featured" : "Regular"}
@@ -1396,7 +1396,7 @@ export default function AdminDashboard() {
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteVendor(v._id)}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-500 hover:text-red-600 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-500 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>
@@ -1489,24 +1489,24 @@ export default function AdminDashboard() {
                                   onChange={(e) => handleUpdateBookingStatus(b._id, e.target.value)}
                                   className={`text-[10px] font-extrabold rounded-lg border px-2.5 py-1 bg-white outline-none cursor-pointer transition-colors dark:bg-stone-900 bg-none ${
                                     b.status === "confirmed"
-                                      ? "text-emerald-700 border-emerald-200 bg-emerald-50/70 dark:text-emerald-400 dark:border-emerald-900"
+                                      ? "text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25 bg-emerald-50/70 dark:text-emerald-400 dark:border-emerald-900"
                                       : b.status === "completed"
                                       ? "text-blue-700 border-blue-200 bg-blue-50/70 dark:text-blue-400 dark:border-blue-900"
                                       : b.status === "cancelled"
-                                      ? "text-red-700 border-red-200 bg-red-50/70 dark:text-red-400 dark:border-red-900"
+                                      ? "text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25 bg-red-50/70 dark:text-red-400 dark:border-red-900"
                                       : "text-amber-700 border-amber-200 bg-amber-50/70 dark:text-amber-400 dark:border-amber-900"
                                   }`}
                                 >
                                   <option value="pending" className="text-amber-700 font-bold bg-white dark:bg-stone-900">Pending</option>
-                                  <option value="confirmed" className="text-emerald-700 font-bold bg-white dark:bg-stone-900">Confirmed</option>
+                                  <option value="confirmed" className="text-emerald-700 dark:text-emerald-400 font-bold bg-white dark:bg-stone-900">Confirmed</option>
                                   <option value="completed" className="text-blue-700 font-bold bg-white dark:bg-stone-900">Completed</option>
-                                  <option value="cancelled" className="text-red-700 font-bold bg-white dark:bg-stone-900">Cancelled</option>
+                                  <option value="cancelled" className="text-red-700 dark:text-red-400 font-bold bg-white dark:bg-stone-900">Cancelled</option>
                                 </select>
                               </td>
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteBooking(b._id)}
-                                  className="px-2 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
+                                  className="px-2 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-450 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>
@@ -1570,7 +1570,7 @@ export default function AdminDashboard() {
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteUser(u._id)}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-450 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>
@@ -1643,7 +1643,7 @@ export default function AdminDashboard() {
                     </div>
                     
                     {passwordMessage.text && (
-                      <p className={`text-xs font-semibold p-2 rounded-lg ${passwordMessage.type === "error" ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"}`}>
+                      <p className={`text-xs font-semibold p-2 rounded-lg ${passwordMessage.type === "error" ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"}`}>
                         {passwordMessage.text}
                       </p>
                     )}
@@ -1727,8 +1727,8 @@ export default function AdminDashboard() {
                                   }}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.verified
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
-                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
+                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
                                   {v.verified ? "Verified" : "Pending"}
@@ -1746,8 +1746,8 @@ export default function AdminDashboard() {
                                   }}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.featured
-                                      ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
-                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:hover:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
+                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
                                   }`}
                                 >
                                   {v.featured ? "Featured" : "Regular"}
@@ -1765,8 +1765,8 @@ export default function AdminDashboard() {
                                   }}
                                   className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.active
-                                      ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900"
-                                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900"
+                                      ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900"
+                                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:hover:bg-red-900/20 dark:text-red-400 dark:border-red-900"
                                   }`}
                                 >
                                   {v.active ? "Live" : "Hidden"}
@@ -1779,7 +1779,7 @@ export default function AdminDashboard() {
                                     await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
                                     fetchAllData();
                                   }}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-450 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
                                 >
                                   [Delete]
                                 </button>
@@ -1841,8 +1841,8 @@ export default function AdminDashboard() {
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, !s.verified, s.featured, s.active)}
                                     className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                       s.verified
-                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900"
-                                        : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900"
+                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900"
+                                        : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900"
                                     }`}
                                   >
                                     {s.verified ? "Verified" : "Pending"}
@@ -1853,8 +1853,8 @@ export default function AdminDashboard() {
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, s.featured, !s.active)}
                                     className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                       s.active
-                                        ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900"
-                                        : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900"
+                                        ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900"
+                                        : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:hover:bg-red-900/20 dark:text-red-400 dark:border-red-900"
                                     }`}
                                   >
                                     {s.active ? "Live" : "Hidden"}
@@ -1863,7 +1863,7 @@ export default function AdminDashboard() {
                                 <td className="p-4 text-center">
                                   <button
                                     onClick={() => handleDeleteService(s.serviceId)}
-                                    className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 border-transparent hover:border-red-200 text-stone-450 hover:text-red-600 transition-all cursor-pointer"
+                                    className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-450 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
                                   >
                                     [Delete]
                                   </button>

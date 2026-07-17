@@ -68,7 +68,7 @@ export default function FaqSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className={`overflow-hidden transition-all duration-300 rounded-[20px] border ${isOpen ? 'border-primary-200/50 bg-white/80 dark:bg-[var(--sw-surface)]/80' : 'border-gray-200 bg-white/40 hover:bg-white/60'}`}
+                className={`overflow-hidden transition-all duration-300 rounded-[20px] border ${isOpen ? 'border-primary-200/50 dark:border-primary-500/25 bg-white/80 dark:bg-[var(--sw-surface)]/80' : 'border-gray-200 bg-white/40 dark:bg-[var(--sw-surface)]/40 hover:bg-white/60 dark:bg-[var(--sw-surface)]/60'}`}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}

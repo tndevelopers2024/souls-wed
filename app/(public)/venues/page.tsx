@@ -325,7 +325,7 @@ export default function VenuesPage() {
 
           <div className="flex items-center gap-3">
             {/* View toggle */}
-            <div className="hidden sm:flex bg-slate-100 dark:bg-white/10/80 p-1 rounded-full border border-slate-200 dark:border-white/10/60">
+            <div className="hidden sm:flex bg-slate-100 dark:bg-[var(--sw-surface)]/10 p-1 rounded-full border border-slate-200 dark:border-white/10">
               <button
                 onClick={() => setViewType("grid")}
                 className={`p-1.5 rounded-full transition-all ${
@@ -387,7 +387,7 @@ export default function VenuesPage() {
                       <button
                         key={opt}
                         onClick={() => { setSort(opt); setSortOpen(false); }}
-                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-primary-50 flex items-center justify-between"
+                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-primary-50 dark:hover:bg-primary-500/10 flex items-center justify-between"
                         style={{
                           fontWeight: sort === opt ? 700 : 500,
                           color: sort === opt ? "var(--sw-primary)" : "var(--sw-navy)",

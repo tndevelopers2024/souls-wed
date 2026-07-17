@@ -19,7 +19,7 @@ export default function AboutPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
-          <div className="relative h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border border-amber-100/50">
+          <div className="relative h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border border-amber-100/50 dark:border-amber-500/20">
             <Image 
               src="/soulswed/venue.jpg" 
               alt="Beautiful Destination Wedding"
@@ -35,7 +35,7 @@ export default function AboutPage() {
             <p className="text-slate-600 dark:text-stone-300 leading-relaxed mb-6">
               Our platform connects you with the finest venues, world-class vendors, and expert planners across the globe. From sun-kissed beaches to historic castles, we bring the world&apos;s most breathtaking locations to your fingertips.
             </p>
-            <div className="grid grid-cols-2 gap-6 mt-8 border-t border-amber-200/60 pt-8">
+            <div className="grid grid-cols-2 gap-6 mt-8 border-t border-amber-200/60 dark:border-amber-500/25 pt-8">
                <div>
                   <h3 className="text-4xl font-extrabold text-primary-500">500+</h3>
                   <p className="text-sm font-semibold tracking-wide text-slate-500 dark:text-stone-400 mt-2 uppercase">Weddings Planned</p>

@@ -36,11 +36,11 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
     <div className="sticky top-24 flex flex-col gap-6">
       
       {/* Pricing Information Card */}
-      <div className="bg-white/60 backdrop-blur-xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[24px] overflow-hidden p-6">
+      <div className="bg-white/60 dark:bg-[var(--sw-surface)]/60 backdrop-blur-xl border border-white dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[24px] overflow-hidden p-6">
         <h3 className="font-bold text-slate-900 dark:text-stone-100 mb-5 text-lg">Starting Price</h3>
         <div className="flex flex-col gap-4">
           {venue.pricePerPlateVeg && (
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10/50 pb-4">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
               <div>
                 <span className="text-2xl font-bold text-slate-900 dark:text-stone-100">
                   {convertPriceString(venue.pricePerPlateVeg, currency)}
@@ -64,7 +64,7 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
         </div>
 
         {venue.rentalCost && (
-          <div className="mt-4 pt-4 border-t border-slate-200 dark:border-white/10/50">
+          <div className="mt-4 pt-4 border-t border-slate-200 dark:border-white/10">
             <h3 className="font-bold text-slate-900 dark:text-stone-100 mb-3 text-lg">Venue Rental</h3>
             <div className="flex items-center justify-between">
               <span className="text-2xl font-bold text-slate-900 dark:text-stone-100">
@@ -87,7 +87,7 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
        * - Live price calculation
        * - Booking creation API call
        */}
-      <div className="bg-white/80 dark:bg-[var(--sw-surface)]/80 backdrop-blur-xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-[24px] p-6">
+      <div className="bg-white/80 dark:bg-[var(--sw-surface)]/80 backdrop-blur-xl border border-white dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-[24px] p-6">
         <h3 className="font-bold text-slate-900 dark:text-stone-100 text-lg mb-5">
           Book {venue.name}
         </h3>
@@ -110,7 +110,7 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
 
       {/* Demand badge */}
       <div className="flex items-center justify-center gap-2">
-        <span className="bg-primary-100 text-primary-800 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200">
+        <span className="bg-primary-100 dark:bg-primary-500/15 text-primary-800 dark:text-primary-300 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200 dark:border-primary-500/25">
           In High Demand
         </span>
         <span className="text-xs font-semibold text-slate-600 dark:text-stone-300">
@@ -118,7 +118,7 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
         </span>
       </div>
 
-      <button className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-600 transition-colors">
+      <button className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-600 dark:text-red-400 transition-colors">
         <AlertTriangle className="w-3.5 h-3.5" />
         Report an Issue
       </button>

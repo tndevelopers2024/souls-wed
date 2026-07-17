@@ -154,7 +154,7 @@ export default function VendorDetailPage() {
                   </div>
                   
                   <div className="flex items-center gap-3 bg-white dark:bg-[var(--sw-surface)] border border-slate-100 dark:border-white/10 shadow-sm rounded-2xl p-3 shrink-0">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-50 text-yellow-500">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-500/10 text-yellow-500">
                       <Star className="w-6 h-6 fill-yellow-400" />
                     </div>
                     <div>
@@ -179,7 +179,7 @@ export default function VendorDetailPage() {
               <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
                 About {name}
               </h2>
-              <div className="bg-slate-50 dark:bg-white/5/50 rounded-[24px] p-6 sm:p-8 border border-slate-100 dark:border-white/10 relative">
+              <div className="bg-slate-50 dark:bg-[var(--sw-surface)]/5 rounded-[24px] p-6 sm:p-8 border border-slate-100 dark:border-white/10 relative">
                 <Quote className="absolute top-6 left-6 w-10 h-10 text-slate-200 -z-10" />
                 <p className="text-slate-600 dark:text-stone-300 leading-loose text-base font-medium max-w-4xl relative z-10 whitespace-pre-wrap">
                   {vendor.description || `${name} is a premier ${vendor.category.toLowerCase()} based in ${vendor.city}. We specialize in bringing your dream wedding to life with flawless execution and an eye for perfection. Contact us to learn more about our services and how we can make your special day truly unforgettable.`}
@@ -207,7 +207,7 @@ export default function VendorDetailPage() {
       {/* Post-booking Success Toast */}
       {paymentSuccess && (
         <div className="fixed bottom-10 right-10 bg-emerald-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 animate-in slide-in-from-bottom-5 z-50">
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 bg-white/20 dark:bg-[var(--sw-surface)]/20 rounded-full flex items-center justify-center shrink-0">
             <Check className="w-5 h-5 text-white" />
           </div>
           <div>

@@ -149,8 +149,8 @@ export default function VenueDetailPage() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {venue.indoor && (
-                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 dark:border-white/10 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 backdrop-blur-sm">
-                    <div className="w-14 h-14 rounded-2xl bg-primary-50/80 flex items-center justify-center flex-shrink-0 text-primary-600">
+                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 dark:border-white/10 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 dark:bg-[var(--sw-surface)]/50 backdrop-blur-sm">
+                    <div className="w-14 h-14 rounded-2xl bg-primary-50/80 dark:bg-primary-500/10 flex items-center justify-center flex-shrink-0 text-primary-600">
                       <Building className="w-6 h-6 stroke-[1.5]" />
                     </div>
                     <div>
@@ -162,8 +162,8 @@ export default function VenueDetailPage() {
                   </div>
                 )}
                 {venue.outdoor && (
-                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 dark:border-white/10 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 backdrop-blur-sm">
-                    <div className="w-14 h-14 rounded-2xl bg-green-50/80 flex items-center justify-center flex-shrink-0 text-green-600">
+                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 dark:border-white/10 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 dark:bg-[var(--sw-surface)]/50 backdrop-blur-sm">
+                    <div className="w-14 h-14 rounded-2xl bg-green-50/80 dark:bg-green-500/10 flex items-center justify-center flex-shrink-0 text-green-600 dark:text-green-400">
                       <TreePine className="w-6 h-6 stroke-[1.5]" />
                     </div>
                     <div>
@@ -222,7 +222,7 @@ export default function VenueDetailPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {venue.pricePerPlateVeg && (
-                  <div className="p-6 rounded-[24px] border border-slate-100 dark:border-white/10 bg-white/50">
+                  <div className="p-6 rounded-[24px] border border-slate-100 dark:border-white/10 bg-white/50 dark:bg-[var(--sw-surface)]/50">
                     <p className="font-semibold text-slate-500 dark:text-stone-400 text-xs tracking-widest uppercase mb-2">Veg Menu</p>
                     <p className="text-3xl font-bold text-slate-900 dark:text-stone-100 mb-1">
                       {convertPriceString(venue.pricePerPlateVeg, currency)}
@@ -231,7 +231,7 @@ export default function VenueDetailPage() {
                   </div>
                 )}
                 {venue.pricePerPlateNonVeg && (
-                  <div className="p-6 rounded-[24px] border border-slate-100 dark:border-white/10 bg-white/50">
+                  <div className="p-6 rounded-[24px] border border-slate-100 dark:border-white/10 bg-white/50 dark:bg-[var(--sw-surface)]/50">
                     <p className="font-semibold text-slate-500 dark:text-stone-400 text-xs tracking-widest uppercase mb-2">Non-Veg Menu</p>
                     <p className="text-3xl font-bold text-slate-900 dark:text-stone-100 mb-1">
                       {convertPriceString(venue.pricePerPlateNonVeg, currency)}
@@ -240,7 +240,7 @@ export default function VenueDetailPage() {
                   </div>
                 )}
                 {venue.rentalCost && (
-                  <div className="p-6 rounded-[24px] border border-primary-100 bg-primary-50/30 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="p-6 rounded-[24px] border border-primary-100 dark:border-primary-500/20 bg-primary-50/30 dark:bg-primary-500/10 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <p className="font-semibold text-primary-600/80 text-xs tracking-widest uppercase mb-2">Venue Rental</p>
                       <p className="text-3xl font-bold text-slate-900 dark:text-stone-100 mb-1">
@@ -325,7 +325,7 @@ export default function VenueDetailPage() {
           <div className="bg-white dark:bg-[var(--sw-surface)] rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl border border-slate-100 dark:border-white/10 flex flex-col items-center">
             {verifyingPayment ? (
               <>
-                <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 mb-4">
+                <div className="w-16 h-16 rounded-full bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center text-primary-600 mb-4">
                   <Loader2 className="w-8 h-8 animate-spin" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 dark:text-stone-200 mb-2">Verifying Payment...</h3>
@@ -333,7 +333,7 @@ export default function VenueDetailPage() {
               </>
             ) : (
               <>
-                <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 animate-bounce">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4 animate-bounce">
                   <Check className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 dark:text-stone-200 mb-2">Payment Confirmed!</h3>

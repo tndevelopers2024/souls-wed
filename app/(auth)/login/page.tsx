@@ -58,7 +58,7 @@ export default function UnifiedLoginPage() {
 
 function LoginSkeleton() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-white/5">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[var(--sw-surface)]/5">
       <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
     </div>
   );
@@ -168,7 +168,7 @@ function LoginContent() {
       ? { from: "#7c3aed", to: "#6d28d9", glow: "rgba(124,58,237,0.25)", badge: "bg-violet-100 text-violet-700 border-violet-200" }
       : role === "vendor"
       ? { from: "#0ea5e9", to: "#0284c7", glow: "rgba(14,165,233,0.25)", badge: "bg-sky-100 text-sky-700 border-sky-200" }
-      : { from: "#f97316", to: "#ea580c", glow: "rgba(249,115,22,0.25)", badge: "bg-primary-100 text-primary-700 border-primary-200" };
+      : { from: "#f97316", to: "#ea580c", glow: "rgba(249,115,22,0.25)", badge: "bg-primary-100 dark:bg-primary-500/15 text-primary-700 border-primary-200 dark:border-primary-500/25" };
 
   return (
     <div
@@ -226,7 +226,7 @@ function LoginContent() {
           }}
         >
           {/* ── Role Tabs ── */}
-          <div className="flex border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5/60">
+          <div className="flex border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-[var(--sw-surface)]/5">
             {ROLES.map((r) => (
               <button
                 key={r.id}
@@ -297,7 +297,7 @@ function LoginContent() {
                     className="w-16 h-16 rounded-full flex items-center justify-center mb-4 text-2xl"
                     style={{ background: "#dcfce7" }}
                   >
-                    <Check className="w-8 h-8 text-emerald-600" />
+                    <Check className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-stone-200 mb-1">Access Granted</h3>
                   <p className="text-sm text-slate-500 dark:text-stone-400">Redirecting to your dashboard…</p>
@@ -317,7 +317,7 @@ function LoginContent() {
                 >
                   {/* Error */}
                   {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl p-3.5 flex gap-3 items-start text-red-700 text-xs">
+                    <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/25 rounded-xl p-3.5 flex gap-3 items-start text-red-700 dark:text-red-400 text-xs">
                       <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                       <span className="font-medium">{error}</span>
                     </div>

@@ -84,7 +84,7 @@ export default function ContactPage() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="lg:col-span-2"
           >
-            <div className="bg-white/80 dark:bg-[var(--sw-surface)]/80 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 shadow-[0_24px_60px_rgba(238,116,41,0.08)] border border-white">
+            <div className="bg-white/80 dark:bg-[var(--sw-surface)]/80 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 shadow-[0_24px_60px_rgba(238,116,41,0.08)] border border-white dark:border-white/10">
               <h2 className="text-xl font-extrabold mb-6" style={{ color: "var(--sw-navy)", fontFamily: "var(--font-heading)" }}>
                 Request a Consultation
               </h2>
@@ -92,20 +92,20 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
                   <div className="space-y-2">
                     <label htmlFor="firstName" className="block text-[10px] font-bold tracking-widest text-slate-500 dark:text-stone-400 uppercase ml-2 mb-1">First Name</label>
-                    <input id="firstName" name="firstName" type="text" className="w-full text-sm bg-white/50 border border-slate-200 dark:border-white/10/60 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="Your First Name" required />
+                    <input id="firstName" name="firstName" type="text" className="w-full text-sm bg-white/50 dark:bg-[var(--sw-surface)]/50 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="Your First Name" required />
                   </div>
                   <div className="space-y-1">
                     <label htmlFor="lastName" className="block text-[10px] font-bold tracking-widest text-slate-500 dark:text-stone-400 uppercase ml-2 mb-1">Last Name</label>
-                    <input id="lastName" name="lastName" type="text" className="w-full text-sm bg-white/50 border border-slate-200 dark:border-white/10/60 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="Your Last Name" required />
+                    <input id="lastName" name="lastName" type="text" className="w-full text-sm bg-white/50 dark:bg-[var(--sw-surface)]/50 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="Your Last Name" required />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <label htmlFor="email" className="block text-[10px] font-bold tracking-widest text-slate-500 dark:text-stone-400 uppercase ml-2 mb-1">Email Address</label>
-                  <input id="email" name="email" type="email" className="w-full text-sm bg-white/50 border border-slate-200 dark:border-white/10/60 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="your@email.com" required />
+                  <input id="email" name="email" type="email" className="w-full text-sm bg-white/50 dark:bg-[var(--sw-surface)]/50 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium shadow-sm" placeholder="your@email.com" required />
                 </div>
                 <div className="space-y-1">
                   <label htmlFor="message" className="block text-[10px] font-bold tracking-widest text-slate-500 dark:text-stone-400 uppercase ml-2 mb-1">Message</label>
-                  <textarea id="message" name="message" rows={4} className="w-full text-sm bg-white/50 border border-slate-200 dark:border-white/10/60 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium resize-none shadow-sm" placeholder="Tell us about your vision, preferred destinations, or any dates you have in mind..." required></textarea>
+                  <textarea id="message" name="message" rows={4} className="w-full text-sm bg-white/50 dark:bg-[var(--sw-surface)]/50 border border-slate-200 dark:border-white/10 rounded-xl px-5 py-3 outline-none focus:bg-white dark:focus:bg-[var(--sw-surface)] focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 dark:text-stone-200 placeholder-slate-400 font-medium resize-none shadow-sm" placeholder="Tell us about your vision, preferred destinations, or any dates you have in mind..." required></textarea>
                 </div>
                 <button 
                   type="button" 
