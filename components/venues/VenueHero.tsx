@@ -16,7 +16,7 @@ export default function VenueHero({ venue }: VenueHeroProps) {
       <div className="mb-4">
         <Link
           href="/venues"
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-800 dark:text-stone-200 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-800 dark:hover:text-stone-200 transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
           Back to Venues

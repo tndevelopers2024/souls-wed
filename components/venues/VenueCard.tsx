@@ -35,7 +35,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
                 <span className="text-xs font-bold text-slate-800 dark:text-stone-200 tracking-wide">Featured</span>
               </div>
             )}
-            <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-[var(--sw-surface)]/80 backdrop-blur-sm text-slate-400 dark:text-stone-500 hover:text-red-500 hover:bg-white dark:bg-[var(--sw-surface)] transition-colors" onClick={(e) => e.preventDefault()}>
+            <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-[var(--sw-surface)]/80 backdrop-blur-sm text-slate-400 dark:text-stone-500 hover:text-red-500 hover:bg-white dark:hover:bg-[var(--sw-surface)] transition-colors" onClick={(e) => e.preventDefault()}>
               <Heart className="w-4 h-4" />
             </button>
           </div>
@@ -73,7 +73,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
                   <span className="text-sm text-slate-500 dark:text-stone-400 capitalize">{venue.priceUnit}</span>
                 </div>
               </div>
-              <span className="px-5 py-2.5 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-stone-100 text-sm font-bold rounded-full transition-colors border border-slate-200 dark:border-white/10">
+              <span className="px-5 py-2.5 bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-900 dark:text-stone-100 text-sm font-bold rounded-full transition-colors border border-slate-200 dark:border-white/10">
                 Book +
               </span>
             </div>

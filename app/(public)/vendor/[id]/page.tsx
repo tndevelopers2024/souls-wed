@@ -104,7 +104,7 @@ export default function VendorDetailPage() {
             <div className="flex flex-col gap-6">
               <Link
                 href={`/vendors/${vendor.category.toLowerCase()}`}
-                className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:text-stone-100 transition-colors w-fit"
+                className="flex items-center gap-1.5 text-sm font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 transition-colors w-fit"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Back to {vendor.category}
@@ -170,7 +170,7 @@ export default function VendorDetailPage() {
             <div className="sticky top-20 z-40 bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-xl border-b border-slate-100 dark:border-white/10 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
               <div className="flex items-center gap-8 overflow-x-auto no-scrollbar pb-1">
                 <a href="#about" className="text-sm font-bold text-slate-900 dark:text-stone-100 border-b-2 border-slate-900 pb-1.5 whitespace-nowrap">About</a>
-                <a href="#gallery" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Portfolio</a>
+                <a href="#gallery" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Portfolio</a>
               </div>
             </div>
 

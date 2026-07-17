@@ -40,6 +40,8 @@
   /* Translucent chip/pill surfaces */
   --sw-chip-bg: rgba(255, 255, 255, 0.6);
   --sw-chip-bg-hover: rgba(255, 255, 255, 0.9);
+  /* Frosted scrim behind card text over photos */
+  --sw-card-scrim: linear-gradient(to top, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.8) 32%, rgba(255,255,255,0.45) 58%, rgba(255,255,255,0.12) 78%, rgba(255,255,255,0) 92%);
   /* Soft peach hero band used on directory pages */
   --sw-hero-gradient: linear-gradient(150deg, #fdf6f0 0%, #fceee3 40%, #f5dcc9 100%);
   /* Intro preloader overlay */
@@ -374,6 +376,7 @@ h6 {
   --sw-glass-panel-strong: rgba(27, 25, 23, 0.95);
   --sw-chip-bg: rgba(255, 255, 255, 0.07);
   --sw-chip-bg-hover: rgba(255, 255, 255, 0.14);
+  --sw-card-scrim: linear-gradient(to top, rgba(20,17,14,0.95) 0%, rgba(20,17,14,0.88) 32%, rgba(20,17,14,0.55) 58%, rgba(20,17,14,0.16) 78%, rgba(20,17,14,0) 92%);
   --sw-hero-gradient: linear-gradient(150deg, #241d18 0%, #2a211a 40%, #1c1613 100%);
   --sw-preloader-bg: #14110E;
   /* Brand accents (primary orange / gold) stay the same on purpose */

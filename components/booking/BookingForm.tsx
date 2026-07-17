@@ -276,7 +276,7 @@ export default function BookingForm({
               className={`flex-1 min-w-fit px-3 py-2.5 text-xs font-bold transition-colors rounded-xl ${
                 bookingType === type.value
                   ? "bg-white dark:bg-[var(--sw-surface)] text-slate-900 dark:text-stone-100 shadow-sm"
-                  : "text-slate-500 dark:text-stone-400 hover:text-slate-700 dark:text-stone-300"
+                  : "text-slate-500 dark:text-stone-400 hover:text-slate-700 dark:hover:text-stone-300"
               }`}
             >
               {type.label}

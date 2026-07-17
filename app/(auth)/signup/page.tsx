@@ -243,7 +243,7 @@ function SignupContent() {
                   router.replace(`?${params.toString()}`, { scroll: false });
                 }}
                 className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-bold transition-all cursor-pointer relative ${
-                  role === r.id ? "text-slate-900 dark:text-stone-100" : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300"
+                  role === r.id ? "text-slate-900 dark:text-stone-100" : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:hover:text-stone-300"
                 }`}
               >
                 <span className={`flex items-center gap-1.5 transition-all ${role === r.id ? "scale-110" : ""}`}>
@@ -434,7 +434,7 @@ function SignupContent() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300 transition-colors cursor-pointer"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:hover:text-stone-300 transition-colors cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -467,7 +467,7 @@ function SignupContent() {
                       <button
                         type="button"
                         onClick={() => alert("Google sign-up coming soon!")}
-                        className="w-full flex items-center justify-center gap-2 bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-stone-300 font-semibold py-2.5 rounded-2xl transition-colors text-sm shadow-sm cursor-pointer"
+                        className="w-full flex items-center justify-center gap-2 bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-stone-300 font-semibold py-2.5 rounded-2xl transition-colors text-sm shadow-sm cursor-pointer"
                       >
                         <svg className="w-4 h-4" viewBox="0 0 24 24">
                           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -500,7 +500,7 @@ function SignupContent() {
         <div className="mt-6 flex justify-center">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-800 dark:text-stone-200 transition-colors"
+            className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-800 dark:hover:text-stone-200 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to SoulsWed

@@ -305,7 +305,7 @@ export default function PublicVendorDirectory({
                   {activeFilters.length > 1 && (
                     <button
                       onClick={() => { setSearch(""); setActiveCity(""); setSort("Recommended"); }}
-                      className="text-xs font-semibold text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300 transition-colors underline"
+                      className="text-xs font-semibold text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:hover:text-stone-300 transition-colors underline"
                     >
                       Clear all
                     </button>
@@ -323,7 +323,7 @@ export default function PublicVendorDirectory({
                 className={`p-1.5 rounded-full transition-all ${
                   viewType === "grid"
                     ? "bg-white dark:bg-[var(--sw-surface)] shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300"
+                    : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:hover:text-stone-300"
                 }`}
                 aria-label="Grid view"
               >
@@ -334,7 +334,7 @@ export default function PublicVendorDirectory({
                 className={`p-1.5 rounded-full transition-all ${
                   viewType === "list"
                     ? "bg-white dark:bg-[var(--sw-surface)] shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300"
+                    : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:hover:text-stone-300"
                 }`}
                 aria-label="List view"
               >

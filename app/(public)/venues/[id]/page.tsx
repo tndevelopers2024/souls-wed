@@ -132,10 +132,10 @@ export default function VenueDetailPage() {
             <div className="sticky top-20 z-40 bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-xl border-b border-slate-100 dark:border-white/10 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
               <div className="flex items-center gap-8 overflow-x-auto no-scrollbar pb-1">
                 <a href="#areas" className="text-sm font-bold text-slate-900 dark:text-stone-100 border-b-2 border-slate-900 pb-1.5 whitespace-nowrap">Areas Available</a>
-                <a href="#about" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">About</a>
-                <a href="#gallery" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Gallery</a>
-                <a href="#pricing" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Pricing</a>
-                <a href="#reviews" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Reviews</a>
+                <a href="#about" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">About</a>
+                <a href="#gallery" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Gallery</a>
+                <a href="#pricing" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Pricing</a>
+                <a href="#reviews" className="text-sm font-medium text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 pb-1.5 whitespace-nowrap transition-colors">Reviews</a>
               </div>
             </div>
 

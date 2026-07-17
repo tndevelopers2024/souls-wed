@@ -55,7 +55,7 @@ export default function VendorCard({
 
       {/* Heart pill top-right */}
       <button
-        className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-sm text-slate-400 dark:text-stone-500 hover:text-red-500 hover:bg-white dark:bg-[var(--sw-surface)] transition-colors shadow-sm"
+        className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-sm text-slate-400 dark:text-stone-500 hover:text-red-500 hover:bg-white dark:hover:bg-[var(--sw-surface)] transition-colors shadow-sm"
         onClick={(e) => e.preventDefault()}
       >
         <Heart className="w-4 h-4" />
@@ -85,7 +85,7 @@ export default function VendorCard({
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to top, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.8) 32%, rgba(255,255,255,0.45) 58%, rgba(255,255,255,0.12) 78%, rgba(255,255,255,0) 92%)",
+              "var(--sw-card-scrim)",
           }}
         />
       </div>
@@ -138,7 +138,7 @@ export default function VendorCard({
             </div>
           </div>
           <span
-            className="text-[14px] font-bold px-5 py-2.5 rounded-full text-slate-900 dark:text-stone-100 bg-white dark:bg-[var(--sw-surface)] shadow-sm hover:bg-slate-50 dark:bg-white/5 transition-colors"
+            className="text-[14px] font-bold px-5 py-2.5 rounded-full text-slate-900 dark:text-stone-100 bg-white dark:bg-[var(--sw-surface)] shadow-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
           >
             Book +
           </span>
