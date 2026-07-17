@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 import ThemeToggle from "@/components/shared/ThemeToggle";
+import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
 
 interface VendorSession {
@@ -1491,67 +1492,36 @@ export default function VendorDashboard() {
                       const price = venue.price || venue.pricePerPlateVeg || "—";
                       const rating = venue.rating || 0;
                       return (
-                        <div key={venue._id} className="group relative rounded-3xl overflow-hidden border border-slate-200 dark:border-stone-800 shadow-none flex flex-col h-[380px] bg-white dark:bg-stone-900/60 transition-shadow hover:shadow-none">
-
-                          {/* Image Section (Top half) */}
-                          <div className="relative h-[200px] w-full bg-slate-100 dark:bg-stone-800 overflow-hidden shrink-0">
-                            {thumb ? (
-                              <img
-                                src={thumb}
-                                alt={venue.name}
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
-                              />
-                            ) : (
-                              <div className={`absolute inset-0 flex items-center justify-center text-xs font-bold ${isDarkMode ? "bg-stone-800 text-stone-500" : "bg-stone-200 text-stone-400"}`}>
-                                NO IMAGE
-                              </div>
-                            )}
-
-                            {venue.featured && (
-                              <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-none" style={{ background: "var(--sw-primary)" }}>
-                                <Star className="w-3 h-3 mr-1 inline-block" /> Featured
-                              </div>
-                            )}
-
-                            <span className={`absolute top-3 right-3 z-20 text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-none ${venue.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
-                              {venue.active ? "Live" : "Pending"}
-                            </span>
-                          </div>
-
-                          {/* Content Section (Bottom half - Solid White) */}
-                          <div className="p-4 flex flex-col flex-1">
-                            <h3 className="text-[18px] font-bold leading-snug text-slate-900 line-clamp-1 mb-1" style={{ fontFamily: "var(--font-heading, serif)" }}>
-                              {venue.name}
-                            </h3>
-                            <p className="text-[11px] text-slate-500 font-medium mb-3 line-clamp-1 flex items-center gap-1">
-                              <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                              {venue.location || venue.city}{venue.country ? `, ${venue.country}` : ""}
-                            </p>
-
-                            {/* Pills row */}
-                            <div className="flex flex-wrap gap-1.5 mb-3">
-                              <span className="flex items-center gap-1 text-[9px] font-bold px-2 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100 shadow-none">
-                                <Users className="w-3 h-3 mr-1 inline-block" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax
-                              </span>
-                              <span className="flex items-center gap-1 text-[9px] font-bold px-2 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100 shadow-none">
-                                <BedDouble className="w-3 h-3 mr-1 inline-block" /> {venue.rooms || 0} Rooms
-                              </span>
-                              <span className="text-[9px] font-bold px-2 py-1 rounded-md bg-orange-50 text-orange-600 border border-orange-100 shadow-none">
-                                {venue.type || "Venue"}
-                              </span>
-                            </div>
-
-                            {/* Price + Edit button */}
-                            <div className="flex items-end justify-between mt-auto pt-3 border-t border-slate-100">
-                              <div className="flex flex-col">
-                                <span className="text-[9px] uppercase tracking-widest font-black text-slate-400 mb-0.5">starting from</span>
-                                <div className="flex items-baseline gap-1">
-                                  <span className="text-[18px] font-bold text-slate-900 leading-none">
-                                    ₹{Number(price).toLocaleString("en-IN") || "—"}
-                                  </span>
-                                  <span className="text-[10px] font-bold text-slate-400 ml-0.5 capitalize">/{venue.priceUnit || "per day"}</span>
+                        <div key={venue._id} className="group h-[420px]">
+                          <ListingCard
+                            name={venue.name}
+                            image={thumb}
+                            location={`${venue.location || venue.city}${venue.country ? `, ${venue.country}` : ""}`}
+                            rating={rating}
+                            reviewCount={venue.reviewCount}
+                            priceDisplay={`₹${Number(price).toLocaleString("en-IN") || "—"}`}
+                            unit={`/${venue.priceUnit || "per day"}`}
+                            priceLabel="starting from"
+                            badge={
+                              venue.featured ? (
+                                <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                  <Star className="w-3 h-3 inline-block" /> Featured
                                 </div>
-                              </div>
+                              ) : undefined
+                            }
+                            topRight={
+                              <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${venue.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                {venue.active ? "Live" : "Pending"}
+                              </span>
+                            }
+                            tags={
+                              <>
+                                <CardTag><Users className="w-3 h-3" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax</CardTag>
+                                <CardTag><BedDouble className="w-3 h-3" /> {venue.rooms || 0} Rooms</CardTag>
+                                <CardTag tone="accent">{venue.type || "Venue"}</CardTag>
+                              </>
+                            }
+                            action={
                               <div className="flex gap-2">
                                 <button
                                   onClick={(e) => {
@@ -1560,20 +1530,20 @@ export default function VendorDashboard() {
                                       setVenues(prev => prev.filter(v => v._id !== venue._id));
                                     }
                                   }}
-                                  className="flex items-center justify-center w-8 h-8 rounded-full text-red-500 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-none"
+                                  className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
                                   title="Delete Venue"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => openEditVenue(venue)}
-                                  className="text-[11px] font-bold px-4 py-2 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-none"
+                                  className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
                                 >
-                                  Edit <Edit2 className="w-3 h-3 ml-1 inline-block" />
+                                  Edit <Edit2 className="w-3 h-3 inline-block" />
                                 </button>
                               </div>
-                            </div>
-                          </div>
+                            }
+                          />
                         </div>
                       );
                     })}
@@ -2112,49 +2082,30 @@ export default function VendorDashboard() {
                       </div>
                     ) : (
                       services.filter(s => s.category === activeTab).map((service) => (
-                        <div key={service.serviceId} className="group relative rounded-3xl overflow-hidden border border-slate-200 dark:border-stone-800 shadow-none flex flex-col h-[340px] bg-white dark:bg-stone-900/60 transition-shadow hover:shadow-none">
-                          
-                          {/* Image Section (Top half) */}
-                          <div className="relative h-[180px] w-full bg-slate-100 overflow-hidden shrink-0">
-                            {service.image ? (
-                              <Image src={service.image} alt={service.name} fill className="object-cover transition-transform duration-700" />
-                            ) : (
-                              <div className="absolute inset-0 flex items-center justify-center text-xs font-bold bg-stone-200 text-stone-400">
-                                NO IMAGE
-                              </div>
-                            )}
-
-                            {service.featured && (
-                              <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-none" style={{ background: "var(--sw-primary)" }}>
-                                <Star className="w-3 h-3 mr-1 inline-block" /> Featured
-                              </div>
-                            )}
-
-                            <span className={`absolute top-3 right-3 z-20 text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-none ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
-                              {service.active ? "Live" : "Pending"}
-                            </span>
-                          </div>
-
-                          {/* Content Section (Bottom half - Solid White) */}
-                          <div className="p-4 flex flex-col flex-1">
-                            <h3 className="text-[18px] font-bold leading-snug text-slate-900 line-clamp-1 mb-1.5" style={{ fontFamily: "var(--font-heading)" }}>
-                              {service.name}
-                            </h3>
-
-                            <div className="flex items-center gap-1.5 mb-4">
-                              <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                              <span className="text-[12px] font-medium text-slate-600 line-clamp-1">{service.city}</span>
-                            </div>
-
-                            <div className="flex items-end justify-between mt-auto pt-3 border-t border-slate-100">
-                              <div className="flex flex-col">
-                                <span className="text-[9px] uppercase font-black tracking-widest text-slate-400 mb-0.5">starting at</span>
-                                <div className="flex items-baseline gap-1">
-                                  <span className="text-[18px] font-bold text-slate-900 leading-none tracking-tight">₹{service.priceFrom?.toLocaleString("en-IN") || 0}</span>
-                                  {service.priceUnit && <span className="text-[10px] font-bold text-slate-400 capitalize">/{service.priceUnit}</span>}
+                        <div key={service.serviceId} className="group h-[420px]">
+                          <ListingCard
+                            name={service.name}
+                            image={service.image || ""}
+                            location={service.city}
+                            rating={service.rating || 0}
+                            reviewCount={service.reviewCount}
+                            priceDisplay={`₹${service.priceFrom?.toLocaleString("en-IN") || 0}`}
+                            unit={service.priceUnit ? `/${service.priceUnit}` : undefined}
+                            priceLabel="starting at"
+                            badge={
+                              service.featured ? (
+                                <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                  <Star className="w-3 h-3 inline-block" /> Featured
                                 </div>
-                              </div>
-                              
+                              ) : undefined
+                            }
+                            topRight={
+                              <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                {service.active ? "Live" : "Pending"}
+                              </span>
+                            }
+                            tags={<CardTag tone="accent">{service.category}</CardTag>}
+                            action={
                               <div className="flex gap-2">
                                 <button
                                   onClick={(e) => {
@@ -2163,20 +2114,20 @@ export default function VendorDashboard() {
                                       setServices(prev => prev.filter(v => v.serviceId !== service.serviceId));
                                     }
                                   }}
-                                  className="flex items-center justify-center w-8 h-8 rounded-full text-red-500 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-none"
+                                  className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
                                   title="Delete Service"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => openEditService(service)}
-                                  className="text-[11px] font-bold px-4 py-2 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-none"
+                                  className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
                                 >
-                                  Edit <Edit2 className="w-3 h-3 ml-1 inline-block" />
+                                  Edit <Edit2 className="w-3 h-3 inline-block" />
                                 </button>
                               </div>
-                            </div>
-                          </div>
+                            }
+                          />
                         </div>
                       ))
                     )}

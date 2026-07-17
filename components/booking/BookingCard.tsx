@@ -151,7 +151,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary-50 to-primary-100/50" />
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary-500/10 to-primary-500/5" />
       )}
 
       {/* Status Badge top-left */}
@@ -169,7 +169,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
         {[ { blur: 1, solid: 55, fade: 100 }, { blur: 3, solid: 42, fade: 78 }, { blur: 6, solid: 28, fade: 58 }, { blur: 12, solid: 16, fade: 40 }, { blur: 24, solid: 6, fade: 24 } ].map((l, idx) => (
           <div key={idx} className="absolute inset-0" style={{ backdropFilter: `blur(${l.blur}px)`, WebkitBackdropFilter: `blur(${l.blur}px)`, maskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)`, WebkitMaskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)` }} />
         ))}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0.5) 65%, rgba(255,255,255,0.1) 85%, rgba(255,255,255,0) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "var(--sw-card-scrim)" }} />
       </div>
 
       {/* Content Area */}
@@ -182,7 +182,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
           </h3>
         </div>
 
-        <div className="flex flex-col gap-2.5 mb-4 bg-white/60 dark:bg-[var(--sw-surface)]/60 backdrop-blur-sm rounded-xl p-3 border border-white/40 shadow-sm">
+        <div className="flex flex-col gap-2.5 mb-4 bg-white/60 dark:bg-[var(--sw-surface)]/60 backdrop-blur-sm rounded-xl p-3 border border-slate-900/5 dark:border-white/10 shadow-sm">
           {renderDate()}
           <div className="flex items-center gap-4">
             {booking.bookingType === "venue" && booking.guestCount && (

@@ -7,8 +7,10 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
+import { Trash2 } from "lucide-react";
 import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2, Wand2, Eye, EyeOff } from "lucide-react";
 import ThemeToggle from "@/components/shared/ThemeToggle";
+import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
 
 interface AdminSession {
@@ -1680,42 +1682,51 @@ export default function AdminDashboard() {
                       No venues matching "{searchTerm}"
                     </div>
                   ) : (
-                    <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
-                      <table className="w-full text-left text-xs border-collapse">
-                        <thead>
-                          <tr className={`border-b text-stone-500 font-bold ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
-                            <th className="p-4">Venue Details</th>
-                            <th className="p-4">City / Style</th>
-                            <th className="p-4">Guests Cap</th>
-                            <th className="p-4">Review Star</th>
-                            <th className="p-4">Verify Flag</th>
-                            <th className="p-4">Featured Flag</th>
-                            <th className="p-4">Active State</th>
-                            <th className="p-4 text-center">Delete</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredVenuesList.map((v) => (
-                            <tr key={v._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
-                            }`}>
-                              <td className="p-4">
-                                <p className={`font-black text-sm leading-tight ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.name}</p>
-                                <p className="text-[9px] text-stone-400 font-mono mt-1">CODE: {v.venueId}</p>
-                              </td>
-                              <td className="p-4">
-                                <p className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{v.city}</p>
-                                <span className={`text-[9px] font-black border px-2 py-0.5 rounded-full mt-1.5 inline-block uppercase tracking-wide ${
-                                  isDarkMode ? "bg-stone-800 border-stone-700 text-stone-400" : "bg-stone-100 border-stone-200 text-stone-600"
-                                }`}>{v.type}</span>
-                              </td>
-                              <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
-                                {v.minGuests}–{v.maxGuests} pax
-                              </td>
-                              <td className="p-4">
-                                <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>Rating: {v.rating} ({v.reviewCount})</span>
-                              </td>
-                              <td className="p-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                      {filteredVenuesList.map((v) => (
+                        <div key={v._id} className="group h-[470px]">
+                          <ListingCard
+                            name={v.name}
+                            image={v.image || (v.gallery && v.gallery[0]) || ""}
+                            location={v.city}
+                            rating={v.rating || 0}
+                            reviewCount={v.reviewCount}
+                            priceDisplay={v.price ? `₹${Number(v.price).toLocaleString("en-IN")}` : "—"}
+                            unit={`/${v.priceUnit || "per day"}`}
+                            priceLabel="starting from"
+                            badge={
+                              v.featured ? (
+                                <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                  <Star className="w-3 h-3 inline-block" /> Featured
+                                </div>
+                              ) : undefined
+                            }
+                            topRight={
+                              <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${v.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                {v.active ? "Live" : "Hidden"}
+                              </span>
+                            }
+                            tags={
+                              <>
+                                <CardTag><Users className="w-3 h-3" /> {v.minGuests}–{v.maxGuests} pax</CardTag>
+                                {v.type && <CardTag tone="accent">{v.type}</CardTag>}
+                              </>
+                            }
+                            action={
+                              <button
+                                onClick={async () => {
+                                  if (!confirm(`Delete "${v.name}" permanently?`)) return;
+                                  await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
+                                  fetchAllData();
+                                }}
+                                className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                title="Delete venue"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            }
+                            footer={
+                              <div className="flex flex-wrap gap-1.5">
                                 <button
                                   onClick={async () => {
                                     await fetch("/api/venues", {
@@ -1725,16 +1736,14 @@ export default function AdminDashboard() {
                                     });
                                     fetchAllData();
                                   }}
-                                  className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
+                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.verified
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
-                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                                      : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
                                   }`}
                                 >
                                   {v.verified ? "Verified" : "Pending"}
                                 </button>
-                              </td>
-                              <td className="p-4">
                                 <button
                                   onClick={async () => {
                                     await fetch("/api/venues", {
@@ -1744,16 +1753,14 @@ export default function AdminDashboard() {
                                     });
                                     fetchAllData();
                                   }}
-                                  className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
+                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.featured
-                                      ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:hover:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
-                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                      ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30"
+                                      : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
                                   }`}
                                 >
                                   {v.featured ? "Featured" : "Regular"}
                                 </button>
-                              </td>
-                              <td className="p-4">
                                 <button
                                   onClick={async () => {
                                     await fetch("/api/venues", {
@@ -1763,31 +1770,19 @@ export default function AdminDashboard() {
                                     });
                                     fetchAllData();
                                   }}
-                                  className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
+                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                     v.active
-                                      ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900"
-                                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:hover:bg-red-900/20 dark:text-red-400 dark:border-red-900"
+                                      ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
+                                      : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30"
                                   }`}
                                 >
                                   {v.active ? "Live" : "Hidden"}
                                 </button>
-                              </td>
-                              <td className="p-4 text-center">
-                                <button
-                                  onClick={async () => {
-                                    if (!confirm(`Delete "${v.name}" permanently?`)) return;
-                                    await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
-                                    fetchAllData();
-                                  }}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-450 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
-                                >
-                                  [Delete]
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                              </div>
+                            }
+                          />
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -1815,63 +1810,77 @@ export default function AdminDashboard() {
                         No {activeTab} matching "{searchTerm}"
                       </div>
                     ) : (
-                      <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
-                        <table className="w-full text-left text-xs border-collapse">
-                          <thead className={`${isDarkMode ? 'bg-stone-900/50 text-stone-400' : 'bg-stone-50 text-stone-500'} font-bold border-b ${dividerClass}`}>
-                            <tr>
-                              <th className="p-4 tracking-wider uppercase">Name & Location</th>
-                              <th className="p-4 tracking-wider uppercase">Provider</th>
-                              <th className="p-4 tracking-wider uppercase text-center">Status (Verified)</th>
-                              <th className="p-4 tracking-wider uppercase text-center">Visibility (Live)</th>
-                              <th className="p-4 tracking-wider uppercase text-center">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
-                            {filteredServices.map(s => (
-                              <tr key={s._id} className={`hover:bg-stone-50 dark:hover:bg-stone-800/30 transition-colors ${!s.active ? 'opacity-60 grayscale' : ''}`}>
-                                <td className="p-4">
-                                  <p className={`font-bold text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-900'}`}>{s.name}</p>
-                                  <p className="text-[10px] text-stone-400 font-semibold mt-0.5">{s.city}</p>
-                                </td>
-                                <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
-                                  Vendor ID: {s.vendorId}
-                                </td>
-                                <td className="p-4 text-center">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                        {filteredServices.map(s => (
+                          <div key={s._id} className={`group h-[450px] ${!s.active ? "opacity-70" : ""}`}>
+                            <ListingCard
+                              name={s.name}
+                              image={s.image || ""}
+                              location={s.city}
+                              rating={s.rating || 0}
+                              reviewCount={s.reviewCount}
+                              priceDisplay={`₹${Number(s.priceFrom || 0).toLocaleString("en-IN")}`}
+                              unit={s.priceUnit ? `/${s.priceUnit}` : undefined}
+                              priceLabel="starting at"
+                              badge={
+                                s.featured ? (
+                                  <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                    <Star className="w-3 h-3 inline-block" /> Featured
+                                  </div>
+                                ) : undefined
+                              }
+                              topRight={
+                                <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${s.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                  {s.active ? "Live" : "Hidden"}
+                                </span>
+                              }
+                              tags={<CardTag tone="accent">{s.category}</CardTag>}
+                              action={
+                                <button
+                                  onClick={() => handleDeleteService(s.serviceId)}
+                                  className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                  title="Delete listing"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              }
+                              footer={
+                                <div className="flex flex-wrap gap-1.5">
                                   <button
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, !s.verified, s.featured, s.active)}
-                                    className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                       s.verified
-                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-900"
-                                        : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900"
+                                        ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                                        : "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
                                     }`}
                                   >
                                     {s.verified ? "Verified" : "Pending"}
                                   </button>
-                                </td>
-                                <td className="p-4 text-center">
+                                  <button
+                                    onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, !s.featured, s.active)}
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
+                                      s.featured
+                                        ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30"
+                                        : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
+                                    }`}
+                                  >
+                                    {s.featured ? "Featured" : "Regular"}
+                                  </button>
                                   <button
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, s.featured, !s.active)}
-                                    className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
                                       s.active
-                                        ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900"
-                                        : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100 dark:hover:bg-red-900/20 dark:text-red-400 dark:border-red-900"
+                                        ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
+                                        : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30"
                                     }`}
                                   >
                                     {s.active ? "Live" : "Hidden"}
                                   </button>
-                                </td>
-                                <td className="p-4 text-center">
-                                  <button
-                                    onClick={() => handleDeleteService(s.serviceId)}
-                                    className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-450 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
-                                  >
-                                    [Delete]
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                                </div>
+                              }
+                            />
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>

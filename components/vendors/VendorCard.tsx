@@ -1,7 +1,7 @@
-import Image from "@/components/shared/CustomImage";
-import { MapPin, Star, Heart } from "lucide-react";
-import { useCurrency } from "@/lib/CurrencyContext";
-import { convertPriceString } from "@/lib/currency";
+"use client";
+
+import { Heart } from "lucide-react";
+import ListingCard from "@/components/shared/ListingCard";
 
 interface VendorCardProps {
   id: string | number;
@@ -16,8 +16,11 @@ interface VendorCardProps {
   image: string;
 }
 
+/**
+ * Public-facing listing card — the shared ListingCard with the shortlist heart
+ * and a "Book +" control.
+ */
 export default function VendorCard({
-  id,
   name,
   location,
   price,
@@ -28,122 +31,31 @@ export default function VendorCard({
   badge,
   image,
 }: VendorCardProps) {
-  const { currency } = useCurrency();
-
   return (
-    <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 dark:border-white/10 w-full h-full bg-white dark:bg-[var(--sw-surface)] [transform:translateZ(0)]">
-      <Image
-        src={image}
-        alt={name}
-        fill
-        sizes="(max-width: 640px) 85vw, (max-width: 768px) 300px, 340px"
-        className="object-cover transition-transform duration-700 group-hover:scale-105"
-      />
-
-      {/* Top Left Badge or Rating */}
-      {badge ? (
-        badge
-      ) : rating > 0 ? (
-        <div
-          className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm"
-          style={{ background: "var(--sw-chip-bg-hover)", backdropFilter: "blur(10px)" }}
+    <ListingCard
+      name={name}
+      image={image}
+      location={location}
+      price={price}
+      unit={unit}
+      rating={rating}
+      reviewCount={reviewCount}
+      tags={tags}
+      badge={badge}
+      topRight={
+        <button
+          className="p-2 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-sm text-slate-400 dark:text-stone-500 hover:text-red-500 hover:bg-white dark:hover:bg-[var(--sw-surface)] transition-colors shadow-sm"
+          onClick={(e) => e.preventDefault()}
+          aria-label="Shortlist"
         >
-          <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
-          <span className="text-slate-800 dark:text-stone-200">{rating.toFixed(1)}</span>
-        </div>
-      ) : null}
-
-      {/* Heart pill top-right */}
-      <button
-        className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-sm text-slate-400 dark:text-stone-500 hover:text-red-500 hover:bg-white dark:hover:bg-[var(--sw-surface)] transition-colors shadow-sm"
-        onClick={(e) => e.preventDefault()}
-      >
-        <Heart className="w-4 h-4" />
-      </button>
-
-      {/* Progressive frosted blur */}
-      <div className="absolute inset-x-0 bottom-0 h-[69%] z-10 pointer-events-none">
-        {[
-          { blur: 1, solid: 55, fade: 100 },
-          { blur: 3, solid: 42, fade: 78 },
-          { blur: 6, solid: 28, fade: 58 },
-          { blur: 12, solid: 16, fade: 40 },
-          { blur: 24, solid: 6, fade: 24 },
-        ].map((l, idx) => (
-          <div
-            key={idx}
-            className="absolute inset-0"
-            style={{
-              backdropFilter: `blur(${l.blur}px)`,
-              WebkitBackdropFilter: `blur(${l.blur}px)`,
-              maskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)`,
-              WebkitMaskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)`,
-            }}
-          />
-        ))}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "var(--sw-card-scrim)",
-          }}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="absolute inset-x-0 bottom-0 z-20 px-4 pt-5 pb-4 flex flex-col">
-        <h3 className="text-[22px] font-bold leading-snug text-slate-900 dark:text-stone-100 line-clamp-2 mb-1" style={{ fontFamily: "var(--font-heading)" }}>
-          {name}
-        </h3>
-
-        <div className="flex items-center gap-1 mb-1">
-          <MapPin className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400 flex-shrink-0" />
-          <span className="text-[13px] font-medium text-slate-600 dark:text-stone-300 line-clamp-1">{location}</span>
-        </div>
-
-        {/* Rating in content area */}
-        {rating > 0 && (
-          <div className="flex items-center mb-3 mt-1">
-            <div className="flex items-center gap-0.5 mr-1.5">
-              {[...Array(5)].map((_, idx) => (
-                <Star
-                  key={idx}
-                  className="w-3.5 h-3.5"
-                  style={{ color: "var(--sw-secondary)" }}
-                  fill={idx < Math.round(rating) ? "var(--sw-secondary)" : "transparent"}
-                />
-              ))}
-            </div>
-            <span className="text-[13px] font-bold text-slate-800 dark:text-stone-200">{rating.toFixed(1)}</span>
-            {reviewCount !== undefined && (
-              <span className="text-[13px] text-slate-500 dark:text-stone-400 font-medium ml-1">({reviewCount} reviews)</span>
-            )}
-          </div>
-        )}
-
-        {tags && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {tags}
-          </div>
-        )}
-
-        <div className="flex items-end justify-between mt-auto">
-          <div className="flex flex-col">
-            <span className="text-[11px] font-medium text-slate-500 dark:text-stone-400 block mb-0.5">from</span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[22px] font-bold text-slate-900 dark:text-stone-100 leading-none tracking-tight">
-                {convertPriceString(price, currency)}
-              </span>
-              <span className="text-[12px] font-medium text-slate-500 dark:text-stone-400 capitalize">{unit}</span>
-            </div>
-          </div>
-          <span
-            className="text-[14px] font-bold px-5 py-2.5 rounded-full text-slate-900 dark:text-stone-100 bg-white dark:bg-[var(--sw-surface)] shadow-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
-          >
-            Book +
-          </span>
-        </div>
-      </div>
-    </div>
+          <Heart className="w-4 h-4" />
+        </button>
+      }
+      action={
+        <span className="text-[14px] font-bold px-5 py-2.5 rounded-full text-slate-900 dark:text-stone-100 bg-white dark:bg-[var(--sw-surface)] shadow-sm hover:bg-slate-50 dark:hover:bg-white/5 transition-colors whitespace-nowrap">
+          Book +
+        </span>
+      }
+    />
   );
 }

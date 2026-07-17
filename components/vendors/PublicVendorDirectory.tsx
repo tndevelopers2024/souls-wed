@@ -12,6 +12,7 @@ import {
 import { formatAsCurrency } from "@/lib/currency";
 import { useCurrency } from "@/lib/CurrencyContext";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
+import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 
 export interface PublicVendor {
   _id: string;
@@ -529,7 +530,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
         <div className="flex-1 flex flex-col justify-between py-1">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-bold text-white">{vendor.category}</span>
+              <span className="rounded-full bg-slate-900 dark:bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white">{vendor.category}</span>
               {rating > 0 && (
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-700 dark:text-stone-300">
                   <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
@@ -543,7 +544,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
               )}
             </div>
             <Link href={detailHref}>
-              <h2 className="text-xl font-extrabold text-slate-950 hover:text-primary-600 transition-colors leading-tight">
+              <h2 className="text-xl font-extrabold text-slate-950 dark:text-stone-100 hover:text-primary-600 transition-colors leading-tight">
                 {vendor.businessName || vendor.name}
               </h2>
             </Link>
@@ -558,11 +559,11 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
           <div className="flex items-end justify-between mt-3">
             <div>
               <span className="block text-[10px] font-bold uppercase text-slate-400 dark:text-stone-500">Starts from</span>
-              <span className="text-lg font-black text-slate-950">
+              <span className="text-lg font-black text-slate-950 dark:text-stone-100">
                 {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
               </span>
             </div>
-            <Link href={detailHref} className="rounded-full bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-600">
+            <Link href={detailHref} className="rounded-full bg-slate-900 dark:bg-white/10 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-600">
               View Details
             </Link>
           </div>
@@ -572,79 +573,49 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
   }
 
   return (
-    <article className="group relative rounded-[28px] overflow-hidden border border-slate-100 dark:border-white/10 bg-white dark:bg-[var(--sw-surface)] shadow-sm min-h-[460px]">
-      <Image
-        src={image}
-        alt={vendor.businessName || vendor.name}
-        fill
-        sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 31vw"
-        className="object-cover transition-transform duration-700 group-hover:scale-105"
-      />
-
-      <div className="absolute top-4 left-4 z-20 flex gap-2">
-        {vendor.featured && (
-          <span className="rounded-full bg-primary-500 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
-            Featured
-          </span>
-        )}
-        {vendor.verified && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400 shadow-sm">
-            <BadgeCheck className="h-3.5 w-3.5" />
-            Verified
-          </span>
-        )}
-      </div>
-
-      <button className="absolute top-4 right-4 z-20 h-9 w-9 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 text-slate-400 dark:text-stone-500 shadow-sm transition-colors hover:text-red-500">
-        <Heart className="m-auto h-4 w-4" />
-      </button>
-
-      <div className="absolute inset-x-0 bottom-0 z-10 h-[74%] bg-gradient-to-t from-white via-white/88 to-transparent" />
-
-      <div className="absolute inset-x-0 bottom-0 z-20 p-5">
-        <div className="mb-3 flex flex-wrap gap-2">
-          <span className="rounded-full bg-slate-900 px-3 py-1.5 text-[11px] font-bold text-white">
-            {vendor.category}
-          </span>
-          {rating > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white dark:bg-[var(--sw-surface)] px-3 py-1.5 text-[11px] font-bold text-slate-800 dark:text-stone-200 shadow-sm">
-              <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-              {rating.toFixed(1)} ({vendor.reviewCount || 0})
-            </span>
-          )}
-        </div>
-
-        <Link href={detailHref}>
-          <h2 className="line-clamp-2 text-2xl font-extrabold leading-tight text-slate-950 hover:text-primary-600 transition-colors">
-            {vendor.businessName || vendor.name}
-          </h2>
-        </Link>
-        <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-stone-300">
-          <MapPin className="h-4 w-4 text-primary-500" />
-          <span>{vendor.city}</span>
-        </div>
-
-        {vendor.description && (
-          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-stone-300">
-            {vendor.description}
-          </p>
-        )}
-
-        <div className="mt-5 flex items-end justify-between gap-4">
-          <div>
-            <span className="block text-[11px] font-bold uppercase text-slate-400 dark:text-stone-500">Starts from</span>
-            <span className="text-xl font-black text-slate-950">
-              {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
-            </span>
-          </div>
-          <Link
-            href={detailHref}
-            className="rounded-full bg-slate-900 px-5 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600"
+    <Link href={detailHref} className="block group h-[540px]">
+      <ListingCard
+        name={vendor.businessName || vendor.name}
+        image={image}
+        location={vendor.city}
+        rating={rating}
+        reviewCount={vendor.reviewCount || 0}
+        priceDisplay={vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
+        priceLabel="from"
+        imageSizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 31vw"
+        badge={
+          (vendor.featured || vendor.verified) ? (
+            <div className="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
+              {vendor.featured && (
+                <span className="rounded-full bg-primary-500 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
+                  Featured
+                </span>
+              )}
+              {vendor.verified && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400 shadow-sm backdrop-blur-sm">
+                  <BadgeCheck className="h-3.5 w-3.5" />
+                  Verified
+                </span>
+              )}
+            </div>
+          ) : undefined
+        }
+        topRight={
+          <button
+            className="h-9 w-9 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 backdrop-blur-sm text-slate-400 dark:text-stone-500 shadow-sm transition-colors hover:text-red-500"
+            onClick={(e) => e.preventDefault()}
+            aria-label="Shortlist"
           >
-            Book
-          </Link>
-        </div>
-      </div>
-    </article>
+            <Heart className="m-auto h-4 w-4" />
+          </button>
+        }
+        tags={<CardTag tone="accent">{vendor.category}</CardTag>}
+        action={
+          <span className="rounded-full bg-white dark:bg-[var(--sw-surface)] px-5 py-2.5 text-[14px] font-bold text-slate-900 dark:text-stone-100 shadow-sm transition-colors hover:bg-slate-50 dark:hover:bg-white/5 whitespace-nowrap">
+            Book +
+          </span>
+        }
+      />
+    </Link>
   );
 }
