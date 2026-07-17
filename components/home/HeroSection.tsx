@@ -82,7 +82,7 @@ export default function HeroSection() {
         />
         <div
           className="orb w-56 h-56 bottom-32 left-1/3"
-          style={{ background: "var(--sw-navy)", animationDelay: "4s" }}
+          style={{ background: "var(--sw-ink)", animationDelay: "4s" }}
         />
 
         {/* Content */}
@@ -93,7 +93,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="glass inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 text-sm font-medium"
-            style={{ color: "rgba(255,255,255,0.9)" }}
+            style={{ color: "var(--sw-chip-bg-hover)" }}
           >
             <Sparkles className="w-4 h-4 inline-block mr-1" style={{ color: "var(--sw-secondary)" }} />
             Flawless Moves. Perfect Events.
@@ -150,7 +150,7 @@ export default function HeroSection() {
             transition={{ duration: 0.7, delay: 0.9, ease: [0.4, 0, 0.2, 1] }}
             className="w-full max-w-5xl xl:max-w-6xl"
           >
-            <div className="bg-white/95 backdrop-blur-md rounded-[32px] md:rounded-full p-2 md:p-2.5 shadow-2xl border border-white/30 flex flex-col md:flex-row items-center relative z-20 w-full">
+            <div className="bg-white/95 dark:bg-[var(--sw-surface)]/95 backdrop-blur-md rounded-[32px] md:rounded-full p-2 md:p-2.5 shadow-2xl border border-white/30 flex flex-col md:flex-row items-center relative z-20 w-full">
 
               {/* Destination */}
               <div className="flex-1 w-full md:w-auto px-6 py-2.5 hover:bg-gray-100/60 rounded-full cursor-pointer transition-colors flex flex-col justify-center items-start text-left group relative">

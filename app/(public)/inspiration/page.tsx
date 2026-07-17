@@ -30,7 +30,7 @@ export default function InspirationPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-lg text-slate-600 max-w-2xl mx-auto"
+            className="text-lg text-slate-600 dark:text-stone-300 max-w-2xl mx-auto"
           >
             Discover breathtaking aesthetics, trendsetting designs, and timeless elegance curated from our finest global celebrations.
           </motion.p>

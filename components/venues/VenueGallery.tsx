@@ -22,14 +22,14 @@ export default function VenueGallery({ images, venueName }: VenueGalleryProps) {
   return (
     <>
       {/* Tabs */}
-      <div className="flex items-center gap-8 border-b border-slate-200 mb-6">
+      <div className="flex items-center gap-8 border-b border-slate-200 dark:border-white/10 mb-6">
         <button className="text-sm font-bold text-primary-600 border-b-2 border-primary-600 pb-3 uppercase tracking-wider">
           PORTFOLIO ({allImages.length})
         </button>
-        <button className="text-sm font-semibold text-slate-400 hover:text-slate-600 pb-3 uppercase tracking-wider transition-colors">
+        <button className="text-sm font-semibold text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300 pb-3 uppercase tracking-wider transition-colors">
           ALBUMS (6)
         </button>
-        <button className="text-sm font-semibold text-slate-400 hover:text-slate-600 pb-3 uppercase tracking-wider transition-colors">
+        <button className="text-sm font-semibold text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300 pb-3 uppercase tracking-wider transition-colors">
           VIDEOS (2)
         </button>
       </div>

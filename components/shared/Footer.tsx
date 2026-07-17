@@ -142,7 +142,7 @@ export default function Footer() {
       <footer
         className="relative overflow-hidden rounded-3xl md:rounded-[48px] transition-all duration-500"
         style={{
-          background: "rgba(255,244,230,0.95)",
+          background: "var(--sw-nav-default)",
           backdropFilter: "blur(24px) saturate(180%)",
           border: "1px solid rgba(238,116,41,0.15)",
         }}
@@ -156,10 +156,10 @@ export default function Footer() {
                 <Sparkles className="w-3.5 h-3.5 inline-block mr-1 text-amber-500" />
                 Exclusive Club
               </span>
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-800">
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-800 dark:text-stone-200">
                 Join the <span className="bg-gradient-to-r from-amber-600 to-primary-500 bg-clip-text text-transparent">SoulsWed Circle</span>
               </h3>
-              <p className="text-xs text-slate-500 mt-2 max-w-xl font-medium leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-stone-400 mt-2 max-w-xl font-medium leading-relaxed">
                 Subscribe to receive curated destination wedding inspiration, venue guides, and exclusive partner promotions.
               </p>
             </div>
@@ -170,7 +170,7 @@ export default function Footer() {
                   name="newsletterEmail"
                   type="email"
                   placeholder="Your Email Address"
-                  className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-5 py-3.5 pr-28 md:px-6 md:py-4 md:pr-36 outline-none transition-all text-sm md:text-base text-slate-800 shadow-inner font-medium placeholder-slate-400"
+                  className="w-full bg-white/80 dark:bg-[var(--sw-surface)]/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-5 py-3.5 pr-28 md:px-6 md:py-4 md:pr-36 outline-none transition-all text-sm md:text-base text-slate-800 dark:text-stone-200 shadow-inner font-medium placeholder-slate-400"
                   required
                 />
                 <button
@@ -198,10 +198,10 @@ export default function Footer() {
                   className="h-7 md:h-8 w-auto"
                 />
               </Link>
-              <p className="text-sm leading-relaxed mb-1.5 font-bold text-slate-700">
+              <p className="text-sm leading-relaxed mb-1.5 font-bold text-slate-700 dark:text-stone-300">
                 Flawless Moves. Perfect Events.
               </p>
-              <p className="text-xs leading-relaxed mb-5 text-slate-500 font-medium max-w-sm">
+              <p className="text-xs leading-relaxed mb-5 text-slate-500 dark:text-stone-400 font-medium max-w-sm">
                 Say &apos;I do&apos; in a dreamy destination! Transforming couples&apos; visions into amazing international wedding celebrations with ease.
               </p>
               <div className="flex gap-3">
@@ -232,7 +232,7 @@ export default function Footer() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ? 'text-amber-600' : 'text-slate-600'}`}
+                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ? 'text-amber-600' : 'text-slate-600 dark:text-stone-300'}`}
                         onMouseEnter={() => setHoveredLink(item.href)}
                         onMouseLeave={() => setHoveredLink(null)}
                       >
@@ -248,7 +248,7 @@ export default function Footer() {
                                 background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
                                 border: "1px solid rgba(238, 116, 41, 0.1)",
                                 backdropFilter: "blur(12px) saturate(150%)",
-                                boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
                                 zIndex: -1,
                               }}
                               transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
@@ -275,7 +275,7 @@ export default function Footer() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ? 'text-amber-600' : 'text-slate-600'}`}
+                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ? 'text-amber-600' : 'text-slate-600 dark:text-stone-300'}`}
                         onMouseEnter={() => setHoveredLink(item.href)}
                         onMouseLeave={() => setHoveredLink(null)}
                       >
@@ -291,7 +291,7 @@ export default function Footer() {
                                 background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
                                 border: "1px solid rgba(238, 116, 41, 0.1)",
                                 backdropFilter: "blur(12px) saturate(150%)",
-                                boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
                                 zIndex: -1,
                               }}
                               transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
@@ -334,7 +334,7 @@ export default function Footer() {
                                 background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
                                 border: "1px solid rgba(238, 116, 41, 0.1)",
                                 backdropFilter: "blur(12px) saturate(150%)",
-                                boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
                                 zIndex: -1,
                               }}
                               transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
@@ -344,10 +344,10 @@ export default function Footer() {
                         <div className="relative z-10 flex items-start gap-3">
                            <Icon className={`w-4 h-4 mt-0.5 ${isHovered ? 'text-amber-600' : 'text-amber-500'} transition-colors`} />
                            <div>
-                             <p className={`text-[13px] font-bold ${isHovered ? 'text-amber-700' : 'text-slate-800'} transition-colors`}>{item.label}</p>
+                             <p className={`text-[13px] font-bold ${isHovered ? 'text-amber-700' : 'text-slate-800 dark:text-stone-200'} transition-colors`}>{item.label}</p>
                              <div className="flex flex-col gap-0.5 mt-0.5">
                                {item.lines.map((line) => (
-                                 <p key={line} className="text-[12px] text-slate-500 font-medium">{line}</p>
+                                 <p key={line} className="text-[12px] text-slate-500 dark:text-stone-400 font-medium">{line}</p>
                                ))}
                              </div>
                            </div>
@@ -366,17 +366,17 @@ export default function Footer() {
           style={{ borderColor: "rgba(238, 116, 41, 0.15)" }}
         >
           <div className="max-w-none mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-slate-400 font-semibold">
+            <p className="text-xs text-slate-400 dark:text-stone-500 font-semibold">
               © 2026 SoulsWed. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <Link href="/privacy" className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
+              <Link href="/privacy" className="text-xs text-slate-400 dark:text-stone-500 hover:text-amber-600 transition-colors font-semibold">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
+              <Link href="/terms" className="text-xs text-slate-400 dark:text-stone-500 hover:text-amber-600 transition-colors font-semibold">
                 Terms of Service
               </Link>
-              <span className="text-xs flex items-center gap-1 text-slate-400 font-semibold">
+              <span className="text-xs flex items-center gap-1 text-slate-400 dark:text-stone-500 font-semibold">
                 Made with
                 <Heart className="w-3 h-3 fill-current mx-0.5 text-red-500 animate-pulse" />
                 in India
@@ -396,7 +396,7 @@ export default function Footer() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute bottom-full right-0 mb-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden min-w-[140px] z-50 flex flex-col"
+                      className="absolute bottom-full right-0 mb-2 bg-white dark:bg-[var(--sw-surface)] rounded-2xl shadow-xl border border-slate-100 dark:border-white/10 overflow-hidden min-w-[140px] z-50 flex flex-col"
                     >
                       {Object.entries(CURRENCIES).map(([code, details]) => (
                         <button
@@ -409,7 +409,7 @@ export default function Footer() {
                             currency === code ? 'bg-primary-50/50' : ''
                           }`}
                         >
-                          <span className={`text-sm font-bold ${currency === code ? 'text-primary-600' : 'text-slate-800'}`}>
+                          <span className={`text-sm font-bold ${currency === code ? 'text-primary-600' : 'text-slate-800 dark:text-stone-200'}`}>
                             {code} ({details.symbol})
                           </span>
                         </button>

@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
 import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2, Wand2, Eye, EyeOff } from "lucide-react";
+import ThemeToggle from "@/components/shared/ThemeToggle";
+import { useTheme } from "@/lib/ThemeContext";
 
 interface AdminSession {
   id: string;
@@ -40,7 +42,7 @@ export default function AdminDashboard() {
   
   // Copy state for feedback
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDark: isDarkMode } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [servicesExpanded, setServicesExpanded] = useState(false);
 
@@ -752,12 +754,13 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button 
+            <ThemeToggle />
+            <button
               onClick={fetchAllData}
               disabled={loadingData}
               className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-xl font-bold text-xs shadow-none transition-all cursor-pointer disabled:opacity-50 ${
-                isDarkMode 
-                  ? "border-stone-800 bg-stone-900 text-stone-300 hover:bg-stone-800" 
+                isDarkMode
+                  ? "border-stone-800 bg-stone-900 text-stone-300 hover:bg-stone-800"
                   : "border-stone-200 bg-white hover:bg-stone-50 text-stone-700"
               }`}
             >

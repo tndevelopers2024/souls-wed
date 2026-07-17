@@ -23,6 +23,27 @@
   --sw-deep-navy: #2F3843;
   --sw-light-gray: #DEE2E6;
   --sw-white: #FFFFFF;
+  /* Stable dark "ink" surface for dark buttons/pills — stays dark in both themes so white text on it always reads. */
+  --sw-ink: #1A1A1A;
+  /* Elevated surface (cards) — flips in dark mode. */
+  --sw-surface: #FFFFFF;
+  --sw-surface-2: #FAFAF9;
+  /* A beautiful, premium, minimal soft-peach/pearl gradient for the entire site */
+  --sw-page-bg: linear-gradient(145deg, #FFFCFA 0%, #FDF5EF 40%, #F7E9DE 100%);
+  /* Navbar / floating glass surfaces (cream in light, warm charcoal in dark) */
+  --sw-nav-solid: rgba(255, 244, 230, 0.98);
+  --sw-nav-default: rgba(255, 244, 230, 0.95);
+  --sw-nav-scrolled: rgba(255, 244, 230, 0.85);
+  /* Translucent white panels (search bar, filter bar, glass cards) */
+  --sw-glass-panel: rgba(255, 255, 255, 0.85);
+  --sw-glass-panel-strong: rgba(255, 255, 255, 0.95);
+  /* Translucent chip/pill surfaces */
+  --sw-chip-bg: rgba(255, 255, 255, 0.6);
+  --sw-chip-bg-hover: rgba(255, 255, 255, 0.9);
+  /* Soft peach hero band used on directory pages */
+  --sw-hero-gradient: linear-gradient(150deg, #fdf6f0 0%, #fceee3 40%, #f5dcc9 100%);
+  /* Intro preloader overlay */
+  --sw-preloader-bg: #FDFBF9;
 
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.18);
@@ -70,10 +91,26 @@
 body {
   font-family: var(--font-body);
   color: var(--sw-black);
-  /* A beautiful, premium, minimal soft-peach/pearl gradient for the entire site */
-  background: linear-gradient(145deg, #FFFCFA 0%, #FDF5EF 40%, #F7E9DE 100%);
+  /* Page background is variable-driven so it flips cleanly in dark mode */
+  background: var(--sw-page-bg);
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ===================== SMOOTH THEME TRANSITIONS ===================== */
+/* Elements animate their colours when the theme flips. Transforms/opacity are
+   intentionally excluded so animations and hovers are unaffected. */
+a, button, input, textarea, select, header, footer, section, article, aside, nav,
+div, span, p, h1, h2, h3, h4, h5, h6, li, label, svg, path {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 0.35s;
+  transition-timing-function: ease;
+}
+
+/* Never let the theme transition fight with framer-motion / explicit animations. */
+[style*="animation"], .no-theme-transition, .no-theme-transition * {
+  transition-property: none;
 }
 
 h1,
@@ -121,7 +158,7 @@ h6 {
 }
 
 .glass-input {
-  background: #FFFFFF;
+  background: var(--sw-surface);
   border: 1.5px solid var(--sw-secondary);
   border-radius: 9999px;
   box-shadow: none;
@@ -129,7 +166,7 @@ h6 {
 }
 
 .glass-input:focus-within {
-  background: #FFFFFF;
+  background: var(--sw-surface);
   border-color: var(--sw-primary);
   box-shadow: 0 4px 16px rgba(252, 203, 17, 0.15);
 }
@@ -311,6 +348,36 @@ h6 {
 }
 
 .dark {
+  /* ===== Brand tokens flipped for dark mode ===== */
+  /* Text / heading colours become light */
+  --sw-navy: #F5F5F4;
+  --sw-black: #E7E5E4;
+  --sw-deep-navy: #D6D3D1;
+  /* Muted body/sub text (pure black in light) becomes a soft warm grey */
+  --sw-steel: #A8A29E;
+  /* Surfaces become warm near-black */
+  --sw-white: #1B1917;
+  --sw-surface: #211E1B;
+  --sw-surface-2: #17140F;
+  --sw-peach: #2A231E;
+  /* Borders become subtle light-on-dark */
+  --sw-light-gray: #3A3532;
+  /* Dark "ink" buttons lighten slightly so they read against the darker page */
+  --sw-ink: #33302C;
+  /* Warm near-black page background to match the brand's warm palette */
+  --sw-page-bg: linear-gradient(145deg, #17130F 0%, #191512 45%, #0F0D0B 100%);
+  /* Navbar / floating glass surfaces become warm charcoal */
+  --sw-nav-solid: rgba(28, 25, 22, 0.98);
+  --sw-nav-default: rgba(28, 25, 22, 0.95);
+  --sw-nav-scrolled: rgba(28, 25, 22, 0.88);
+  --sw-glass-panel: rgba(33, 30, 27, 0.85);
+  --sw-glass-panel-strong: rgba(27, 25, 23, 0.95);
+  --sw-chip-bg: rgba(255, 255, 255, 0.07);
+  --sw-chip-bg-hover: rgba(255, 255, 255, 0.14);
+  --sw-hero-gradient: linear-gradient(150deg, #241d18 0%, #2a211a 40%, #1c1613 100%);
+  --sw-preloader-bg: #14110E;
+  /* Brand accents (primary orange / gold) stay the same on purpose */
+
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

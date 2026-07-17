@@ -22,7 +22,7 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
   if (reviewCount === 0) {
     return (
       <div className="text-center py-10 rounded-[24px]" style={{ background: "var(--sw-peach)" }}>
-        <p className="text-slate-500 text-sm">No reviews yet — be the first to celebrate here!</p>
+        <p className="text-slate-500 dark:text-stone-400 text-sm">No reviews yet — be the first to celebrate here!</p>
       </div>
     );
   }
@@ -48,16 +48,16 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
               />
             ))}
           </div>
-          <p className="text-xs text-slate-500">{reviewCount} reviews</p>
+          <p className="text-xs text-slate-500 dark:text-stone-400">{reviewCount} reviews</p>
         </div>
 
         {/* Bars */}
         <div className="flex-1 space-y-2">
           {distribution.map((d) => (
             <div key={d.stars} className="flex items-center gap-3">
-              <span className="text-xs font-semibold text-slate-600 w-4">{d.stars}</span>
+              <span className="text-xs font-semibold text-slate-600 dark:text-stone-300 w-4">{d.stars}</span>
               <Star className="w-3 h-3" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
-              <div className="flex-1 h-2 rounded-full bg-white overflow-hidden">
+              <div className="flex-1 h-2 rounded-full bg-white dark:bg-[var(--sw-surface)] overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
@@ -66,7 +66,7 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
                   }}
                 />
               </div>
-              <span className="text-xs text-slate-400 w-8 text-right">{d.pct}%</span>
+              <span className="text-xs text-slate-400 dark:text-stone-500 w-8 text-right">{d.pct}%</span>
             </div>
           ))}
         </div>
@@ -77,20 +77,20 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
         {reviews.map((review) => (
           <div
             key={review.id}
-            className="p-5 rounded-[20px] border border-slate-100"
+            className="p-5 rounded-[20px] border border-slate-100 dark:border-white/10"
             style={{ background: "white" }}
           >
             <div className="flex items-start gap-3 mb-3">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white flex-shrink-0"
-                style={{ background: "var(--sw-navy)" }}
+                style={{ background: "var(--sw-ink)" }}
               >
                 {review.avatar}
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <p className="font-bold text-sm text-slate-800">{review.author}</p>
-                  <p className="text-xs text-slate-400">{review.date}</p>
+                  <p className="font-bold text-sm text-slate-800 dark:text-stone-200">{review.author}</p>
+                  <p className="text-xs text-slate-400 dark:text-stone-500">{review.date}</p>
                 </div>
                 <div className="flex items-center gap-0.5 mt-0.5">
                   {[1, 2, 3, 4, 5].map((s) => (
@@ -104,7 +104,7 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
                 </div>
               </div>
             </div>
-            <p className="text-sm text-slate-600 leading-relaxed">{review.text}</p>
+            <p className="text-sm text-slate-600 dark:text-stone-300 leading-relaxed">{review.text}</p>
           </div>
         ))}
       </div>

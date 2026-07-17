@@ -16,10 +16,10 @@ export default function TermsPage() {
           <h1 className="text-3xl md:text-5xl font-extrabold mb-4" style={{ color: "var(--sw-navy)", fontFamily: "var(--font-heading)" }}>
             Terms & Conditions
           </h1>
-          <p className="text-sm text-slate-500 font-medium">Last Updated: July 2026</p>
+          <p className="text-sm text-slate-500 dark:text-stone-400 font-medium">Last Updated: July 2026</p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-xl rounded-[32px] p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 space-y-8 text-sm md:text-base text-slate-600 leading-relaxed">
+        <div className="bg-white/80 dark:bg-[var(--sw-surface)]/80 backdrop-blur-xl rounded-[32px] p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/60 space-y-8 text-sm md:text-base text-slate-600 dark:text-stone-300 leading-relaxed">
           <section>
             <h2 className="text-xl font-bold mb-3" style={{ color: "var(--sw-navy)", fontFamily: "var(--font-heading)" }}>1. Agreement to Terms</h2>
             <p>

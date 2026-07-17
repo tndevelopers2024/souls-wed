@@ -111,9 +111,9 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
       <div 
         className="relative mx-auto rounded-[2rem] p-3 max-w-full"
         style={{
-          background: "rgba(255,255,255,0.85)",
+          background: "var(--sw-glass-panel)",
           backdropFilter: "blur(24px) saturate(200%)",
-          border: "1px solid rgba(255,255,255,0.6)",
+          border: "1px solid var(--sw-chip-bg)",
           boxShadow: "0 8px 32px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)",
         }}
       >
@@ -130,13 +130,13 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 href={item.href}
                 className={`relative shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-extrabold tracking-wide transition-all duration-300 group ${
                   isActive
-                    ? "text-slate-900 bg-primary-50/80"
-                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                    ? "text-slate-900 dark:text-stone-100 bg-primary-50/80"
+                    : "text-slate-500 dark:text-stone-400 hover:text-slate-900 dark:text-stone-100 hover:bg-slate-50 dark:bg-white/5"
                 }`}
               >
                 <Icon 
                   className={`w-4 h-4 transition-transform duration-300 group-hover:scale-110 ${
-                    isActive ? "text-primary-500" : "text-slate-400 group-hover:text-primary-400"
+                    isActive ? "text-primary-500" : "text-slate-400 dark:text-stone-500 group-hover:text-primary-400"
                   }`} 
                   strokeWidth={isActive ? 2.5 : 2}
                 />
@@ -168,7 +168,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
           style={{
             background: activeCount > 0
               ? "linear-gradient(135deg, var(--sw-primary) 0%, #f5932a 100%)"
-              : "linear-gradient(135deg, var(--sw-navy) 0%, #2a3747 100%)",
+              : "linear-gradient(135deg, var(--sw-ink) 0%, #2a3747 100%)",
             color: "white",
             boxShadow: activeCount > 0
               ? "0 6px 20px rgba(238,116,41,0.38)"
@@ -213,7 +213,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                       ? "linear-gradient(135deg, rgba(238,116,41,0.12) 0%, rgba(245,163,42,0.08) 100%)"
                       : isOpen
                       ? "white"
-                      : "rgba(255,255,255,0.6)",
+                      : "var(--sw-chip-bg)",
                     color: isActive ? "var(--sw-primary)" : "var(--sw-navy)",
                     border: isActive
                       ? "1.5px solid rgba(238,116,41,0.3)"
@@ -278,7 +278,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                         style={{ borderBottom: "1px solid rgba(0,0,0,0.05)", background: "rgba(250,250,250,0.5)" }}
                       >
                         <Icon className="w-4 h-4" style={{ color: "var(--sw-primary)" }} />
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+                        <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-stone-500">
                           {f.label}
                         </span>
                       </div>
@@ -339,7 +339,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
       <div className="flex flex-col items-center gap-4 mt-2">
         <div className="flex items-center gap-3">
           <div className="h-px w-12 bg-gradient-to-r from-transparent to-slate-200" />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Destinations</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-stone-500">Destinations</span>
           <div className="h-px w-12 bg-gradient-to-l from-transparent to-slate-200" />
         </div>
 
@@ -373,7 +373,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 className="w-full h-full rounded-full flex items-center justify-center relative overflow-hidden"
                 style={{
                   background: activeCity === ""
-                    ? "linear-gradient(135deg, var(--sw-navy) 0%, #1e293b 100%)"
+                    ? "linear-gradient(135deg, var(--sw-ink) 0%, #1e293b 100%)"
                     : "white",
                 }}
               >

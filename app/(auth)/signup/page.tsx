@@ -4,12 +4,12 @@
 // Keeping them as constants avoids the CSS-specificity clash that caused
 // global .field-input padding to override Tailwind pl-11.
 const INPUT_CLS =
-  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pl-11 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all";
+  "w-full bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 pl-11 text-sm text-slate-900 dark:text-stone-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all";
 const INPUT_PR_CLS =
-  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pl-11 pr-12 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all";
+  "w-full bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 pl-11 pr-12 text-sm text-slate-900 dark:text-stone-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all";
 const SELECT_CLS =
-  "w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all appearance-none";
-const ICON_CLS = "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none";
+  "w-full bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-stone-100 outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 transition-all appearance-none";
+const ICON_CLS = "absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-stone-500 pointer-events-none";
 
 import React, { Suspense, useState, useLayoutEffect, useEffect } from "react";
 import Link from "next/link";
@@ -72,7 +72,7 @@ const ACCENT: Record<UserRole, { from: string; to: string; glow: string }> = {
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-6 h-6 animate-spin text-primary-500" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-white/5"><Loader2 className="w-6 h-6 animate-spin text-primary-500" /></div>}>
       <SignupContent />
     </Suspense>
   );
@@ -216,22 +216,22 @@ function SignupContent() {
               priority
             />
           </Link>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Create your account</p>
+          <p className="text-xs font-semibold text-slate-400 dark:text-stone-500 uppercase tracking-widest">Create your account</p>
         </div>
 
         {/* Card */}
         <div
           className="rounded-3xl overflow-hidden"
           style={{
-            background: "rgba(255,255,255,0.85)",
-            border: "1.5px solid rgba(255,255,255,0.6)",
+            background: "var(--sw-glass-panel)",
+            border: "1.5px solid var(--sw-chip-bg)",
             backdropFilter: "blur(24px)",
             boxShadow: `0 24px 64px ${accent.glow}, 0 4px 16px rgba(0,0,0,0.05)`,
             transition: "box-shadow 0.4s",
           }}
         >
           {/* ── Role Tabs ── */}
-          <div className="flex border-b border-slate-100 bg-slate-50/60">
+          <div className="flex border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5/60">
             {ROLES.map((r) => (
               <button
                 key={r.id}
@@ -243,7 +243,7 @@ function SignupContent() {
                   router.replace(`?${params.toString()}`, { scroll: false });
                 }}
                 className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-bold transition-all cursor-pointer relative ${
-                  role === r.id ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
+                  role === r.id ? "text-slate-900 dark:text-stone-100" : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300"
                 }`}
               >
                 <span className={`flex items-center gap-1.5 transition-all ${role === r.id ? "scale-110" : ""}`}>
@@ -272,7 +272,7 @@ function SignupContent() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.2 }}
-                className="text-xs text-slate-500 text-center mb-6"
+                className="text-xs text-slate-500 dark:text-stone-400 text-center mb-6"
               >
                 {currentRole.subtitle}
               </motion.p>
@@ -289,8 +289,8 @@ function SignupContent() {
                   <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 text-2xl animate-bounce">
                     <Sparkles className="w-7 h-7" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-1">Registration Complete!</h3>
-                  <p className="text-sm text-slate-500">Redirecting to sign in…</p>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-stone-200 mb-1">Registration Complete!</h3>
+                  <p className="text-sm text-slate-500 dark:text-stone-400">Redirecting to sign in…</p>
                 </motion.div>
               ) : role === "admin" ? (
                 <motion.div
@@ -304,8 +304,8 @@ function SignupContent() {
                   <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 mb-6 text-2xl">
                     <ShieldCheck className="w-7 h-7" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-2">Admin Portal</h3>
-                  <p className="text-sm text-slate-500 mb-8 px-2">
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-stone-200 mb-2">Admin Portal</h3>
+                  <p className="text-sm text-slate-500 dark:text-stone-400 mb-8 px-2">
                     New admin accounts cannot be created publicly. Please log in to the admin console if you have access.
                   </p>
                   <Link
@@ -434,7 +434,7 @@ function SignupContent() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300 transition-colors cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -460,14 +460,14 @@ function SignupContent() {
                   {/* Google SSO (cosmetic) */}
                   
                       <div className="relative flex items-center py-1">
-                        <div className="flex-grow border-t border-slate-200" />
-                        <span className="flex-shrink-0 mx-4 text-slate-400 text-[11px] font-semibold uppercase tracking-wider">or</span>
-                        <div className="flex-grow border-t border-slate-200" />
+                        <div className="flex-grow border-t border-slate-200 dark:border-white/10" />
+                        <span className="flex-shrink-0 mx-4 text-slate-400 dark:text-stone-500 text-[11px] font-semibold uppercase tracking-wider">or</span>
+                        <div className="flex-grow border-t border-slate-200 dark:border-white/10" />
                       </div>
                       <button
                         type="button"
                         onClick={() => alert("Google sign-up coming soon!")}
-                        className="w-full flex items-center justify-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold py-2.5 rounded-2xl transition-colors text-sm shadow-sm cursor-pointer"
+                        className="w-full flex items-center justify-center gap-2 bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-stone-300 font-semibold py-2.5 rounded-2xl transition-colors text-sm shadow-sm cursor-pointer"
                       >
                         <svg className="w-4 h-4" viewBox="0 0 24 24">
                           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -480,7 +480,7 @@ function SignupContent() {
                     
 
                   {/* Already have an account */}
-                  <p className="text-center text-slate-500 text-xs mt-1">
+                  <p className="text-center text-slate-500 dark:text-stone-400 text-xs mt-1">
                     Already have an account?{" "}
                     <Link
                       href={`/login?role=${role}`}
@@ -500,7 +500,7 @@ function SignupContent() {
         <div className="mt-6 flex justify-center">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+            className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-800 dark:text-stone-200 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to SoulsWed
@@ -517,7 +517,7 @@ function SignupContent() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-bold text-slate-600 uppercase tracking-wider">{label}</label>
+      <label className="text-xs font-bold text-slate-600 dark:text-stone-300 uppercase tracking-wider">{label}</label>
       <div className="relative">{children}</div>
     </div>
   );

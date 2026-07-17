@@ -58,7 +58,7 @@ export default function UnifiedLoginPage() {
 
 function LoginSkeleton() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-white/5">
       <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
     </div>
   );
@@ -211,22 +211,22 @@ function LoginContent() {
               priority
             />
           </Link>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Welcome back</p>
+          <p className="text-xs font-semibold text-slate-400 dark:text-stone-500 uppercase tracking-widest">Welcome back</p>
         </div>
 
         {/* Card */}
         <div
           className="rounded-3xl overflow-hidden"
           style={{
-            background: "rgba(255,255,255,0.85)",
-            border: "1.5px solid rgba(255,255,255,0.6)",
+            background: "var(--sw-glass-panel)",
+            border: "1.5px solid var(--sw-chip-bg)",
             backdropFilter: "blur(24px)",
             boxShadow: `0 24px 64px ${accent.glow}, 0 4px 16px rgba(0,0,0,0.05)`,
             transition: "box-shadow 0.4s",
           }}
         >
           {/* ── Role Tabs ── */}
-          <div className="flex border-b border-slate-100 bg-slate-50/60">
+          <div className="flex border-b border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5/60">
             {ROLES.map((r) => (
               <button
                 key={r.id}
@@ -238,7 +238,7 @@ function LoginContent() {
                   router.replace(`?${params.toString()}`, { scroll: false });
                 }}
                 className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-bold transition-all cursor-pointer relative ${
-                  role === r.id ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
+                  role === r.id ? "text-slate-900 dark:text-stone-100" : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300"
                 }`}
               >
                 <span
@@ -280,7 +280,7 @@ function LoginContent() {
                     All access attempts are logged and monitored
                   </div>
                 )}
-                <p className="text-xs text-slate-500 text-center">{currentRole.subtitle}</p>
+                <p className="text-xs text-slate-500 dark:text-stone-400 text-center">{currentRole.subtitle}</p>
               </motion.div>
             </AnimatePresence>
 
@@ -299,8 +299,8 @@ function LoginContent() {
                   >
                     <Check className="w-8 h-8 text-emerald-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-1">Access Granted</h3>
-                  <p className="text-sm text-slate-500">Redirecting to your dashboard…</p>
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-stone-200 mb-1">Access Granted</h3>
+                  <p className="text-sm text-slate-500 dark:text-stone-400">Redirecting to your dashboard…</p>
                 </motion.div>
               ) : (
                 <motion.form
@@ -325,7 +325,7 @@ function LoginContent() {
 
                   {/* Email */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                    <label className="text-xs font-bold text-slate-600 dark:text-stone-300 uppercase tracking-wider">
                       Email Address
                     </label>
                     <div className="relative">
@@ -335,18 +335,18 @@ function LoginContent() {
                         placeholder="you@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 transition-all pl-11"
+                        className="w-full bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-stone-100 placeholder-slate-400 outline-none focus:ring-2 transition-all pl-11"
                         style={{ "--tw-ring-color": accent.from } as React.CSSProperties}
                         required
                         autoComplete="email"
                       />
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-stone-500" />
                     </div>
                   </div>
 
                   {/* Password */}
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                    <label className="text-xs font-bold text-slate-600 dark:text-stone-300 uppercase tracking-wider">
                       Password
                     </label>
                     <div className="relative">
@@ -356,16 +356,16 @@ function LoginContent() {
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 transition-all pl-11 pr-12"
+                        className="w-full bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-stone-100 placeholder-slate-400 outline-none focus:ring-2 transition-all pl-11 pr-12"
                         style={{ "--tw-ring-color": accent.from } as React.CSSProperties}
                         required
                         autoComplete="current-password"
                       />
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-stone-500" />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300 transition-colors cursor-pointer"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -375,7 +375,7 @@ function LoginContent() {
                   {/* Remember / Forgot */}
                   {role !== "admin" && (
                     <div className="flex justify-between items-center text-xs">
-                      <label className="flex items-center gap-2 cursor-pointer text-slate-500 font-medium">
+                      <label className="flex items-center gap-2 cursor-pointer text-slate-500 dark:text-stone-400 font-medium">
                         <input type="checkbox" className="rounded border-slate-300 w-4 h-4" />
                         <span>Remember me</span>
                       </label>
@@ -410,16 +410,16 @@ function LoginContent() {
                   {role !== "admin" && (
                     <>
                       <div className="relative flex items-center py-1">
-                        <div className="flex-grow border-t border-slate-200" />
-                        <span className="flex-shrink-0 mx-4 text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
+                        <div className="flex-grow border-t border-slate-200 dark:border-white/10" />
+                        <span className="flex-shrink-0 mx-4 text-slate-400 dark:text-stone-500 text-[11px] font-semibold uppercase tracking-wider">
                           or
                         </span>
-                        <div className="flex-grow border-t border-slate-200" />
+                        <div className="flex-grow border-t border-slate-200 dark:border-white/10" />
                       </div>
                       <button
                         type="button"
                         onClick={() => alert("Google authentication coming soon!")}
-                        className="w-full flex items-center justify-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold py-2.5 rounded-xl transition-colors text-sm shadow-sm cursor-pointer"
+                        className="w-full flex items-center justify-center gap-2 bg-white dark:bg-[var(--sw-surface)] border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-stone-300 font-semibold py-2.5 rounded-xl transition-colors text-sm shadow-sm cursor-pointer"
                       >
                         <svg className="w-4 h-4" viewBox="0 0 24 24">
                           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -434,7 +434,7 @@ function LoginContent() {
 
                   {/* Sign up link */}
                   {role !== "admin" && (
-                    <p className="text-center text-slate-500 text-xs mt-1">
+                    <p className="text-center text-slate-500 dark:text-stone-400 text-xs mt-1">
                       {role === "vendor" ? "New vendor?" : "New user?"}{" "}
                       <Link
                         href={role === "vendor" ? "/signup?role=vendor" : "/signup"}
@@ -455,7 +455,7 @@ function LoginContent() {
         <div className="mt-6 flex justify-center">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+            className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-stone-400 hover:text-slate-800 dark:text-stone-200 transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to SoulsWed

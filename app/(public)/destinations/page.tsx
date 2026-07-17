@@ -49,7 +49,7 @@ export default function DestinationsPage() {
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-[var(--sw-navy)] font-heading leading-tight">
             Top Wedding <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--sw-primary)] to-[#f5a623]">Destinations</span>
           </h1>
-          <p className="text-lg text-slate-600 leading-relaxed">
+          <p className="text-lg text-slate-600 dark:text-stone-300 leading-relaxed">
             From the romantic streets of Paris to the royal palaces of Udaipur, explore the most breathtaking backdrops for your love story.
           </p>
         </motion.div>

@@ -7,6 +7,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
+import ThemeToggle from "@/components/shared/ThemeToggle";
+import { useTheme } from "@/lib/ThemeContext";
 
 interface VendorSession {
   id: string;
@@ -143,7 +145,7 @@ export default function VendorDashboard() {
   const [bookings, setBookings] = useState<DashboardBooking[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isDarkMode = false;
+  const { isDark: isDarkMode } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [servicesExpanded, setServicesExpanded] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -863,6 +865,7 @@ export default function VendorDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <button
               onClick={fetchBookings}
               disabled={loadingData}

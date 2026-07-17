@@ -49,7 +49,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
   const renderDate = () => {
     if (booking.bookingType === "room") {
       return (
-        <div className="flex items-center gap-1.5 text-sm text-slate-600">
+        <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
           <CalendarDays className="w-4 h-4 text-primary-500" />
           <span className="font-medium">
             {booking.checkIn && booking.checkOut ? (
@@ -62,7 +62,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
       );
     } else {
       return (
-        <div className="flex items-center gap-1.5 text-sm text-slate-600">
+        <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
           <CalendarDays className="w-4 h-4 text-primary-500" />
           <span className="font-medium">
             {booking.eventDate ? (
@@ -72,7 +72,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
             )}
           </span>
           {booking.functionTime && (
-            <span className="text-slate-400 capitalize"> ({booking.functionTime})</span>
+            <span className="text-slate-400 dark:text-stone-500 capitalize"> ({booking.functionTime})</span>
           )}
         </div>
       );
@@ -142,7 +142,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
 
 
   return (
-    <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 w-full h-[540px] cursor-pointer group bg-white [transform:translateZ(0)]">
+    <div className="relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 dark:border-white/10 w-full h-[540px] cursor-pointer group bg-white dark:bg-[var(--sw-surface)] [transform:translateZ(0)]">
       {/* Full Background Image */}
       {venueImage ? (
         <img
@@ -160,7 +160,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
       </div>
 
       {/* Heart pill top-right */}
-      <button className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-white flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shadow-sm" onClick={(e) => e.preventDefault()}>
+      <button className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-white dark:bg-[var(--sw-surface)] flex items-center justify-center text-slate-400 dark:text-stone-500 hover:text-red-500 transition-colors shadow-sm" onClick={(e) => e.preventDefault()}>
         <Heart className="w-4 h-4" />
       </button>
 
@@ -176,8 +176,8 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
       <div className="absolute inset-x-0 bottom-0 z-20 px-5 pt-6 pb-5 flex flex-col h-full justify-end">
         
         <div className="mb-3">
-          <p className="text-xs text-slate-600 font-mono mb-1 bg-white/50 w-fit px-2 py-0.5 rounded-md">ID: {booking._id.substring(18)}</p>
-          <h3 className="text-2xl font-bold leading-snug text-slate-900 line-clamp-2" style={{ fontFamily: "var(--font-heading)" }}>
+          <p className="text-xs text-slate-600 dark:text-stone-300 font-mono mb-1 bg-white/50 w-fit px-2 py-0.5 rounded-md">ID: {booking._id.substring(18)}</p>
+          <h3 className="text-2xl font-bold leading-snug text-slate-900 dark:text-stone-100 line-clamp-2" style={{ fontFamily: "var(--font-heading)" }}>
             {booking.providerName}
           </h3>
         </div>
@@ -186,26 +186,26 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
           {renderDate()}
           <div className="flex items-center gap-4">
             {booking.bookingType === "venue" && booking.guestCount && (
-              <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium">
+              <div className="flex items-center gap-1.5 text-sm text-slate-700 dark:text-stone-300 font-medium">
                 <Users className="w-4 h-4 text-primary-500" />
                 <span>{booking.guestCount} Guests</span>
               </div>
             )}
             {booking.bookingType === "room" && booking.roomCount && (
-              <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium">
+              <div className="flex items-center gap-1.5 text-sm text-slate-700 dark:text-stone-300 font-medium">
                 <BedDouble className="w-4 h-4 text-primary-500" />
                 <span>{booking.roomCount} Rooms</span>
               </div>
             )}
             {booking.bookingType !== "venue" && booking.bookingType !== "room" && (
-              <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium capitalize">
-                <span className="bg-slate-100 text-slate-700 text-[10.5px] font-bold px-2 py-0.5 rounded border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-1.5 text-sm text-slate-700 dark:text-stone-300 font-medium capitalize">
+                <span className="bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-stone-300 text-[10.5px] font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-white/10 shadow-sm">
                   {booking.bookingType}
                 </span>
               </div>
             )}
             {booking.functionType && (
-              <div className="flex items-center gap-1.5 text-sm text-slate-700 font-medium capitalize">
+              <div className="flex items-center gap-1.5 text-sm text-slate-700 dark:text-stone-300 font-medium capitalize">
                 <Clock className="w-4 h-4 text-primary-500" />
                 <span>{booking.functionType}</span>
               </div>
@@ -216,23 +216,23 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
         {/* User Details (For Vendor View) */}
         {isVendor && (
           <div className="mb-4 bg-primary-50/80 backdrop-blur-sm rounded-xl p-3 border border-primary-200/50 shadow-sm">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Customer Details</p>
-            <p className="text-sm font-bold text-slate-800">{booking.userName}</p>
-            <p className="text-xs text-slate-600 font-medium mt-0.5">{booking.userPhone} • {booking.userEmail}</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-stone-400 uppercase tracking-wider mb-0.5">Customer Details</p>
+            <p className="text-sm font-bold text-slate-800 dark:text-stone-200">{booking.userName}</p>
+            <p className="text-xs text-slate-600 dark:text-stone-300 font-medium mt-0.5">{booking.userPhone} • {booking.userEmail}</p>
           </div>
         )}
 
         <div className="flex items-end justify-between mt-1">
           <div className="flex flex-col gap-1">
             <div className="flex items-baseline gap-2">
-              <span className="text-[11px] font-medium text-slate-500 uppercase">Total</span>
-              <span className="text-lg font-bold text-slate-900 leading-none">
+              <span className="text-[11px] font-medium text-slate-500 dark:text-stone-400 uppercase">Total</span>
+              <span className="text-lg font-bold text-slate-900 dark:text-stone-100 leading-none">
                 {formatAsCurrency(booking.totalAmount, booking.currency || "INR")}
               </span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-[11px] font-medium text-slate-500 uppercase">Paid</span>
-              <span className={`text-sm font-bold leading-none ${booking.status === 'confirmed' ? 'text-emerald-600' : 'text-slate-400'}`}>
+              <span className="text-[11px] font-medium text-slate-500 dark:text-stone-400 uppercase">Paid</span>
+              <span className={`text-sm font-bold leading-none ${booking.status === 'confirmed' ? 'text-emerald-600' : 'text-slate-400 dark:text-stone-500'}`}>
                 {booking.status === 'confirmed' 
                   ? formatAsCurrency(booking.advanceAmount, booking.currency || "INR")
                   : formatAsCurrency(0, booking.currency || "INR")
@@ -256,7 +256,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
               <button
                 onClick={() => setShowCancelConfirm(true)}
                 disabled={deleting}
-                className="bg-white hover:bg-red-50 text-slate-700 hover:text-red-600 font-bold px-5 py-2 rounded-full text-[11px] transition-colors border border-slate-200 disabled:opacity-50"
+                className="bg-white dark:bg-[var(--sw-surface)] hover:bg-red-50 text-slate-700 dark:text-stone-300 hover:text-red-600 font-bold px-5 py-2 rounded-full text-[11px] transition-colors border border-slate-200 dark:border-white/10 disabled:opacity-50"
               >
                 {deleting ? "Cancelling..." : "Cancel Booking"}
               </button>
@@ -276,18 +276,18 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
       {/* Custom Confirmation Modal via Portal */}
       {showCancelConfirm && mounted && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 text-center shadow-2xl border border-slate-100 flex flex-col items-center animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-[var(--sw-surface)] rounded-3xl p-6 max-w-sm w-full mx-4 text-center shadow-2xl border border-slate-100 dark:border-white/10 flex flex-col items-center animate-in fade-in zoom-in-95 duration-200">
             <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 mb-4 animate-pulse">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-slate-800 mb-1">Cancel Booking?</h3>
-            <p className="text-xs text-slate-500 mb-6 leading-relaxed">
-              Are you sure you want to cancel and delete this booking for <span className="font-bold text-slate-700">{booking.providerName}</span>? This action cannot be undone.
+            <h3 className="text-base font-bold text-slate-800 dark:text-stone-200 mb-1">Cancel Booking?</h3>
+            <p className="text-xs text-slate-500 dark:text-stone-400 mb-6 leading-relaxed">
+              Are you sure you want to cancel and delete this booking for <span className="font-bold text-slate-700 dark:text-stone-300">{booking.providerName}</span>? This action cannot be undone.
             </p>
             <div className="flex gap-3 w-full">
               <button
                 onClick={() => setShowCancelConfirm(false)}
-                className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-full text-xs transition-colors"
+                className="flex-1 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 text-slate-700 dark:text-stone-300 font-bold py-3 rounded-full text-xs transition-colors"
               >
                 Keep Booking
               </button>

@@ -93,7 +93,7 @@ export default function DecoratorsPlannersSection() {
               <button onClick={() => scroll("left")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-white)", border: "1px solid var(--sw-light-gray)" }}>
                 <ChevronLeft className="w-5 h-5" style={{ color: "var(--sw-navy)" }} />
               </button>
-              <button onClick={() => scroll("right")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-navy)" }}>
+              <button onClick={() => scroll("right")} className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110" style={{ background: "var(--sw-ink)" }}>
                 <ChevronRight className="w-5 h-5 text-white" />
               </button>
             </div>
@@ -147,7 +147,7 @@ export default function DecoratorsPlannersSection() {
             >
               <div ref={scrollRef} className="flex gap-5 overflow-x-auto snap-scroll pb-4" style={{ scrollbarWidth: "none" }}>
                 {items.length === 0 ? (
-                  <div className="w-full text-center py-20 text-slate-500 font-medium">No {activeTab} available at the moment.</div>
+                  <div className="w-full text-center py-20 text-slate-500 dark:text-stone-400 font-medium">No {activeTab} available at the moment.</div>
                 ) : (
                   items.map((item, i) => (
                     <motion.div
@@ -168,11 +168,11 @@ export default function DecoratorsPlannersSection() {
                         rating={item.rating}
                         image={item.image}
                         tags={
-                          <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
+                          <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white dark:bg-[var(--sw-surface)] text-slate-700 dark:text-stone-300 shadow-sm">
                             {item.tag === "Decorator" ? (
-                              <Flower2 className="w-3.5 h-3.5 text-slate-500" />
+                              <Flower2 className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />
                             ) : (
-                              <ClipboardList className="w-3.5 h-3.5 text-slate-500" />
+                              <ClipboardList className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />
                             )}
                             {item.tag}
                           </div>

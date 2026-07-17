@@ -3,7 +3,11 @@ import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { CurrencyProvider } from "@/lib/CurrencyContext";
+import { ThemeProvider } from "@/lib/ThemeContext";
 import Preloader from "@/components/shared/Preloader";
+
+// Runs before paint to set the theme class and avoid a flash of the wrong theme.
+const themeInitScript = `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}var d=document.documentElement;d.classList.toggle('dark',t==='dark');d.style.colorScheme=t;}catch(e){}})();`;
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -45,12 +49,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(inter.variable, "font-sans", outfit.variable)}>
+    <html lang="en" className={cn(inter.variable, "font-sans", outfit.variable)} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-screen antialiased overflow-x-hidden w-full">
-        <CurrencyProvider>
-          <Preloader />
-          {children}
-        </CurrencyProvider>
+        <ThemeProvider>
+          <CurrencyProvider>
+            <Preloader />
+            {children}
+          </CurrencyProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -131,7 +131,7 @@ export default function PublicVendorDirectory({
         <div
           className="relative overflow-hidden pt-16 pb-16 px-4 text-center rounded-[40px] shadow-sm border border-primary-50/60"
           style={{
-            background: "linear-gradient(150deg, #fdf6f0 0%, #fceee3 40%, #f5dcc9 100%)",
+            background: "var(--sw-hero-gradient)",
           }}
         >
         {/* Floating orbs */}
@@ -195,7 +195,7 @@ export default function PublicVendorDirectory({
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-500 dark:text-stone-400 mb-10 max-w-xl mx-auto leading-relaxed">
             {meta.subtitle}
           </p>
 
@@ -241,7 +241,7 @@ export default function PublicVendorDirectory({
                     className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
                     style={{ background: "rgba(0,0,0,0.08)" }}
                   >
-                    <X className="w-3.5 h-3.5 text-slate-500" />
+                    <X className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400" />
                   </motion.button>
                 )}
               </AnimatePresence>
@@ -260,9 +260,9 @@ export default function PublicVendorDirectory({
         {/* Results header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-stone-400">
               Showing{" "}
-              <span className="font-bold text-slate-800">{filtered.length}</span>{" "}
+              <span className="font-bold text-slate-800 dark:text-stone-200">{filtered.length}</span>{" "}
               {(activeCategory || "vendor").toLowerCase()}
               {filtered.length !== 1 && !(activeCategory || "vendor").toLowerCase().endsWith("s") ? "s" : ""}
               {activeCity && (
@@ -305,7 +305,7 @@ export default function PublicVendorDirectory({
                   {activeFilters.length > 1 && (
                     <button
                       onClick={() => { setSearch(""); setActiveCity(""); setSort("Recommended"); }}
-                      className="text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors underline"
+                      className="text-xs font-semibold text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300 transition-colors underline"
                     >
                       Clear all
                     </button>
@@ -317,13 +317,13 @@ export default function PublicVendorDirectory({
 
           <div className="flex items-center gap-3">
             {/* View toggle */}
-            <div className="hidden sm:flex bg-slate-100/80 p-1 rounded-full border border-slate-200/60">
+            <div className="hidden sm:flex bg-slate-100 dark:bg-white/10/80 p-1 rounded-full border border-slate-200 dark:border-white/10/60">
               <button
                 onClick={() => setViewType("grid")}
                 className={`p-1.5 rounded-full transition-all ${
                   viewType === "grid"
-                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 hover:text-slate-600"
+                    ? "bg-white dark:bg-[var(--sw-surface)] shadow-sm text-[var(--sw-primary)]"
+                    : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300"
                 }`}
                 aria-label="Grid view"
               >
@@ -333,8 +333,8 @@ export default function PublicVendorDirectory({
                 onClick={() => setViewType("list")}
                 className={`p-1.5 rounded-full transition-all ${
                   viewType === "list"
-                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 hover:text-slate-600"
+                    ? "bg-white dark:bg-[var(--sw-surface)] shadow-sm text-[var(--sw-primary)]"
+                    : "text-slate-400 dark:text-stone-500 hover:text-slate-600 dark:text-stone-300"
                 }`}
                 aria-label="List view"
               >
@@ -354,7 +354,7 @@ export default function PublicVendorDirectory({
                   boxShadow: sortOpen ? "0 0 0 3px rgba(238,116,41,0.1)" : "none",
                 }}
               >
-                <span className="hidden sm:inline text-slate-400 font-normal text-xs">Sort:</span>
+                <span className="hidden sm:inline text-slate-400 dark:text-stone-500 font-normal text-xs">Sort:</span>
                 {sort}
                 <ChevronDown
                   className="w-4 h-4 transition-transform duration-200"
@@ -417,7 +417,7 @@ export default function PublicVendorDirectory({
             >
               No vendors found
             </p>
-            <p className="text-slate-400 text-sm mb-6 max-w-xs">
+            <p className="text-slate-400 dark:text-stone-500 text-sm mb-6 max-w-xs">
               We couldn&apos;t find vendors matching your filters. Try adjusting your search or clearing some filters.
             </p>
             <button
@@ -451,7 +451,7 @@ export default function PublicVendorDirectory({
         {/* Load more */}
         {visibleCount < filtered.length && (
           <div className="text-center mt-14">
-            <div className="text-xs text-slate-400 mb-4 font-medium">
+            <div className="text-xs text-slate-400 dark:text-stone-500 mb-4 font-medium">
               Showing {visible.length} of {filtered.length} vendors
             </div>
             <button
@@ -461,7 +461,7 @@ export default function PublicVendorDirectory({
               style={{
                 background: isLoading
                   ? "var(--sw-light-gray)"
-                  : "linear-gradient(135deg, var(--sw-navy) 0%, #2a3747 100%)",
+                  : "linear-gradient(135deg, var(--sw-ink) 0%, #2a3747 100%)",
                 boxShadow: isLoading ? "none" : "0 6px 20px rgba(55,71,90,0.3)",
                 color: isLoading ? "var(--sw-navy)" : "white",
               }}
@@ -492,7 +492,7 @@ export default function PublicVendorDirectory({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center mt-12 flex items-center justify-center gap-2 text-xs text-slate-400 font-medium"
+            className="text-center mt-12 flex items-center justify-center gap-2 text-xs text-slate-400 dark:text-stone-500 font-medium"
           >
             <Sparkles className="w-3.5 h-3.5" />
             You&apos;ve seen all {filtered.length} vendors
@@ -519,7 +519,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
 
   if (view === "list") {
     return (
-      <article className="group flex flex-col sm:flex-row gap-4 sm:gap-5 rounded-[24px] overflow-hidden border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow p-3 sm:p-4">
+      <article className="group flex flex-col sm:flex-row gap-4 sm:gap-5 rounded-[24px] overflow-hidden border border-slate-100 dark:border-white/10 bg-white dark:bg-[var(--sw-surface)] shadow-sm hover:shadow-md transition-shadow p-3 sm:p-4">
         <div className="relative w-full sm:w-44 h-52 sm:h-44 rounded-[18px] overflow-hidden flex-shrink-0">
           <Image src={image} alt={vendor.businessName || vendor.name} fill sizes="(max-width: 640px) 100vw, 176px" className="object-cover" />
           {vendor.featured && (
@@ -531,7 +531,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
             <div className="flex items-center gap-2 mb-1">
               <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-bold text-white">{vendor.category}</span>
               {rating > 0 && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-700">
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-700 dark:text-stone-300">
                   <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                   {rating.toFixed(1)} ({vendor.reviewCount || 0})
                 </span>
@@ -547,17 +547,17 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
                 {vendor.businessName || vendor.name}
               </h2>
             </Link>
-            <div className="flex items-center gap-1.5 text-sm text-slate-500 mt-1">
+            <div className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-stone-400 mt-1">
               <MapPin className="h-3.5 w-3.5 text-primary-500" />
               <span>{vendor.city}</span>
             </div>
             {vendor.description && (
-              <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-500">{vendor.description}</p>
+              <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-stone-400">{vendor.description}</p>
             )}
           </div>
           <div className="flex items-end justify-between mt-3">
             <div>
-              <span className="block text-[10px] font-bold uppercase text-slate-400">Starts from</span>
+              <span className="block text-[10px] font-bold uppercase text-slate-400 dark:text-stone-500">Starts from</span>
               <span className="text-lg font-black text-slate-950">
                 {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
               </span>
@@ -572,7 +572,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
   }
 
   return (
-    <article className="group relative rounded-[28px] overflow-hidden border border-slate-100 bg-white shadow-sm min-h-[460px]">
+    <article className="group relative rounded-[28px] overflow-hidden border border-slate-100 dark:border-white/10 bg-white dark:bg-[var(--sw-surface)] shadow-sm min-h-[460px]">
       <Image
         src={image}
         alt={vendor.businessName || vendor.name}
@@ -588,14 +588,14 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
           </span>
         )}
         {vendor.verified && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700 shadow-sm">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700 shadow-sm">
             <BadgeCheck className="h-3.5 w-3.5" />
             Verified
           </span>
         )}
       </div>
 
-      <button className="absolute top-4 right-4 z-20 h-9 w-9 rounded-full bg-white/90 text-slate-400 shadow-sm transition-colors hover:text-red-500">
+      <button className="absolute top-4 right-4 z-20 h-9 w-9 rounded-full bg-white/90 dark:bg-[var(--sw-surface)]/90 text-slate-400 dark:text-stone-500 shadow-sm transition-colors hover:text-red-500">
         <Heart className="m-auto h-4 w-4" />
       </button>
 
@@ -607,7 +607,7 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
             {vendor.category}
           </span>
           {rating > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-slate-800 shadow-sm">
+            <span className="inline-flex items-center gap-1 rounded-full bg-white dark:bg-[var(--sw-surface)] px-3 py-1.5 text-[11px] font-bold text-slate-800 dark:text-stone-200 shadow-sm">
               <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
               {rating.toFixed(1)} ({vendor.reviewCount || 0})
             </span>
@@ -619,20 +619,20 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
             {vendor.businessName || vendor.name}
           </h2>
         </Link>
-        <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-slate-600">
+        <div className="mt-2 flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-stone-300">
           <MapPin className="h-4 w-4 text-primary-500" />
           <span>{vendor.city}</span>
         </div>
 
         {vendor.description && (
-          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
+          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-stone-300">
             {vendor.description}
           </p>
         )}
 
         <div className="mt-5 flex items-end justify-between gap-4">
           <div>
-            <span className="block text-[11px] font-bold uppercase text-slate-400">Starts from</span>
+            <span className="block text-[11px] font-bold uppercase text-slate-400 dark:text-stone-500">Starts from</span>
             <span className="text-xl font-black text-slate-950">
               {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
             </span>

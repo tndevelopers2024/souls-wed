@@ -150,7 +150,7 @@ export default function TestimonialsSection() {
               <div className="flex gap-4">
                  <button 
                    onClick={prev} 
-                   className="w-14 h-14 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110 shadow-sm bg-white"
+                   className="w-14 h-14 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110 shadow-sm bg-white dark:bg-[var(--sw-surface)]"
                    style={{ border: "1px solid var(--sw-light-gray)", color: "var(--sw-navy)" }}
                    aria-label="Previous story"
                  >
@@ -159,7 +159,7 @@ export default function TestimonialsSection() {
                  <button 
                    onClick={next} 
                    className="w-14 h-14 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110 shadow-xl"
-                   style={{ background: "var(--sw-navy)", color: "var(--sw-white)" }}
+                   style={{ background: "var(--sw-ink)", color: "var(--sw-white)" }}
                    aria-label="Next story"
                  >
                    <ChevronRight className="w-6 h-6" />
@@ -204,7 +204,7 @@ export default function TestimonialsSection() {
                      }}
                      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                      whileHover={diff === 0 ? { scale: 1.02, rotate: 0 } : {}}
-                     className="absolute inset-0 w-full h-full rounded-[2.5rem] overflow-hidden bg-white p-3 sm:p-4 border border-gray-200"
+                     className="absolute inset-0 w-full h-full rounded-[2.5rem] overflow-hidden bg-white dark:bg-[var(--sw-surface)] p-3 sm:p-4 border border-gray-200"
                      style={{ pointerEvents: diff === 0 ? "auto" : "none" }}
                    >
                      <div className="relative w-full h-full rounded-[1.8rem] overflow-hidden">

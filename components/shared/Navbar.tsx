@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { CURRENCIES } from "@/lib/currency";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 
 // --- CUSTOM SVG ICON COMPONENTS (replacing lucide-react) ---
 
@@ -183,7 +184,7 @@ function DropdownMenu({ columns }: { columns: { title: string; items: { label: s
       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
       className="absolute top-full left-1/2 -translate-x-1/2 mt-6 w-max min-w-[800px] rounded-[32px] z-50 p-8 flex gap-12 before:absolute before:-top-8 before:left-0 before:w-full before:h-8 before:bg-transparent"
       style={{
-        background: "rgba(255,244,230,0.98)",
+        background: "var(--sw-nav-solid)",
         backdropFilter: "blur(20px)",
         border: "1px solid rgba(238,116,41,0.15)",
         boxShadow: "0 24px 60px rgba(238,116,41,0.12)",
@@ -329,7 +330,7 @@ export default function Navbar() {
       <div
         className="overflow-visible w-full md:w-fit mx-auto transition-all duration-300 ease-in-out"
         style={{
-          background: mobileOpen ? "rgba(255,244,230,0.98)" : (scrolled ? "rgba(255,244,230,0.85)" : "rgba(255,244,230,0.95)"),
+          background: mobileOpen ? "var(--sw-nav-solid)" : (scrolled ? "var(--sw-nav-scrolled)" : "var(--sw-nav-default)"),
           backdropFilter: "blur(24px) saturate(180%)",
           border: "1px solid rgba(238,116,41,0.15)",
           boxShadow: scrolled ? "0 10px 40px rgba(238,116,41,0.08)" : "0 4px 20px rgba(238,116,41,0.04)",
@@ -387,7 +388,7 @@ export default function Navbar() {
                             background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
                             border: "1px solid rgba(238, 116, 41, 0.1)",
                             backdropFilter: "blur(12px) saturate(150%)",
-                            boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                            boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
                             zIndex: -1,
                           }}
                           transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
@@ -418,6 +419,8 @@ export default function Navbar() {
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-3">
 
+              <ThemeToggle />
+
               <div
                 className="relative"
                 ref={currencyRef}
@@ -444,7 +447,7 @@ export default function Navbar() {
                         background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
                         border: "1px solid rgba(238, 116, 41, 0.1)",
                         backdropFilter: "blur(12px) saturate(150%)",
-                        boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                        boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
                         zIndex: -1,
                       }}
                       transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
@@ -469,7 +472,7 @@ export default function Navbar() {
                       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                       className="absolute top-full right-0 mt-6 min-w-[140px] rounded-[28px] p-2 z-50 flex flex-col before:absolute before:-top-6 before:left-0 before:w-full before:h-6 before:bg-transparent"
                       style={{
-                        background: "rgba(255,244,230,0.98)",
+                        background: "var(--sw-nav-solid)",
                         backdropFilter: "blur(20px)",
                         border: "1px solid rgba(238,116,41,0.15)",
                         boxShadow: "0 24px 60px rgba(238,116,41,0.12)",
@@ -568,7 +571,7 @@ export default function Navbar() {
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="py-1.5 text-sm font-bold text-slate-600 hover:text-primary-500"
+                          className="py-1.5 text-sm font-bold text-slate-600 dark:text-stone-300 hover:text-primary-500"
                           onClick={() => setMobileOpen(false)}
                         >
                           {item.label}
@@ -579,8 +582,12 @@ export default function Navbar() {
                 </div>
               );
             })}
-            <div className="flex items-center justify-between px-3 py-2 mt-2 border-t border-primary-100">
-              <span className="text-sm font-bold text-slate-800">Currency</span>
+            <div className="flex items-center justify-between px-3 py-2 mt-2 border-t border-primary-100 dark:border-white/10">
+              <span className="text-sm font-bold text-slate-800 dark:text-stone-200">Appearance</span>
+              <ThemeToggle />
+            </div>
+            <div className="flex items-center justify-between px-3 py-2 border-t border-primary-100 dark:border-white/10">
+              <span className="text-sm font-bold text-slate-800 dark:text-stone-200">Currency</span>
               <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
                 {Object.keys(CURRENCIES).map(code => (
                   <button
@@ -591,7 +598,7 @@ export default function Navbar() {
                     }}
                     className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors whitespace-nowrap ${currency === code
                         ? 'bg-primary-500 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-primary-100'
+                        : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-stone-300 hover:bg-primary-100'
                       }`}
                   >
                     {code}
@@ -601,7 +608,7 @@ export default function Navbar() {
             </div>
             <div className="pt-2 mt-1 border-t flex flex-col gap-2" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
               {loading ? (
-                <div className="h-10 bg-slate-100 rounded-full animate-pulse" />
+                <div className="h-10 bg-slate-100 dark:bg-white/10 rounded-full animate-pulse" />
               ) : user ? (
                 <>
                   <div className="px-3 py-2 flex items-center gap-3">
@@ -609,8 +616,8 @@ export default function Navbar() {
                       {user.name.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-800">{user.name}</p>
-                      <p className="text-xs text-slate-500 capitalize">{user.role} Profile</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-stone-200">{user.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-stone-400 capitalize">{user.role} Profile</p>
                     </div>
                   </div>
                   <Link
