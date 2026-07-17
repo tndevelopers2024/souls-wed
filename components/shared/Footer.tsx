@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Phone, Mail, MessageCircle, ChevronUp, Sparkles } from "lucide-react";
 import { useCurrency } from "@/lib/CurrencyContext";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 import { CURRENCIES } from "@/lib/currency";
 
 function IconInstagram({ className }: { className?: string }) {
@@ -424,8 +425,11 @@ export default function Footer() {
       </footer>
       </div>
 
-      {/* Floating Action Buttons (Scroll to Top & WhatsApp) */}
+      {/* Floating Action Buttons (Theme, Scroll to Top & WhatsApp) */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-4">
+        {/* Light / dark theme */}
+        <ThemeToggle variant="fab" className="ml-auto" />
+
         {/* Scroll to Top */}
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}

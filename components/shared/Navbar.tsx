@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { CURRENCIES } from "@/lib/currency";
-import ThemeToggle from "@/components/shared/ThemeToggle";
 
 // --- CUSTOM SVG ICON COMPONENTS (replacing lucide-react) ---
 
@@ -419,8 +418,6 @@ export default function Navbar() {
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-3">
 
-              <ThemeToggle />
-
               <div
                 className="relative"
                 ref={currencyRef}
@@ -583,10 +580,6 @@ export default function Navbar() {
               );
             })}
             <div className="flex items-center justify-between px-3 py-2 mt-2 border-t border-primary-100 dark:border-white/10">
-              <span className="text-sm font-bold text-slate-800 dark:text-stone-200">Appearance</span>
-              <ThemeToggle />
-            </div>
-            <div className="flex items-center justify-between px-3 py-2 border-t border-primary-100 dark:border-white/10">
               <span className="text-sm font-bold text-slate-800 dark:text-stone-200">Currency</span>
               <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
                 {Object.keys(CURRENCIES).map(code => (
