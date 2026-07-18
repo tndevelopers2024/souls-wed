@@ -58,3 +58,21 @@ export function validatePassword(password: string): string | null {
 
   return null;
 }
+
+/**
+ * Validate a phone number.
+ * Basic validation: Requires 10 to 15 digits, optionally starting with a '+'.
+ */
+export function validatePhone(phone: string): string | null {
+  if (!phone) {
+    return "Phone number is required.";
+  }
+  
+  // Regex for 10-15 digits, optional leading +
+  const phoneRegex = /^\+?[1-9]\d{9,14}$/;
+  if (!phoneRegex.test(phone.replace(/[\s-]/g, ""))) {
+    return "Invalid phone number format. Please provide a valid 10 to 15 digit number.";
+  }
+
+  return null;
+}

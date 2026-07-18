@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Vendor } from "@/lib/models/Vendor";
 import { Admin } from "@/lib/models/Admin";
 import { User } from "@/lib/models/User";
-import { hashPassword, validatePassword } from "@/lib/auth";
+import { hashPassword, validatePassword, validatePhone } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -70,6 +70,14 @@ export async function POST(req: Request) {
     } else if (role === "user") {
       const { phone } = body;
 
+      const phoneError = validatePhone(phone);
+      if (phoneError) {
+        return NextResponse.json(
+          { message: phoneError },
+          { status: 400 }
+        );
+      }
+
       // Check if User exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -99,6 +107,14 @@ export async function POST(req: Request) {
       if (!businessName || !phone || !category || !city) {
         return NextResponse.json(
           { message: "Vendor specific fields (businessName, phone, category, city) are missing." },
+          { status: 400 }
+        );
+      }
+
+      const phoneError = validatePhone(phone);
+      if (phoneError) {
+        return NextResponse.json(
+          { message: phoneError },
           { status: 400 }
         );
       }
