@@ -78,6 +78,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // ─── Step 3.5: Check if email is verified ───
+    if (!user.isEmailVerified) {
+      return NextResponse.json(
+        { message: "Please verify your email using the OTP sent to you before logging in.", unverified: true },
+        { status: 403 }
+      );
+    }
+
     // ─── Step 4: Create encrypted session cookie ───
     // This is the key change from the old approach.
     // getIronSession() reads/creates the encrypted cookie.

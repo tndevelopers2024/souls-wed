@@ -61,17 +61,70 @@ export function validatePassword(password: string): string | null {
 
 /**
  * Validate a phone number.
- * Basic validation: Requires 10 to 15 digits, optionally starting with a '+'.
+ * Strict validation: Blocks dummy numbers (1234567890, 9999999999).
+ * If 10 digits, enforces Indian mobile number rules (starts with 6-9).
  */
 export function validatePhone(phone: string): string | null {
   if (!phone) {
     return "Phone number is required.";
   }
   
-  // Regex for 10-15 digits, optional leading +
-  const phoneRegex = /^\+?[1-9]\d{9,14}$/;
-  if (!phoneRegex.test(phone.replace(/[\s-]/g, ""))) {
+  const cleanPhone = phone.replace(/[\s-]/g, "");
+  
+  // Basic length and character check
+  if (!/^\+?[0-9]{10,15}$/.test(cleanPhone)) {
     return "Invalid phone number format. Please provide a valid 10 to 15 digit number.";
+  }
+
+  // Block sequential numbers (e.g., 1234567890, 0123456789, 9876543210)
+  if (/012345678|123456789|987654321|876543210/.test(cleanPhone)) {
+    return "Please provide a real phone number, not a sequence.";
+  }
+
+  // Block repetitive numbers (e.g., 9999999999, 1111111111)
+  if (/^(\d)\1{7,}$/.test(cleanPhone.replace('+', ''))) {
+    return "Please provide a real phone number, not repeated digits.";
+  }
+
+  // If it's a standard 10 digit Indian number without country code, enforce 6-9 starting digit
+  if (/^\d{10}$/.test(cleanPhone)) {
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return "Indian mobile numbers must start with 6, 7, 8, or 9.";
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Validate an email address.
+ * Strict validation: Requires standard email format.
+ */
+export function validateEmail(email: string): string | null {
+  if (!email) {
+    return "Email address is required.";
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (!emailRegex.test(email)) {
+    return "Please provide a valid email address (e.g., name@example.com).";
+  }
+
+  return null;
+}
+
+/**
+ * Validate a user or business name.
+ * Strict validation: Only letters, spaces, hyphens, and apostrophes. No numbers or special symbols.
+ */
+export function validateName(name: string): string | null {
+  if (!name || name.trim().length < 2) {
+    return "Name must be at least 2 characters long.";
+  }
+  
+  const nameRegex = /^[A-Za-z\s'\-]{2,50}$/;
+  if (!nameRegex.test(name)) {
+    return "Name can only contain letters, spaces, hyphens, and apostrophes. No numbers or special characters are allowed.";
   }
 
   return null;

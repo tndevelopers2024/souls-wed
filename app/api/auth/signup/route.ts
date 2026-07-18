@@ -4,7 +4,7 @@ import { Admin } from "@/lib/models/Admin";
 import { User } from "@/lib/models/User";
 import { Otp } from "@/lib/models/Otp";
 import { sendVerificationOtpEmail } from "@/lib/mail";
-import { hashPassword, validatePassword, validatePhone } from "@/lib/auth";
+import { hashPassword, validatePassword, validatePhone, validateEmail, validateName } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -19,6 +19,12 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    const nameError = validateName(name);
+    if (nameError) return NextResponse.json({ message: nameError }, { status: 400 });
+
+    const emailError = validateEmail(email);
+    if (emailError) return NextResponse.json({ message: emailError }, { status: 400 });
 
     const passwordError = validatePassword(password);
     if (passwordError) {
@@ -56,21 +62,12 @@ export async function POST(req: Request) {
         );
       }
 
-      // Create admin
-      const newAdmin = new Admin({
-        name,
-        email,
-        passwordHash,
-        role: "admin",
-        isEmailVerified: false,
-      });
-      await newAdmin.save();
-
-      // Generate and send OTP
+      // Generate and send OTP with pending registration data
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const registrationData = { name, email, passwordHash, role: "admin", isEmailVerified: false };
       await Otp.findOneAndUpdate(
         { email },
-        { email, role: "admin", otp: otpCode },
+        { email, role: "admin", otp: otpCode, registrationData },
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
       void sendVerificationOtpEmail(email, name, otpCode);
@@ -99,22 +96,12 @@ export async function POST(req: Request) {
         );
       }
 
-      // Create user
-      const newUser = new User({
-        name,
-        email,
-        passwordHash,
-        phone,
-        role: "user",
-        isEmailVerified: false,
-      });
-      await newUser.save();
-
-      // Generate and send OTP
+      // Generate and send OTP with pending registration data
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const registrationData = { name, email, passwordHash, phone, role: "user", isEmailVerified: false };
       await Otp.findOneAndUpdate(
         { email },
-        { email, role: "user", otp: otpCode },
+        { email, role: "user", otp: otpCode, registrationData },
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
       void sendVerificationOtpEmail(email, name, otpCode);
@@ -150,8 +137,9 @@ export async function POST(req: Request) {
         );
       }
 
-      // Create vendor
-      const newVendor = new Vendor({
+      // Generate and send OTP with pending registration data
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const registrationData = {
         name, // contact person
         businessName,
         email,
@@ -162,14 +150,10 @@ export async function POST(req: Request) {
         verified: false, // public signups start unverified
         isEmailVerified: false,
         available: true,
-      });
-      await newVendor.save();
-
-      // Generate and send OTP
-      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      };
       await Otp.findOneAndUpdate(
         { email },
-        { email, role: "vendor", otp: otpCode },
+        { email, role: "vendor", otp: otpCode, registrationData },
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
       void sendVerificationOtpEmail(email, name, otpCode);

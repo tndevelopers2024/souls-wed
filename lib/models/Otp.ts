@@ -4,6 +4,7 @@ const OtpSchema = new Schema({
   email: { type: String, required: true, lowercase: true, trim: true },
   role: { type: String, required: true },
   otp: { type: String, required: true },
+  registrationData: { type: Schema.Types.Mixed }, // Store pending registration fields here
   createdAt: { type: Date, default: Date.now, expires: 900 }, // Expires after 15 minutes (900 seconds)
 });
 

@@ -30,25 +30,31 @@ export async function POST(req: Request) {
       );
     }
 
-    // Mark user as verified
-    let user = null;
-    if (role === "admin") {
-      user = await Admin.findOneAndUpdate({ email: email.toLowerCase().trim() }, { isEmailVerified: true }, { new: true });
-    } else if (role === "vendor") {
-      user = await Vendor.findOneAndUpdate({ email: email.toLowerCase().trim() }, { isEmailVerified: true }, { new: true });
-    } else if (role === "user") {
-      user = await User.findOneAndUpdate({ email: email.toLowerCase().trim() }, { isEmailVerified: true }, { new: true });
-    } else {
+    // Extract registration data and create the actual user
+    const registrationData = otpRecord.registrationData;
+    if (!registrationData) {
       return NextResponse.json(
-        { message: "Invalid user role specified." },
+        { message: "Registration data not found in OTP record. Please sign up again." },
         { status: 400 }
       );
     }
 
-    if (!user) {
+    registrationData.isEmailVerified = true;
+
+    let user = null;
+    if (role === "admin") {
+      user = new Admin(registrationData);
+      await user.save();
+    } else if (role === "vendor") {
+      user = new Vendor(registrationData);
+      await user.save();
+    } else if (role === "user") {
+      user = new User(registrationData);
+      await user.save();
+    } else {
       return NextResponse.json(
-        { message: "User not found." },
-        { status: 404 }
+        { message: "Invalid user role specified." },
+        { status: 400 }
       );
     }
 
