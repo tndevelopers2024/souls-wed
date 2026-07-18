@@ -1600,7 +1600,7 @@ export default function VendorDashboard() {
 
                       <div className="flex-1 bg-white dark:bg-stone-900 rounded-2xl p-5 shadow-xl flex flex-col items-center text-center relative border border-stone-100 dark:border-stone-800">
                         <div className="w-20 h-20 rounded-full mb-4 -mt-10 shadow-lg border-4 border-white dark:border-stone-900 z-10 overflow-hidden flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200 dark:from-stone-800 dark:to-stone-900">
-                          {vendor.profileImage && (vendor.profileImage.startsWith("/") || vendor.profileImage.startsWith("http")) ? (
+                          {vendor.profileImage && (vendor.profileImage.startsWith("/") || vendor.profileImage.startsWith("http") || vendor.profileImage.startsWith("data:")) ? (
                             <img src={vendor.profileImage} alt="Profile" className="w-full h-full object-cover" />
                           ) : vendor.profileImage && vendor.profileImage.length <= 10 ? (
                             <span className="text-3xl">{vendor.profileImage}</span>

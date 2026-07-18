@@ -222,7 +222,7 @@ export default function UserDashboard() {
                     <h3 className="font-extrabold text-sm mb-4 text-slate-900">My Account Profile</h3>
                     {/* Avatar */}
                     <div className="flex justify-center mb-4">
-                      {user.profileImage && (user.profileImage.startsWith("/") || user.profileImage.startsWith("http")) ? (
+                      {user.profileImage && (user.profileImage.startsWith("/") || user.profileImage.startsWith("http") || user.profileImage.startsWith("data:")) ? (
                         <div className="w-16 h-16 rounded-full overflow-hidden shadow-lg border-4 border-white">
                           <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
                         </div>

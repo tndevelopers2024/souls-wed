@@ -602,7 +602,7 @@ export default function Navbar() {
                 style={{ background: "var(--sw-primary)" }}
               >
                 {user && user.profileImage ? (
-                  user.profileImage.startsWith("/") || user.profileImage.startsWith("http") ? (
+                  user.profileImage.startsWith("/") || user.profileImage.startsWith("http") || user.profileImage.startsWith("data:") ? (
                     <img src={user.profileImage} alt="" className="w-6 h-6 rounded-full object-cover border border-white/30 relative z-10" />
                   ) : (
                     <span className="relative z-10 text-base leading-none">{user.profileImage}</span>
@@ -672,7 +672,7 @@ export default function Navbar() {
               ) : user ? (
                 <>
                   <div className="px-3 py-2 flex items-center gap-3">
-                    {user.profileImage && (user.profileImage.startsWith("/") || user.profileImage.startsWith("http")) ? (
+                    {user.profileImage && (user.profileImage.startsWith("/") || user.profileImage.startsWith("http") || user.profileImage.startsWith("data:")) ? (
                       <div className="w-9 h-9 rounded-full overflow-hidden shadow-sm border border-white/20">
                         <img src={user.profileImage} alt="" className="w-full h-full object-cover" />
                       </div>
