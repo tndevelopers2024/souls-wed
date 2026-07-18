@@ -78,16 +78,12 @@ export async function POST(req: Request) {
       // Save file
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      const uploadDir = path.join(process.cwd(), "public", "uploads", "avatars");
-      await mkdir(uploadDir, { recursive: true });
-
-      const ext = file.name.split(".").pop()?.replace(/[^a-zA-Z0-9]/g, "") ?? "jpg";
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      const filename = `avatar-${uniqueSuffix}.${ext}`;
-      const filePath = path.join(uploadDir, filename);
-
-      await writeFile(filePath, buffer);
-      profileImage = `/uploads/avatars/${filename}`;
+      
+      // Since Vercel is a serverless environment, writing to /public is not allowed at runtime.
+      // We convert the file to a base64 Data URI and save it directly to the database.
+      const mimeType = file.type;
+      const base64 = buffer.toString("base64");
+      profileImage = `data:${mimeType};base64,${base64}`;
     } else {
       return NextResponse.json({ message: "Unsupported content type." }, { status: 400 });
     }
