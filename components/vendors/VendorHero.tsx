@@ -23,7 +23,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
         id: vendor._id,
         name: vendor.businessName || vendor.name,
         location: vendor.city || "Various Locations",
-        price: vendor.pricing?.startingPrice || 0,
+        price: vendor.priceFrom || 0,
         unit: "event",
         rating: vendor.rating || 0,
         reviewCount: vendor.reviewCount || 0,
