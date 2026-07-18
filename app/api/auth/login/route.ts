@@ -108,7 +108,7 @@ export async function POST(req: Request) {
 
     // Send asynchronous login notification email
     const userAgent = req.headers.get("user-agent") || "Unknown Device";
-    void sendLoginNotificationEmail(user.email, user.name, role, userAgent);
+    await sendLoginNotificationEmail(user.email, user.name, role, userAgent);
 
     return NextResponse.json({
       success: true,

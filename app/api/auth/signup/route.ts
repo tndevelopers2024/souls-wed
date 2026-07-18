@@ -70,7 +70,7 @@ export async function POST(req: Request) {
         { email, role: "admin", otp: otpCode, registrationData },
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
-      void sendVerificationOtpEmail(email, name, otpCode);
+      await sendVerificationOtpEmail(email, name, otpCode);
 
       return NextResponse.json(
         { message: "Admin account registered successfully." },
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
         { email, role: "user", otp: otpCode, registrationData },
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
-      void sendVerificationOtpEmail(email, name, otpCode);
+      await sendVerificationOtpEmail(email, name, otpCode);
 
       return NextResponse.json(
         { message: "User account registered successfully." },
@@ -156,7 +156,7 @@ export async function POST(req: Request) {
         { email, role: "vendor", otp: otpCode, registrationData },
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
-      void sendVerificationOtpEmail(email, name, otpCode);
+      await sendVerificationOtpEmail(email, name, otpCode);
 
       return NextResponse.json(
         { message: "Vendor account registered successfully." },
