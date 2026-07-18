@@ -90,3 +90,44 @@ export async function sendVerificationOtpEmail(to: string, name: string, otpCode
     console.error("Error sending OTP email:", error);
   }
 }
+
+/**
+ * Sends a password reset email.
+ */
+export async function sendPasswordResetEmail(to: string, name: string, resetUrl: string) {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("SMTP credentials missing. Would have sent reset link %s to %s", resetUrl, to);
+    return;
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"${process.env.SMTP_FROM_NAME || "SoulsWed Security"}" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      to,
+      subject: "Reset your Password - SoulsWed",
+      html: `
+        <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #DEE2E6; border-radius: 8px;">
+          <h2 style="color: #EE7429; margin-top: 0;">Password Reset Request</h2>
+          <p style="color: #1A1A1A; font-size: 16px;">Hello ${name},</p>
+          <p style="color: #4a4a4a; line-height: 1.5;">We received a request to reset your password for your SoulsWed account. You can reset your password by clicking the button below:</p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}" style="background-color: #EE7429; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; display: inline-block;">Reset Password</a>
+          </div>
+          
+          <p style="color: #4a4a4a; line-height: 1.5; font-size: 14px;">If the button above does not work, copy and paste the following link into your browser:</p>
+          <p style="color: #4a4a4a; line-height: 1.5; font-size: 12px; word-break: break-all;">
+            <a href="${resetUrl}" style="color: #EE7429;">${resetUrl}</a>
+          </p>
+          
+          <p style="color: #4a4a4a; line-height: 1.5; font-size: 14px;">This link is valid for 1 hour. If you did not request a password reset, you can safely ignore this email.</p>
+          <br>
+          <p style="color: #4a4a4a; line-height: 1.5;">Best regards,<br><strong style="color: #1A1A1A;">SoulsWed Security Team</strong></p>
+        </div>
+      `,
+    });
+    console.log("Password reset email sent to %s, messageId: %s", to, info.messageId);
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+  }
+}

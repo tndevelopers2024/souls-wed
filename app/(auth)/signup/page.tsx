@@ -32,6 +32,7 @@ import {
   Sparkles,
   Building2,
   Phone as PhoneIcon,
+  Wand2,
 } from "lucide-react";
 import { PhoneInput } from "@/components/shared/PhoneInput";
 
@@ -107,6 +108,16 @@ function SignupContent() {
   const [error, setError]     = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [shake, setShake]     = useState(false);
+
+  const generateStrongPassword = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+    let pass = "";
+    for (let i = 0; i < 16; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setPassword(pass);
+    setShowPassword(true);
+  };
 
   // Sync URL changes to state
   useEffect(() => {
@@ -493,8 +504,20 @@ function SignupContent() {
                   </Field>
 
                   {/* Password with show/hide */}
-                  <Field label="Password">
-                    <input
+                  <div className="flex flex-col gap-1.5 relative">
+                    <div className="flex justify-between items-center ml-1">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Password</label>
+                      <button
+                        type="button"
+                        onClick={generateStrongPassword}
+                        className="text-[10px] flex items-center gap-1 font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                      >
+                        <Wand2 className="h-3 w-3" />
+                        Generate Strong
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <input
                       type={showPassword ? "text" : "password"}
                       placeholder="Min. 8 characters"
                       value={password}
@@ -512,7 +535,8 @@ function SignupContent() {
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
-                  </Field>
+                    </div>
+                  </div>
 
                   {/* Submit */}
                   <button

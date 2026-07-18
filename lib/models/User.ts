@@ -8,6 +8,8 @@ const UserSchema = new Schema({
   profileImage: { type: String, default: "" },
   role:         { type: String, default: "user" }, // user, couple
   isEmailVerified: { type: Boolean, default: false },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   createdAt:    { type: Date, default: Date.now },
 });
 

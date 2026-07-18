@@ -7,6 +7,8 @@ const AdminSchema = new Schema({
   profileImage: { type: String, default: "" },
   role:         { type: String, default: "admin" }, // admin, superadmin, moderator
   isEmailVerified: { type: Boolean, default: false },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   createdAt:    { type: Date, default: Date.now },
 });
 

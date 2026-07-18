@@ -23,6 +23,8 @@ const VendorSchema = new Schema({
   verified:     { type: Boolean, default: false }, // Admin verification
   isEmailVerified: { type: Boolean, default: false }, // Email OTP verification
   available:    { type: Boolean, default: true },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   createdAt:    { type: Date, default: Date.now },
 });
 

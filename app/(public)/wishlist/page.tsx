@@ -112,6 +112,7 @@ export default function WishlistPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8, filter: "blur(4px)" }}
                     transition={{ duration: 0.3 }}
+                    className="h-[420px] sm:h-[460px] lg:h-[480px] w-full"
                   >
                     <VendorCard
                       id={item.id}
