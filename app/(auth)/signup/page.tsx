@@ -473,7 +473,7 @@ function SignupContent() {
                         value={phone}
                         onChange={setPhone}
                         placeholder="Enter phone number"
-                        disabled={isLoading}
+                        disabled={loading}
                         className={shake ? "animate-shake" : ""}
                       />
                     </Field>
