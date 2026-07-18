@@ -148,6 +148,42 @@ function SignupContent() {
       return;
     }
 
+    // Client-side password validation
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      triggerShake();
+      return;
+    }
+    if (!/(?=.*[a-z])/.test(password)) {
+      setError("Password must contain at least one lowercase letter.");
+      triggerShake();
+      return;
+    }
+    if (!/(?=.*[A-Z])/.test(password)) {
+      setError("Password must contain at least one uppercase letter.");
+      triggerShake();
+      return;
+    }
+    if (!/(?=.*[0-9])/.test(password)) {
+      setError("Password must contain at least one number.");
+      triggerShake();
+      return;
+    }
+    if (!/(?=.*[!@#$%^&*()[\]{}\-_=+|;:'",.<>/?`~])/.test(password)) {
+      setError("Password must contain at least one special character.");
+      triggerShake();
+      return;
+    }
+    const lowerPass = password.toLowerCase();
+    const predictablePatterns = ["12345", "qwerty", "password", "abcde", "admin"];
+    for (const pattern of predictablePatterns) {
+      if (lowerPass.includes(pattern)) {
+        setError("Password is too predictable. Please avoid common sequences or words.");
+        triggerShake();
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       let payload: Record<string, string> = { role, name, email, password };
@@ -286,8 +322,47 @@ function SignupContent() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="flex flex-col items-center text-center py-6"
                 >
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 text-2xl animate-bounce">
-                    <Sparkles className="w-7 h-7" />
+                  <div className="relative flex items-center justify-center mb-6 w-24 h-24">
+                    {/* Glowing background rings */}
+                    <motion.div
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: [1.2, 1.5, 1], opacity: [0.5, 0.2, 0] }}
+                      transition={{ duration: 1.5, ease: "easeOut", times: [0, 0.5, 1] }}
+                      className="absolute inset-0 rounded-full blur-xl"
+                      style={{ background: accent.from }}
+                    />
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                      className="relative z-10 w-20 h-20 rounded-full flex items-center justify-center"
+                      style={{
+                        background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
+                        boxShadow: `0 0 40px ${accent.glow}`,
+                      }}
+                    >
+                      <motion.svg
+                        className="w-10 h-10 text-white"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <motion.path
+                          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                          initial={{ pathLength: 0, fill: "rgba(255,255,255,0)", scale: 0.8 }}
+                          animate={{ pathLength: 1, fill: "rgba(255,255,255,1)", scale: [0.8, 1.1, 1] }}
+                          transition={{
+                            pathLength: { duration: 0.7, ease: "easeInOut" },
+                            fill: { duration: 0.4, ease: "easeOut", delay: 0.5 },
+                            scale: { duration: 0.4, ease: "easeOut", delay: 0.5 }
+                          }}
+                          style={{ originX: "50%", originY: "50%" }}
+                        />
+                      </motion.svg>
+                    </motion.div>
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 mb-1">Registration Complete!</h3>
                   <p className="text-sm text-slate-500">Redirecting to sign in…</p>

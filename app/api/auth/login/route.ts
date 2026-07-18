@@ -23,6 +23,7 @@ import { Vendor } from "@/lib/models/Vendor";
 import { Admin } from "@/lib/models/Admin";
 import { User } from "@/lib/models/User";
 import { verifyPassword } from "@/lib/auth";
+import { sendLoginNotificationEmail } from "@/lib/mail";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
@@ -96,6 +97,10 @@ export async function POST(req: Request) {
     // ↑ This encrypts all the session data and sets it as a cookie
     // The cookie value looks like: "Fe26.2**abc123..." (encrypted gibberish)
     // Nobody can read or modify it without SESSION_SECRET
+
+    // Send asynchronous login notification email
+    const userAgent = req.headers.get("user-agent") || "Unknown Device";
+    void sendLoginNotificationEmail(user.email, user.name, role, userAgent);
 
     return NextResponse.json({
       success: true,

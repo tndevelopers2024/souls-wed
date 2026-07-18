@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff, AlertCircle, IdCard, Moon, Sun, Monitor, SlidersHorizontal, LogOut, Shield } from "lucide-react";
+import { User, Home, Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff, AlertCircle, IdCard, Moon, Sun, Monitor, SlidersHorizontal, LogOut, Shield, BadgeCheck, MessageSquare, TrendingUp } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
 import AvatarUploader from "@/components/shared/AvatarUploader";
+import VendorAnalyticsChart from "@/components/vendors/VendorAnalyticsChart";
+import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 
 interface VendorSession {
   id: string;
@@ -34,7 +36,7 @@ interface VendorSession {
   unavailableDates?: string[];
 }
 
-type TabType = "overview" | "leads" | "venues" | "rooms" | "settings" | "account-settings" | "planners" | "caterers" | "decorators";
+type TabType = "overview" | "leads" | "settings" | "account-settings" | "services";
 
 interface DashboardBooking {
   _id: string;
@@ -148,6 +150,7 @@ export default function VendorDashboard() {
   const [available, setAvailable] = useState(true);
   const [bookings, setBookings] = useState<DashboardBooking[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const [selectedCategory, setSelectedCategory] = useState("venues");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isDark: isDarkMode, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -661,19 +664,14 @@ export default function VendorDashboard() {
     { id: "overview", label: "Dashboard", icon: LayoutDashboard },
     {
       id: "services",
-      label: "Booking Categories",
+      label: "Services & Venues",
       icon: Briefcase,
-      subItems: [
-        { id: "venues", label: "Venue", count: venues.length || null, icon: MapPin },
-        { id: "rooms", label: "Rooms", count: services.filter(s => s.category === "rooms").length || null, icon: BedDouble },
-        { id: "planners", label: "Wedding Planners", count: services.filter(s => s.category === "planners").length || null, icon: ClipboardList },
-        { id: "caterers", label: "Caterers", count: services.filter(s => s.category === "caterers").length || null, icon: Utensils },
-        { id: "decorators", label: "Decorators", count: services.filter(s => s.category === "decorators").length || null, icon: Brush },
-      ]
+      count: venues.length + services.length || null
     },
     { id: "leads", label: "Booking Inquiries", count: bookings.length || null, icon: Inbox },
     { id: "settings", label: "Business Profile", icon: Settings },
     { id: "account-settings", label: "Settings", icon: SlidersHorizontal },
+    { id: "home", label: "Back to Home", icon: Home, href: "/" },
   ];
 
   // Dark Mode helper CSS classes (corrected color classes to standard Tailwind tokens)
@@ -725,7 +723,9 @@ export default function VendorDashboard() {
               <div key={item.id} className="w-full">
                 <button
                   onClick={() => {
-                    if (hasSubItems) {
+                    if (item.href) {
+                      router.push(item.href);
+                    } else if (hasSubItems) {
                       setServicesExpanded(!servicesExpanded);
                       if (sidebarCollapsed) setSidebarCollapsed(false);
                     } else {
@@ -827,9 +827,13 @@ export default function VendorDashboard() {
 
           <div className={`flex items-center justify-between p-2 rounded-xl transition-colors ${isDarkMode ? 'bg-stone-900/50 hover:bg-stone-800' : 'bg-white hover:bg-stone-50 border border-stone-100'}`}>
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs uppercase">
-                {vendor.businessName ? vendor.businessName.slice(0, 1) : "V"}
-              </div>
+              {vendor.profileImage ? (
+                <img src={vendor.profileImage} alt={vendor.businessName || vendor.name} className="w-8 h-8 shrink-0 rounded-full object-cover" />
+              ) : (
+                <div className="w-8 h-8 shrink-0 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 flex items-center justify-center">
+                  <User className="w-4 h-4" />
+                </div>
+              )}
               {!sidebarCollapsed && (
                 <div className="min-w-0 flex-1 pr-2">
                   <h4 className={`font-bold text-xs truncate ${headingText}`}>{vendor.businessName || vendor.name}</h4>
@@ -874,10 +878,9 @@ export default function VendorDashboard() {
                 <span className="block sm:inline">
                   {activeTab === "overview" && "Manage your profile showcase, settings, and upcoming client bookings."}
                   {activeTab === "leads" && "All couple enquiries and booking requests."}
-                  {activeTab === "venues" && "All active venue listings synced to the public directory."}
+                  {activeTab === "services" && "Manage your active listings and venues."}
                   {activeTab === "settings" && "Manage your vendor portal configuration."}
                   {activeTab === "account-settings" && "Appearance, security & account preferences."}
-                  {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && `Manage your active ${activeTab} listings.`}
                 </span>
               </p>
             </div>
@@ -1002,41 +1005,108 @@ export default function VendorDashboard() {
               <div className="flex flex-col gap-5">
 
                 {/* Account verification warning banner */}
-                <div className={`border rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-none ${vendor.verified
-                  ? isDarkMode ? "bg-emerald-950/10 border-emerald-900/50" : "bg-emerald-50/60 border-emerald-200 dark:border-emerald-500/25"
-                  : isDarkMode ? "bg-amber-950/10 border-amber-900/50" : "bg-amber-50/60 border-amber-200"
-                  }`}>
-                  <div className="flex gap-3 text-xs font-semibold">
-                    <div>
-                      <h4 className={`font-bold ${headingText}`}>
-                        {vendor.verified ? "Profile Approved and Public" : "Account Verification Pending"}
-                      </h4>
-                      <p className="text-[10px] text-stone-500 mt-0.5 font-medium">
-                        {vendor.verified
-                          ? "Your profile can appear in the public vendor directory while accepting enquiries is enabled."
-                          : "Administrators will verify your brand details soon. Public listing stays hidden until approval."}
-                      </p>
+                {!vendor.verified && (
+                  <div className={`border rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-none ${isDarkMode ? "bg-amber-950/10 border-amber-900/50" : "bg-amber-50/60 border-amber-200"
+                    }`}>
+                    <div className="flex gap-3 text-xs font-semibold">
+                      <div>
+                        <h4 className={`font-bold ${headingText}`}>
+                          Account Verification Pending
+                        </h4>
+                        <p className="text-[10px] text-stone-500 mt-0.5 font-medium">
+                          Administrators will verify your brand details soon. Public listing stays hidden until approval.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex flex-col gap-6">
 
-                  {/* Performance grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {[
-                      { label: "Partner Rating", count: "New" },
-                      { label: "Total Reviews", count: "0" },
-                      { label: "Active Leads", count: bookings.length },
-                    ].map((stat, i) => (
-                      <div
-                        key={i}
-                        className={`p-5 rounded-3xl border flex flex-col gap-3 relative overflow-hidden group shadow-none transition-all duration-300 hover:-translate-y-0.5 ${cardClass}`}
-                      >
-                        <span className={`text-2xl font-black ${headingText}`}>{stat.count}</span>
-                        <span className="text-xs font-bold text-stone-450">{stat.label}</span>
+                  {/* Performance & ID grid */}
+                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                    {/* Metrics */}
+                    <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      {[
+                        {
+                          label: "Partner Rating",
+                          count: "New",
+                          icon: Star,
+                          color: "text-amber-500 dark:text-amber-400",
+                          bg: "bg-amber-50 dark:bg-amber-500/10",
+                          desc: "Top 10% in your city"
+                        },
+                        {
+                          label: "Total Reviews",
+                          count: "0",
+                          icon: MessageSquare,
+                          color: "text-blue-500 dark:text-blue-400",
+                          bg: "bg-blue-50 dark:bg-blue-500/10",
+                          desc: "Awaiting your first review"
+                        },
+                        {
+                          label: "Active Leads",
+                          count: bookings.length,
+                          icon: TrendingUp,
+                          color: "text-emerald-500 dark:text-emerald-400",
+                          bg: "bg-emerald-50 dark:bg-emerald-500/10",
+                          desc: "Respond quickly to win"
+                        },
+                      ].map((stat, i) => {
+                        const Icon = stat.icon;
+                        return (
+                          <div
+                            key={i}
+                            className={`p-5 rounded-3xl border flex flex-col justify-between relative overflow-hidden group shadow-none ${cardClass}`}
+                          >
+                            <div className="flex items-center justify-between mb-4">
+                              <span className={`text-2xl font-black ${headingText}`}>{stat.count}</span>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${stat.bg} ${stat.color}`}>
+                                <Icon className="w-4 h-4" />
+                              </div>
+                            </div>
+                            <div>
+                              <span className="block text-xs font-bold text-stone-600 dark:text-stone-300 mb-1">{stat.label}</span>
+                              <span className="block text-[10px] font-semibold text-stone-400">{stat.desc}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* ID Card */}
+                    <div className={`lg:col-span-2 p-5 rounded-3xl border flex items-center gap-5 relative overflow-hidden shadow-none ${cardClass}`}>
+                      {/* Avatar */}
+                      <div className="relative shrink-0">
+                        {vendor?.profileImage ? (
+                          <img src={vendor.profileImage} alt={vendor.name} className="w-16 h-16 rounded-full object-cover border-2 border-primary-100 dark:border-stone-800" />
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-black text-2xl border-2 border-white dark:border-stone-900">
+                            {(vendor?.businessName || vendor?.name || "?").charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        {vendor?.verified && (
+                          <div className="absolute -bottom-1 -right-1 bg-white dark:bg-stone-900 rounded-full p-0.5">
+                            <BadgeCheck className="w-6 h-6 text-green-500 fill-green-100 dark:fill-green-900/30" />
+                          </div>
+                        )}
                       </div>
-                    ))}
+
+                      {/* Details */}
+                      <div className="flex flex-col min-w-0">
+                        <h3 className={`font-extrabold text-base leading-tight truncate ${headingText}`}>
+                          {vendor?.businessName || vendor?.name}
+                        </h3>
+                        <p className="text-xs text-stone-500 font-semibold mt-1 capitalize truncate">
+                          {vendor?.category} • {vendor?.city}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2.5">
+                          <span className="text-[10px] bg-primary-50 text-primary-700 dark:bg-primary-500/10 dark:text-primary-400 px-2.5 py-0.5 rounded-md font-black tracking-wide uppercase">
+                            ID: {vendor?.id?.slice(-6) || "NEW"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* ── Real-Time Listing Grid ── */}
@@ -1066,12 +1136,12 @@ export default function VendorDashboard() {
                           <h3 className={`font-extrabold text-sm ${headingText}`}>Your Listings at a Glance</h3>
                           <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Real-time • {new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                           {categories.map((cat) => (
                             <button
                               key={cat.id}
                               onClick={() => setActiveTab(cat.id as TabType)}
-                              className={`relative group flex flex-col gap-2 p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${isDarkMode ? "bg-stone-900/60 border-stone-800" : `${cat.lightBg}`}`}
+                              className={`relative group flex flex-col gap-2 p-4 rounded-2xl border text-left cursor-pointer ${isDarkMode ? "bg-stone-900/60 border-stone-800" : `${cat.lightBg}`}`}
                             >
                               {/* Icon + live badge */}
                               <div className="flex items-start justify-between mb-1">
@@ -1128,34 +1198,38 @@ export default function VendorDashboard() {
                     );
                   })()}
 
-                  {/* Leads list section */}
-                  <div className={`rounded-3xl p-6 border shadow-none flex flex-col gap-5 min-h-[320px] ${cardClass}`}>
-                    <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
-                      <h3 className={`font-extrabold text-sm ${headingText}`}>Active Inquiries</h3>
-                      <button
-                        onClick={() => setActiveTab("leads")}
-                        className="text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center gap-0.5 cursor-pointer"
-                      >
-                        View All Leads
-                      </button>
-                    </div>
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                    <VendorAnalyticsChart bookings={bookings} />
 
-                    {bookings.length === 0 ? (
-                      <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                        <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>All Caught Up!</h4>
-                        <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
-                          No active couple requests currently. Complete your business information to start appearing in search queries.
-                        </p>
+                    {/* Leads list section */}
+                    <div className={`rounded-3xl p-6 border shadow-none flex flex-col gap-5 min-h-[320px] ${cardClass}`}>
+                      <div className={`flex justify-between items-center pb-2 border-b ${dividerClass}`}>
+                        <h3 className={`font-extrabold text-sm ${headingText}`}>Active Inquiries</h3>
+                        <button
+                          onClick={() => setActiveTab("leads")}
+                          className="text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center gap-0.5 cursor-pointer"
+                        >
+                          View All Leads
+                        </button>
                       </div>
-                    ) : (
-                      <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-                        {bookings.slice(0, 6).map((booking) => (
-                          <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
-                            <BookingCard booking={booking} isVendor={true} />
-                          </div>
-                        ))}
-                      </div>
-                    )}
+
+                      {bookings.length === 0 ? (
+                        <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
+                          <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>All Caught Up!</h4>
+                          <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
+                            No active couple requests currently. Complete your business information to start appearing in search queries.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+                          {bookings.slice(0, 6).map((booking) => (
+                            <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
+                              <BookingCard booking={booking} isVendor={true} />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -1193,8 +1267,23 @@ export default function VendorDashboard() {
               </div>
             )}
 
+            {activeTab === "services" && (
+              <div className={`mb-6 p-4 border rounded-3xl ${cardClass} overflow-x-auto custom-scrollbar flex items-center gap-2`} style={{ scrollbarWidth: 'none' }}>
+                {VENDOR_CATEGORIES.map(cat => (
+                  <button
+                    key={cat.slug}
+                    onClick={() => setSelectedCategory(cat.slug)}
+                    className={`flex shrink-0 items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${selectedCategory === cat.slug ? "bg-primary-500 text-white" : isDarkMode ? "bg-stone-800/60 text-stone-400 hover:bg-stone-800" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}
+                  >
+                    <cat.icon className="w-3.5 h-3.5" />
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* MY VENUES TAB */}
-            {activeTab === "venues" && (
+            {activeTab === "services" && selectedCategory === "venues" && (
               <div className="flex flex-col gap-5">
 
                 {/* ── Header bar ── */}
@@ -2042,8 +2131,8 @@ export default function VendorDashboard() {
                       type="button"
                       onClick={() => { if (isDarkMode) toggleTheme(); }}
                       className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${!isDarkMode
-                          ? "border-[#EE7429] bg-gradient-to-br from-orange-50/80 to-amber-50/60 shadow-lg shadow-orange-500/10"
-                          : "border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-md"
+                        ? "border-[#EE7429] bg-gradient-to-br from-orange-50/80 to-amber-50/60 shadow-lg shadow-orange-500/10"
+                        : "border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-md"
                         }`}
                     >
                       {!isDarkMode && (
@@ -2052,8 +2141,8 @@ export default function VendorDashboard() {
                         </div>
                       )}
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${!isDarkMode
-                          ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
-                          : "bg-stone-100 dark:bg-stone-800 text-stone-400 group-hover:bg-stone-200 dark:group-hover:bg-stone-700"
+                        ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-400 group-hover:bg-stone-200 dark:group-hover:bg-stone-700"
                         }`}>
                         <Sun className="w-6 h-6" />
                       </div>
@@ -2077,8 +2166,8 @@ export default function VendorDashboard() {
                       type="button"
                       onClick={() => { if (!isDarkMode) toggleTheme(); }}
                       className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${isDarkMode
-                          ? "border-[#EE7429] bg-gradient-to-br from-stone-800/80 to-stone-900/60 shadow-lg shadow-orange-500/10"
-                          : "border-stone-200 hover:border-stone-300 hover:shadow-md"
+                        ? "border-[#EE7429] bg-gradient-to-br from-stone-800/80 to-stone-900/60 shadow-lg shadow-orange-500/10"
+                        : "border-stone-200 hover:border-stone-300 hover:shadow-md"
                         }`}
                     >
                       {isDarkMode && (
@@ -2087,8 +2176,8 @@ export default function VendorDashboard() {
                         </div>
                       )}
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${isDarkMode
-                          ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
-                          : "bg-stone-100 text-stone-400 group-hover:bg-stone-200"
+                        ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
+                        : "bg-stone-100 text-stone-400 group-hover:bg-stone-200"
                         }`}>
                         <Moon className="w-6 h-6" />
                       </div>
@@ -2209,192 +2298,197 @@ export default function VendorDashboard() {
               </div>
             )}
 
-            {/* SERVICES SECTION (Rooms, Planners, Caterers, Decorators) */}
-            {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && (
-              <div className={`rounded-3xl p-0 border-0 shadow-none min-h-[400px]`}>
-                <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
-                  <h3 className={`font-extrabold text-lg capitalize ${headingText}`}>My {activeTab}</h3>
-                  {serviceView === "grid" && (
-                    <button
-                      onClick={() => openAddService(activeTab)}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold text-xs transition-colors shadow-none"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      Add New
-                    </button>
-                  )}
-                </div>
-
-                {serviceView !== "grid" && (
-                  <div className="max-w-2xl">
-                    <button
-                      onClick={() => setServiceView("grid")}
-                      className="flex items-center gap-1 text-xs font-bold text-stone-500 hover:text-stone-800 mb-6 transition-colors"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                      Back to grid
-                    </button>
-
-                    {serviceMessage && (
-                      <div className={`mb-6 rounded-2xl border px-4 py-3 text-xs font-bold ${serviceMessage.includes("Failed") || serviceMessage.includes("required")
-                        ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-100"
-                        : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100"
-                        }`}>
-                        {serviceMessage}
-                      </div>
+            {/* SERVICES SECTION */}
+            {activeTab === "services" && selectedCategory !== "venues" && (() => {
+              const activeTab = selectedCategory; // override for internal logic
+              const currentCat = VENDOR_CATEGORIES.find(c => c.slug === selectedCategory);
+              const catLabel = currentCat ? currentCat.name : selectedCategory;
+              return (
+                <div className={`rounded-3xl p-0 border-0 shadow-none min-h-[400px]`}>
+                  <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
+                    <h3 className={`font-extrabold text-lg capitalize ${headingText}`}>My {catLabel}</h3>
+                    {serviceView === "grid" && (
+                      <button
+                        onClick={() => openAddService(activeTab)}
+                        className="flex items-center gap-1.5 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold text-xs transition-colors shadow-none"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        Add New
+                      </button>
                     )}
+                  </div>
 
-                    <div className={`p-6 rounded-3xl border ${cardClass}`}>
-                      <div className="flex flex-col gap-5">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {serviceView !== "grid" && (
+                    <div className="max-w-2xl">
+                      <button
+                        onClick={() => setServiceView("grid")}
+                        className="flex items-center gap-1 text-xs font-bold text-stone-500 hover:text-stone-800 mb-6 transition-colors"
+                      >
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                        Back to grid
+                      </button>
+
+                      {serviceMessage && (
+                        <div className={`mb-6 rounded-2xl border px-4 py-3 text-xs font-bold ${serviceMessage.includes("Failed") || serviceMessage.includes("required")
+                          ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-100"
+                          : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100"
+                          }`}>
+                          {serviceMessage}
+                        </div>
+                      )}
+
+                      <div className={`p-6 rounded-3xl border ${cardClass}`}>
+                        <div className="flex flex-col gap-5">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Service Name *</label>
+                              <input
+                                type="text"
+                                value={serviceForm.name}
+                                onChange={e => setServiceForm({ ...serviceForm, name: e.target.value })}
+                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                placeholder="e.g. Royal Catering"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">City *</label>
+                              <input
+                                type="text"
+                                value={serviceForm.city}
+                                onChange={e => setServiceForm({ ...serviceForm, city: e.target.value })}
+                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Starting Price (₹)</label>
+                              <input
+                                type="number"
+                                value={serviceForm.priceFrom}
+                                onChange={e => setServiceForm({ ...serviceForm, priceFrom: e.target.value })}
+                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Price Unit</label>
+                              <select
+                                value={serviceForm.priceUnit}
+                                onChange={e => setServiceForm({ ...serviceForm, priceUnit: e.target.value })}
+                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              >
+                                <option value="per event">per event</option>
+                                <option value="per day">per day</option>
+                                <option value="per plate">per plate</option>
+                              </select>
+                            </div>
+                          </div>
+
                           <div className="flex flex-col gap-1.5">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Service Name *</label>
-                            <input
-                              type="text"
-                              value={serviceForm.name}
-                              onChange={e => setServiceForm({ ...serviceForm, name: e.target.value })}
+                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Main Image URL (or upload)</label>
+                            <div className="flex gap-2">
+                              <input
+                                type="url"
+                                value={serviceForm.image}
+                                onChange={e => setServiceForm({ ...serviceForm, image: e.target.value })}
+                                className={`flex-1 border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                placeholder="https://..."
+                              />
+                              <label className="flex items-center justify-center px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl cursor-pointer transition-colors border border-stone-200">
+                                {uploadingServiceImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                                <input type="file" accept="image/*" className="hidden" onChange={handleServiceImageUpload} disabled={uploadingServiceImage} />
+                              </label>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Description</label>
+                            <textarea
+                              value={serviceForm.description}
+                              onChange={e => setServiceForm({ ...serviceForm, description: e.target.value })}
+                              rows={3}
                               className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                              placeholder="e.g. Royal Catering"
                             />
                           </div>
-                          <div className="flex flex-col gap-1.5">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">City *</label>
-                            <input
-                              type="text"
-                              value={serviceForm.city}
-                              onChange={e => setServiceForm({ ...serviceForm, city: e.target.value })}
-                              className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                            />
-                          </div>
-                        </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="flex flex-col gap-1.5">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Starting Price (₹)</label>
-                            <input
-                              type="number"
-                              value={serviceForm.priceFrom}
-                              onChange={e => setServiceForm({ ...serviceForm, priceFrom: e.target.value })}
-                              className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                            />
-                          </div>
-                          <div className="flex flex-col gap-1.5">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Price Unit</label>
-                            <select
-                              value={serviceForm.priceUnit}
-                              onChange={e => setServiceForm({ ...serviceForm, priceUnit: e.target.value })}
-                              className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                            >
-                              <option value="per event">per event</option>
-                              <option value="per day">per day</option>
-                              <option value="per plate">per plate</option>
-                            </select>
-                          </div>
+                          <button
+                            onClick={handleSaveService}
+                            disabled={savingService}
+                            className="w-full mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
+                          >
+                            {savingService && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {savingService ? "Saving..." : "Save Listing"}
+                          </button>
                         </div>
-
-                        <div className="flex flex-col gap-1.5">
-                          <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Main Image URL (or upload)</label>
-                          <div className="flex gap-2">
-                            <input
-                              type="url"
-                              value={serviceForm.image}
-                              onChange={e => setServiceForm({ ...serviceForm, image: e.target.value })}
-                              className={`flex-1 border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                              placeholder="https://..."
-                            />
-                            <label className="flex items-center justify-center px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl cursor-pointer transition-colors border border-stone-200">
-                              {uploadingServiceImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                              <input type="file" accept="image/*" className="hidden" onChange={handleServiceImageUpload} disabled={uploadingServiceImage} />
-                            </label>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-1.5">
-                          <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Description</label>
-                          <textarea
-                            value={serviceForm.description}
-                            onChange={e => setServiceForm({ ...serviceForm, description: e.target.value })}
-                            rows={3}
-                            className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                          />
-                        </div>
-
-                        <button
-                          onClick={handleSaveService}
-                          disabled={savingService}
-                          className="w-full mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
-                        >
-                          {savingService && <Loader2 className="w-4 h-4 animate-spin" />}
-                          {savingService ? "Saving..." : "Save Listing"}
-                        </button>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {serviceView === "grid" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {services.filter(s => s.category === activeTab).length === 0 ? (
-                      <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
-                        <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 border border-stone-200">
-                          <ClipboardList className="w-6 h-6 text-stone-400" />
+                  {serviceView === "grid" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {services.filter(s => s.category === activeTab).length === 0 ? (
+                        <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
+                          <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 border border-stone-200">
+                            <ClipboardList className="w-6 h-6 text-stone-400" />
+                          </div>
+                          <h4 className="font-bold text-stone-800 mb-1">No listings yet</h4>
+                          <p className="text-xs text-stone-500 mb-4 max-w-[200px]">Create your first {activeTab} listing to appear in the directory.</p>
                         </div>
-                        <h4 className="font-bold text-stone-800 mb-1">No listings yet</h4>
-                        <p className="text-xs text-stone-500 mb-4 max-w-[200px]">Create your first {activeTab} listing to appear in the directory.</p>
-                      </div>
-                    ) : (
-                      services.filter(s => s.category === activeTab).map((service) => (
-                        <div key={service.serviceId} className="group h-[420px]">
-                          <ListingCard
-                            name={service.name}
-                            image={service.image || ""}
-                            location={service.city}
-                            rating={service.rating || 0}
-                            reviewCount={service.reviewCount}
-                            priceDisplay={`₹${service.priceFrom?.toLocaleString("en-IN") || 0}`}
-                            unit={service.priceUnit ? `/${service.priceUnit}` : undefined}
-                            priceLabel="starting at"
-                            badge={
-                              service.featured ? (
-                                <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
-                                  <Star className="w-3 h-3 inline-block" /> Featured
+                      ) : (
+                        services.filter(s => s.category === activeTab).map((service) => (
+                          <div key={service.serviceId} className="group h-[420px]">
+                            <ListingCard
+                              name={service.name}
+                              image={service.image || ""}
+                              location={service.city}
+                              rating={service.rating || 0}
+                              reviewCount={service.reviewCount}
+                              priceDisplay={`₹${service.priceFrom?.toLocaleString("en-IN") || 0}`}
+                              unit={service.priceUnit ? `/${service.priceUnit}` : undefined}
+                              priceLabel="starting at"
+                              badge={
+                                service.featured ? (
+                                  <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                    <Star className="w-3 h-3 inline-block" /> Featured
+                                  </div>
+                                ) : undefined
+                              }
+                              topRight={
+                                <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                  {service.active ? "Live" : "Pending"}
+                                </span>
+                              }
+                              tags={<CardTag tone="accent">{service.category}</CardTag>}
+                              action={
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeleteConfirmation({ isOpen: true, type: 'service', id: service.serviceId, apiId: service.serviceId, name: service.name });
+                                    }}
+                                    className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                    title="Delete Service"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => openEditService(service)}
+                                    className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
+                                  >
+                                    Edit <Edit2 className="w-3 h-3 inline-block" />
+                                  </button>
                                 </div>
-                              ) : undefined
-                            }
-                            topRight={
-                              <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
-                                {service.active ? "Live" : "Pending"}
-                              </span>
-                            }
-                            tags={<CardTag tone="accent">{service.category}</CardTag>}
-                            action={
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setDeleteConfirmation({ isOpen: true, type: 'service', id: service.serviceId, apiId: service.serviceId, name: service.name });
-                                  }}
-                                  className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
-                                  title="Delete Service"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => openEditService(service)}
-                                  className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
-                                >
-                                  Edit <Edit2 className="w-3 h-3 inline-block" />
-                                </button>
-                              </div>
-                            }
-                          />
-                        </div>
-                      ))
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+                              }
+                            />
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
 
 
           </motion.div>

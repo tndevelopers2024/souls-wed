@@ -8,11 +8,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
 import { Trash2 } from "lucide-react";
-import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2, Wand2, Eye, EyeOff, Moon, Sun, SlidersHorizontal, LogOut, Shield, AlertCircle, Search, Bell, RefreshCw, Wallet, CalendarCheck, Copy, Check, Menu, X, ChevronLeft, SearchX, Mail, Phone, CalendarDays } from "lucide-react";
+import { User, Home, Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2, Wand2, Eye, EyeOff, Moon, Sun, SlidersHorizontal, LogOut, Shield, AlertCircle, Search, Bell, RefreshCw, Wallet, CalendarCheck, Copy, Check, Menu, X, ChevronLeft, SearchX, Mail, Phone, CalendarDays } from "lucide-react";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
 import AvatarUploader from "@/components/shared/AvatarUploader";
+import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 
 interface AdminSession {
   id: string;
@@ -22,16 +23,17 @@ interface AdminSession {
   profileImage?: string;
 }
 
-type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "venues" | "rooms" | "planners" | "caterers" | "decorators" | "settings";
+type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "services" | "settings";
 
 export default function AdminDashboard() {
   const router = useRouter();
   const [admin, setAdmin] = useState<AdminSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
-  
+
   // Tab control & search
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const [selectedCategory, setSelectedCategory] = useState("venues");
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -42,7 +44,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [venuesList, setVenuesList] = useState<any[]>([]);
   const [servicesList, setServicesList] = useState<any[]>([]);
-  
+
   // Copy state for feedback
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { isDark: isDarkMode, toggleTheme } = useTheme();
@@ -382,7 +384,7 @@ export default function AdminDashboard() {
   const getMonthlyStats = () => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const now = new Date();
-    
+
     interface MonthlyAgg {
       monthName: string;
       year: number;
@@ -391,7 +393,7 @@ export default function AdminDashboard() {
       confirmed: number;
       revenue: number;
     }
-    
+
     const last6Months: MonthlyAgg[] = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -410,7 +412,7 @@ export default function AdminDashboard() {
       const date = new Date(b.createdAt);
       const m = date.getMonth();
       const y = date.getFullYear();
-      
+
       const target = last6Months.find(item => item.monthIndex === m && item.year === y);
       if (target) {
         target.bookings += 1;
@@ -468,11 +470,10 @@ export default function AdminDashboard() {
   const bubbleColors = ["bg-primary-500 text-white", "bg-primary-300 text-white", "bg-primary-200 text-primary-800", "bg-primary-100 text-primary-700"];
   const bubbleDots = ["bg-primary-500", "bg-primary-300", "bg-primary-200", "bg-primary-100"];
   const deltaBadge = (label: string, positive: boolean) => (
-    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black whitespace-nowrap ${
-      positive
-        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
-        : "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400"
-    }`}>{label}</span>
+    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black whitespace-nowrap ${positive
+      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+      : "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400"
+      }`}>{label}</span>
   );
   const pendingApprovals = vendors.filter(v => !v.verified);
 
@@ -590,21 +591,16 @@ export default function AdminDashboard() {
     { id: "overview", label: "Dashboard", count: null, icon: LayoutDashboard },
     {
       id: "services",
-      label: "Categories",
+      label: "Services & Venues",
       icon: Briefcase,
-      subItems: [
-        { id: "venues", label: "Venue", count: venuesList.length || null, icon: Map },
-        { id: "rooms", label: "Rooms", count: servicesList.filter(s => s.category === "rooms").length || null, icon: BedDouble },
-        { id: "planners", label: "Wedding Planners", count: servicesList.filter(s => s.category === "planners").length || null, icon: ClipboardList },
-        { id: "caterers", label: "Caterers", count: servicesList.filter(s => s.category === "caterers").length || null, icon: UtensilsCrossed },
-        { id: "decorators", label: "Decorators", count: servicesList.filter(s => s.category === "decorators").length || null, icon: Flower2 },
-      ]
+      count: venuesList.length + servicesList.length || null
     },
     { id: "approvals", label: "Approvals", count: pendingApprovals.length || null, icon: UserCheck },
     { id: "vendors", label: "Vendors", count: vendors.length || null, icon: Building2 },
     { id: "users", label: "Customers", count: users.length || null, icon: Users },
     { id: "bookings", label: "Bookings", count: bookings.length || null, icon: BookOpen },
     { id: "settings", label: "Settings", count: null, icon: Settings },
+    { id: "home", label: "Back to Home", icon: Home, href: "/" },
   ];
 
   // Standard theme variables for consistency (corrected colors from non-standard)
@@ -617,7 +613,7 @@ export default function AdminDashboard() {
 
   return (
     <div className={`h-screen font-body flex relative overflow-hidden p-0 sm:p-2 transition-colors duration-300 ${containerBg} ${isDarkMode ? "dark" : ""}`}>
-      
+
       {/* Background Decorative Ambient Shapes */}
       <div className="absolute w-[50rem] h-[50rem] -top-96 -left-96 opacity-[0.03] pointer-events-none rounded-full bg-primary-500 blur-[150px]" />
       <div className="absolute w-[45rem] h-[45rem] -bottom-80 -right-80 opacity-[0.03] pointer-events-none rounded-full bg-amber-500 blur-[150px]" />
@@ -629,12 +625,12 @@ export default function AdminDashboard() {
           {!sidebarCollapsed ? (
             <div className="flex flex-col gap-1">
               <Link href="/">
-                <Image 
-                  src="/logo/logo-by-soulswed.png" 
-                  alt="SoulsWed" 
-                  width={150} 
-                  height={45} 
-                  className="h-8 w-auto hover:opacity-80 transition-opacity" 
+                <Image
+                  src="/logo/logo-by-soulswed.png"
+                  alt="SoulsWed"
+                  width={150}
+                  height={45}
+                  className="h-8 w-auto hover:opacity-80 transition-opacity"
                   priority
                 />
               </Link>
@@ -652,7 +648,7 @@ export default function AdminDashboard() {
             const isSubActive = hasSubItems && item.subItems.some((sub: any) => sub.id === activeTab);
             const isActive = activeTab === item.id || isSubActive;
             const Icon = item.icon;
-            
+
             const groupLabel = ({ overview: "Menu", bookings: "Financial", settings: "Tools" } as Record<string, string>)[item.id];
 
             return (
@@ -662,7 +658,9 @@ export default function AdminDashboard() {
                 )}
                 <button
                   onClick={() => {
-                    if (hasSubItems) {
+                    if (item.href) {
+                      router.push(item.href);
+                    } else if (hasSubItems) {
                       setServicesExpanded(!servicesExpanded);
                       if (sidebarCollapsed) setSidebarCollapsed(false);
                     } else {
@@ -670,13 +668,12 @@ export default function AdminDashboard() {
                       setSearchTerm("");
                     }
                   }}
-                  className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-                    isActive
-                      ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
-                      : isDarkMode
-                        ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
-                  }`}
+                  className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${isActive
+                    ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
+                    : isDarkMode
+                      ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
+                    }`}
                   title={item.label}
                 >
                   <div className="flex items-center gap-3">
@@ -684,13 +681,12 @@ export default function AdminDashboard() {
                     {!sidebarCollapsed && <span>{item.label}</span>}
                   </div>
                   {!sidebarCollapsed && item.count !== undefined && item.count !== null && !hasSubItems && (
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                      isActive 
-                        ? "bg-white/20 text-white" 
-                        : isDarkMode 
-                          ? "bg-stone-800 text-stone-400 border border-stone-700"
-                          : "bg-stone-100 text-stone-500 border border-stone-200"
-                    }`}>
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${isActive
+                      ? "bg-white/20 text-white"
+                      : isDarkMode
+                        ? "bg-stone-800 text-stone-400 border border-stone-700"
+                        : "bg-stone-100 text-stone-500 border border-stone-200"
+                      }`}>
                       {item.count}
                     </span>
                   )}
@@ -698,13 +694,12 @@ export default function AdminDashboard() {
                     servicesExpanded ? <ChevronDown className="w-4 h-4 opacity-70" /> : <ChevronRight className="w-4 h-4 opacity-70" />
                   )}
                   {sidebarCollapsed && item.count !== undefined && item.count !== null && !hasSubItems && (
-                    <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${
-                      isActive 
-                        ? "bg-white text-primary-600" 
-                        : isDarkMode 
-                          ? "bg-stone-800 text-stone-400 border border-stone-700"
-                          : "bg-stone-100 text-stone-500 border border-stone-200"
-                    }`}>
+                    <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${isActive
+                      ? "bg-white text-primary-600"
+                      : isDarkMode
+                        ? "bg-stone-800 text-stone-400 border border-stone-700"
+                        : "bg-stone-100 text-stone-500 border border-stone-200"
+                      }`}>
                       {item.count}
                     </span>
                   )}
@@ -728,26 +723,24 @@ export default function AdminDashboard() {
                               setActiveTab(subItem.id as TabType);
                               setSearchTerm("");
                             }}
-                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-                              isSubItemActive 
-                                ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
-                                : isDarkMode
-                                  ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                                  : "text-stone-500 hover:text-stone-900 hover:bg-stone-50"
-                            }`}
+                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${isSubItemActive
+                              ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20"
+                              : isDarkMode
+                                ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                                : "text-stone-500 hover:text-stone-900 hover:bg-stone-50"
+                              }`}
                           >
                             <div className="flex items-center gap-2.5">
                               <SubIcon className="w-[15px] h-[15px] shrink-0" />
                               <span>{subItem.label}</span>
                             </div>
                             {subItem.count !== undefined && subItem.count !== null && (
-                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                                isSubItemActive 
-                                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300" 
-                                  : isDarkMode 
-                                    ? "bg-stone-800 text-stone-400 border border-stone-700"
-                                    : "bg-stone-100 text-stone-500 border border-stone-200"
-                              }`}>
+                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${isSubItemActive
+                                ? "bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300"
+                                : isDarkMode
+                                  ? "bg-stone-800 text-stone-400 border border-stone-700"
+                                  : "bg-stone-100 text-stone-500 border border-stone-200"
+                                }`}>
                                 {subItem.count}
                               </span>
                             )}
@@ -791,11 +784,10 @@ export default function AdminDashboard() {
           <div className={`flex items-center gap-2 ${sidebarCollapsed ? "flex-col" : "justify-between"}`}>
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-                isDarkMode
-                  ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                  : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
-              }`}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${isDarkMode
+                ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
+                }`}
               title={sidebarCollapsed ? "Expand sidebar" : "Hide sidebar"}
             >
               <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -823,16 +815,15 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-4 min-w-0">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
-                isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
-              }`}
+              className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
+                }`}
             >
               {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
 
             <div className="min-w-0">
               <h1 className={`font-extrabold text-xl md:text-2xl tracking-tight capitalize truncate ${headingText}`}>
-                {activeTab === "overview" ? "Dashboard" : (menuItems.find(i=>i.id===activeTab) || menuItems.find(i=>i.subItems?.some((s: any)=>s.id===activeTab))?.subItems?.find((s: any)=>s.id===activeTab))?.label}
+                {activeTab === "overview" ? "Dashboard" : (menuItems.find(i => i.id === activeTab) || menuItems.find(i => i.subItems?.some((s: any) => s.id === activeTab))?.subItems?.find((s: any) => s.id === activeTab))?.label}
               </h1>
               <p className="text-[11px] text-stone-500 font-semibold mt-0.5">
                 {loadingData ? "Syncing live data..." : format(new Date(), "EEEE, MMMM do yyyy")}
@@ -842,9 +833,8 @@ export default function AdminDashboard() {
 
           <div className="flex items-center gap-2.5">
             {/* Search */}
-            <div className={`hidden md:flex items-center gap-2 px-4 h-10 rounded-full border transition-colors ${
-              isDarkMode ? "bg-stone-900 border-stone-800" : "bg-white border-stone-200"
-            }`}>
+            <div className={`hidden md:flex items-center gap-2 px-4 h-10 rounded-full border transition-colors ${isDarkMode ? "bg-stone-900 border-stone-800" : "bg-white border-stone-200"
+              }`}>
               <Search className="w-4 h-4 text-stone-400" />
               <input
                 value={searchTerm}
@@ -859,9 +849,8 @@ export default function AdminDashboard() {
               onClick={fetchAllData}
               disabled={loadingData}
               title="Refresh data"
-              className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50 ${
-                isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800" : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
-              }`}
+              className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50 ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800" : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
+                }`}
             >
               <RefreshCw className={`w-4 h-4 ${loadingData ? "animate-spin" : ""}`} />
             </button>
@@ -870,9 +859,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab("approvals")}
               title={`${pendingApprovals.length} pending approvals`}
-              className={`relative w-10 h-10 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${
-                isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800" : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
-              }`}
+              className={`relative w-10 h-10 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800" : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
+                }`}
             >
               <Bell className="w-4 h-4" />
               {pendingApprovals.length > 0 && (
@@ -887,8 +875,8 @@ export default function AdminDashboard() {
               {admin.profileImage ? (
                 <img src={admin.profileImage} alt={admin.name} className="w-10 h-10 rounded-full object-cover" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-primary-500 text-white flex items-center justify-center font-black text-sm uppercase">
-                  {admin.name.slice(0, 1)}
+                <div className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 flex items-center justify-center">
+                  <User className="w-5 h-5" />
                 </div>
               )}
               <div className="hidden sm:block leading-tight">
@@ -902,17 +890,16 @@ export default function AdminDashboard() {
         {/* Mobile Navigation Drawer */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className={`lg:hidden border rounded-3xl px-6 py-4 absolute w-full top-[68px] z-30 shadow-none flex flex-col gap-2 ${
-                isDarkMode ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-stone-200 text-stone-800"
-              }`}
+              className={`lg:hidden border rounded-3xl px-6 py-4 absolute w-full top-[68px] z-30 shadow-none flex flex-col gap-2 ${isDarkMode ? "bg-stone-900 border-stone-800 text-white" : "bg-white border-stone-200 text-stone-800"
+                }`}
             >
               {menuItems.map((item) => {
                 const hasSubItems = item.subItems && item.subItems.length > 0;
-                
+
                 return (
                   <div key={item.id} className="flex flex-col gap-1">
                     <button
@@ -925,22 +912,20 @@ export default function AdminDashboard() {
                           setMobileMenuOpen(false);
                         }
                       }}
-                      className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${
-                        activeTab === item.id || (hasSubItems && item.subItems.some((s: any)=>s.id === activeTab))
-                          ? "bg-primary-500 text-white" 
-                          : isDarkMode 
-                            ? "text-stone-300 hover:bg-stone-800" 
-                            : "text-stone-600 hover:bg-stone-50"
-                      }`}
+                      className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${activeTab === item.id || (hasSubItems && item.subItems.some((s: any) => s.id === activeTab))
+                        ? "bg-primary-500 text-white"
+                        : isDarkMode
+                          ? "text-stone-300 hover:bg-stone-800"
+                          : "text-stone-600 hover:bg-stone-50"
+                        }`}
                     >
                       <div className="flex items-center gap-2">
                         <span>{item.label}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         {item.count !== null && item.count !== undefined && !hasSubItems && (
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                            activeTab === item.id ? "bg-white/20 text-white" : "bg-stone-105 text-stone-600"
-                          }`}>
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${activeTab === item.id ? "bg-white/20 text-white" : "bg-stone-105 text-stone-600"
+                            }`}>
                             {item.count}
                           </span>
                         )}
@@ -960,19 +945,17 @@ export default function AdminDashboard() {
                               setSearchTerm("");
                               setMobileMenuOpen(false);
                             }}
-                            className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all ${
-                              activeTab === subItem.id 
-                                ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20" 
-                                : isDarkMode 
-                                  ? "text-stone-400 hover:bg-stone-800" 
-                                  : "text-stone-500 hover:bg-stone-50"
-                            }`}
+                            className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === subItem.id
+                              ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20"
+                              : isDarkMode
+                                ? "text-stone-400 hover:bg-stone-800"
+                                : "text-stone-500 hover:bg-stone-50"
+                              }`}
                           >
                             <span>{subItem.label}</span>
                             {subItem.count !== null && subItem.count !== undefined && (
-                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                                activeTab === subItem.id ? "bg-primary-100 text-primary-600" : "bg-stone-105 text-stone-500"
-                              }`}>
+                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${activeTab === subItem.id ? "bg-primary-100 text-primary-600" : "bg-stone-105 text-stone-500"
+                                }`}>
                                 {subItem.count}
                               </span>
                             )}
@@ -984,7 +967,7 @@ export default function AdminDashboard() {
                 );
               })}
               <hr className={`my-2 ${dividerClass}`} />
-              <button 
+              <button
                 onClick={handleLogout}
                 className="flex items-center justify-center gap-2 p-3 bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 font-bold rounded-xl text-xs"
               >
@@ -1014,7 +997,7 @@ export default function AdminDashboard() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.2 }}
             >
-              
+
               {/* ─── TAB: OVERVIEW (loading skeleton) ─── */}
               {activeTab === "overview" && loadingData && !stats && (
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
@@ -1152,10 +1135,15 @@ export default function AdminDashboard() {
                           <h4 className={`font-extrabold text-lg tracking-tight ${headingText}`}>Listing Statistics</h4>
                           <p className="text-[11px] text-stone-400 font-semibold mt-0.5">Track listings by category</p>
                         </div>
-                        <button className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold cursor-default shrink-0 ${isDarkMode ? "border-stone-800 text-stone-300" : "border-stone-200 text-stone-600"}`}>
-                          All time
-                          <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-                        </button>
+                        <div className="relative shrink-0">
+                          <select className={`appearance-none bg-transparent flex items-center gap-2 pl-4 pr-8 py-2 rounded-full border text-xs font-bold cursor-pointer outline-none ${isDarkMode ? "border-stone-800 text-stone-300 bg-stone-900 focus:border-stone-600" : "border-stone-200 text-stone-600 bg-white focus:border-stone-400"}`}>
+                            <option value="all">All time</option>
+                            <option value="month">This Month</option>
+                            <option value="week">This Week</option>
+                            <option value="today">Today</option>
+                          </select>
+                          <ChevronDown className="w-3.5 h-3.5 opacity-60 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
                       </div>
 
                       <div className="flex items-center gap-2 mt-5">
@@ -1198,10 +1186,15 @@ export default function AdminDashboard() {
                           <h4 className={`font-extrabold text-lg tracking-tight ${headingText}`}>Vendor Growth</h4>
                           <p className="text-[11px] text-stone-400 font-semibold mt-0.5">Track vendors by city</p>
                         </div>
-                        <button className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold cursor-default shrink-0 ${isDarkMode ? "border-stone-800 text-stone-300" : "border-stone-200 text-stone-600"}`}>
-                          All time
-                          <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-                        </button>
+                        <div className="relative shrink-0">
+                          <select className={`appearance-none bg-transparent flex items-center gap-2 pl-4 pr-8 py-2 rounded-full border text-xs font-bold cursor-pointer outline-none ${isDarkMode ? "border-stone-800 text-stone-300 bg-stone-900 focus:border-stone-600" : "border-stone-200 text-stone-600 bg-white focus:border-stone-400"}`}>
+                            <option value="all">All time</option>
+                            <option value="month">This Month</option>
+                            <option value="week">This Week</option>
+                            <option value="today">Today</option>
+                          </select>
+                          <ChevronDown className="w-3.5 h-3.5 opacity-60 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
                       </div>
 
                       {topCities.length === 0 ? (
@@ -1394,9 +1387,8 @@ export default function AdminDashboard() {
                         </thead>
                         <tbody>
                           {paginate(filteredVendors).map((v: any) => (
-                            <tr key={v._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
-                            }`}>
+                            <tr key={v._id} className={`border-b last:border-0 transition-colors ${isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
+                              }`}>
                               <td className="p-4">
                                 <div className="flex items-center gap-3">
                                   <div className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center font-black text-xs uppercase ${isDarkMode ? "bg-primary-500/15 text-primary-400" : "bg-primary-50 text-primary-600"}`}>
@@ -1409,9 +1401,8 @@ export default function AdminDashboard() {
                                 </div>
                               </td>
                               <td className="p-4">
-                                <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black border uppercase tracking-wide ${
-                                  isDarkMode ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-600"
-                                }`}>
+                                <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black border uppercase tracking-wide ${isDarkMode ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-600"
+                                  }`}>
                                   {v.category}
                                 </span>
                               </td>
@@ -1426,11 +1417,10 @@ export default function AdminDashboard() {
                               <td className="p-4">
                                 <button
                                   onClick={() => handleUpdateVendorStatus(v._id, !v.verified)}
-                                  className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
-                                    v.verified
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
-                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
-                                  }`}
+                                  className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${v.verified
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900"
+                                    : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                    }`}
                                 >
                                   {v.verified ? "Verified" : "Pending"}
                                 </button>
@@ -1438,11 +1428,10 @@ export default function AdminDashboard() {
                               <td className="p-4">
                                 <button
                                   onClick={() => handleUpdateVendorStatus(v._id, undefined, !v.featured)}
-                                  className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
-                                    v.featured
-                                      ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:hover:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
-                                      : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
-                                  }`}
+                                  className={`px-3 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${v.featured
+                                    ? "bg-primary-50 text-primary-700 border-primary-200 hover:bg-primary-100 dark:hover:bg-primary-950/20 dark:text-primary-400 dark:border-primary-900"
+                                    : "bg-stone-50 text-stone-500 border-stone-200 hover:bg-stone-100 dark:hover:bg-stone-900 dark:border-stone-800 dark:text-stone-400"
+                                    }`}
                                 >
                                   {v.featured ? "Featured" : "Regular"}
                                 </button>
@@ -1506,9 +1495,8 @@ export default function AdminDashboard() {
                         </thead>
                         <tbody>
                           {paginate(filteredBookings).map((b: any) => (
-                            <tr key={b._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
-                            }`}>
+                            <tr key={b._id} className={`border-b last:border-0 transition-colors ${isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
+                              }`}>
                               <td className="p-4">
                                 <p className={`font-black text-sm leading-tight ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{b.venueName}</p>
                                 <div className="flex items-center gap-1.5 mt-1">
@@ -1527,9 +1515,8 @@ export default function AdminDashboard() {
                                 <p className="text-[10px] text-stone-450 mt-0.5">{b.userEmail} • {b.userPhone || "No Phone"}</p>
                               </td>
                               <td className="p-4">
-                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border uppercase ${
-                                  isDarkMode ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-600"
-                                }`}>
+                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border uppercase ${isDarkMode ? "bg-stone-800 border-stone-700 text-stone-300" : "bg-stone-100 border-stone-200 text-stone-600"
+                                  }`}>
                                   {b.bookingType}
                                 </span>
                                 <p className="text-[10px] font-semibold text-stone-500 mt-1.5">
@@ -1554,15 +1541,14 @@ export default function AdminDashboard() {
                                 <select
                                   value={b.status}
                                   onChange={(e) => handleUpdateBookingStatus(b._id, e.target.value)}
-                                  className={`text-[10px] font-extrabold rounded-lg border px-2.5 py-1 bg-white outline-none cursor-pointer transition-colors dark:bg-stone-900 bg-none ${
-                                    b.status === "confirmed"
-                                      ? "text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25 bg-emerald-50/70 dark:text-emerald-400 dark:border-emerald-900"
-                                      : b.status === "completed"
+                                  className={`text-[10px] font-extrabold rounded-lg border px-2.5 py-1 bg-white outline-none cursor-pointer transition-colors dark:bg-stone-900 bg-none ${b.status === "confirmed"
+                                    ? "text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25 bg-emerald-50/70 dark:text-emerald-400 dark:border-emerald-900"
+                                    : b.status === "completed"
                                       ? "text-blue-700 border-blue-200 bg-blue-50/70 dark:text-blue-400 dark:border-blue-900"
                                       : b.status === "cancelled"
-                                      ? "text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25 bg-red-50/70 dark:text-red-400 dark:border-red-900"
-                                      : "text-amber-700 border-amber-200 bg-amber-50/70 dark:text-amber-400 dark:border-amber-900"
-                                  }`}
+                                        ? "text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25 bg-red-50/70 dark:text-red-400 dark:border-red-900"
+                                        : "text-amber-700 border-amber-200 bg-amber-50/70 dark:text-amber-400 dark:border-amber-900"
+                                    }`}
                                 >
                                   <option value="pending" className="text-amber-700 font-bold bg-white dark:bg-stone-900">Pending</option>
                                   <option value="confirmed" className="text-emerald-700 dark:text-emerald-400 font-bold bg-white dark:bg-stone-900">Confirmed</option>
@@ -1628,9 +1614,8 @@ export default function AdminDashboard() {
                         </thead>
                         <tbody>
                           {paginate(filteredUsers).map((u: any) => (
-                            <tr key={u._id} className={`border-b last:border-0 transition-colors ${
-                              isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
-                            }`}>
+                            <tr key={u._id} className={`border-b last:border-0 transition-colors ${isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
+                              }`}>
                               <td className="p-4">
                                 <div className="flex items-center gap-3">
                                   <div className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center font-black text-xs uppercase ${isDarkMode ? "bg-primary-500/15 text-primary-400" : "bg-primary-50 text-primary-600"}`}>
@@ -1706,22 +1691,20 @@ export default function AdminDashboard() {
                       <button
                         type="button"
                         onClick={() => { if (isDarkMode) toggleTheme(); }}
-                        className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
-                          !isDarkMode
-                            ? "border-[#EE7429] bg-gradient-to-br from-orange-50/80 to-amber-50/60 shadow-lg shadow-orange-500/10"
-                            : "border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-md"
-                        }`}
+                        className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${!isDarkMode
+                          ? "border-[#EE7429] bg-gradient-to-br from-orange-50/80 to-amber-50/60 shadow-lg shadow-orange-500/10"
+                          : "border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-md"
+                          }`}
                       >
                         {!isDarkMode && (
                           <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#EE7429] flex items-center justify-center">
                             <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                           </div>
                         )}
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-                          !isDarkMode
-                            ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
-                            : "bg-stone-100 dark:bg-stone-800 text-stone-400 group-hover:bg-stone-200 dark:group-hover:bg-stone-700"
-                        }`}>
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${!isDarkMode
+                          ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
+                          : "bg-stone-100 dark:bg-stone-800 text-stone-400 group-hover:bg-stone-200 dark:group-hover:bg-stone-700"
+                          }`}>
                           <Sun className="w-6 h-6" />
                         </div>
                         {/* Mini preview */}
@@ -1743,22 +1726,20 @@ export default function AdminDashboard() {
                       <button
                         type="button"
                         onClick={() => { if (!isDarkMode) toggleTheme(); }}
-                        className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
-                          isDarkMode
-                            ? "border-[#EE7429] bg-gradient-to-br from-stone-800/80 to-stone-900/60 shadow-lg shadow-orange-500/10"
-                            : "border-stone-200 hover:border-stone-300 hover:shadow-md"
-                        }`}
+                        className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${isDarkMode
+                          ? "border-[#EE7429] bg-gradient-to-br from-stone-800/80 to-stone-900/60 shadow-lg shadow-orange-500/10"
+                          : "border-stone-200 hover:border-stone-300 hover:shadow-md"
+                          }`}
                       >
                         {isDarkMode && (
                           <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#EE7429] flex items-center justify-center">
                             <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                           </div>
                         )}
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-                          isDarkMode
-                            ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
-                            : "bg-stone-100 text-stone-400 group-hover:bg-stone-200"
-                        }`}>
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${isDarkMode
+                          ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
+                          : "bg-stone-100 text-stone-400 group-hover:bg-stone-200"
+                          }`}>
                           <Moon className="w-6 h-6" />
                         </div>
                         {/* Mini preview */}
@@ -1836,7 +1817,7 @@ export default function AdminDashboard() {
                         </div>
                         <p className="text-[10px] text-stone-400 mt-1.5">Minimum 6 characters. Use a mix of letters, numbers, and symbols.</p>
                       </div>
-                      
+
                       {passwordMessage.text && (
                         <div className={`flex items-center gap-2 text-xs font-semibold p-3 rounded-xl ${passwordMessage.type === "error" ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-500/20" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20"}`}>
                           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
@@ -1878,8 +1859,24 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-              {/* ─── TAB: VENUES DIRECTORY ─── */}
-              {activeTab === "venues" && (
+              {/* ─── TAB: SERVICES & VENUES DIRECTORY ─── */}
+              {activeTab === "services" && (
+                <div className="flex flex-col gap-6">
+                  {/* Category Selector */}
+                  <div className={`p-4 border rounded-3xl ${cardClass} overflow-x-auto custom-scrollbar flex items-center gap-2`} style={{ scrollbarWidth: 'none' }}>
+                    {VENDOR_CATEGORIES.map(cat => (
+                      <button
+                        key={cat.slug}
+                        onClick={() => setSelectedCategory(cat.slug)}
+                        className={`flex shrink-0 items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${selectedCategory === cat.slug ? "bg-primary-500 text-white" : isDarkMode ? "bg-stone-800/60 text-stone-400 hover:bg-stone-800" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}
+                      >
+                        <cat.icon className="w-3.5 h-3.5" />
+                        {cat.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  {selectedCategory === "venues" ? (
                 <div className={`border rounded-3xl overflow-hidden p-6 shadow-none ${cardClass}`}>
                   <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
                     <div>
@@ -1965,11 +1962,10 @@ export default function AdminDashboard() {
                                     notify(v.verified ? "Venue marked as pending" : "Venue verified");
                                     fetchAllData();
                                   }}
-                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
-                                    v.verified
-                                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
-                                      : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
-                                  }`}
+                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${v.verified
+                                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                                    : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
+                                    }`}
                                 >
                                   {v.verified ? "Verified" : "Pending"}
                                 </button>
@@ -1983,11 +1979,10 @@ export default function AdminDashboard() {
                                     notify(v.featured ? "Removed from featured" : "Venue featured");
                                     fetchAllData();
                                   }}
-                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
-                                    v.featured
-                                      ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30"
-                                      : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
-                                  }`}
+                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${v.featured
+                                    ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30"
+                                    : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
+                                    }`}
                                 >
                                   {v.featured ? "Featured" : "Regular"}
                                 </button>
@@ -2001,11 +1996,10 @@ export default function AdminDashboard() {
                                     notify(v.active ? "Venue hidden from site" : "Venue is now live");
                                     fetchAllData();
                                   }}
-                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
-                                    v.active
-                                      ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
-                                      : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30"
-                                  }`}
+                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${v.active
+                                    ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
+                                    : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30"
+                                    }`}
                                 >
                                   {v.active ? "Live" : "Hidden"}
                                 </button>
@@ -2017,22 +2011,22 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
-              )}
-
-              {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && (() => {
-                const filteredServices = servicesList.filter(s => s.category === activeTab && (
-                  s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+              ) : (() => {
+                const currentCat = VENDOR_CATEGORIES.find(c => c.slug === selectedCategory);
+                    const catLabel = currentCat ? currentCat.name : selectedCategory;
+                    const filteredServices = servicesList.filter(s => s.category === selectedCategory && (
+                  s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   s.city.toLowerCase().includes(searchTerm.toLowerCase())
                 ));
                 return (
                   <div className={`border rounded-3xl overflow-hidden p-6 shadow-none ${cardClass}`}>
                     <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
                       <div>
-                        <h3 className={`font-extrabold text-base capitalize ${headingText}`}>{activeTab} Directory</h3>
+                        <h3 className={`font-extrabold text-base capitalize ${headingText}`}>{catLabel} Directory</h3>
                         <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Toggle live status, verified flags, and details on all listings</p>
                       </div>
                       <span className="text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1.5 rounded-full uppercase tracking-wider dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900">
-                        {filteredServices.length} {activeTab} total
+                        {filteredServices.length} {catLabel} total
                       </span>
                     </div>
 
@@ -2047,8 +2041,8 @@ export default function AdminDashboard() {
                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
                           <SearchX className="w-6 h-6 text-stone-400" />
                         </div>
-                        <h4 className={`font-bold text-sm capitalize ${headingText}`}>No {activeTab} found</h4>
-                        <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : `No ${activeTab} listings have been added yet.`}</p>
+                        <h4 className={`font-bold text-sm capitalize ${headingText}`}>No {catLabel} found</h4>
+                        <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : `No ${catLabel} listings have been added yet.`}</p>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -2089,31 +2083,28 @@ export default function AdminDashboard() {
                                 <div className="flex flex-wrap gap-1.5">
                                   <button
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, !s.verified, s.featured, s.active)}
-                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
-                                      s.verified
-                                        ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
-                                        : "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
-                                    }`}
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${s.verified
+                                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
+                                      : "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
+                                      }`}
                                   >
                                     {s.verified ? "Verified" : "Pending"}
                                   </button>
                                   <button
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, !s.featured, s.active)}
-                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
-                                      s.featured
-                                        ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30"
-                                        : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
-                                    }`}
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${s.featured
+                                      ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30"
+                                      : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
+                                      }`}
                                   >
                                     {s.featured ? "Featured" : "Regular"}
                                   </button>
                                   <button
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, s.featured, !s.active)}
-                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
-                                      s.active
-                                        ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
-                                        : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30"
-                                    }`}
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${s.active
+                                      ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
+                                      : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30"
+                                      }`}
                                   >
                                     {s.active ? "Live" : "Hidden"}
                                   </button>
@@ -2127,6 +2118,8 @@ export default function AdminDashboard() {
                   </div>
                 );
               })()}
+              </div>
+            )}
 
             </motion.div>
           </AnimatePresence>

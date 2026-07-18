@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Vendor } from "@/lib/models/Vendor";
 import { Admin } from "@/lib/models/Admin";
 import { User } from "@/lib/models/User";
-import { hashPassword } from "@/lib/auth";
+import { hashPassword, validatePassword } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -18,9 +18,10 @@ export async function POST(req: Request) {
       );
     }
 
-    if (password.length < 8) {
+    const passwordError = validatePassword(password);
+    if (passwordError) {
       return NextResponse.json(
-        { message: "Password must be at least 8 characters long." },
+        { message: passwordError },
         { status: 400 }
       );
     }
