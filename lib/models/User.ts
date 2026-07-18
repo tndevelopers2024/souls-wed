@@ -7,6 +7,7 @@ const UserSchema = new Schema({
   phone:        { type: String },
   profileImage: { type: String, default: "" },
   role:         { type: String, default: "user" }, // user, couple
+  isEmailVerified: { type: Boolean, default: false },
   createdAt:    { type: Date, default: Date.now },
 });
 

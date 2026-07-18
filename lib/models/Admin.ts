@@ -6,6 +6,7 @@ const AdminSchema = new Schema({
   passwordHash: { type: String, required: true },
   profileImage: { type: String, default: "" },
   role:         { type: String, default: "admin" }, // admin, superadmin, moderator
+  isEmailVerified: { type: Boolean, default: false },
   createdAt:    { type: Date, default: Date.now },
 });
 

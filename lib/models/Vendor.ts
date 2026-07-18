@@ -20,7 +20,8 @@ const VendorSchema = new Schema({
   profileImage: { type: String, default: "" },
   images:       [{ type: String }],
   featured:     { type: Boolean, default: false },
-  verified:     { type: Boolean, default: false },
+  verified:     { type: Boolean, default: false }, // Admin verification
+  isEmailVerified: { type: Boolean, default: false }, // Email OTP verification
   available:    { type: Boolean, default: true },
   createdAt:    { type: Date, default: Date.now },
 });

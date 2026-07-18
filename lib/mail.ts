@@ -53,3 +53,40 @@ export async function sendLoginNotificationEmail(
     console.error("Error sending login notification email:", error);
   }
 }
+
+/**
+ * Sends an OTP email for account verification.
+ */
+export async function sendVerificationOtpEmail(to: string, name: string, otpCode: string) {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("SMTP credentials missing. Would have sent OTP %s to %s", otpCode, to);
+    // For development, if no SMTP is set, we just log it so we can test the flow.
+    return;
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"${process.env.SMTP_FROM_NAME || "SoulsWed Security"}" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      to,
+      subject: "Verify your Email - SoulsWed",
+      html: `
+        <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #DEE2E6; border-radius: 8px;">
+          <h2 style="color: #EE7429; margin-top: 0;">Verify your Email Address</h2>
+          <p style="color: #1A1A1A; font-size: 16px;">Hello ${name},</p>
+          <p style="color: #4a4a4a; line-height: 1.5;">Thank you for registering at SoulsWed. Please use the following One-Time Password (OTP) to verify your email address and complete your registration:</p>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0; text-align: center; border: 1px dashed #FCCB11;">
+            <span style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #1A1A1A;">${otpCode}</span>
+          </div>
+          
+          <p style="color: #4a4a4a; line-height: 1.5; font-size: 14px;">This code is valid for 15 minutes. If you did not request this, please ignore this email.</p>
+          <br>
+          <p style="color: #4a4a4a; line-height: 1.5;">Best regards,<br><strong style="color: #1A1A1A;">SoulsWed Team</strong></p>
+        </div>
+      `,
+    });
+    console.log("OTP email sent to %s, messageId: %s", to, info.messageId);
+  } catch (error) {
+    console.error("Error sending OTP email:", error);
+  }
+}

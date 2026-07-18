@@ -199,7 +199,7 @@ function SignupContent() {
       if (!res.ok) throw new Error(data.message || "Failed to register account.");
 
       setSuccess(true);
-      setTimeout(() => router.push(`/login?role=${role}`), 1800);
+      setTimeout(() => router.push(`/verify-email?email=${encodeURIComponent(email)}&role=${role}`), 1800);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
       triggerShake();
@@ -365,7 +365,7 @@ function SignupContent() {
                     </motion.div>
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 mb-1">Registration Complete!</h3>
-                  <p className="text-sm text-slate-500">Redirecting to sign in…</p>
+                  <p className="text-sm text-slate-500">Redirecting to email verification…</p>
                 </motion.div>
               ) : role === "admin" ? (
                 <motion.div

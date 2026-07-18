@@ -2,6 +2,8 @@ import { connectDB } from "@/lib/mongodb";
 import { Vendor } from "@/lib/models/Vendor";
 import { Admin } from "@/lib/models/Admin";
 import { User } from "@/lib/models/User";
+import { Otp } from "@/lib/models/Otp";
+import { sendVerificationOtpEmail } from "@/lib/mail";
 import { hashPassword, validatePassword, validatePhone } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
@@ -60,8 +62,18 @@ export async function POST(req: Request) {
         email,
         passwordHash,
         role: "admin",
+        isEmailVerified: false,
       });
       await newAdmin.save();
+
+      // Generate and send OTP
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      await Otp.findOneAndUpdate(
+        { email },
+        { email, role: "admin", otp: otpCode },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      void sendVerificationOtpEmail(email, name, otpCode);
 
       return NextResponse.json(
         { message: "Admin account registered successfully." },
@@ -94,8 +106,18 @@ export async function POST(req: Request) {
         passwordHash,
         phone,
         role: "user",
+        isEmailVerified: false,
       });
       await newUser.save();
+
+      // Generate and send OTP
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      await Otp.findOneAndUpdate(
+        { email },
+        { email, role: "user", otp: otpCode },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      void sendVerificationOtpEmail(email, name, otpCode);
 
       return NextResponse.json(
         { message: "User account registered successfully." },
@@ -138,9 +160,19 @@ export async function POST(req: Request) {
         category,
         city,
         verified: false, // public signups start unverified
+        isEmailVerified: false,
         available: true,
       });
       await newVendor.save();
+
+      // Generate and send OTP
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      await Otp.findOneAndUpdate(
+        { email },
+        { email, role: "vendor", otp: otpCode },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      void sendVerificationOtpEmail(email, name, otpCode);
 
       return NextResponse.json(
         { message: "Vendor account registered successfully." },
