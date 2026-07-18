@@ -1,15 +1,46 @@
 "use client";
 
+import { useState } from "react";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
-import { MapPin, Star, BadgeCheck, ChevronLeft, Phone, Image as ImageIcon, Heart, PenSquare, Share2 } from "lucide-react";
+import { MapPin, Star, BadgeCheck, ChevronLeft, Phone, Image as ImageIcon, Heart, PenSquare, Share2, Check } from "lucide-react";
 import type { PublicVendor } from "@/components/vendors/PublicVendorDirectory";
+import { useWishlistStore } from "@/lib/store/useWishlistStore";
 
 interface VendorHeroProps {
   vendor: PublicVendor;
 }
 
 export default function VendorHero({ vendor }: VendorHeroProps) {
+  const { items, addItem, removeItem } = useWishlistStore();
+  const isSaved = items.some((item) => item.id === vendor._id);
+
+  const toggleWishlist = () => {
+    if (isSaved) {
+      removeItem(vendor._id);
+    } else {
+      addItem({
+        id: vendor._id,
+        name: vendor.businessName || vendor.name,
+        location: vendor.city || "Various Locations",
+        price: vendor.pricing?.startingPrice || 0,
+        unit: "event",
+        rating: vendor.rating || 0,
+        reviewCount: vendor.reviewCount || 0,
+        image: vendor.images && vendor.images.length > 0 ? vendor.images[0] : "/soulswed/vendors/1128.webp",
+        category: vendor.category
+      });
+    }
+  };
+
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const image = vendor.images && vendor.images.length > 0 ? vendor.images[0] : "/soulswed/vendors/1128.webp";
   const name = vendor.businessName || vendor.name;
   const rating = vendor.rating || 0;
@@ -39,7 +70,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
           sizes="(max-width: 1024px) 100vw, 800px"
         />
         {vendor.verified && (
-          <div className="absolute top-4 left-4 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-white text-slate-800 shadow-sm">
+          <div className="absolute top-4 left-4 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-white text-slate-800 border border-slate-200">
             <BadgeCheck className="w-4 h-4 text-green-600"/>
             Verified Partner
           </div>
@@ -47,7 +78,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
       </div>
 
       {/* Info Card (Slight overlap) */}
-      <div className="bg-white border border-slate-200 rounded-b-3xl rounded-t-xl -mt-6 relative z-10 p-6 shadow-sm flex flex-col gap-5">
+      <div className="bg-white border border-slate-200 rounded-b-3xl rounded-t-xl -mt-6 relative z-10 p-6 flex flex-col gap-5">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="space-y-2">
             <h1
@@ -70,7 +101,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
           {/* Rating Badge */}
           {rating > 0 && (
             <div className="flex flex-col items-end gap-1">
-              <div className="flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded-lg shadow-sm">
+              <div className="flex items-center gap-1 bg-green-600 text-white px-3 py-1.5 rounded-lg">
                 <Star className="w-4 h-4 fill-current" />
                 <span className="font-bold">{rating.toFixed(1)}</span>
               </div>
@@ -84,39 +115,51 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
         {/* Contact Strip */}
         <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
           {vendor.phone ? (
-            <a href={`tel:${vendor.phone}`} className="flex items-center gap-2 text-green-600 font-semibold text-sm hover:text-green-700 transition-colors">
+            <a href={`tel:${vendor.phone}`} className="flex items-center gap-2 text-green-600 font-semibold text-sm">
               <Phone className="w-4 h-4" />
               Contact
             </a>
           ) : (
-            <button className="flex items-center gap-2 text-green-600 font-semibold text-sm hover:text-green-700 transition-colors">
+            <button className="flex items-center gap-2 text-green-600 font-semibold text-sm">
               <Phone className="w-4 h-4" />
               Contact
             </button>
           )}
-          <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-500 text-white px-2 py-0.5 rounded shadow-sm">
+          <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-500 text-white px-2 py-0.5 rounded">
             Highly Requested
           </span>
         </div>
       </div>
 
       {/* Action Bar */}
-      <div className="flex items-center justify-between border-b border-slate-200 py-4 px-2 mt-2">
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
+      <div className="flex flex-wrap items-center justify-between sm:justify-start gap-4 sm:gap-8 border-b border-slate-200 py-4 px-2 mt-2">
+        <button 
+          onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
+        >
           <ImageIcon className="w-4 h-4" />
           {vendor.images?.length || 1} Photos
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
-          <Heart className="w-4 h-4" />
-          Shortlist
+        <button 
+          onClick={toggleWishlist}
+          className={`flex items-center gap-2 text-sm font-semibold transition-opacity hover:opacity-70 ${isSaved ? "text-red-500" : "text-slate-600"}`}
+        >
+          <Heart className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
+          {isSaved ? "Saved" : "Shortlist"}
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
+        <button 
+          onClick={() => document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' })}
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
+        >
           <PenSquare className="w-4 h-4" />
           Write a Review
         </button>
-        <button className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-primary-600 transition-colors">
-          <Share2 className="w-4 h-4" />
-          Share
+        <button 
+          onClick={handleShare}
+          className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
+        >
+          {copied ? <Check className="w-4 h-4 text-green-600" /> : <Share2 className="w-4 h-4" />}
+          {copied ? <span className="text-green-600">Copied!</span> : "Share"}
         </button>
       </div>
     </div>

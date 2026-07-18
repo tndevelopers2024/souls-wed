@@ -44,14 +44,14 @@ export default function SimilarVenues({ venues }: SimilarVenuesProps) {
             <div className="flex gap-2">
               <button
                 onClick={() => scroll("left")}
-                className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                className="w-11 h-11 rounded-full flex items-center justify-center"
                 style={{ background: "var(--sw-white)" }}
               >
                 <ChevronLeft className="w-5 h-5" style={{ color: "var(--sw-navy)" }} />
               </button>
               <button
                 onClick={() => scroll("right")}
-                className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                className="w-11 h-11 rounded-full flex items-center justify-center"
                 style={{ background: "var(--sw-ink)" }}
               >
                 <ChevronRight className="w-5 h-5 text-white" />

@@ -6,6 +6,7 @@ import { MapPin, Star, Users, BedDouble, Crown, Heart } from "lucide-react";
 import type { Venue } from "@/lib/venues-data";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { convertPriceString } from "@/lib/currency";
+import { useWishlistStore } from "@/lib/store/useWishlistStore";
 import VendorCard from "@/components/vendors/VendorCard";
 
 interface VenueCardProps {
@@ -13,67 +14,88 @@ interface VenueCardProps {
   view?: "grid" | "list";
 }
 
-const blurLayers = [
-  { blur: 1, solid: 55, fade: 100 },
-  { blur: 3, solid: 42, fade: 78 },
-  { blur: 6, solid: 28, fade: 58 },
-  { blur: 12, solid: 16, fade: 40 },
-  { blur: 24, solid: 6, fade: 24 },
-];
-
 export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
   const { currency } = useCurrency();
+  const { items, addItem, removeItem } = useWishlistStore();
+  const isSaved = items.some((item) => item.id === venue.id);
+
+  const toggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isSaved) {
+      removeItem(venue.id);
+    } else {
+      addItem({
+        id: venue.id,
+        name: venue.name,
+        location: venue.location,
+        price: venue.price,
+        unit: venue.priceUnit,
+        rating: venue.rating,
+        reviewCount: venue.reviewCount,
+        image: venue.image,
+        category: "venue"
+      });
+    }
+  };
   if (view === "list") {
     return (
       <Link href={`/venues/${venue.id}?type=venue`} className="group block">
-        <div className="bg-white rounded-[32px] border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row">
+        <div className="bg-white dark:bg-[var(--sw-surface)] rounded-[32px] border border-slate-200 dark:border-white/10 overflow-hidden flex flex-col sm:flex-row">
           <div className="relative w-full sm:w-[280px] h-[220px] sm:h-auto flex-shrink-0">
-            <Image src={venue.image} alt={venue.name} fill sizes="(max-width: 640px) 100vw, 280px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+            <Image src={venue.image} alt={venue.name} fill sizes="(max-width: 640px) 100vw, 280px" className="object-cover" />
             {venue.featured && (
-              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                <Crown className="w-3.5 h-3.5" style={{ color: "var(--sw-primary)" }} />
-                <span className="text-xs font-bold text-slate-800 tracking-wide">Featured</span>
+              <div
+                className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white"
+                style={{ background: "var(--sw-primary)" }}
+              >
+                <Crown className="w-3.5 h-3.5" />
+                Featured
               </div>
             )}
-            <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm text-slate-400 hover:text-red-500 hover:bg-white transition-colors"onClick={(e) => e.preventDefault()}>
-              <Heart className="w-4 h-4" />
+            <button 
+              className={`absolute top-3 right-3 p-2 rounded-full bg-white/90 transition-opacity hover:opacity-70 ${isSaved ? "text-red-500" : "text-slate-400"}`}
+              onClick={toggleWishlist} 
+              aria-label="Shortlist"
+            >
+              <Heart className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
             </button>
           </div>
           <div className="p-6 flex flex-col justify-between flex-grow">
             <div>
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-bold text-slate-900 line-clamp-1"style={{ fontFamily:"var(--font-heading)"}}>{venue.name}</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-stone-100 line-clamp-1" style={{ fontFamily: "var(--font-heading)" }}>{venue.name}</h3>
                 {venue.rating > 0 && (
-                  <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg">
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: "var(--sw-chip-bg-hover)" }}>
                     <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
-                    <span className="text-sm font-bold text-slate-800">{venue.rating.toFixed(1)}</span>
+                    <span className="text-sm font-bold text-slate-800 dark:text-stone-200">{venue.rating.toFixed(1)}</span>
                   </div>
                 )}
               </div>
               <div className="flex items-center gap-1.5 mb-4">
-                <MapPin className="w-4 h-4 text-slate-500"/>
-                <span className="text-sm text-slate-600">{venue.location}, {venue.country}</span>
+                <MapPin className="w-4 h-4 text-slate-500 dark:text-stone-400" />
+                <span className="text-sm text-slate-600 dark:text-stone-300">{venue.location}, {venue.country}</span>
               </div>
               <div className="flex flex-wrap gap-4 mb-4 sm:mb-0">
-                <div className="flex items-center gap-1.5 text-sm text-slate-600">
-                  <Users className="w-4 h-4 text-slate-400"/>
+                <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
+                  <Users className="w-4 h-4 text-slate-400 dark:text-stone-500" />
                   <span>{venue.minGuests}-{venue.maxGuests} pax</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-sm text-slate-600">
-                  <BedDouble className="w-4 h-4 text-slate-400"/>
+                <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
+                  <BedDouble className="w-4 h-4 text-slate-400 dark:text-stone-500" />
                   <span>{venue.rooms} Rooms</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-end justify-between pt-4 border-t border-slate-50">
+            <div className="flex items-end justify-between pt-4 border-t border-slate-50 dark:border-white/10">
               <div>
-                <span className="text-xs font-medium text-slate-500 block mb-0.5">Starting from</span>
+                <span className="text-xs font-medium text-slate-500 dark:text-stone-400 block mb-0.5">Starting from</span>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-bold text-slate-900">{convertPriceString(venue.price, currency)}</span>
-                  <span className="text-sm text-slate-500 capitalize">{venue.priceUnit}</span>
+                  <span className="text-xl font-bold text-slate-900 dark:text-stone-100">{convertPriceString(venue.price, currency)}</span>
+                  <span className="text-sm text-slate-500 dark:text-stone-400 capitalize">{venue.priceUnit}</span>
                 </div>
               </div>
-              <span className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-900 text-sm font-bold rounded-full transition-colors border border-slate-200">
+              <span className="px-5 py-2.5 bg-slate-50 dark:bg-white/10 text-slate-900 dark:text-stone-100 text-sm font-bold rounded-full border border-slate-200 dark:border-white/10">
                 Book +
               </span>
             </div>
@@ -99,7 +121,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
           badge={
             venue.featured ? (
               <div
-                className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm"
+                className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white"
                 style={{ background: "var(--sw-primary)" }}
               >
                 <Crown className="w-3.5 h-3.5" />
@@ -109,16 +131,16 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
           }
           tags={
             <>
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
-                <Users className="w-3.5 h-3.5 text-slate-500"/>
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700">
+                <Users className="w-3.5 h-3.5 text-slate-500" />
                 {venue.minGuests}-{venue.maxGuests} pax
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
-                <BedDouble className="w-3.5 h-3.5 text-slate-500"/>
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700">
+                <BedDouble className="w-3.5 h-3.5 text-slate-500" />
                 {venue.rooms} Rooms
               </div>
-              <div 
-                className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm"
+              <div
+                className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white"
                 style={{ color: "var(--sw-primary)" }}
               >
                 {venue.type}

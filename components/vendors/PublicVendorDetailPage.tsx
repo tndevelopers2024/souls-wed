@@ -18,8 +18,8 @@ function VendorGallery({ images, name }: { images: string[]; name: string }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
       {images.map((img, idx) => (
-        <div key={idx} className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-sm border border-slate-100 group">
-          <Image src={img} alt={`${name} gallery ${idx + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+        <div key={idx} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200">
+          <Image src={img} alt={`${name} gallery ${idx + 1}`} fill className="object-cover" />
         </div>
       ))}
     </div>
@@ -63,6 +63,27 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
   const [verifyingPayment, setVerifyingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState("areas");
+
+  // Scroll-spy: track which section is in view
+  useEffect(() => {
+    const sectionIds = ["areas", "about", "gallery", "pricing", "reviews"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveTab(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "-20% 0px -60% 0px", threshold: 0 }
+    );
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [vendor]);
 
   const cat = vendor.category.toLowerCase();
   const isVenue = cat.includes("venue") || cat.includes("banquet");
@@ -86,7 +107,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
   }, [successParam, sessionId, bookingId]);
 
   const images = vendor.images?.length ? vendor.images : ["/soulswed/vendors/1182.avif"];
-  
+
   // Dynamic mocked FAQs based on category
   const faqs = [
     { question: "What is your booking and cancellation policy?", answer: "We require a 30% advance payment to lock in your date. Cancellations made more than 30 days prior to the event receive a full refund of the advance." },
@@ -98,19 +119,33 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
       {/* ── Main content ── */}
       <div className="max-w-7xl mx-auto px-4 pt-28 pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
-          
+
           {/* Left — main */}
           <div className="space-y-10">
             <VendorHero vendor={{ ...vendor, images }} />
 
             {/* Tab Navigation */}
-            <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-6 shadow-sm">
-              <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-1">
-                <a href="#areas" className="text-sm font-bold text-primary-600 border-b-2 border-primary-600 pb-1 whitespace-nowrap">Areas Available</a>
-                <a href="#about"className="text-sm font-semibold text-slate-600 hover:text-primary-600 pb-1 whitespace-nowrap transition-colors">About</a>
-                <a href="#gallery"className="text-sm font-semibold text-slate-600 hover:text-primary-600 pb-1 whitespace-nowrap transition-colors">Gallery</a>
-                <a href="#pricing"className="text-sm font-semibold text-slate-600 hover:text-primary-600 pb-1 whitespace-nowrap transition-colors">Pricing</a>
-                <a href="#reviews"className="text-sm font-semibold text-slate-600 hover:text-primary-600 pb-1 whitespace-nowrap transition-colors">Reviews</a>
+            <div className="sticky top-20 z-40 bg-white py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-6">
+              <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1 overflow-x-auto no-scrollbar">
+                {[
+                  { id: "areas", label: "Areas Available" },
+                  { id: "about", label: "About" },
+                  { id: "gallery", label: "Gallery" },
+                  { id: "pricing", label: "Pricing" },
+                  { id: "reviews", label: "Reviews" },
+                ].map((tab) => (
+                  <a
+                    key={tab.id}
+                    href={`#${tab.id}`}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`text-sm rounded-lg px-4 py-2 whitespace-nowrap transition-colors ${activeTab === tab.id
+                        ? "font-semibold text-slate-900 bg-white"
+                        : "font-medium text-slate-500"
+                      }`}
+                  >
+                    {tab.label}
+                  </a>
+                ))}
               </div>
             </div>
 
@@ -120,7 +155,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                 Areas Available (2)
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 hover:border-primary-200 transition-colors bg-white shadow-sm">
+                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-200 bg-slate-50/50">
                   <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0 text-primary-600">
                     <Package className="w-6 h-6" />
                   </div>
@@ -129,7 +164,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                     <p className="text-xs text-slate-500 mt-1">Indoor • Banquet Hall</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-100 hover:border-primary-200 transition-colors bg-white shadow-sm">
+                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-200 bg-slate-50/50">
                   <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
                     <Package className="w-6 h-6" />
                   </div>
@@ -139,7 +174,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                   </div>
                 </div>
               </div>
-              
+
               {/* Feature tags */}
               <div className="flex flex-wrap gap-2 mt-5">
                 {["Air Conditioned", "Parking Available", "Power Backup"].map((f) => (
@@ -174,8 +209,8 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
               <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
                 Pricing
               </h2>
-              <div className="rounded-[24px] overflow-hidden border border-slate-100"style={{ background:"white"}}>
-                
+              <div className="rounded-[24px] overflow-hidden border border-slate-100" style={{ background: "white" }}>
+
                 {isPerPlate ? (
                   <>
                     <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
@@ -247,10 +282,10 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
               </h2>
               <div className="space-y-3">
                 {faqs.map((faq, i) => (
-                  <div key={i} className="rounded-[20px] overflow-hidden border border-slate-100"style={{ background:"white"}}>
+                  <div key={i} className="rounded-[20px] overflow-hidden border border-slate-100" style={{ background: "white" }}>
                     <button className="w-full flex items-center justify-between px-5 py-4 text-left gap-3 outline-none" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                       <span className="font-semibold text-sm text-slate-800">{faq.question}</span>
-                      <ChevronDown className="w-4 h-4 flex-shrink-0 text-slate-400 transition-transform"style={{ transform: openFaq === i ?"rotate(180deg)":"rotate(0)"}} />
+                      <ChevronDown className="w-4 h-4 flex-shrink-0 text-slate-400 transition-transform" style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0)" }} />
                     </button>
                     {openFaq === i && (
                       <div className="px-5 pb-4">

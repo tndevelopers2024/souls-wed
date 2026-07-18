@@ -4,6 +4,7 @@ const AdminSchema = new Schema({
   name:         { type: String, required: true },
   email:        { type: String, required: true, unique: true, lowercase: true, trim: true },
   passwordHash: { type: String, required: true },
+  profileImage: { type: String, default: "" },
   role:         { type: String, default: "admin" }, // admin, superadmin, moderator
   createdAt:    { type: Date, default: Date.now },
 });

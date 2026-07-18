@@ -133,7 +133,25 @@ async function getRoomsAsPublicVendors(): Promise<PublicVendor[]> {
     _id: vendor._id.toString(),
   })) as unknown as PublicVendor[];
 
-  return [...mappedVenues, ...mappedVendors];
+  // 3. Service Listings for Rooms (from the dashboard/seeder)
+  const dbServices = await ServiceListing.find({ category: /room/i, active: true })
+    .lean();
+  const mappedServices = dbServices.map((s: any) => ({
+    _id: s.serviceId,
+    businessName: s.name,
+    name: s.name,
+    category: "Rooms",
+    city: s.city,
+    description: s.description || "",
+    rating: s.rating || 0,
+    reviewCount: s.reviewCount || 0,
+    priceFrom: s.priceFrom,
+    images: s.image ? [s.image, ...(s.gallery || [])] : (s.gallery || []),
+    featured: s.featured || false,
+    verified: s.verified || false,
+  })) as PublicVendor[];
+
+  return [...mappedVenues, ...mappedVendors, ...mappedServices];
 }
 
 async function getPublicVendors(category: string): Promise<PublicVendor[]> {

@@ -14,11 +14,10 @@ export default function VenuesPage() {
   const [fetchLoading, setFetchLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [activeCity, setActiveCity] = useState("");
+  const [activeCities, setActiveCities] = useState<string[]>([]);
   const [sort, setSort] = useState("Recommended");
   const [sortOpen, setSortOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(9);
-  const [searchFocused, setSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [viewType, setViewType] = useState<"grid" | "list">("grid");
 
@@ -56,11 +55,13 @@ export default function VenuesPage() {
       );
     }
 
-    if (activeCity) {
+    if (activeCities.length > 0) {
       list = list.filter(
         (v) =>
-          v.city.toLowerCase().includes(activeCity.toLowerCase()) ||
-          v.location.toLowerCase().includes(activeCity.toLowerCase())
+          activeCities.some((city) =>
+            v.city.toLowerCase().includes(city.toLowerCase()) ||
+            v.location.toLowerCase().includes(city.toLowerCase())
+          )
       );
     }
 
@@ -83,14 +84,14 @@ export default function VenuesPage() {
     }
 
     return list;
-  }, [search, activeCity, sort, allVenues]);
+  }, [search, activeCities, sort, allVenues]);
 
   const visible = filtered.slice(0, visibleCount);
 
   // Reset visible count when filters change
   useEffect(() => {
     setVisibleCount(9);
-  }, [search, activeCity, sort]);
+  }, [search, activeCities, sort]);
 
   const handleLoadMore = () => {
     setIsLoading(true);
@@ -102,7 +103,11 @@ export default function VenuesPage() {
 
   const activeFilters: { label: string; onRemove: () => void }[] = [];
   if (search.trim()) activeFilters.push({ label: `"${search}"`, onRemove: () => setSearch("") });
-  if (activeCity) activeFilters.push({ label: activeCity, onRemove: () => setActiveCity("") });
+  if (activeCities.length > 0) {
+    activeCities.forEach((city) => {
+      activeFilters.push({ label: city, onRemove: () => setActiveCities((prev) => prev.filter((c) => c !== city)) });
+    });
+  }
   if (sort !== "Recommended") activeFilters.push({ label: sort, onRemove: () => setSort("Recommended") });
 
   // Loading skeleton
@@ -137,12 +142,13 @@ export default function VenuesPage() {
     <div className="min-h-screen" style={{ background: "var(--sw-white)" }}>
 
       {/* ══════════════════════ HERO ══════════════════════ */}
-      <div
-        className="relative overflow-hidden pt-28 pb-20 px-4 text-center"
-        style={{
-          background: "var(--sw-hero-gradient)",
-        }}
-      >
+      <div className="pt-28 pb-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div
+          className="relative overflow-hidden pt-16 pb-16 px-4 text-center rounded-[40px] border border-primary-50/60"
+          style={{
+            background: "var(--sw-hero-gradient)",
+          }}
+        >
         {/* Floating orbs */}
         <div
           className="absolute -top-16 -left-16 w-80 h-80 rounded-full pointer-events-none"
@@ -208,60 +214,19 @@ export default function VenuesPage() {
             Discover extraordinary spaces — from regal palaces to serene backwater resorts — curated for your perfect celebration.
           </p>
 
-          {/* Search bar */}
-          <motion.div
-            className="max-w-2xl mx-auto relative"
-            animate={{ scale: searchFocused ? 1.02 : 1 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div
-              className="flex items-center rounded-full px-5 py-3 gap-3 transition-all duration-300"
-              style={{
-                background: "white",
-                border: searchFocused
-                  ? "2px solid var(--sw-primary)"
-                  : "2px solid rgba(0,0,0,0.08)",
-                boxShadow: searchFocused
-                  ? "0 8px 32px rgba(238,116,41,0.18)"
-                  : "0 4px 24px rgba(0,0,0,0.08)",
-              }}
-            >
-              <Search
-                className="w-5 h-5 flex-shrink-0 transition-colors duration-300"
-                style={{ color: searchFocused ? "var(--sw-primary)" : "#94a3b8" }}
-              />
-              <input
-                type="text"
-                placeholder="Search by venue name, city, or location…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                className="flex-1 text-sm font-medium outline-none bg-transparent"
-                style={{ color: "var(--sw-navy)" }}
-              />
-              <AnimatePresence>
-                {search && (
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.7 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.7 }}
-                    onClick={() => setSearch("")}
-                    className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
-                    style={{ background: "rgba(0,0,0,0.08)" }}
-                  >
-                    <X className="w-3.5 h-3.5 text-slate-500"/>
-                  </motion.button>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
         </motion.div>
 
       </div>
+      </div>
 
       {/* ══════════════════════ STICKY FILTER BAR ══════════════════════ */}
-      <VenueFilterBar activeCity={activeCity} onCityChange={setActiveCity} />
+      <VenueFilterBar
+        activeCities={activeCities}
+        onCityChange={setActiveCities}
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder="Search by venue name, city, or location…"
+      />
 
       {/* ══════════════════════ MAIN CONTENT ══════════════════════ */}
       <div className="max-w-7xl mx-auto px-4 py-10">
@@ -273,11 +238,11 @@ export default function VenuesPage() {
               Showing{" "}
               <span className="font-bold text-slate-800">{filtered.length}</span>{""}
               venue{filtered.length !== 1 ? "s" : ""}
-              {activeCity && (
+              {activeCities.length > 0 && (
                 <span>
                   {" "}in{" "}
                   <span className="font-bold" style={{ color: "var(--sw-primary)" }}>
-                    {activeCity}
+                    {activeCities.join(", ")}
                   </span>
                 </span>
               )}
@@ -299,7 +264,7 @@ export default function VenuesPage() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.85 }}
                       onClick={f.onRemove}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all hover:opacity-80"
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
                       style={{
                         background: "rgba(238,116,41,0.1)",
                         color: "var(--sw-primary)",
@@ -312,7 +277,7 @@ export default function VenuesPage() {
                   ))}
                   {activeFilters.length > 1 && (
                     <button
-                      onClick={() => { setSearch(""); setActiveCity(""); setSort("Recommended"); }}
+                      onClick={() => { setSearch(""); setActiveCities([]); setSort("Recommended"); }}
                       className="text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors underline"
                     >
                       Clear all
@@ -354,7 +319,7 @@ export default function VenuesPage() {
             <div className="relative flex-shrink-0">
               <button
                 onClick={() => setSortOpen(!sortOpen)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-semibold transition-all hover:shadow-md"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-semibold"
                 style={{
                   borderColor: sortOpen ? "var(--sw-primary)" : "var(--sw-light-gray)",
                   color: "var(--sw-navy)",
@@ -387,7 +352,7 @@ export default function VenuesPage() {
                       <button
                         key={opt}
                         onClick={() => { setSort(opt); setSortOpen(false); }}
-                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-primary-50 flex items-center justify-between"
+                        className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-slate-50 flex items-center justify-between"
                         style={{
                           fontWeight: sort === opt ? 700 : 500,
                           color: sort === opt ? "var(--sw-primary)" : "var(--sw-navy)",
@@ -430,7 +395,7 @@ export default function VenuesPage() {
               We couldn't find venues matching your filters. Try adjusting your search or clearing some filters.
             </p>
             <button
-              onClick={() => { setSearch(""); setActiveCity(""); setSort("Recommended"); }}
+              onClick={() => { setSearch(""); setActiveCities([]); setSort("Recommended"); }}
               className="px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:opacity-90"
               style={{
                 background: "var(--sw-primary)",
@@ -466,7 +431,7 @@ export default function VenuesPage() {
             <button
               onClick={handleLoadMore}
               disabled={isLoading}
-              className="relative px-10 py-4 rounded-full font-bold text-sm transition-all hover:-translate-y-0.5 text-white overflow-hidden group"
+              className="relative px-10 py-4 rounded-full font-bold text-sm text-white overflow-hidden group"
               style={{
                 background: isLoading
                   ? "var(--sw-light-gray)"

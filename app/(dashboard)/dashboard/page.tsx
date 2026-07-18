@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { LayoutDashboard, BookHeart, Settings, Lock, Save, Wand2, Eye, EyeOff, Loader2 } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
+import AvatarUploader from "@/components/shared/AvatarUploader";
 
 interface UserSession {
   id: string;
@@ -13,6 +14,7 @@ interface UserSession {
   email: string;
   role: string;
   phone?: string;
+  profileImage?: string;
 }
 
 type TabType = "overview" | "bookings" | "settings";
@@ -218,6 +220,22 @@ export default function UserDashboard() {
                   {/* Details card */}
                   <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                     <h3 className="font-extrabold text-sm mb-4 text-slate-900">My Account Profile</h3>
+                    {/* Avatar */}
+                    <div className="flex justify-center mb-4">
+                      {user.profileImage && (user.profileImage.startsWith("/") || user.profileImage.startsWith("http")) ? (
+                        <div className="w-16 h-16 rounded-full overflow-hidden shadow-lg border-4 border-white">
+                          <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                        </div>
+                      ) : user.profileImage && user.profileImage.length <= 10 ? (
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-stone-100 to-stone-200 flex items-center justify-center shadow-lg border-4 border-white text-2xl">
+                          {user.profileImage}
+                        </div>
+                      ) : (
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500 to-primary-500 flex items-center justify-center shadow-lg border-4 border-white text-xl font-black text-white">
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
                     <div className="flex flex-col gap-4 border-t border-slate-100 pt-4 text-xs">
                       <div>
                         <span className="text-[10px] text-slate-400 block font-bold uppercase">Name</span>
@@ -353,6 +371,16 @@ export default function UserDashboard() {
               <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] min-h-[400px]">
                 <h3 className="font-extrabold text-lg pb-4 border-b mb-8 border-slate-100 text-slate-900">Account Settings</h3>
                 
+                {/* Profile Avatar Section */}
+                <div className="max-w-md mx-auto mb-8 pb-6 border-b border-slate-100">
+                  <h4 className="font-extrabold text-sm text-slate-900 mb-4 text-center">Profile Avatar</h4>
+                  <AvatarUploader
+                    currentImage={user.profileImage || ""}
+                    userName={user.name}
+                    onAvatarChange={(newImage) => setUser({ ...user, profileImage: newImage })}
+                  />
+                </div>
+
                 <div className="max-w-md flex flex-col gap-6 text-sm">
                   <div className="flex flex-col gap-2">
                     <label className="font-bold text-slate-500 uppercase tracking-wider text-[11px]">Full Name</label>

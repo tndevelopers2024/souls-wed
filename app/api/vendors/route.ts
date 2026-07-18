@@ -109,6 +109,11 @@ export async function PATCH(req: Request) {
       "images",
     ];
 
+    // profileImage is safe to update without triggering re-approval
+    if (body.profileImage !== undefined) {
+      allowed.profileImage = typeof body.profileImage === "string" ? body.profileImage.trim().slice(0, 500) : "";
+    }
+
     for (const field of listingFields) {
       if (body[field] !== undefined) allowed[field] = sanitizeVendorField(field, body[field]);
     }

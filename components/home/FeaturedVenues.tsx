@@ -38,11 +38,11 @@ export default function FeaturedVenues() {
   if (!loading && venues.length === 0) return null;
 
   return (
-    <section className="py-20 overflow-hidden">
+    <section className="py-12 md:py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <motion.div
-          className="flex items-end justify-between mb-10"
+          className="flex flex-col items-center text-center mb-8 md:mb-10 gap-4 md:gap-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -53,7 +53,7 @@ export default function FeaturedVenues() {
               Top Picks
             </p>
             <h2 className="section-heading">Amazing Venues</h2>
-            <p className="section-subtext">Best destinations at best prices</p>
+            <p className="section-subtext mx-auto">Best destinations at best prices</p>
           </div>
           <div className="flex items-center gap-4">
             <a

@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff } from "lucide-react";
+import { Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff, AlertCircle, IdCard, Moon, Sun, Monitor, SlidersHorizontal, LogOut, Shield } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
+import AvatarUploader from "@/components/shared/AvatarUploader";
 
 interface VendorSession {
   id: string;
@@ -25,13 +27,14 @@ interface VendorSession {
   instagram?: string;
   priceFrom?: number | string;
   images?: string[];
+  profileImage?: string;
   verified?: boolean;
   featured?: boolean;
   available?: boolean;
   unavailableDates?: string[];
 }
 
-type TabType = "overview" | "leads" | "venues" | "rooms" | "settings" | "planners" | "caterers" | "decorators";
+type TabType = "overview" | "leads" | "venues" | "rooms" | "settings" | "account-settings" | "planners" | "caterers" | "decorators";
 
 interface DashboardBooking {
   _id: string;
@@ -146,8 +149,16 @@ export default function VendorDashboard() {
   const [bookings, setBookings] = useState<DashboardBooking[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isDark: isDarkMode } = useTheme();
+  const { isDark: isDarkMode, toggleTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; type: 'venue' | 'service'; id: string; apiId?: string; name: string } | null>(null);
+  const [isDeletingItem, setIsDeletingItem] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [servicesExpanded, setServicesExpanded] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
@@ -662,6 +673,7 @@ export default function VendorDashboard() {
     },
     { id: "leads", label: "Booking Inquiries", count: bookings.length || null, icon: Inbox },
     { id: "settings", label: "Business Profile", icon: Settings },
+    { id: "account-settings", label: "Settings", icon: SlidersHorizontal },
   ];
 
   // Dark Mode helper CSS classes (corrected color classes to standard Tailwind tokens)
@@ -721,10 +733,10 @@ export default function VendorDashboard() {
                     }
                   }}
                   className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${isActive
-                      ? "bg-primary-500 text-white"
-                      : isDarkMode
-                        ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
+                    ? "bg-primary-500 text-white"
+                    : isDarkMode
+                      ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
                     }`}
                   title={item.label}
                 >
@@ -765,10 +777,10 @@ export default function VendorDashboard() {
                             key={subItem.id}
                             onClick={() => setActiveTab(subItem.id as TabType)}
                             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${isSubItemActive
-                                ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20"
-                                : isDarkMode
-                                  ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                                  : "text-stone-500 hover:text-stone-900 hover:bg-stone-50"
+                              ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20"
+                              : isDarkMode
+                                ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                                : "text-stone-500 hover:text-stone-900 hover:bg-stone-50"
                               }`}
                           >
                             <div className="flex items-center gap-2.5">
@@ -777,10 +789,10 @@ export default function VendorDashboard() {
                             </div>
                             {subItem.count !== undefined && subItem.count !== null && (
                               <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${isSubItemActive
-                                  ? "bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300"
-                                  : isDarkMode
-                                    ? "bg-stone-800 text-stone-400 border border-stone-700"
-                                    : "bg-stone-100 text-stone-500 border border-stone-200"
+                                ? "bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300"
+                                : isDarkMode
+                                  ? "bg-stone-800 text-stone-400 border border-stone-700"
+                                  : "bg-stone-100 text-stone-500 border border-stone-200"
                                 }`}>
                                 {subItem.count}
                               </span>
@@ -800,8 +812,8 @@ export default function VendorDashboard() {
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${isDarkMode
-                ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
-                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
+              ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+              : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
               }`}
             title={sidebarCollapsed ? "Expand sidebar" : "Hide sidebar"}
           >
@@ -843,7 +855,7 @@ export default function VendorDashboard() {
       <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
 
         {/* Floating Top Header */}
-        <header className={`border rounded-2xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-300 ${headerClass}`}>
+        <header className={`sticky top-0 z-50 backdrop-blur-xl border rounded-2xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-300 ${headerClass}`}>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -854,13 +866,19 @@ export default function VendorDashboard() {
             </button>
             <div>
               <h1 className={`font-extrabold text-lg tracking-tight font-serif capitalize ${headingText}`}>
-                {activeTab === "overview" ? (vendor.businessName || "Partner Dashboard") : (menuItems.find(i => i.id === activeTab) || menuItems.find(i => i.subItems?.some((s: any) => s.id === activeTab))?.subItems?.find((s: any) => s.id === activeTab))?.label}
+                {(menuItems.find(i => i.id === activeTab) || menuItems.find(i => i.subItems?.some((s: any) => s.id === activeTab))?.subItems?.find((s: any) => s.id === activeTab))?.label || "Partner Dashboard"}
               </h1>
-              <p className="text-[10px] text-stone-500 font-semibold mt-0.5">
-                {activeTab === "overview" && "Manage your profile showcase, settings, and upcoming client bookings."}
-                {activeTab === "leads" && "All couple enquiries and booking requests."}
-                {activeTab === "venues" && "All active venue listings synced to the public directory."}
-                {activeTab === "settings" && "Manage your vendor portal configuration."}
+              <p className="text-[10px] text-stone-500 font-semibold mt-0.5 flex flex-wrap items-center gap-1.5">
+                <span className="font-bold text-[#EE7429] tracking-wider uppercase">{vendor.businessName || vendor.name}</span>
+                <span className="opacity-50 hidden sm:inline">•</span>
+                <span className="block sm:inline">
+                  {activeTab === "overview" && "Manage your profile showcase, settings, and upcoming client bookings."}
+                  {activeTab === "leads" && "All couple enquiries and booking requests."}
+                  {activeTab === "venues" && "All active venue listings synced to the public directory."}
+                  {activeTab === "settings" && "Manage your vendor portal configuration."}
+                  {activeTab === "account-settings" && "Appearance, security & account preferences."}
+                  {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && `Manage your active ${activeTab} listings.`}
+                </span>
               </p>
             </div>
           </div>
@@ -871,8 +889,8 @@ export default function VendorDashboard() {
               onClick={fetchBookings}
               disabled={loadingData}
               className={`flex items-center justify-center gap-2 px-3 py-1.5 border rounded-xl font-bold text-xs shadow-none cursor-pointer disabled:opacity-50 ${isDarkMode
-                  ? "border-stone-800 bg-stone-900 text-stone-300 hover:bg-stone-800"
-                  : "border-stone-200 bg-white hover:bg-stone-50 text-stone-700"
+                ? "border-stone-800 bg-stone-900 text-stone-300 hover:bg-stone-800"
+                : "border-stone-200 bg-white hover:bg-stone-50 text-stone-700"
                 }`}
             >
               <span>Sync</span>
@@ -905,10 +923,10 @@ export default function VendorDashboard() {
                         }
                       }}
                       className={`flex items-center justify-between p-3 rounded-xl text-xs font-bold transition-all ${activeTab === item.id || (hasSubItems && item.subItems.some((s: any) => s.id === activeTab))
-                          ? "bg-primary-500 text-white"
-                          : isDarkMode
-                            ? "text-stone-300 hover:bg-stone-800"
-                            : "text-stone-600 hover:bg-stone-50"
+                        ? "bg-primary-500 text-white"
+                        : isDarkMode
+                          ? "text-stone-300 hover:bg-stone-800"
+                          : "text-stone-600 hover:bg-stone-50"
                         }`}
                     >
                       <div className="flex items-center gap-2">
@@ -937,10 +955,10 @@ export default function VendorDashboard() {
                               setMobileMenuOpen(false);
                             }}
                             className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === subItem.id
-                                ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20"
-                                : isDarkMode
-                                  ? "text-stone-400 hover:bg-stone-800"
-                                  : "text-stone-500 hover:bg-stone-50"
+                              ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20"
+                              : isDarkMode
+                                ? "text-stone-400 hover:bg-stone-800"
+                                : "text-stone-500 hover:bg-stone-50"
                               }`}
                           >
                             <span>{subItem.label}</span>
@@ -985,8 +1003,8 @@ export default function VendorDashboard() {
 
                 {/* Account verification warning banner */}
                 <div className={`border rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-none ${vendor.verified
-                    ? isDarkMode ? "bg-emerald-950/10 border-emerald-900/50" : "bg-emerald-50/60 border-emerald-200 dark:border-emerald-500/25"
-                    : isDarkMode ? "bg-amber-950/10 border-amber-900/50" : "bg-amber-50/60 border-amber-200"
+                  ? isDarkMode ? "bg-emerald-950/10 border-emerald-900/50" : "bg-emerald-50/60 border-emerald-200 dark:border-emerald-500/25"
+                  : isDarkMode ? "bg-amber-950/10 border-amber-900/50" : "bg-amber-50/60 border-amber-200"
                   }`}>
                   <div className="flex gap-3 text-xs font-semibold">
                     <div>
@@ -1224,8 +1242,8 @@ export default function VendorDashboard() {
                         </h3>
                         {venueMessage && (
                           <div className={`mb-5 rounded-3xl px-4 py-3 text-xs font-bold border ${venueMessage.includes("Failed") || venueMessage.includes("required")
-                              ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25"
-                              : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25"
+                            ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25"
+                            : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25"
                             }`}>{venueMessage}</div>
                         )}
 
@@ -1420,10 +1438,10 @@ export default function VendorDashboard() {
                                 type="button"
                                 onClick={() => setVenueForm(p => ({ ...p, [key]: !p[key] }))}
                                 className={`flex items-center justify-between px-4 py-2.5 rounded-xl border font-bold capitalize cursor-pointer transition-all ${venueForm[key]
-                                    ? "bg-primary-500 border-primary-500 text-white"
-                                    : isDarkMode
-                                      ? "border-stone-700 text-stone-400 hover:border-stone-600"
-                                      : "border-stone-200 text-stone-500 hover:border-stone-300"
+                                  ? "bg-primary-500 border-primary-500 text-white"
+                                  : isDarkMode
+                                    ? "border-stone-700 text-stone-400 hover:border-stone-600"
+                                    : "border-stone-200 text-stone-500 hover:border-stone-300"
                                   }`}
                               >
                                 <span>{key}</span>
@@ -1526,9 +1544,7 @@ export default function VendorDashboard() {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    if (confirm(`Are you sure you want to delete ${venue.name}?`)) {
-                                      setVenues(prev => prev.filter(v => v._id !== venue._id));
-                                    }
+                                    setDeleteConfirmation({ isOpen: true, type: 'venue', id: venue._id, apiId: venue.venueId, name: venue.name });
                                   }}
                                   className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
                                   title="Delete Venue"
@@ -1555,333 +1571,557 @@ export default function VendorDashboard() {
 
             {/* SETTINGS SECTION */}
             {activeTab === "settings" && (
-              <div className={`rounded-3xl p-6 border shadow-none min-h-[400px] ${cardClass}`}>
-                <h3 className={`font-extrabold text-base pb-3 border-b mb-6 ${dividerClass} ${headingText}`}>Business Showcase Settings</h3>
+              <div className="flex flex-col xl:flex-row gap-8 items-start">
 
-                <form onSubmit={handleSaveProfile} className="max-w-2xl flex flex-col gap-5 text-xs">
-                  {profileMessage && (
-                    <div className={`rounded-3xl border px-4 py-3 font-bold ${profileMessage.includes("Failed")
-                        ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25"
-                        : "bg-amber-50 text-amber-800 border-amber-200"
-                      }`}>
-                      {profileMessage}
-                    </div>
-                  )}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-bold text-stone-500 uppercase tracking-wider">Brand Name</label>
-                    <input
-                      type="text"
-                      name="businessName"
-                      defaultValue={vendor.businessName}
-                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                        }`}
-                      required
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-bold text-stone-500 uppercase tracking-wider">Representative</label>
-                      <input
-                        type="text"
-                        name="name"
-                        defaultValue={vendor.name}
-                        className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                          }`}
-                        required
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-bold text-stone-500 uppercase tracking-wider">Phone</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        defaultValue={vendor.phone}
-                        className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                          }`}
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-bold text-stone-500 uppercase tracking-wider">Category</label>
-                      <select
-                        name="category"
-                        defaultValue={vendor.category}
-                        className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                          }`}
-                      >
-                        {["Venues", "Rooms", "Planners", "Caterers", "Decorators"].map((category) => (
-                          <option key={category} value={category}>{category}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-bold text-stone-500 uppercase tracking-wider">Base City Location</label>
-                      <input
-                        type="text"
-                        name="city"
-                        defaultValue={vendor.city}
-                        className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                          }`}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-bold text-stone-500 uppercase tracking-wider">Starting Price (INR)</label>
-                      <input
-                        type="number"
-                        min="0"
-                        name="priceFrom"
-                        defaultValue={vendor.priceFrom || ""}
-                        className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                          }`}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-bold text-stone-500 uppercase tracking-wider">Website</label>
-                      <input
-                        type="url"
-                        name="website"
-                        defaultValue={vendor.website}
-                        className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                          }`}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-bold text-stone-500 uppercase tracking-wider">Instagram</label>
-                    <input
-                      type="text"
-                      name="instagram"
-                      defaultValue={vendor.instagram}
-                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                        }`}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <div className="flex justify-between items-center">
-                      <label className="font-bold text-stone-500 uppercase tracking-wider text-xs">Showcase Gallery ({showcaseImages.length}/6)</label>
-                      {uploadError && <span className="text-red-500 font-bold text-[10px]">{uploadError}</span>}
-                    </div>
+                {/* LEFT: ID CARD */}
+                <div className="w-full xl:w-[320px] shrink-0 mx-auto xl:mx-0">
+                  <div className="relative w-full h-[520px] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col">
+                    {/* Lanyard Hole */}
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-16 h-3 bg-black/20 backdrop-blur-md rounded-full z-20 shadow-inner border border-white/10"></div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-                      {showcaseImages.map((imgUrl, index) => (
-                        <div key={index} className="relative aspect-square rounded-3xl overflow-hidden border border-stone-200/20 group">
-                          <img
-                            src={imgUrl}
-                            alt={`Preview ${index + 1}`}
-                            className="object-cover w-full h-full"
-                          />
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
-                            <div className="flex justify-end">
-                              <button
-                                type="button"
-                                onClick={() => removeImage(index)}
-                                className="p-1.5 bg-red-600/95 text-white rounded-xl hover:bg-red-700 transition-colors cursor-pointer"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                            <div className="flex justify-center gap-1.5">
-                              <button
-                                type="button"
-                                onClick={() => moveImage(index, "left")}
-                                disabled={index === 0}
-                                className="p-1 bg-white/20 text-white rounded-xl disabled:opacity-30 hover:bg-white/40 cursor-pointer"
-                              >
-                                <ArrowLeft className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => moveImage(index, "right")}
-                                disabled={index === showcaseImages.length - 1}
-                                className="p-1 bg-white/20 text-white rounded-xl disabled:opacity-30 hover:bg-white/40 cursor-pointer"
-                              >
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
+                    {/* Card Background gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#EE7429] to-[#FCCB11] opacity-95"></div>
+
+                    {/* Decorative elements */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/10 rounded-full blur-3xl -ml-10 -mb-10"></div>
+
+                    {/* Content */}
+                    <div className="relative z-10 flex flex-col h-full p-6 pt-12">
+                      <div className="flex justify-between items-start mb-6 text-white">
+                        <div>
+                          <h2 className="font-black text-xl tracking-tight leading-none">SoulsWed</h2>
+                          <p className="text-[9px] font-bold tracking-widest uppercase opacity-80 mt-1">Partner Pass</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-sm">
+                          <Star className="w-5 h-5 fill-white" />
+                        </div>
+                      </div>
+
+                      <div className="flex-1 bg-white dark:bg-stone-900 rounded-2xl p-5 shadow-xl flex flex-col items-center text-center relative border border-stone-100 dark:border-stone-800">
+                        <div className="w-20 h-20 rounded-full mb-4 -mt-10 shadow-lg border-4 border-white dark:border-stone-900 z-10 overflow-hidden flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200 dark:from-stone-800 dark:to-stone-900">
+                          {vendor.profileImage && (vendor.profileImage.startsWith("/") || vendor.profileImage.startsWith("http")) ? (
+                            <img src={vendor.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                          ) : vendor.profileImage && vendor.profileImage.length <= 10 ? (
+                            <span className="text-3xl">{vendor.profileImage}</span>
+                          ) : (
+                            <span className="text-3xl font-black text-[#EE7429]">{vendor.businessName ? vendor.businessName.charAt(0) : "V"}</span>
+                          )}
+                        </div>
+                        <h3 className="font-black text-lg text-stone-900 dark:text-white leading-tight mb-1">{vendor.businessName}</h3>
+                        <p className="text-[10px] font-bold text-[#EE7429] uppercase tracking-widest mb-4 bg-[#EE7429]/10 px-2.5 py-1 rounded-full">{vendor.category || "Vendor"}</p>
+
+                        <div className="w-full space-y-3 text-left mt-2">
+                          <div className="bg-stone-50 dark:bg-stone-800/50 p-2.5 rounded-xl border border-stone-100 dark:border-stone-800">
+                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-0.5">Representative</p>
+                            <p className="text-sm font-semibold text-stone-700 dark:text-stone-300 truncate">{vendor.name}</p>
+                          </div>
+                          <div className="bg-stone-50 dark:bg-stone-800/50 p-2.5 rounded-xl border border-stone-100 dark:border-stone-800">
+                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-0.5">Location</p>
+                            <p className="text-sm font-semibold text-stone-700 dark:text-stone-300 truncate">{vendor.city}</p>
                           </div>
                         </div>
-                      ))}
 
-                      {showcaseImages.length < 6 && (
-                        <label className="relative aspect-square rounded-3xl border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center cursor-pointer hover:border-primary-500 hover:bg-primary-500/5 transition-all text-stone-400 hover:text-primary-500">
-                          {uploadingImage ? (
-                            <>
-                              <Loader2 className="w-5 h-5 animate-spin text-primary-500 mb-1" />
-                              <span className="text-[9px] font-bold uppercase tracking-wider">Uploading...</span>
-                            </>
-                          ) : (
-                            <>
-                              <Plus className="w-5 h-5 mb-1" />
-                              <span className="text-[9px] font-bold uppercase tracking-wider">Upload Item</span>
-                            </>
-                          )}
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            disabled={uploadingImage}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
+                        <div className="mt-auto w-full flex justify-center opacity-40 mix-blend-multiply dark:mix-blend-screen pt-4">
+                          <svg viewBox="0 0 100 20" className="w-full h-8">
+                            <path d="M0,0 h3 v20 h-3 z M5,0 h1 v20 h-1 z M8,0 h4 v20 h-4 z M14,0 h2 v20 h-2 z M18,0 h1 v20 h-1 z M21,0 h3 v20 h-3 z M26,0 h1 v20 h-1 z M29,0 h4 v20 h-4 z M35,0 h2 v20 h-2 z M39,0 h3 v20 h-3 z M44,0 h1 v20 h-1 z M47,0 h4 v20 h-4 z M53,0 h2 v20 h-2 z M57,0 h1 v20 h-1 z M60,0 h3 v20 h-3 z M65,0 h1 v20 h-1 z M68,0 h4 v20 h-4 z M74,0 h2 v20 h-2 z M78,0 h3 v20 h-3 z M83,0 h1 v20 h-1 z M86,0 h4 v20 h-4 z M92,0 h2 v20 h-2 z M96,0 h4 v20 h-4 z" fill="currentColor" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex justify-between items-end">
+                        <p className="text-[10px] font-bold text-white/80 tracking-widest font-mono">ID: {String((vendor as any).id || (vendor as any).userId || "VNDR").split('-')[0].substring(0, 8).toUpperCase()}</p>
+                        <p className="text-[10px] font-bold text-white/90">VALID 2026</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* RIGHT: ALL SETTINGS PANELS */}
+                <div className="flex-1 w-full flex flex-col gap-8">
+
+                  {/* 0. PROFILE AVATAR */}
+                  <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                    <div className={`flex items-center justify-between pb-3 border-b mb-6 ${dividerClass}`}>
+                      <h3 className={`font-extrabold text-base ${headingText}`}>Profile Avatar</h3>
+                    </div>
+                    <AvatarUploader
+                      currentImage={vendor.profileImage || ""}
+                      userName={vendor.businessName || vendor.name}
+                      onAvatarChange={(newImage) => setVendor({ ...vendor, profileImage: newImage })}
+                    />
+                  </div>
+
+                  {/* 1. BUSINESS SHOWCASE SETTINGS */}
+                  <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                    <div className={`flex items-center justify-between pb-3 border-b mb-6 ${dividerClass}`}>
+                      <h3 className={`font-extrabold text-base ${headingText}`}>Business Showcase Settings</h3>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingProfile(!isEditingProfile)}
+                        className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[11px] font-black tracking-widest uppercase transition-all shadow-sm ${isEditingProfile ? "bg-stone-200 text-stone-700 hover:bg-stone-300 dark:bg-stone-800 dark:text-stone-300" : "bg-[#EE7429] text-white hover:bg-[#d66825] shadow-[#EE7429]/20"}`}
+                      >
+                        {isEditingProfile ? <><X className="w-3.5 h-3.5" /> Cancel Edit</> : <><Edit2 className="w-3.5 h-3.5" /> Edit Profile</>}
+                      </button>
                     </div>
 
-                    {showcaseImages.length < 6 && (
-                      <div className="flex gap-2 mt-1">
+                    {!isEditingProfile ? (
+                      <div className="space-y-6">
+                        <div>
+                          <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">About Business</h4>
+                          <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
+                            {vendor.description || "No description provided. Click Edit Profile to add a description to showcase your business to customers."}
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-stone-50 dark:bg-stone-800/30 p-3 rounded-2xl">
+                            <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Phone</h4>
+                            <p className="text-sm font-semibold">{vendor.phone || "N/A"}</p>
+                          </div>
+                          <div className="bg-stone-50 dark:bg-stone-800/30 p-3 rounded-2xl">
+                            <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Email</h4>
+                            <p className="text-sm font-semibold truncate">{vendor.email}</p>
+                          </div>
+                          <div className="bg-stone-50 dark:bg-stone-800/30 p-3 rounded-2xl">
+                            <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Starting Price</h4>
+                            <p className="text-sm font-semibold">{vendor.priceFrom ? `₹${vendor.priceFrom.toLocaleString('en-IN')}` : "N/A"}</p>
+                          </div>
+                          <div className="bg-stone-50 dark:bg-stone-800/30 p-3 rounded-2xl">
+                            <h4 className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Website</h4>
+                            {vendor.website ? (
+                              <a href={vendor.website} target="_blank" rel="noreferrer" className="text-sm font-semibold text-primary-500 hover:underline truncate block">{vendor.website}</a>
+                            ) : <p className="text-sm font-semibold text-stone-400">N/A</p>}
+                          </div>
+                        </div>
+
+                        {showcaseImages.length > 0 && (
+                          <div>
+                            <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">Gallery ({showcaseImages.length})</h4>
+                            <div className="grid grid-cols-3 gap-2">
+                              {showcaseImages.map((img, i) => (
+                                <div key={i} className="aspect-square rounded-xl overflow-hidden border border-stone-200/20">
+                                  <img src={img} alt="Gallery" className="w-full h-full object-cover" />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <form onSubmit={handleSaveProfile} className="max-w-2xl flex flex-col gap-5 text-xs animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        {profileMessage && (
+                          <div className={`rounded-3xl border px-4 py-3 font-bold ${profileMessage.includes("Failed")
+                            ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25"
+                            : "bg-amber-50 text-amber-800 border-amber-200"
+                            }`}>
+                            {profileMessage}
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-bold text-stone-500 uppercase tracking-wider">Brand Name</label>
+                          <input
+                            type="text"
+                            name="businessName"
+                            defaultValue={vendor.businessName}
+                            className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                              }`}
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Representative</label>
+                            <input
+                              type="text"
+                              name="name"
+                              defaultValue={vendor.name}
+                              className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                }`}
+                              required
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Phone</label>
+                            <input
+                              type="tel"
+                              name="phone"
+                              defaultValue={vendor.phone}
+                              className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                }`}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Category</label>
+                            <select
+                              name="category"
+                              defaultValue={vendor.category}
+                              className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                }`}
+                            >
+                              {["Venues", "Rooms", "Planners", "Caterers", "Decorators"].map((category) => (
+                                <option key={category} value={category}>{category}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Base City Location</label>
+                            <input
+                              type="text"
+                              name="city"
+                              defaultValue={vendor.city}
+                              className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                }`}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Starting Price (INR)</label>
+                            <input
+                              type="number"
+                              min="0"
+                              name="priceFrom"
+                              defaultValue={vendor.priceFrom || ""}
+                              className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                }`}
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Website</label>
+                            <input
+                              type="url"
+                              name="website"
+                              defaultValue={vendor.website}
+                              className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                }`}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-bold text-stone-500 uppercase tracking-wider">Instagram</label>
+                          <input
+                            type="text"
+                            name="instagram"
+                            defaultValue={vendor.instagram}
+                            className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                              }`}
+                          />
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          <div className="flex justify-between items-center">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider text-xs">Showcase Gallery ({showcaseImages.length}/6)</label>
+                            {uploadError && <span className="text-red-500 font-bold text-[10px]">{uploadError}</span>}
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                            {showcaseImages.map((imgUrl, index) => (
+                              <div key={index} className="relative aspect-square rounded-3xl overflow-hidden border border-stone-200/20 group">
+                                <img
+                                  src={imgUrl}
+                                  alt={`Preview ${index + 1}`}
+                                  className="object-cover w-full h-full"
+                                />
+                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
+                                  <div className="flex justify-end">
+                                    <button
+                                      type="button"
+                                      onClick={() => removeImage(index)}
+                                      className="p-1.5 bg-red-600/95 text-white rounded-xl hover:bg-red-700 transition-colors cursor-pointer"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                  <div className="flex justify-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => moveImage(index, "left")}
+                                      disabled={index === 0}
+                                      className="p-1 bg-white/20 text-white rounded-xl disabled:opacity-30 hover:bg-white/40 cursor-pointer"
+                                    >
+                                      <ArrowLeft className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => moveImage(index, "right")}
+                                      disabled={index === showcaseImages.length - 1}
+                                      className="p-1 bg-white/20 text-white rounded-xl disabled:opacity-30 hover:bg-white/40 cursor-pointer"
+                                    >
+                                      <ArrowRight className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+
+                            {showcaseImages.length < 6 && (
+                              <label className="relative aspect-square rounded-3xl border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center cursor-pointer hover:border-primary-500 hover:bg-primary-500/5 transition-all text-stone-400 hover:text-primary-500">
+                                {uploadingImage ? (
+                                  <>
+                                    <Loader2 className="w-5 h-5 animate-spin text-primary-500 mb-1" />
+                                    <span className="text-[9px] font-bold uppercase tracking-wider">Uploading...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Plus className="w-5 h-5 mb-1" />
+                                    <span className="text-[9px] font-bold uppercase tracking-wider">Upload Item</span>
+                                  </>
+                                )}
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleImageUpload}
+                                  disabled={uploadingImage}
+                                  className="hidden"
+                                />
+                              </label>
+                            )}
+                          </div>
+
+                          {showcaseImages.length < 6 && (
+                            <div className="flex gap-2 mt-1">
+                              <input
+                                type="url"
+                                placeholder="Or paste an image URL here..."
+                                id="manual-url-input"
+                                className={`flex-1 border rounded-xl px-4 py-2 outline-none font-semibold text-[11px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                  }`}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    const input = e.currentTarget;
+                                    const val = input.value.trim();
+                                    if (val) {
+                                      if (showcaseImages.length >= 6) {
+                                        setUploadError("Maximum of 6 images allowed.");
+                                        return;
+                                      }
+                                      setShowcaseImages((prev) => [...prev, val]);
+                                      input.value = "";
+                                    }
+                                  }
+                                }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const input = document.getElementById("manual-url-input") as HTMLInputElement | null;
+                                  const val = input?.value.trim();
+                                  if (val) {
+                                    if (showcaseImages.length >= 6) {
+                                      setUploadError("Maximum of 6 images allowed.");
+                                      return;
+                                    }
+                                    setShowcaseImages((prev) => [...prev, val]);
+                                    if (input) input.value = "";
+                                  }
+                                }}
+                                className="px-4 py-2 bg-stone-900 dark:bg-stone-800 hover:bg-primary-500 text-white rounded-xl font-bold text-[11px] transition-colors cursor-pointer"
+                              >
+                                Add URL
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-bold text-stone-500 uppercase tracking-wider">Public Description</label>
+                          <textarea
+                            name="description"
+                            defaultValue={vendor.description}
+                            rows={4}
+                            className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                              }`}
+                            placeholder="Describe your services, style, and coverage."
+                          />
+                        </div>
+                        <p className="text-[10px] text-stone-400 font-medium">
+                          Saving listing details sends the profile back to admin approval before it appears publicly again.
+                        </p>
+                        <button
+                          type="submit"
+                          disabled={savingProfile}
+                          className="w-fit rounded-full bg-slate-900 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
+                        >
+                          {savingProfile ? "Saving..." : "Save and Request Approval"}
+                        </button>
+                      </form>
+                    )}
+                  </div>
+
+                  {/* 2. UNAVAILABLE DATES */}
+                  <div className={`border rounded-3xl overflow-hidden p-6 shadow-none ${cardClass}`}>
+                    <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
+                      <div>
+                        <h3 className={`font-extrabold text-base ${headingText}`}>Unavailable Dates</h3>
+                        <p className="text-[10px] text-stone-400 font-semibold mt-0.5">
+                          Block dates you're already booked outside the platform. Customers won't be able to book these dates.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-2">
                         <input
-                          type="url"
-                          placeholder="Or paste an image URL here..."
-                          id="manual-url-input"
-                          className={`flex-1 border rounded-xl px-4 py-2 outline-none font-semibold text-[11px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                            }`}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              const input = e.currentTarget;
-                              const val = input.value.trim();
-                              if (val) {
-                                if (showcaseImages.length >= 6) {
-                                  setUploadError("Maximum of 6 images allowed.");
-                                  return;
-                                }
-                                setShowcaseImages((prev) => [...prev, val]);
-                                input.value = "";
-                              }
-                            }
-                          }}
+                          type="date"
+                          value={newUnavailableDate}
+                          onChange={(e) => setNewUnavailableDate(e.target.value)}
+                          min={new Date().toISOString().split("T")[0]}
+                          className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                         />
                         <button
                           type="button"
-                          onClick={() => {
-                            const input = document.getElementById("manual-url-input") as HTMLInputElement | null;
-                            const val = input?.value.trim();
-                            if (val) {
-                              if (showcaseImages.length >= 6) {
-                                setUploadError("Maximum of 6 images allowed.");
-                                return;
-                              }
-                              setShowcaseImages((prev) => [...prev, val]);
-                              if (input) input.value = "";
-                            }
-                          }}
-                          className="px-4 py-2 bg-stone-900 dark:bg-stone-800 hover:bg-primary-500 text-white rounded-xl font-bold text-[11px] transition-colors cursor-pointer"
+                          onClick={addUnavailableDate}
+                          disabled={!newUnavailableDate}
+                          className="rounded-full bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
                         >
-                          Add URL
+                          Add
                         </button>
                       </div>
-                    )}
+
+                      {unavailableDates.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {unavailableDates.map((date) => (
+                            <span
+                              key={date}
+                              className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-stone-50 border-stone-200 text-stone-700"}`}
+                            >
+                              {date}
+                              <button
+                                type="button"
+                                onClick={() => removeUnavailableDate(date)}
+                                className="text-stone-400 hover:text-red-500"
+                                aria-label={`Remove ${date}`}
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-[11px] text-stone-400 font-semibold">No unavailable dates set.</p>
+                      )}
+
+                      {unavailableDatesMessage && (
+                        <p className="text-[11px] font-bold text-primary-600">{unavailableDatesMessage}</p>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={handleSaveUnavailableDates}
+                        disabled={savingUnavailableDates}
+                        className="w-fit rounded-full bg-slate-900 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
+                      >
+                        {savingUnavailableDates ? "Saving..." : "Save Unavailable Dates"}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-bold text-stone-500 uppercase tracking-wider">Public Description</label>
-                    <textarea
-                      name="description"
-                      defaultValue={vendor.description}
-                      rows={4}
-                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                        }`}
-                      placeholder="Describe your services, style, and coverage."
-                    />
-                  </div>
-                  <p className="text-[10px] text-stone-400 font-medium">
-                    Saving listing details sends the profile back to admin approval before it appears publicly again.
-                  </p>
-                  <button
-                    type="submit"
-                    disabled={savingProfile}
-                    className="w-fit rounded-full bg-slate-900 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
-                  >
-                    {savingProfile ? "Saving..." : "Save and Request Approval"}
-                  </button>
-                </form>
+
+                </div>
               </div>
             )}
 
-            {/* UNAVAILABLE DATES */}
-            {activeTab === "settings" && (
-              <div className={`mt-8 border rounded-3xl overflow-hidden p-6 shadow-none max-w-2xl ${cardClass}`}>
-                <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
-                  <div>
-                    <h3 className={`font-extrabold text-base ${headingText}`}>Unavailable Dates</h3>
-                    <p className="text-[10px] text-stone-400 font-semibold mt-0.5">
-                      Block dates you're already booked outside the platform. Customers won't be able to book these dates.
-                    </p>
+            {/* ACCOUNT SETTINGS SECTION */}
+            {activeTab === "account-settings" && (
+              <div className="flex flex-col gap-8 max-w-3xl">
+
+                {/* 1. APPEARANCE */}
+                <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                  <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
+                    <div>
+                      <h3 className={`font-extrabold text-base ${headingText}`}>Appearance</h3>
+                      <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Customize the look and feel of your dashboard</p>
+                    </div>
+                    <Palette className="w-5 h-5 text-stone-300" />
                   </div>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="date"
-                      value={newUnavailableDate}
-                      onChange={(e) => setNewUnavailableDate(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
-                      className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                    />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Light Mode Card */}
                     <button
                       type="button"
-                      onClick={addUnavailableDate}
-                      disabled={!newUnavailableDate}
-                      className="rounded-full bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
+                      onClick={() => { if (isDarkMode) toggleTheme(); }}
+                      className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${!isDarkMode
+                          ? "border-[#EE7429] bg-gradient-to-br from-orange-50/80 to-amber-50/60 shadow-lg shadow-orange-500/10"
+                          : "border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-md"
+                        }`}
                     >
-                      Add
+                      {!isDarkMode && (
+                        <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#EE7429] flex items-center justify-center">
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                      )}
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${!isDarkMode
+                          ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
+                          : "bg-stone-100 dark:bg-stone-800 text-stone-400 group-hover:bg-stone-200 dark:group-hover:bg-stone-700"
+                        }`}>
+                        <Sun className="w-6 h-6" />
+                      </div>
+                      {/* Mini preview */}
+                      <div className="w-full rounded-xl border border-stone-200 bg-white p-3 space-y-2 transition-all">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-stone-100"></div>
+                          <div className="h-2 w-16 rounded-full bg-stone-200"></div>
+                        </div>
+                        <div className="h-2 w-full rounded-full bg-stone-100"></div>
+                        <div className="h-2 w-3/4 rounded-full bg-stone-100"></div>
+                      </div>
+                      <div className="text-center">
+                        <p className={`text-sm font-bold ${!isDarkMode ? "text-[#EE7429]" : "text-stone-600 dark:text-stone-400"}`}>Light</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">Clean & bright</p>
+                      </div>
+                    </button>
+
+                    {/* Dark Mode Card */}
+                    <button
+                      type="button"
+                      onClick={() => { if (!isDarkMode) toggleTheme(); }}
+                      className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${isDarkMode
+                          ? "border-[#EE7429] bg-gradient-to-br from-stone-800/80 to-stone-900/60 shadow-lg shadow-orange-500/10"
+                          : "border-stone-200 hover:border-stone-300 hover:shadow-md"
+                        }`}
+                    >
+                      {isDarkMode && (
+                        <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#EE7429] flex items-center justify-center">
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                      )}
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${isDarkMode
+                          ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
+                          : "bg-stone-100 text-stone-400 group-hover:bg-stone-200"
+                        }`}>
+                        <Moon className="w-6 h-6" />
+                      </div>
+                      {/* Mini preview */}
+                      <div className="w-full rounded-xl border border-stone-700 bg-stone-900 p-3 space-y-2 transition-all">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-stone-800"></div>
+                          <div className="h-2 w-16 rounded-full bg-stone-700"></div>
+                        </div>
+                        <div className="h-2 w-full rounded-full bg-stone-800"></div>
+                        <div className="h-2 w-3/4 rounded-full bg-stone-800"></div>
+                      </div>
+                      <div className="text-center">
+                        <p className={`text-sm font-bold ${isDarkMode ? "text-[#EE7429]" : "text-stone-600"}`}>Dark</p>
+                        <p className="text-[10px] text-stone-400 mt-0.5">Easy on the eyes</p>
+                      </div>
                     </button>
                   </div>
-
-                  {unavailableDates.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {unavailableDates.map((date) => (
-                        <span
-                          key={date}
-                          className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-[11px] font-bold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-300" : "bg-stone-50 border-stone-200 text-stone-700"}`}
-                        >
-                          {date}
-                          <button
-                            type="button"
-                            onClick={() => removeUnavailableDate(date)}
-                            className="text-stone-400 hover:text-red-500"
-                            aria-label={`Remove ${date}`}
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-[11px] text-stone-400 font-semibold">No unavailable dates set.</p>
-                  )}
-
-                  {unavailableDatesMessage && (
-                    <p className="text-[11px] font-bold text-primary-600">{unavailableDatesMessage}</p>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={handleSaveUnavailableDates}
-                    disabled={savingUnavailableDates}
-                    className="w-fit rounded-full bg-slate-900 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
-                  >
-                    {savingUnavailableDates ? "Saving..." : "Save Unavailable Dates"}
-                  </button>
                 </div>
-              </div>
-            )}
 
-            {/* PASSWORD SETTINGS */}
-            {activeTab === "settings" && (
-                <div className={`mt-8 border rounded-3xl overflow-hidden p-6 shadow-none max-w-2xl ${cardClass}`}>
-                  <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
+                {/* 2. ACCOUNT SECURITY */}
+                <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                  <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
                     <div>
                       <h3 className={`font-extrabold text-base ${headingText}`}>Account Security</h3>
                       <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Manage your vendor account password</p>
                     </div>
+                    <Shield className="w-5 h-5 text-stone-300" />
                   </div>
 
-                  <form onSubmit={handleChangePassword} className="space-y-4">
+                  <form onSubmit={handleChangePassword} className="space-y-5">
                     <div>
-                      <label className="block text-xs font-semibold mb-1 text-stone-500">Current Password</label>
+                      <label className="block text-xs font-bold mb-1.5 text-stone-500 uppercase tracking-wider">Current Password</label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
                         <input
@@ -1889,14 +2129,14 @@ export default function VendorDashboard() {
                           required
                           value={currentPassword}
                           onChange={(e) => setCurrentPassword(e.target.value)}
-                          className={`w-full pl-9 pr-4 py-2 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
+                          className={`w-full pl-9 pr-4 py-2.5 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
                           placeholder="••••••••"
                         />
                       </div>
                     </div>
                     <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <label className="block text-xs font-semibold text-stone-500">New Password</label>
+                      <div className="flex justify-between items-center mb-1.5">
+                        <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider">New Password</label>
                         <button
                           type="button"
                           onClick={generateStrongPassword}
@@ -1914,7 +2154,7 @@ export default function VendorDashboard() {
                           minLength={6}
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
-                          className={`w-full pl-9 pr-10 py-2 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
+                          className={`w-full pl-9 pr-10 py-2.5 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
                           placeholder="••••••••"
                         />
                         <button
@@ -1925,19 +2165,21 @@ export default function VendorDashboard() {
                           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
+                      <p className="text-[10px] text-stone-400 mt-1.5">Minimum 6 characters. Use a mix of letters, numbers, and symbols.</p>
                     </div>
-                    
+
                     {passwordMessage.text && (
-                      <p className={`text-xs font-semibold p-2 rounded-lg ${passwordMessage.type === "error" ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"}`}>
+                      <div className={`flex items-center gap-2 text-xs font-semibold p-3 rounded-xl ${passwordMessage.type === "error" ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-500/20" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20"}`}>
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                         {passwordMessage.text}
-                      </p>
+                      </div>
                     )}
 
-                    <div className="pt-2">
+                    <div className="pt-1">
                       <button
                         type="submit"
                         disabled={isChangingPassword}
-                        className="flex items-center gap-2 bg-stone-900 hover:bg-stone-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 bg-stone-900 dark:bg-stone-800 hover:bg-primary-600 dark:hover:bg-primary-600 text-white px-6 py-3 rounded-full text-xs font-bold transition-all disabled:opacity-50 shadow-sm"
                       >
                         {isChangingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                         Save New Password
@@ -1945,7 +2187,27 @@ export default function VendorDashboard() {
                     </div>
                   </form>
                 </div>
-              )}
+
+                {/* 3. SIGN OUT */}
+                <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                  <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
+                    <div>
+                      <h3 className={`font-extrabold text-base ${headingText}`}>Session</h3>
+                      <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Sign out of your vendor account on this device</p>
+                    </div>
+                    <LogOut className="w-5 h-5 text-stone-300" />
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 px-6 py-3 rounded-full text-xs font-bold transition-all border border-red-100 dark:border-red-500/20"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </button>
+                </div>
+
+              </div>
+            )}
 
             {/* SERVICES SECTION (Rooms, Planners, Caterers, Decorators) */}
             {["rooms", "planners", "caterers", "decorators"].includes(activeTab) && (
@@ -1975,8 +2237,8 @@ export default function VendorDashboard() {
 
                     {serviceMessage && (
                       <div className={`mb-6 rounded-2xl border px-4 py-3 text-xs font-bold ${serviceMessage.includes("Failed") || serviceMessage.includes("required")
-                          ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-100"
-                          : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100"
+                        ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-100"
+                        : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100"
                         }`}>
                         {serviceMessage}
                       </div>
@@ -2110,9 +2372,7 @@ export default function VendorDashboard() {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    if (confirm(`Are you sure you want to delete ${service.name}?`)) {
-                                      setServices(prev => prev.filter(v => v.serviceId !== service.serviceId));
-                                    }
+                                    setDeleteConfirmation({ isOpen: true, type: 'service', id: service.serviceId, apiId: service.serviceId, name: service.name });
                                   }}
                                   className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
                                   title="Delete Service"
@@ -2140,6 +2400,65 @@ export default function VendorDashboard() {
           </motion.div>
         </AnimatePresence>
       </div>
+
+
+
+      {/* Delete Confirmation Modal */}
+      {mounted && deleteConfirmation?.isOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[var(--sw-surface)] rounded-3xl p-6 max-w-sm w-full mx-4 text-center shadow-2xl border border-slate-100 dark:border-white/10 flex flex-col items-center animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-500 mb-4 animate-pulse">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-800 dark:text-stone-200 mb-1">Delete {deleteConfirmation.type === 'venue' ? 'Venue' : 'Service'}?</h3>
+            <p className="text-xs text-slate-500 dark:text-stone-400 mb-6 leading-relaxed">
+              Are you sure you want to delete <span className="font-bold text-slate-700 dark:text-stone-300">{deleteConfirmation.name}</span>? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => setDeleteConfirmation(null)}
+                className="flex-1 bg-slate-100 dark:bg-[var(--sw-surface)]/10 hover:bg-slate-200 text-slate-700 dark:text-stone-300 font-bold py-3 rounded-full text-xs transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={isDeletingItem}
+                onClick={async () => {
+                  setIsDeletingItem(true);
+                  try {
+                    if (deleteConfirmation.type === 'venue') {
+                      const res = await fetch(`/api/venues?venueId=${deleteConfirmation.apiId || deleteConfirmation.id}`, { method: 'DELETE' });
+                      if (res.ok) {
+                        setVenues(prev => prev.filter(v => v._id !== deleteConfirmation.id && v.venueId !== deleteConfirmation.id));
+                      } else {
+                        const errData = await res.json().catch(() => ({}));
+                        alert(errData.message || "Failed to delete venue.");
+                      }
+                    } else {
+                      const res = await fetch(`/api/services?serviceId=${deleteConfirmation.apiId || deleteConfirmation.id}`, { method: 'DELETE' });
+                      if (res.ok) {
+                        setServices(prev => prev.filter(v => v.serviceId !== deleteConfirmation.id));
+                      } else {
+                        const errData = await res.json().catch(() => ({}));
+                        alert(errData.message || "Failed to delete service.");
+                      }
+                    }
+                  } catch (error) {
+                    alert("An error occurred during deletion.");
+                  } finally {
+                    setIsDeletingItem(false);
+                    setDeleteConfirmation(null);
+                  }
+                }}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-full text-xs transition-colors shadow-sm shadow-red-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isDeletingItem ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

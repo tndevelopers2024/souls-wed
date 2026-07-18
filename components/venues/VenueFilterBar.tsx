@@ -5,7 +5,7 @@ import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  SlidersHorizontal, X, Check,
+  SlidersHorizontal, X, Check, Search,
   Users, Coins, Building2, Layers, Sparkles, Globe2,
   LayoutGrid, BedDouble, CalendarHeart, ChefHat, Palette, 
   ClipboardList, Utensils,
@@ -27,12 +27,17 @@ const categoryLinks = [
 
 
 interface Props {
-  activeCity: string;
-  onCityChange: (city: string) => void;
+  activeCities: string[];
+  onCityChange: (cities: string[]) => void;
   activeCategory?: string;
+  search?: string;
+  onSearchChange?: (value: string) => void;
+  searchPlaceholder?: string;
 }
 
-export default function VenueFilterBar({ activeCity, onCityChange, activeCategory }: Props) {
+export default function VenueFilterBar({ activeCities, onCityChange, activeCategory, search, onSearchChange, searchPlaceholder }: Props) {
+  const noCitySelected = activeCities.length === 0;
+  const [searchFocused, setSearchFocused] = useState(false);
   const { currency, setCurrency } = useCurrency();
   const [openFilter, setOpenFilter] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
@@ -135,8 +140,8 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 }`}
               >
                 <Icon 
-                  className={`w-4 h-4 transition-transform duration-300 group-hover:scale-110 ${
-                    isActive ?"text-primary-500":"text-slate-400 group-hover:text-primary-400"
+                  className={`w-4 h-4 ${
+                    isActive ?"text-primary-500":"text-slate-400"
                   }`} 
                   strokeWidth={isActive ? 2.5 : 2}
                 />
@@ -351,7 +356,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
           <motion.button
             whileHover={{ y: -4, scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
-            onClick={() => onCityChange("")}
+            onClick={() => onCityChange([])}
             className="flex-shrink-0 flex flex-col items-center gap-2.5"
           >
             <div
@@ -360,11 +365,11 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                 width: 76,
                 height: 76,
                 borderRadius: "50%",
-                padding: activeCity === "" ? "3px" : "2px",
-                background: activeCity === ""
+                padding: noCitySelected ? "3px" : "2px",
+                background: noCitySelected
                   ? "linear-gradient(135deg, var(--sw-primary), #f5a623)"
                   : "rgba(55,71,90,0.06)",
-                boxShadow: activeCity === ""
+                boxShadow: noCitySelected
                   ? "0 8px 24px rgba(238,116,41,0.4)"
                   : "0 4px 12px rgba(0,0,0,0.03)",
               }}
@@ -372,26 +377,26 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
               <div
                 className="w-full h-full rounded-full flex items-center justify-center relative overflow-hidden"
                 style={{
-                  background: activeCity === ""
+                  background: noCitySelected
                     ? "linear-gradient(135deg, var(--sw-ink) 0%, #1e293b 100%)"
                     : "white",
                 }}
               >
-                {activeCity === "" && (
+                {noCitySelected && (
                    <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none" />
                 )}
                 <Globe2
                   className="w-7 h-7 relative z-10"
                   style={{
-                    color: activeCity === "" ? "white" : "var(--sw-navy)",
-                    opacity: activeCity === "" ? 1 : 0.5,
+                    color: noCitySelected ? "white" : "var(--sw-navy)",
+                    opacity: noCitySelected ? 1 : 0.5,
                   }}
                 />
               </div>
             </div>
             <span
               className="text-[11px] font-extrabold transition-colors duration-200 uppercase tracking-wider"
-              style={{ color: activeCity === "" ? "var(--sw-primary)" : "#64748b" }}
+              style={{ color: noCitySelected ? "var(--sw-primary)" : "#64748b" }}
             >
               All Cities
             </span>
@@ -399,13 +404,19 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
 
           {/* City circles */}
           {cities.map((city) => {
-            const isActive = activeCity === city.name;
+            const isActive = activeCities.includes(city.name);
             return (
               <motion.button
                 key={city.name}
                 whileHover={{ y: -4, scale: 1.05 }}
                 whileTap={{ scale: 0.96 }}
-                onClick={() => onCityChange(city.name)}
+                onClick={() => {
+                  if (isActive) {
+                    onCityChange(activeCities.filter((c) => c !== city.name));
+                  } else {
+                    onCityChange([...activeCities, city.name]);
+                  }
+                }}
                 className="flex-shrink-0 flex flex-col items-center gap-2.5 group"
               >
                 {/* Gradient ring + image */}
@@ -429,7 +440,7 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
                       src={city.image}
                       alt={city.name}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="object-cover"
                       sizes="76px"
                       style={{ transform: isActive ? "scale(1.15)" : "scale(1)" }}
                     />
@@ -475,6 +486,57 @@ export default function VenueFilterBar({ activeCity, onCityChange, activeCategor
           })}
         </div>
       </div>
+
+      {/* ═══════════ ROW 3 — Search Bar ═══════════ */}
+      {onSearchChange && (
+        <motion.div
+          className="max-w-2xl mx-auto w-full relative"
+          animate={{ scale: searchFocused ? 1.01 : 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div
+            className="flex items-center rounded-full px-5 py-3 gap-3 transition-all duration-300"
+            style={{
+              background: "white",
+              border: searchFocused
+                ? "2px solid var(--sw-primary)"
+                : "2px solid rgba(0,0,0,0.08)",
+              boxShadow: searchFocused
+                ? "0 8px 32px rgba(238,116,41,0.18)"
+                : "0 4px 16px rgba(0,0,0,0.06)",
+            }}
+          >
+            <Search
+              className="w-5 h-5 flex-shrink-0 transition-colors duration-300"
+              style={{ color: searchFocused ? "var(--sw-primary)" : "#94a3b8" }}
+            />
+            <input
+              type="text"
+              placeholder={searchPlaceholder || "Search by name, city, or specialty…"}
+              value={search || ""}
+              onChange={(e) => onSearchChange(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              className="flex-1 text-sm font-medium outline-none bg-transparent"
+              style={{ color: "var(--sw-navy)" }}
+            />
+            <AnimatePresence>
+              {search && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  onClick={() => onSearchChange("")}
+                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
+                  style={{ background: "rgba(0,0,0,0.08)" }}
+                >
+                  <X className="w-3.5 h-3.5 text-slate-500" />
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }

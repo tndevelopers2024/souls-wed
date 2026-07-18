@@ -62,14 +62,14 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
     scrollRef.current.scrollBy({ left: dir === "right" ? 320 : -320, behavior: "smooth" });
   };
 
-  // if (!loading && items.length === 0) return null;
+  if (!loading && items.length === 0) return null;
 
   return (
-    <section className="py-20 overflow-x-clip">
+    <section className="py-12 md:py-20 overflow-x-clip">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <motion.div
-          className="flex items-end justify-between mb-10"
+          className="flex flex-col items-center text-center mb-8 md:mb-10 gap-4 md:gap-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -80,7 +80,7 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
               {tagLabel}
             </p>
             <h2 className="section-heading">{title}</h2>
-            <p className="section-subtext">{subtitle}</p>
+            <p className="section-subtext mx-auto">{subtitle}</p>
           </div>
           <div className="flex items-center gap-4">
             <a
@@ -115,7 +115,7 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] h-[460px] sm:h-[500px] lg:h-[540px] rounded-[32px] animate-pulse"
+                className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] h-[420px] sm:h-[500px] lg:h-[540px] rounded-[32px] animate-pulse"
                 style={{ background: "var(--sw-light-gray, #f1f5f9)" }}
               />
             ))}
@@ -145,7 +145,7 @@ export default function CategoryCarouselSection({ categorySlug, title, subtitle,
             {items.map((item, i) => (
               <motion.div
                 key={item.id}
-                className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] h-[460px] sm:h-[500px] lg:h-[540px] cursor-pointer block group"
+                className="flex-shrink-0 w-[85vw] sm:w-[320px] md:w-[340px] lg:w-[360px] h-[420px] sm:h-[500px] lg:h-[540px] cursor-pointer block group"
                 initial={{ opacity: 0, x: 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}

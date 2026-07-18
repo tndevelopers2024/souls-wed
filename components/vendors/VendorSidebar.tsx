@@ -45,7 +45,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
     <div className="sticky top-24 flex flex-col gap-6">
       
       {/* Pricing Information Card */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="p-5">
           <h3 className="font-bold text-slate-800 mb-3">Starting Price</h3>
           
@@ -95,7 +95,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
       
       {/* Destination Price (Only for Venues) */}
       {isVenue && (
-        <div className="bg-primary-50/50 p-5 border-t border-slate-100 border border-slate-200 rounded-xl mt-4 shadow-sm">
+        <div className="bg-primary-50/50 p-5 border-t border-slate-100 border border-slate-200 rounded-xl mt-4">
           <h3 className="font-bold text-slate-800 mb-2">Venue Rental</h3>
           <div className="flex items-center justify-between">
             <span className="text-xl font-bold text-slate-800">
@@ -110,7 +110,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
       )}
 
       {/* ─── BOOKING FORM ─── */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl p-5">
         <h3 className="font-bold text-slate-800 text-sm mb-4">
           Book {vendor.businessName || vendor.name}
         </h3>
@@ -132,7 +132,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
         </span>
       </div>
 
-      <button className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-600 transition-colors">
+      <button className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:opacity-70 transition-opacity">
         <AlertTriangle className="w-3.5 h-3.5" />
         Report an Issue
       </button>

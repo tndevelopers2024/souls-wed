@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { notFound, useParams, useSearchParams } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
@@ -41,6 +41,27 @@ export default function VenueDetailPage() {
   const [venueNotFound, setVenueNotFound] = useState(false);
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState("areas");
+
+  // Scroll-spy: track which section is in view
+  useEffect(() => {
+    const sectionIds = ["areas", "about", "gallery", "pricing", "reviews"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveTab(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "-20% 0px -60% 0px", threshold: 0 }
+    );
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [venue]);
 
   // Stripe Payment Callback States
   const successParam = searchParams.get("success");
@@ -129,13 +150,28 @@ export default function VenueDetailPage() {
             <VenueHero venue={venue} />
 
             {/* Tab Navigation */}
-            <div className="sticky top-20 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-100 py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
-              <div className="flex items-center gap-8 overflow-x-auto no-scrollbar pb-1">
-                <a href="#areas"className="text-sm font-bold text-slate-900 border-b-2 border-slate-900 pb-1.5 whitespace-nowrap">Areas Available</a>
-                <a href="#about"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">About</a>
-                <a href="#gallery"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">Gallery</a>
-                <a href="#pricing"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">Pricing</a>
-                <a href="#reviews"className="text-sm font-medium text-slate-500 hover:text-slate-900 pb-1.5 whitespace-nowrap transition-colors">Reviews</a>
+            <div className="sticky top-20 z-40 bg-white py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
+              <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1 overflow-x-auto no-scrollbar">
+                {[
+                  { id: "areas", label: "Areas Available" },
+                  { id: "about", label: "About" },
+                  { id: "gallery", label: "Gallery" },
+                  { id: "pricing", label: "Pricing" },
+                  { id: "reviews", label: "Reviews" },
+                ].map((tab) => (
+                  <a
+                    key={tab.id}
+                    href={`#${tab.id}`}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`text-sm rounded-lg px-4 py-2 whitespace-nowrap transition-colors ${
+                      activeTab === tab.id
+                        ? "font-semibold text-slate-900 bg-white"
+                        : "font-medium text-slate-500"
+                    }`}
+                  >
+                    {tab.label}
+                  </a>
+                ))}
               </div>
             </div>
 
@@ -149,27 +185,27 @@ export default function VenueDetailPage() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {venue.indoor && (
-                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-200 bg-slate-50/50">
                     <div className="w-14 h-14 rounded-2xl bg-primary-50/80 flex items-center justify-center flex-shrink-0 text-primary-600">
                       <Building className="w-6 h-6 stroke-[1.5]" />
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-900 text-lg mb-1">Indoor Banquet</h4>
                       <p className="text-sm text-slate-500 leading-relaxed">
-                        Capacity for {venue.minGuests} seated or {venue.maxGuests} floating guests.
+                        Capacity for {Number(venue.minGuests) || 50} seated or {Number(venue.maxGuests) || 200} floating guests.
                       </p>
                     </div>
                   </div>
                 )}
                 {venue.outdoor && (
-                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 bg-white/50 backdrop-blur-sm">
+                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-200 bg-slate-50/50">
                     <div className="w-14 h-14 rounded-2xl bg-green-50/80 flex items-center justify-center flex-shrink-0 text-green-600">
                       <TreePine className="w-6 h-6 stroke-[1.5]" />
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-900 text-lg mb-1">Outdoor Lawn</h4>
                       <p className="text-sm text-slate-500 leading-relaxed">
-                        Capacity for {Math.floor(venue.maxGuests * 0.8)} seated or {Math.floor(venue.maxGuests * 1.5)} floating guests.
+                        Capacity for {Math.floor((Number(venue.maxGuests) || 200) * 0.8)} seated or {Math.floor((Number(venue.maxGuests) || 200) * 1.5)} floating guests.
                       </p>
                     </div>
                   </div>
@@ -220,40 +256,46 @@ export default function VenueDetailPage() {
               >
                 Pricing
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {venue.pricePerPlateVeg && (
-                  <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50">
-                    <p className="font-semibold text-slate-500 text-xs tracking-widest uppercase mb-2">Veg Menu</p>
-                    <p className="text-3xl font-bold text-slate-900 mb-1">
-                      {convertPriceString(venue.pricePerPlateVeg, currency)}
-                    </p>
-                    <p className="text-sm text-slate-400">Per plate, inclusive of taxes</p>
-                  </div>
-                )}
-                {venue.pricePerPlateNonVeg && (
-                  <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50">
-                    <p className="font-semibold text-slate-500 text-xs tracking-widest uppercase mb-2">Non-Veg Menu</p>
-                    <p className="text-3xl font-bold text-slate-900 mb-1">
-                      {convertPriceString(venue.pricePerPlateNonVeg, currency)}
-                    </p>
-                    <p className="text-sm text-slate-400">Per plate, inclusive of taxes</p>
-                  </div>
-                )}
-                {venue.rentalCost && (
-                  <div className="p-6 rounded-[24px] border border-primary-100 bg-primary-50/30 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                      <p className="font-semibold text-primary-600/80 text-xs tracking-widest uppercase mb-2">Venue Rental</p>
+              {venue.pricePerPlateVeg || venue.pricePerPlateNonVeg || venue.rentalCost ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {venue.pricePerPlateVeg && (
+                    <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50">
+                      <p className="font-semibold text-slate-500 text-xs tracking-widest uppercase mb-2">Veg Menu</p>
                       <p className="text-3xl font-bold text-slate-900 mb-1">
-                        {convertPriceString(venue.rentalCost, currency)}
+                        {convertPriceString(venue.pricePerPlateVeg, currency)}
                       </p>
-                      <p className="text-sm text-slate-500">Full-day exclusive use of the property</p>
+                      <p className="text-sm text-slate-400">Per plate, inclusive of taxes</p>
                     </div>
-                    <button className="bg-slate-900 text-white font-bold px-8 py-3 rounded-xl hover:bg-slate-800 transition-colors">
-                      Request Quote
-                    </button>
-                  </div>
-                )}
-              </div>
+                  )}
+                  {venue.pricePerPlateNonVeg && (
+                    <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50">
+                      <p className="font-semibold text-slate-500 text-xs tracking-widest uppercase mb-2">Non-Veg Menu</p>
+                      <p className="text-3xl font-bold text-slate-900 mb-1">
+                        {convertPriceString(venue.pricePerPlateNonVeg, currency)}
+                      </p>
+                      <p className="text-sm text-slate-400">Per plate, inclusive of taxes</p>
+                    </div>
+                  )}
+                  {venue.rentalCost && (
+                    <div className="p-6 rounded-[24px] border border-primary-100 bg-primary-50/30 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <p className="font-semibold text-primary-600/80 text-xs tracking-widest uppercase mb-2">Venue Rental</p>
+                        <p className="text-3xl font-bold text-slate-900 mb-1">
+                          {convertPriceString(venue.rentalCost, currency)}
+                        </p>
+                        <p className="text-sm text-slate-500">Full-day exclusive use of the property</p>
+                      </div>
+                      <button className="bg-slate-900 text-white font-bold px-8 py-3 rounded-xl">
+                        Request Quote
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50 text-center">
+                  <p className="text-slate-500 text-sm">Pricing details are available upon request. Please contact the venue directly for a custom quote.</p>
+                </div>
+              )}
             </section>
 
             {/* Reviews */}

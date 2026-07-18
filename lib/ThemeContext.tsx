@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useServerInsertedHTML } from "next/navigation";
 
 type Theme = "light" | "dark";
 
@@ -34,9 +34,16 @@ function applyTheme(theme: Theme) {
   root.style.colorScheme = theme;
 }
 
+// Runs before paint to set the theme class and avoid a flash of the wrong theme.
+const themeInitScript = `(function(){try{var p=window.location.pathname;var isPriv=p.startsWith('/admin')||p.startsWith('/vendor/dashboard');if(!isPriv){document.documentElement.classList.remove('dark');document.documentElement.style.colorScheme='light';return;}var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}var d=document.documentElement;d.classList.toggle('dark',t==='dark');d.style.colorScheme=t;}catch(e){}})();`;
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light");
   const pathname = usePathname();
+
+  useServerInsertedHTML(() => {
+    return <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />;
+  });
 
   // On mount, read what the anti-FOUC script already decided (localStorage or system).
   useEffect(() => {

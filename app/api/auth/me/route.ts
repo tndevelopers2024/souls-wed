@@ -96,6 +96,7 @@ export async function GET() {
         verified: dbUser.verified || false,
         featured: dbUser.featured || false,
         available: dbUser.available !== false,
+        profileImage: dbUser.profileImage || "",
       },
     });
   } catch (error: unknown) {

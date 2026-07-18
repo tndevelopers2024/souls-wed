@@ -11,6 +11,7 @@ interface VenueGalleryProps {
 
 export default function VenueGallery({ images, venueName }: VenueGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"portfolio" | "albums" | "videos">("portfolio");
 
   const allImages = images.length > 0 ? images : ["/soulswed/pageimg_venues.jpg"];
 
@@ -23,49 +24,86 @@ export default function VenueGallery({ images, venueName }: VenueGalleryProps) {
     <>
       {/* Tabs */}
       <div className="flex items-center gap-8 border-b border-slate-200 mb-6">
-        <button className="text-sm font-bold text-primary-600 border-b-2 border-primary-600 pb-3 uppercase tracking-wider">
+        <button 
+          onClick={() => setActiveTab("portfolio")}
+          className={`text-sm pb-3 uppercase tracking-wider transition-colors ${
+            activeTab === "portfolio" 
+              ? "font-bold text-primary-600 border-b-2 border-primary-600" 
+              : "font-semibold text-slate-400 hover:text-slate-600"
+          }`}
+        >
           PORTFOLIO ({allImages.length})
         </button>
-        <button className="text-sm font-semibold text-slate-400 hover:text-slate-600 pb-3 uppercase tracking-wider transition-colors">
+        <button 
+          onClick={() => setActiveTab("albums")}
+          className={`text-sm pb-3 uppercase tracking-wider transition-colors ${
+            activeTab === "albums" 
+              ? "font-bold text-primary-600 border-b-2 border-primary-600" 
+              : "font-semibold text-slate-400 hover:text-slate-600"
+          }`}
+        >
           ALBUMS (6)
         </button>
-        <button className="text-sm font-semibold text-slate-400 hover:text-slate-600 pb-3 uppercase tracking-wider transition-colors">
+        <button 
+          onClick={() => setActiveTab("videos")}
+          className={`text-sm pb-3 uppercase tracking-wider transition-colors ${
+            activeTab === "videos" 
+              ? "font-bold text-primary-600 border-b-2 border-primary-600" 
+              : "font-semibold text-slate-400 hover:text-slate-600"
+          }`}
+        >
           VIDEOS (2)
         </button>
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {allImages.slice(0, 9).map((img, idx) => (
-          <div
-            key={idx}
-            className="relative cursor-pointer aspect-square rounded-xl overflow-hidden group"
-            onClick={() => setLightboxIndex(idx)}
-          >
-            <Image
-              src={img}
-              alt={`${venueName} – photo ${idx + 1}`}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 640px) 50vw, 33vw"
-            />
-            {idx === 8 && allImages.length > 9 && (
-              <div
-                className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 hover:bg-black/40 transition-colors"
-              >
-                <span className="text-white font-bold text-xl">+{allImages.length - 9}</span>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      {activeTab === "portfolio" && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {allImages.slice(0, 9).map((img, idx) => (
+            <div
+              key={idx}
+              className="relative cursor-pointer aspect-square rounded-xl overflow-hidden group"
+              onClick={() => setLightboxIndex(idx)}
+            >
+              <Image
+                src={img}
+                alt={`${venueName} – photo ${idx + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 50vw, 33vw"
+              />
+              {idx === 8 && allImages.length > 9 && (
+                <div
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 hover:bg-black/40 transition-colors"
+                >
+                  <span className="text-white font-bold text-xl">+{allImages.length - 9}</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {activeTab === "albums" && (
+        <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
+          <Images className="w-12 h-12 text-slate-300 mb-4" />
+          <p className="text-slate-500 font-medium">Albums are currently being curated.</p>
+        </div>
+      )}
+
+      {activeTab === "videos" && (
+        <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
+          <Images className="w-12 h-12 text-slate-300 mb-4" />
+          <p className="text-slate-500 font-medium">No videos uploaded yet.</p>
+        </div>
+      )}
 
       {/* "View all photos" button */}
       {allImages.length > 9 && (
         <div className="flex justify-center mt-6">
           <button
             onClick={() => setLightboxIndex(0)}
-            className="px-6 py-2 rounded-full border text-sm font-bold transition-all hover:bg-primary-50"
+            className="px-6 py-2 rounded-full border text-sm font-bold"
             style={{ borderColor: "var(--sw-primary)", color: "var(--sw-primary)" }}
           >
             View {allImages.length - 9} more

@@ -17,6 +17,7 @@ const VendorSchema = new Schema({
   priceFrom:    { type: Number }, // Base starting price for generic showcase
   advancePercentage: { type: Number, default: 30 }, // Default 30% advance
   unavailableDates: [{ type: Date }],
+  profileImage: { type: String, default: "" },
   images:       [{ type: String }],
   featured:     { type: Boolean, default: false },
   verified:     { type: Boolean, default: false },

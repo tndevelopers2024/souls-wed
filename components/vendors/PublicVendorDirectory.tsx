@@ -7,12 +7,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, MapPin, Star, Heart, BadgeCheck,
   ChevronDown, LayoutGrid, List, Loader2, Users,
-  SlidersHorizontal, Sparkles,
+  SlidersHorizontal, Sparkles, Crown,
 } from "lucide-react";
 import { formatAsCurrency } from "@/lib/currency";
 import { useCurrency } from "@/lib/CurrencyContext";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
+import VendorCard from "@/components/vendors/VendorCard";
 
 export interface PublicVendor {
   _id: string;
@@ -62,11 +63,10 @@ export default function PublicVendorDirectory({
   activeCategory?: string;
 }) {
   const [search, setSearch] = useState("");
-  const [activeCity, setActiveCity] = useState("");
+  const [activeCities, setActiveCities] = useState<string[]>([]);
   const [sort, setSort] = useState("Recommended");
   const [sortOpen, setSortOpen] = useState(false);
   const [viewType, setViewType] = useState<"grid" | "list">("grid");
-  const [searchFocused, setSearchFocused] = useState(false);
   const [visibleCount, setVisibleCount] = useState(9);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -90,9 +90,11 @@ export default function PublicVendorDirectory({
       );
     }
 
-    if (activeCity) {
+    if (activeCities.length > 0) {
       list = list.filter((v) =>
-        v.city.toLowerCase().includes(activeCity.toLowerCase())
+        activeCities.some((city) =>
+          v.city.toLowerCase().includes(city.toLowerCase())
+        )
       );
     }
 
@@ -107,7 +109,7 @@ export default function PublicVendorDirectory({
     }
 
     return list;
-  }, [vendors, search, activeCity, sort]);
+  }, [vendors, search, activeCities, sort]);
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -121,7 +123,11 @@ export default function PublicVendorDirectory({
 
   const activeFilters: { label: string; onRemove: () => void }[] = [];
   if (search.trim()) activeFilters.push({ label: `"${search}"`, onRemove: () => setSearch("") });
-  if (activeCity) activeFilters.push({ label: activeCity, onRemove: () => setActiveCity("") });
+  if (activeCities.length > 0) {
+    activeCities.forEach((city) => {
+      activeFilters.push({ label: city, onRemove: () => setActiveCities((prev) => prev.filter((c) => c !== city)) });
+    });
+  }
   if (sort !== "Recommended") activeFilters.push({ label: sort, onRemove: () => setSort("Recommended") });
 
   return (
@@ -135,125 +141,83 @@ export default function PublicVendorDirectory({
             background: "var(--sw-hero-gradient)",
           }}
         >
-        {/* Floating orbs */}
-        <div
-          className="absolute -top-16 -left-16 w-80 h-80 rounded-full pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, rgba(238,116,41,0.18) 0%, transparent 70%)",
-            filter: "blur(40px)",
-            animation: "orb-float 9s ease-in-out infinite",
-          }}
-        />
-        <div
-          className="absolute top-10 -right-20 w-96 h-96 rounded-full pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, rgba(252,203,17,0.2) 0%, transparent 70%)",
-            filter: "blur(48px)",
-            animation: "orb-float 12s ease-in-out infinite reverse",
-          }}
-        />
-        <div
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-40 rounded-full pointer-events-none"
-          style={{
-            background: "radial-gradient(ellipse, rgba(238,116,41,0.08) 0%, transparent 70%)",
-            filter: "blur(30px)",
-          }}
-        />
-
-        <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10"
-        >
-          {/* Eyebrow pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest"
+          {/* Floating orbs */}
+          <div
+            className="absolute -top-16 -left-16 w-80 h-80 rounded-full pointer-events-none"
             style={{
-              background: "rgba(238,116,41,0.12)",
-              color: "var(--sw-primary)",
-              border: "1px solid rgba(238,116,41,0.25)",
+              background: "radial-gradient(circle, rgba(238,116,41,0.18) 0%, transparent 70%)",
+              filter: "blur(40px)",
+              animation: "orb-float 9s ease-in-out infinite",
             }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
-            {meta.eyebrow}
-          </div>
+          />
+          <div
+            className="absolute top-10 -right-20 w-96 h-96 rounded-full pointer-events-none"
+            style={{
+              background: "radial-gradient(circle, rgba(252,203,17,0.2) 0%, transparent 70%)",
+              filter: "blur(48px)",
+              animation: "orb-float 12s ease-in-out infinite reverse",
+            }}
+          />
+          <div
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-40 rounded-full pointer-events-none"
+            style={{
+              background: "radial-gradient(ellipse, rgba(238,116,41,0.08) 0%, transparent 70%)",
+              filter: "blur(30px)",
+            }}
+          />
 
-          <h1
-            className="text-5xl sm:text-6xl md:text-7xl font-bold mb-5 leading-[1.1]"
-            style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
-          >
-            {meta.titlePrefix}{" "}
-            <span
-              className="relative inline-block"
-              style={{
-                background: "linear-gradient(135deg, var(--sw-primary) 0%, #f5a623 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              {meta.titleAccent}
-            </span>
-          </h1>
-
-          <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
-            {meta.subtitle}
-          </p>
-
-          {/* Search bar */}
           <motion.div
-            className="max-w-2xl mx-auto relative"
-            animate={{ scale: searchFocused ? 1.02 : 1 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="relative z-10"
           >
-            <div
-              className="flex items-center rounded-full px-5 py-3 gap-3 transition-all duration-300"
+            {/* Eyebrow pill */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest"
               style={{
-                background: "white",
-                border: searchFocused
-                  ? "2px solid var(--sw-primary)"
-                  : "2px solid rgba(0,0,0,0.08)",
-                boxShadow: searchFocused
-                  ? "0 8px 32px rgba(238,116,41,0.18)"
-                  : "0 4px 24px rgba(0,0,0,0.08)",
+                background: "rgba(238,116,41,0.12)",
+                color: "var(--sw-primary)",
+                border: "1px solid rgba(238,116,41,0.25)",
               }}
             >
-              <Search
-                className="w-5 h-5 flex-shrink-0 transition-colors duration-300"
-                style={{ color: searchFocused ? "var(--sw-primary)" : "#94a3b8" }}
-              />
-              <input
-                type="text"
-                placeholder={`Search by ${(activeCategory || "vendor").toLowerCase()} name, city, or specialty…`}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                className="flex-1 text-sm font-medium outline-none bg-transparent"
-                style={{ color: "var(--sw-navy)" }}
-              />
-              <AnimatePresence>
-                {search && (
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.7 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.7 }}
-                    onClick={() => setSearch("")}
-                    className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
-                    style={{ background: "rgba(0,0,0,0.08)" }}
-                  >
-                    <X className="w-3.5 h-3.5 text-slate-500"/>
-                  </motion.button>
-                )}
-              </AnimatePresence>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
+              {meta.eyebrow}
             </div>
+
+            <h1
+              className="text-5xl sm:text-6xl md:text-7xl font-bold mb-5 leading-[1.1]"
+              style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
+            >
+              {meta.titlePrefix}{" "}
+              <span
+                className="relative inline-block"
+                style={{
+                  background: "linear-gradient(135deg, var(--sw-primary) 0%, #f5a623 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                {meta.titleAccent}
+              </span>
+            </h1>
+
+            <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
+              {meta.subtitle}
+            </p>
           </motion.div>
-        </motion.div>
         </div>
       </div>
 
       {/* ══════════════════════ STICKY FILTER BAR ══════════════════════ */}
-      <VenueFilterBar activeCity={activeCity} onCityChange={setActiveCity} activeCategory={activeCategory || "All"} />
+      <VenueFilterBar
+        activeCities={activeCities}
+        onCityChange={setActiveCities}
+        activeCategory={activeCategory || "All"}
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder={`Search by ${(activeCategory || "vendor").toLowerCase()} name, city, or specialty…`}
+      />
 
       {/* ══════════════════════ MAIN CONTENT ══════════════════════ */}
       <div className="max-w-7xl mx-auto px-4 py-10">
@@ -266,11 +230,11 @@ export default function PublicVendorDirectory({
               <span className="font-bold text-slate-800">{filtered.length}</span>{""}
               {(activeCategory || "vendor").toLowerCase()}
               {filtered.length !== 1 && !(activeCategory || "vendor").toLowerCase().endsWith("s") ? "s" : ""}
-              {activeCity && (
+              {activeCities.length > 0 && (
                 <span>
                   {" "}in{" "}
                   <span className="font-bold" style={{ color: "var(--sw-primary)" }}>
-                    {activeCity}
+                    {activeCities.join(", ")}
                   </span>
                 </span>
               )}
@@ -305,7 +269,7 @@ export default function PublicVendorDirectory({
                   ))}
                   {activeFilters.length > 1 && (
                     <button
-                      onClick={() => { setSearch(""); setActiveCity(""); setSort("Recommended"); }}
+                      onClick={() => { setSearch(""); setActiveCities([]); setSort("Recommended"); }}
                       className="text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors underline"
                     >
                       Clear all
@@ -321,22 +285,20 @@ export default function PublicVendorDirectory({
             <div className="hidden sm:flex bg-slate-100 p-1 rounded-full border border-slate-200">
               <button
                 onClick={() => setViewType("grid")}
-                className={`p-1.5 rounded-full transition-all ${
-                  viewType === "grid"
-                    ?"bg-white shadow-sm text-[var(--sw-primary)]"
-                    :"text-slate-400 hover:text-slate-600"
-                }`}
+                className={`p-1.5 rounded-full transition-all ${viewType === "grid"
+                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
+                    : "text-slate-400 hover:text-slate-600"
+                  }`}
                 aria-label="Grid view"
               >
                 <LayoutGrid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewType("list")}
-                className={`p-1.5 rounded-full transition-all ${
-                  viewType === "list"
-                    ?"bg-white shadow-sm text-[var(--sw-primary)]"
-                    :"text-slate-400 hover:text-slate-600"
-                }`}
+                className={`p-1.5 rounded-full transition-all ${viewType === "list"
+                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
+                    : "text-slate-400 hover:text-slate-600"
+                  }`}
                 aria-label="List view"
               >
                 <List className="w-4 h-4" />
@@ -422,7 +384,7 @@ export default function PublicVendorDirectory({
               We couldn&apos;t find vendors matching your filters. Try adjusting your search or clearing some filters.
             </p>
             <button
-              onClick={() => { setSearch(""); setActiveCity(""); setSort("Recommended"); }}
+              onClick={() => { setSearch(""); setActiveCities([]); setSort("Recommended"); }}
               className="px-6 py-2.5 rounded-full text-sm font-bold transition-all hover:opacity-90"
               style={{
                 background: "var(--sw-primary)",
@@ -443,7 +405,7 @@ export default function PublicVendorDirectory({
                 transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.4), ease: [0.22, 1, 0.36, 1] }}
                 className={viewType === "list" ? "w-full" : ""}
               >
-                <VendorCard vendor={vendor} index={i} view={viewType} />
+                <DirectoryItemCard vendor={vendor} index={i} view={viewType} />
               </motion.div>
             ))}
           </div>
@@ -506,7 +468,7 @@ export default function PublicVendorDirectory({
 }
 
 // ── Vendor Card ──────────────────────────────────────────────────────────────
-function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: number; view: "grid" | "list" }) {
+function DirectoryItemCard({ vendor, index, view }: { vendor: PublicVendor; index: number; view: "grid" | "list" }) {
   const { currency } = useCurrency();
   const image = vendor.images?.[0] || fallbackImages[index % fallbackImages.length];
   const rating = vendor.rating || 0;
@@ -515,107 +477,116 @@ function VendorCard({ vendor, index, view }: { vendor: PublicVendor; index: numb
     vendor.category === "Venues"
       ? `/venues/${vendor.venueId || vendor._id}?type=venue`
       : vendor.category === "Rooms" && vendor.venueId
-      ? `/venues/${vendor.venueId}?type=room`
-      : `/vendor/${vendor._id}`;
+        ? `/venues/${vendor.venueId}?type=room`
+        : `/vendor/${vendor._id}`;
 
   if (view === "list") {
     return (
-      <article className="group flex flex-col sm:flex-row gap-4 sm:gap-5 rounded-[24px] overflow-hidden border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow p-3 sm:p-4">
-        <div className="relative w-full sm:w-44 h-52 sm:h-44 rounded-[18px] overflow-hidden flex-shrink-0">
-          <Image src={image} alt={vendor.businessName || vendor.name} fill sizes="(max-width: 640px) 100vw, 176px" className="object-cover" />
-          {vendor.featured && (
-            <span className="absolute top-2 left-2 rounded-full bg-primary-500 px-2.5 py-1 text-[9px] font-black uppercase text-white">Featured</span>
-          )}
-        </div>
-        <div className="flex-1 flex flex-col justify-between py-1">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[10px] font-bold text-white">{vendor.category}</span>
-              {rating > 0 && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-700">
-                  <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                  {rating.toFixed(1)} ({vendor.reviewCount || 0})
-                </span>
-              )}
-              {vendor.verified && (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600">
-                  <BadgeCheck className="h-3.5 w-3.5" /> Verified
-                </span>
-              )}
-            </div>
-            <Link href={detailHref}>
-              <h2 className="text-xl font-extrabold text-slate-950 hover:text-primary-600 transition-colors leading-tight">
-                {vendor.businessName || vendor.name}
-              </h2>
-            </Link>
-            <div className="flex items-center gap-1.5 text-sm text-slate-500 mt-1">
-              <MapPin className="h-3.5 w-3.5 text-primary-500" />
-              <span>{vendor.city}</span>
-            </div>
-            {vendor.description && (
-              <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-500">{vendor.description}</p>
+      <Link href={detailHref} className="group block">
+        <div className="bg-white rounded-[32px] border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row">
+          <div className="relative w-full sm:w-[280px] h-[220px] sm:h-auto flex-shrink-0">
+            <Image src={image} alt={vendor.businessName || vendor.name} fill sizes="(max-width: 640px) 100vw, 280px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+            {vendor.featured && (
+              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                <Crown className="w-3.5 h-3.5" style={{ color: "var(--sw-primary)" }} />
+                <span className="text-xs font-bold text-slate-800 tracking-wide">Featured</span>
+              </div>
             )}
+            <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm text-slate-400 hover:text-red-500 hover:bg-white transition-colors" onClick={(e) => e.preventDefault()}>
+              <Heart className="w-4 h-4" />
+            </button>
           </div>
-          <div className="flex items-end justify-between mt-3">
+          <div className="p-6 flex flex-col justify-between flex-grow">
             <div>
-              <span className="block text-[10px] font-bold uppercase text-slate-400">Starts from</span>
-              <span className="text-lg font-black text-slate-950">
-                {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-xl font-bold text-slate-900 line-clamp-1" style={{ fontFamily: "var(--font-heading)" }}>{vendor.businessName || vendor.name}</h3>
+                {rating > 0 && (
+                  <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg">
+                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
+                    <span className="text-sm font-bold text-slate-800">{rating.toFixed(1)}</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-1.5 mb-4">
+                <MapPin className="w-4 h-4 text-slate-500" />
+                <span className="text-sm text-slate-600">{vendor.city}</span>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-4 sm:mb-0">
+                <div className="flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 px-2.5 py-1 rounded-md">
+                  <span>{vendor.category}</span>
+                </div>
+                {vendor.verified && (
+                  <div className="flex items-center gap-1.5 text-sm text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">
+                    <BadgeCheck className="w-4 h-4" />
+                    <span>Verified</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex items-end justify-between pt-4 border-t border-slate-50 mt-4">
+              <div>
+                {vendor.priceFrom ? (
+                  <>
+                    <span className="text-xs font-medium text-slate-500 block mb-0.5">Starting from</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-xl font-bold text-slate-900">{formatAsCurrency(vendor.priceFrom, currency)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <span className="text-xl font-bold text-slate-900">On request</span>
+                )}
+              </div>
+              <span className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-900 text-sm font-bold rounded-full transition-colors border border-slate-200">
+                Book +
               </span>
             </div>
-            <Link href={detailHref} className="rounded-full bg-slate-900 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-primary-600">
-              View Details
-            </Link>
           </div>
         </div>
-      </article>
+      </Link>
     );
   }
 
   return (
-    <Link href={detailHref} className="block group h-[540px]">
-      <ListingCard
-        name={vendor.businessName || vendor.name}
-        image={image}
-        location={vendor.city}
-        rating={rating}
-        reviewCount={vendor.reviewCount || 0}
-        priceDisplay={vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
-        priceLabel="from"
-        imageSizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 31vw"
-        badge={
-          (vendor.featured || vendor.verified) ? (
-            <div className="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
-              {vendor.featured && (
-                <span className="rounded-full bg-primary-500 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-white shadow-sm">
-                  Featured
-                </span>
-              )}
+    <Link href={detailHref} className="block group">
+      <div className="h-[460px] sm:h-[500px] lg:h-[540px]">
+        <VendorCard
+          id={vendor._id}
+          name={vendor.businessName || vendor.name}
+          image={image}
+          location={vendor.city}
+          rating={rating}
+          reviewCount={vendor.reviewCount || 0}
+          price={vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
+          unit=""
+          badge={
+            vendor.featured ? (
+              <div
+                className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm"
+                style={{ background: "var(--sw-primary)" }}
+              >
+                <Crown className="w-3.5 h-3.5" />
+                Featured
+              </div>
+            ) : undefined
+          }
+          tags={
+            <>
+              <div 
+                className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm"
+                style={{ color: "var(--sw-primary)" }}
+              >
+                {vendor.category}
+              </div>
               {vendor.verified && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-emerald-700 shadow-sm backdrop-blur-sm">
-                  <BadgeCheck className="h-3.5 w-3.5" />
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-emerald-700 shadow-sm">
+                  <BadgeCheck className="w-3.5 h-3.5" />
                   Verified
-                </span>
+                </div>
               )}
-            </div>
-          ) : undefined
-        }
-        topRight={
-          <button
-            className="h-9 w-9 rounded-full bg-white/90 backdrop-blur-sm text-slate-400 shadow-sm transition-colors hover:text-red-500"
-            onClick={(e) => e.preventDefault()}
-            aria-label="Shortlist"
-          >
-            <Heart className="m-auto h-4 w-4" />
-          </button>
-        }
-        tags={<CardTag tone="accent">{vendor.category}</CardTag>}
-        action={
-          <span className="rounded-full bg-white px-5 py-2.5 text-[14px] font-bold text-slate-900 shadow-sm transition-colors hover:bg-slate-50 whitespace-nowrap">
-            Book +
-          </span>
-        }
-      />
+            </>
+          }
+        />
+      </div>
     </Link>
   );
 }

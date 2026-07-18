@@ -41,23 +41,23 @@ export default function DecoratorsPlannersSection() {
       fetch("/api/services?category=decorators&verified=true&limit=8").then(r => r.json()),
       fetch("/api/services?category=planners&verified=true&limit=8").then(r => r.json())
     ])
-    .then(([decorData, plannerData]) => {
-      const mapData = (services: any[], tag: string) => (services || []).map((s: any) => ({
-        id: s.serviceId,
-        name: s.name,
-        location: s.city,
-        price: `₹${s.priceFrom?.toLocaleString("en-IN") || 0}`,
-        unit: s.priceUnit || "per event",
-        rating: s.rating || 0,
-        verified: s.verified,
-        tag,
-        image: s.image || "",
-      }));
-      setDecorators(mapData(decorData.services, "Decorator"));
-      setPlanners(mapData(plannerData.services, "Planner"));
-    })
-    .catch(console.error)
-    .finally(() => setLoading(false));
+      .then(([decorData, plannerData]) => {
+        const mapData = (services: any[], tag: string) => (services || []).map((s: any) => ({
+          id: s.serviceId,
+          name: s.name,
+          location: s.city,
+          price: `₹${s.priceFrom?.toLocaleString("en-IN") || 0}`,
+          unit: s.priceUnit || "per event",
+          rating: s.rating || 0,
+          verified: s.verified,
+          tag,
+          image: s.image || "",
+        }));
+        setDecorators(mapData(decorData.services, "Decorator"));
+        setPlanners(mapData(plannerData.services, "Planner"));
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   const items = activeTab === "decorators" ? decorators : planners;
@@ -72,7 +72,7 @@ export default function DecoratorsPlannersSection() {
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <motion.div
-          className="flex items-end justify-between mb-8"
+          className="flex flex-col items-center text-center mb-8 gap-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -83,7 +83,7 @@ export default function DecoratorsPlannersSection() {
               Design &amp; Plan
             </p>
             <h2 className="section-heading">Decorators &amp; Planners</h2>
-            <p className="section-subtext">{subtext[activeTab]}</p>
+            <p className="section-subtext mx-auto">{subtext[activeTab]}</p>
           </div>
           <div className="flex items-center gap-4">
             <a href={`/category/${activeTab}`} className="hidden md:inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:gap-3" style={{ background: "var(--sw-white)", color: "var(--sw-navy)" }}>
@@ -170,9 +170,9 @@ export default function DecoratorsPlannersSection() {
                         tags={
                           <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700 shadow-sm">
                             {item.tag === "Decorator" ? (
-                              <Flower2 className="w-3.5 h-3.5 text-slate-500"/>
+                              <Flower2 className="w-3.5 h-3.5 text-slate-500" />
                             ) : (
-                              <ClipboardList className="w-3.5 h-3.5 text-slate-500"/>
+                              <ClipboardList className="w-3.5 h-3.5 text-slate-500" />
                             )}
                             {item.tag}
                           </div>

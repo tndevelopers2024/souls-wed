@@ -5,6 +5,7 @@ const UserSchema = new Schema({
   email:        { type: String, required: true, unique: true, lowercase: true, trim: true },
   passwordHash: { type: String, required: true },
   phone:        { type: String },
+  profileImage: { type: String, default: "" },
   role:         { type: String, default: "user" }, // user, couple
   createdAt:    { type: Date, default: Date.now },
 });

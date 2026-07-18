@@ -8,16 +8,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
 import { Trash2 } from "lucide-react";
-import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2, Wand2, Eye, EyeOff } from "lucide-react";
+import { Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2, Wand2, Eye, EyeOff, Moon, Sun, SlidersHorizontal, LogOut, Shield, AlertCircle, Search, Bell, RefreshCw, Wallet, CalendarCheck, Copy, Check, Menu, X, ChevronLeft, SearchX, Mail, Phone, CalendarDays } from "lucide-react";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
+import AvatarUploader from "@/components/shared/AvatarUploader";
 
 interface AdminSession {
   id: string;
   name: string;
   email: string;
   role: string;
+  profileImage?: string;
 }
 
 type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "venues" | "rooms" | "planners" | "caterers" | "decorators" | "settings";
@@ -27,7 +29,6 @@ export default function AdminDashboard() {
   const [admin, setAdmin] = useState<AdminSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
-  const [checkingSystem, setCheckingSystem] = useState(false);
   
   // Tab control & search
   const [activeTab, setActiveTab] = useState<TabType>("overview");
@@ -44,7 +45,7 @@ export default function AdminDashboard() {
   
   // Copy state for feedback
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const { isDark: isDarkMode } = useTheme();
+  const { isDark: isDarkMode, toggleTheme } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [servicesExpanded, setServicesExpanded] = useState(false);
 
@@ -183,14 +184,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const runDiagnostics = () => {
-    setCheckingSystem(true);
-    setTimeout(() => {
-      setCheckingSystem(false);
-      fetchAllData();
-    }, 1200);
-  };
-
   // ─── Moderation Operations ───
 
   const handleUpdateVendorStatus = async (vendorId: string, verified?: boolean, featured?: boolean) => {
@@ -202,13 +195,14 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
+        notify("Vendor profile updated");
         fetchAllData();
       } else {
-        alert(data.message || "Failed to update vendor.");
+        notify(data.message || "Failed to update vendor.", "error");
       }
     } catch (err) {
       console.error(err);
-      alert("An error occurred during update.");
+      notify("Network error while updating vendor.", "error");
     }
   };
 
@@ -221,48 +215,63 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
+        notify("Listing updated");
         fetchAllData();
       } else {
-        alert(data.message || "Failed to update service.");
+        notify(data.message || "Failed to update listing.", "error");
       }
     } catch (err) {
       console.error(err);
-      alert("An error occurred during update.");
+      notify("Network error while updating listing.", "error");
     }
   };
 
-  const handleDeleteVendor = async (vendorId: string) => {
-    if (!confirm("Are you sure you want to permanently delete this vendor?")) return;
-    try {
-      const res = await fetch(`/api/admin/vendors?vendorId=${vendorId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        fetchAllData();
-      } else {
-        alert(data.message || "Failed to delete vendor.");
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDeleteVendor = (vendorId: string) => {
+    setConfirmDialog({
+      title: "Delete this vendor?",
+      desc: "The vendor profile will be permanently removed from the platform. This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/admin/vendors?vendorId=${vendorId}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (res.ok) {
+            notify("Vendor deleted");
+            fetchAllData();
+          } else {
+            notify(data.message || "Failed to delete vendor.", "error");
+          }
+        } catch (err) {
+          console.error(err);
+          notify("Network error while deleting vendor.", "error");
+        }
+      },
+    });
   };
 
-  const handleDeleteService = async (serviceId: string) => {
-    if (!confirm("Are you sure you want to permanently delete this service?")) return;
-    try {
-      const res = await fetch(`/api/services?serviceId=${serviceId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        fetchAllData();
-      } else {
-        alert(data.message || "Failed to delete service.");
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDeleteService = (serviceId: string) => {
+    setConfirmDialog({
+      title: "Delete this listing?",
+      desc: "The service listing will be permanently removed from the platform. This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/services?serviceId=${serviceId}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (res.ok) {
+            notify("Listing deleted");
+            fetchAllData();
+          } else {
+            notify(data.message || "Failed to delete listing.", "error");
+          }
+        } catch (err) {
+          console.error(err);
+          notify("Network error while deleting listing.", "error");
+        }
+      },
+    });
   };
 
   const handleUpdateBookingStatus = async (bookingId: string, status: string) => {
@@ -274,30 +283,39 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
+        notify("Booking status updated");
         fetchAllData();
       } else {
-        alert(data.message || "Failed to update booking status.");
+        notify(data.message || "Failed to update booking status.", "error");
       }
     } catch (err) {
       console.error(err);
+      notify("Network error while updating booking.", "error");
     }
   };
 
-  const handleDeleteBooking = async (bookingId: string) => {
-    if (!confirm("Are you sure you want to delete this booking permanently?")) return;
-    try {
-      const res = await fetch(`/api/admin/bookings?bookingId=${bookingId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        fetchAllData();
-      } else {
-        alert(data.message || "Failed to delete booking.");
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDeleteBooking = (bookingId: string) => {
+    setConfirmDialog({
+      title: "Delete this booking?",
+      desc: "The booking record and its payment history will be permanently removed. This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/admin/bookings?bookingId=${bookingId}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (res.ok) {
+            notify("Booking deleted");
+            fetchAllData();
+          } else {
+            notify(data.message || "Failed to delete booking.", "error");
+          }
+        } catch (err) {
+          console.error(err);
+          notify("Network error while deleting booking.", "error");
+        }
+      },
+    });
   };
 
   const handleUpdateUserRole = async (userId: string, role: string) => {
@@ -309,30 +327,39 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
+        notify("User role updated");
         fetchAllData();
       } else {
-        alert(data.message || "Failed to update user role.");
+        notify(data.message || "Failed to update user role.", "error");
       }
     } catch (err) {
       console.error(err);
+      notify("Network error while updating user role.", "error");
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm("Are you sure you want to delete this user profile?")) return;
-    try {
-      const res = await fetch(`/api/admin/users?userId=${userId}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        fetchAllData();
-      } else {
-        alert(data.message || "Failed to delete user.");
-      }
-    } catch (err) {
-      console.error(err);
-    }
+  const handleDeleteUser = (userId: string) => {
+    setConfirmDialog({
+      title: "Delete this user?",
+      desc: "The user account and profile will be permanently removed. This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/admin/users?userId=${userId}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (res.ok) {
+            notify("User deleted");
+            fetchAllData();
+          } else {
+            notify(data.message || "Failed to delete user.", "error");
+          }
+        } catch (err) {
+          console.error(err);
+          notify("Network error while deleting user.", "error");
+        }
+      },
+    });
   };
 
   const formatDate = (dateStr: string) => {
@@ -361,6 +388,7 @@ export default function AdminDashboard() {
       year: number;
       monthIndex: number;
       bookings: number;
+      confirmed: number;
       revenue: number;
     }
     
@@ -372,6 +400,7 @@ export default function AdminDashboard() {
         year: d.getFullYear(),
         monthIndex: d.getMonth(),
         bookings: 0,
+        confirmed: 0,
         revenue: 0,
       });
     }
@@ -386,6 +415,7 @@ export default function AdminDashboard() {
       if (target) {
         target.bookings += 1;
         if (b.status === "confirmed" || b.status === "completed") {
+          target.confirmed += 1;
           target.revenue += b.advanceAmount || 0;
         }
       }
@@ -394,6 +424,7 @@ export default function AdminDashboard() {
     return last6Months.map(item => ({
       month: item.monthName,
       bookings: item.bookings,
+      confirmed: item.confirmed,
       revenue: item.revenue,
     }));
   };
@@ -402,50 +433,47 @@ export default function AdminDashboard() {
   const maxBookings = Math.max(...monthlyData.map(d => d.bookings), 1);
   const maxRevenue = Math.max(...monthlyData.map(d => d.revenue), 1);
 
-  const totalVenueBookings = bookings.filter(b => b.bookingType === "venue").length;
-  const totalRoomBookings = bookings.filter(b => b.bookingType === "room").length;
-  const venuePercentage = bookings.length ? Math.round((totalVenueBookings / bookings.length) * 100) : 0;
-  const roomPercentage = bookings.length ? Math.round((totalRoomBookings / bookings.length) * 100) : 0;
+  const thisMonth = monthlyData[monthlyData.length - 1];
+  const prevMonth = monthlyData[monthlyData.length - 2];
+  const pctChange = (curr: number, prev: number) =>
+    prev > 0 ? Math.round(((curr - prev) / prev) * 1000) / 10 : curr > 0 ? 100 : 0;
+  const revenueChange = pctChange(thisMonth?.revenue || 0, prevMonth?.revenue || 0);
+  const bookingsChange = pctChange(thisMonth?.bookings || 0, prevMonth?.bookings || 0);
 
-  const getActivityFeed = () => {
-    const activities: any[] = [];
-    
-    users.slice(0, 4).forEach(u => {
-      activities.push({
-        type: "user",
-        title: "New Client Registered",
-        desc: `${u.name} joined as platform user`,
-        time: u.createdAt,
-        bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200",
-      });
-    });
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const newUsersThisMonth = users.filter(u => u.createdAt && new Date(u.createdAt) > thirtyDaysAgo).length;
+  const newVendorsThisMonth = vendors.filter(v => v.createdAt && new Date(v.createdAt) > thirtyDaysAgo).length;
 
-    vendors.slice(0, 4).forEach(v => {
-      activities.push({
-        type: "vendor",
-        title: v.verified ? "Vendor Partner Active" : "Vendor Registration Pending",
-        desc: `${v.businessName || v.name} registered under ${v.category}`,
-        time: v.createdAt,
-        bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200",
-      });
-    });
+  const catServices = (c: string) => servicesList.filter((s: any) => s.category === c);
+  const categoryStats = [
+    { id: "venues", label: "Venues", count: venuesList.length, live: venuesList.filter((v: any) => v.active).length },
+    { id: "rooms", label: "Rooms", count: catServices("rooms").length, live: catServices("rooms").filter((s: any) => s.active).length },
+    { id: "planners", label: "Planners", count: catServices("planners").length, live: catServices("planners").filter((s: any) => s.active).length },
+    { id: "caterers", label: "Caterers", count: catServices("caterers").length, live: catServices("caterers").filter((s: any) => s.active).length },
+    { id: "decorators", label: "Decorators", count: catServices("decorators").length, live: catServices("decorators").filter((s: any) => s.active).length },
+  ].sort((a, b) => b.count - a.count);
+  const totalListings = venuesList.length + servicesList.length;
+  const liveListings = categoryStats.reduce((sum, c) => sum + c.live, 0);
 
-    bookings.slice(0, 4).forEach(b => {
-      activities.push({
-        type: "booking",
-        title: `Booking Order: ${(b.status || "pending").toUpperCase()}`,
-        desc: `${b.userName || "Guest"} booked ${b.providerName || b.venueName || "Service"} (${formatAsCurrency(b.advanceAmount || 0, "INR")} advance)`,
-        time: b.createdAt,
-        bgColor: isDarkMode ? "bg-stone-900/40 border-stone-800" : "bg-stone-50 border-stone-200",
-      });
-    });
+  const cityCounts: Record<string, number> = {};
+  vendors.forEach(v => {
+    const city = (v.city || "").trim();
+    if (city) cityCounts[city] = (cityCounts[city] || 0) + 1;
+  });
+  const topCities = Object.entries(cityCounts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  const maxCityCount = topCities[0]?.[1] || 1;
 
-    return activities
-      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
-      .slice(0, 6);
-  };
-
-  const activities = getActivityFeed();
+  const arcColors = ["#EE7429", "#FCCB11", isDarkMode ? "#A8A29E" : "#2F3843"];
+  const bubbleColors = ["bg-primary-500 text-white", "bg-primary-300 text-white", "bg-primary-200 text-primary-800", "bg-primary-100 text-primary-700"];
+  const bubbleDots = ["bg-primary-500", "bg-primary-300", "bg-primary-200", "bg-primary-100"];
+  const deltaBadge = (label: string, positive: boolean) => (
+    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black whitespace-nowrap ${
+      positive
+        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+        : "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400"
+    }`}>{label}</span>
+  );
   const pendingApprovals = vendors.filter(v => !v.verified);
 
   const filteredApprovals = pendingApprovals.filter(v => {
@@ -502,6 +530,51 @@ export default function AdminDashboard() {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // ─── Toast notifications ───
+  const [toast, setToast] = useState<{ id: number; msg: string; type: "success" | "error" } | null>(null);
+  const notify = (msg: string, type: "success" | "error" = "success") => {
+    const id = Date.now();
+    setToast({ id, msg, type });
+    setTimeout(() => setToast(t => (t && t.id === id ? null : t)), 3200);
+  };
+
+  // ─── Destructive-action confirmation dialog ───
+  const [confirmDialog, setConfirmDialog] = useState<{ title: string; desc: string; onConfirm: () => void } | null>(null);
+
+  // ─── Table pagination ───
+  const PAGE_SIZE = 8;
+  const [tablePage, setTablePage] = useState(1);
+  useEffect(() => { setTablePage(1); }, [activeTab, searchTerm]);
+  const paginate = (arr: any[]) => arr.slice((tablePage - 1) * PAGE_SIZE, tablePage * PAGE_SIZE);
+  const TablePager = ({ total }: { total: number }) => {
+    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (total <= PAGE_SIZE) return null;
+    const start = (tablePage - 1) * PAGE_SIZE + 1;
+    const end = Math.min(tablePage * PAGE_SIZE, total);
+    return (
+      <div className="flex items-center justify-between pt-4">
+        <span className="text-[11px] font-semibold text-stone-400">Showing {start}–{end} of {total}</span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setTablePage(p => Math.max(1, p - 1))}
+            disabled={tablePage === 1}
+            className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-default ${isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 text-stone-600 hover:bg-stone-50"}`}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className={`text-[11px] font-black px-1 ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{tablePage} / {pages}</span>
+          <button
+            onClick={() => setTablePage(p => Math.min(pages, p + 1))}
+            disabled={tablePage === pages}
+            className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-default ${isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 text-stone-600 hover:bg-stone-50"}`}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center bg-stone-50 text-stone-800 font-body">
@@ -514,10 +587,10 @@ export default function AdminDashboard() {
   if (!admin) return null;
 
   const menuItems: any[] = [
-    { id: "overview", label: "Overview", count: null, icon: LayoutDashboard },
-    { 
-      id: "services", 
-      label: "Booking Categories", 
+    { id: "overview", label: "Dashboard", count: null, icon: LayoutDashboard },
+    {
+      id: "services",
+      label: "Categories",
       icon: Briefcase,
       subItems: [
         { id: "venues", label: "Venue", count: venuesList.length || null, icon: Map },
@@ -527,18 +600,17 @@ export default function AdminDashboard() {
         { id: "decorators", label: "Decorators", count: servicesList.filter(s => s.category === "decorators").length || null, icon: Flower2 },
       ]
     },
-    { id: "approvals", label: "Approvals Queue", count: pendingApprovals.length || null, icon: UserCheck },
-    { id: "vendors", label: "Vendors Directory", count: vendors.length || null, icon: Building2 },
-    { id: "bookings", label: "Bookings Ledger", count: bookings.length || null, icon: BookOpen },
-    { id: "users", label: "Client Registry", count: users.length || null, icon: Users },
+    { id: "approvals", label: "Approvals", count: pendingApprovals.length || null, icon: UserCheck },
+    { id: "vendors", label: "Vendors", count: vendors.length || null, icon: Building2 },
+    { id: "users", label: "Customers", count: users.length || null, icon: Users },
+    { id: "bookings", label: "Bookings", count: bookings.length || null, icon: BookOpen },
     { id: "settings", label: "Settings", count: null, icon: Settings },
   ];
 
   // Standard theme variables for consistency (corrected colors from non-standard)
-  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#fafaf9] text-stone-800";
+  const containerBg = isDarkMode ? "bg-stone-950 text-stone-200" : "bg-[#f4f1ec] text-stone-800";
   const sidebarClass = isDarkMode ? "border-stone-800 bg-stone-900/80 text-stone-300" : "border-stone-200 bg-white/70 text-stone-600";
   const cardClass = isDarkMode ? "bg-stone-900/60 border-stone-800 text-stone-300" : "bg-white/70 border-stone-200 text-stone-600";
-  const headerClass = isDarkMode ? "bg-stone-900/70 border-stone-800 text-white" : "bg-white/70 border-stone-200 text-stone-800";
   const headingText = isDarkMode ? "text-white" : "text-stone-900";
   const dividerClass = isDarkMode ? "border-stone-800" : "border-stone-100";
   const subCardClass = isDarkMode ? "bg-stone-950/60 border-stone-800" : "bg-[#fafaf9] border-stone-200";
@@ -581,8 +653,13 @@ export default function AdminDashboard() {
             const isActive = activeTab === item.id || isSubActive;
             const Icon = item.icon;
             
+            const groupLabel = ({ overview: "Menu", bookings: "Financial", settings: "Tools" } as Record<string, string>)[item.id];
+
             return (
               <div key={item.id} className="w-full">
+                {groupLabel && !sidebarCollapsed && (
+                  <p className="px-3.5 pt-3 pb-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-stone-400">{groupLabel}</p>
+                )}
                 <button
                   onClick={() => {
                     if (hasSubItems) {
@@ -594,8 +671,8 @@ export default function AdminDashboard() {
                     }
                   }}
                   className={`w-full relative flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3.5 py-3 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-                    isActive 
-                      ? "bg-primary-500 text-white" 
+                    isActive
+                      ? "bg-primary-500 text-white shadow-lg shadow-primary-500/30"
                       : isDarkMode
                         ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"
@@ -685,46 +762,54 @@ export default function AdminDashboard() {
           })}
         </nav>
 
-        {/* Footer profile info */}
-        <div className={`p-4 border-t flex flex-col gap-1.5 ${dividerClass} ${isDarkMode ? 'bg-stone-900/30' : 'bg-stone-50/50'} rounded-b-3xl`}>
-          <button 
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-start'} gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-              isDarkMode 
-                ? "text-stone-400 hover:text-white hover:bg-stone-800/60" 
-                : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
-            }`}
-            title={sidebarCollapsed ? "Expand sidebar" : "Hide sidebar"}
-          >
-            <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-            </svg>
-            {!sidebarCollapsed && <span>Hide sidebar</span>}
+        {/* Footer: promo-style approvals card + collapse/logout */}
+        <div className="p-4 flex flex-col gap-2">
+          {!sidebarCollapsed && (
+            <div className="relative overflow-hidden rounded-3xl bg-stone-900 p-5 text-white">
+              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-primary-500/30 blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-12 -left-8 w-28 h-28 rounded-full bg-amber-500/20 blur-2xl pointer-events-none" />
+              <div className="relative">
+                <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center mb-3">
+                  <Sparkles className="w-4 h-4 text-amber-300" />
+                </div>
+                <p className="font-extrabold text-sm">Approvals Queue</p>
+                <p className="text-[10px] text-stone-400 font-semibold mt-1 leading-relaxed">
+                  {pendingApprovals.length > 0
+                    ? `${pendingApprovals.length} vendor${pendingApprovals.length === 1 ? "" : "s"} awaiting your review`
+                    : "All caught up — no pending vendors"}
+                </p>
+                <button
+                  onClick={() => setActiveTab("approvals")}
+                  className="w-full mt-4 bg-primary-500 hover:bg-primary-600 text-white font-bold text-xs py-2.5 rounded-xl transition-colors cursor-pointer"
+                >
+                  {pendingApprovals.length > 0 ? "Review now" : "Open queue"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className={`flex items-center gap-2 ${sidebarCollapsed ? "flex-col" : "justify-between"}`}>
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                isDarkMode
+                  ? "text-stone-400 hover:text-white hover:bg-stone-800/60"
+                  : "text-stone-600 hover:text-stone-900 hover:bg-stone-100"
+              }`}
+              title={sidebarCollapsed ? "Expand sidebar" : "Hide sidebar"}
+            >
+              <svg className="w-[18px] h-[18px] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+              {!sidebarCollapsed && <span>Hide sidebar</span>}
             </button>
 
-          <div className="my-1 border-t border-transparent" />
-
-          <div className={`flex items-center justify-between p-2 rounded-xl transition-colors ${isDarkMode ? 'bg-stone-900/50 hover:bg-stone-800' : 'bg-white hover:bg-stone-50 border border-stone-100'}`}>
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 shrink-0 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs uppercase">
-                {admin.name.slice(0, 1)}
-              </div>
-              {!sidebarCollapsed && (
-                <div className="min-w-0 flex-1 pr-2">
-                  <h4 className={`font-bold text-xs truncate ${headingText}`}>{admin.name}</h4>
-                  <p className="text-[10px] font-medium text-stone-500 truncate">{admin.email}</p>
-                </div>
-              )}
-            </div>
-            
-            <button 
-              onClick={handleLogout} 
-              title="Sign Out" 
-              className={`shrink-0 p-1.5 rounded-lg transition-colors cursor-pointer ${sidebarCollapsed ? 'mx-auto' : ''} ${isDarkMode ? 'text-stone-400 hover:text-red-400 hover:bg-red-950/30' : 'text-stone-500 hover:text-red-500 hover:bg-red-50'}`}
+            <button
+              onClick={handleLogout}
+              title="Sign Out"
+              className={`shrink-0 p-2 rounded-xl transition-colors cursor-pointer ${isDarkMode ? 'text-stone-400 hover:text-red-400 hover:bg-red-950/30' : 'text-stone-500 hover:text-red-500 hover:bg-red-50'}`}
             >
-              <svg className="w-[15px] h-[15px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -733,41 +818,84 @@ export default function AdminDashboard() {
       {/* ─── MAIN CONTENT CONTAINER ─── */}
       <div className="flex-1 min-w-0 flex flex-col p-3 gap-4 overflow-y-auto">
 
-        {/* Floating Top Header */}
-        <header className={`border rounded-3xl px-6 py-4 flex items-center justify-between shadow-none transition-colors duration-305 ${headerClass}`}>
-          <div className="flex items-center gap-4">
-            <button 
+        {/* Top Header — title & date left, action cluster right */}
+        <header className="px-2 pt-2 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4 min-w-0">
+            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${
                 isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
               }`}
             >
-              {mobileMenuOpen ? "[Close]" : "[Menu]"}
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
-            
-            <div>
-              <h1 className={`font-extrabold text-lg md:text-xl font-serif tracking-tight capitalize ${headingText}`}>
-                {activeTab === "overview" ? "Analytics Command Room" : (menuItems.find(i=>i.id===activeTab) || menuItems.find(i=>i.subItems?.some((s: any)=>s.id===activeTab))?.subItems?.find((s: any)=>s.id===activeTab))?.label}
+
+            <div className="min-w-0">
+              <h1 className={`font-extrabold text-xl md:text-2xl tracking-tight capitalize truncate ${headingText}`}>
+                {activeTab === "overview" ? "Dashboard" : (menuItems.find(i=>i.id===activeTab) || menuItems.find(i=>i.subItems?.some((s: any)=>s.id===activeTab))?.subItems?.find((s: any)=>s.id===activeTab))?.label}
               </h1>
-              <p className="text-[10px] text-stone-500 font-semibold mt-0.5">
-                {loadingData ? "Syncing..." : `Status: Active • Operator: ${admin.name}`}
+              <p className="text-[11px] text-stone-500 font-semibold mt-0.5">
+                {loadingData ? "Syncing live data..." : format(new Date(), "EEEE, MMMM do yyyy")}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
+          <div className="flex items-center gap-2.5">
+            {/* Search */}
+            <div className={`hidden md:flex items-center gap-2 px-4 h-10 rounded-full border transition-colors ${
+              isDarkMode ? "bg-stone-900 border-stone-800" : "bg-white border-stone-200"
+            }`}>
+              <Search className="w-4 h-4 text-stone-400" />
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search records..."
+                className={`bg-transparent outline-none text-xs font-semibold w-36 ${isDarkMode ? "text-stone-200 placeholder:text-stone-500" : "text-stone-700 placeholder:text-stone-400"}`}
+              />
+            </div>
+
+            {/* Refresh */}
             <button
               onClick={fetchAllData}
               disabled={loadingData}
-              className={`flex items-center justify-center gap-2 px-3.5 py-2 border rounded-xl font-bold text-xs shadow-none transition-all cursor-pointer disabled:opacity-50 ${
-                isDarkMode
-                  ? "border-stone-800 bg-stone-900 text-stone-300 hover:bg-stone-800"
-                  : "border-stone-200 bg-white hover:bg-stone-50 text-stone-700"
+              title="Refresh data"
+              className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50 ${
+                isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800" : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
               }`}
             >
-              <span>Refresh</span>
+              <RefreshCw className={`w-4 h-4 ${loadingData ? "animate-spin" : ""}`} />
             </button>
+
+            {/* Notifications */}
+            <button
+              onClick={() => setActiveTab("approvals")}
+              title={`${pendingApprovals.length} pending approvals`}
+              className={`relative w-10 h-10 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${
+                isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800" : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
+              }`}
+            >
+              <Bell className="w-4 h-4" />
+              {pendingApprovals.length > 0 && (
+                <span className={`absolute top-2 right-2.5 w-2 h-2 rounded-full bg-primary-500 ring-2 ${isDarkMode ? "ring-stone-900" : "ring-white"}`} />
+              )}
+            </button>
+
+            <ThemeToggle />
+
+            {/* Profile */}
+            <div className="flex items-center gap-2.5 pl-1.5">
+              {admin.profileImage ? (
+                <img src={admin.profileImage} alt={admin.name} className="w-10 h-10 rounded-full object-cover" />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-primary-500 text-white flex items-center justify-center font-black text-sm uppercase">
+                  {admin.name.slice(0, 1)}
+                </div>
+              )}
+              <div className="hidden sm:block leading-tight">
+                <p className={`text-xs font-extrabold ${headingText}`}>{admin.name}</p>
+                <p className="text-[10px] font-semibold text-stone-500">Marketplace Admin</p>
+              </div>
+            </div>
           </div>
         </header>
 
@@ -887,343 +1015,242 @@ export default function AdminDashboard() {
               transition={{ duration: 0.2 }}
             >
               
+              {/* ─── TAB: OVERVIEW (loading skeleton) ─── */}
+              {activeTab === "overview" && loadingData && !stats && (
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+                  <div className="xl:col-span-2 flex flex-col gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className={`h-44 rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-900/70" : "bg-white/80"}`} />
+                      ))}
+                    </div>
+                    <div className={`h-96 rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-900/70" : "bg-white/80"}`} />
+                  </div>
+                  <div className="flex flex-col gap-6">
+                    <div className={`h-[420px] rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-900/70" : "bg-white/80"}`} />
+                    <div className={`h-72 rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-900/70" : "bg-white/80"}`} />
+                  </div>
+                </div>
+              )}
+
               {/* ─── TAB: OVERVIEW ─── */}
-              {activeTab === "overview" && (
-                <div className="flex flex-col gap-6">
-                  
-                  {/* Stats Cards Row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                    {[
-                      { 
-                        title: "Total Revenue", 
-                        value: formatAsCurrency(stats?.totalRevenue || 0, "INR"), 
-                        change: "+12.4% vs last week", 
-                        isUp: true, 
-                        bgColor: "bg-white border-stone-200" ,
-                        darkBg: "bg-stone-900/60 border-stone-800 text-stone-300"
-                      },
-                      { 
-                        title: "Registered Users", 
-                        value: stats?.totalUsers ?? "0", 
-                        change: "+8.2% vs last month", 
-                        isUp: true, 
-                        bgColor: "bg-white border-stone-200",
-                        darkBg: "bg-stone-900/60 border-stone-800 text-stone-300"
-                      },
-                      { 
-                        title: "Partner Vendors", 
-                        value: stats?.totalVendors ?? "0", 
-                        change: `${pendingApprovals.length} pending`, 
-                        isUp: pendingApprovals.length === 0, 
-                        bgColor: "bg-white border-stone-200",
-                        darkBg: "bg-stone-900/60 border-stone-800 text-stone-300"
-                      },
-                      { 
-                        title: "Total Bookings", 
-                        value: stats?.totalBookings ?? "0", 
-                        change: `${bookings.filter(b=>b.status==='confirmed').length} confirmed`, 
-                        isUp: true, 
-                        bgColor: "bg-white border-stone-200",
-                        darkBg: "bg-stone-900/60 border-stone-800 text-stone-300"
-                      },
-                    ].map((card, i) => (
-                      <div key={i} className={`p-6 rounded-3xl border shadow-none flex flex-col justify-between min-h-[110px] transition-all duration-200 ${
-                        isDarkMode ? card.darkBg : card.bgColor
-                      }`}>
-                        <div>
-                          <span className="text-[10px] font-black uppercase tracking-wider text-stone-400">{card.title}</span>
-                          <h3 className={`text-xl md:text-2xl font-black tracking-tight leading-none mt-2.5 ${isDarkMode ? 'text-white' : 'text-stone-905'}`}>{card.value}</h3>
-                        </div>
-                        <span className={`text-[10px] font-bold mt-2.5 inline-block ${card.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600'}`}>
-                          {card.change}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              {activeTab === "overview" && !(loadingData && !stats) && (
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
 
-                  {/* Charts Row */}
-                  <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-                    {/* CSS Bar Chart */}
-                    <div className={`xl:col-span-3 rounded-3xl border p-6 shadow-none flex flex-col justify-between ${cardClass}`}>
-                      <div className={`flex justify-between items-center pb-4 border-b ${dividerClass}`}>
-                        <div>
-                          <h4 className={`font-extrabold text-sm tracking-tight ${headingText}`}>Booking Volume & Revenue Trends</h4>
-                          <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Calculated dynamically from last 6 months of billing ledger</p>
+                  {/* ── Left: KPI grid + booking activity chart ── */}
+                  <div className="xl:col-span-2 flex flex-col gap-6">
+
+                    {/* KPI cards 2x2 */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+                      {/* 1. Total Revenue — filled primary card */}
+                      <div className="relative overflow-hidden rounded-3xl p-6 bg-primary-500 text-white shadow-xl shadow-primary-500/25">
+                        <div className="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+                        <div className="relative flex items-start justify-between">
+                          <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm">
+                            <Wallet className="w-5 h-5 text-primary-500" />
+                          </div>
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-white/20 text-white">
+                            {revenueChange >= 0 ? "+" : ""}{revenueChange}%
+                          </span>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1.5 text-[9px] font-black text-primary-500">
-                            <span className="w-2.5 h-2.5 rounded bg-primary-400 inline-block" /> Bookings
-                          </div>
-                          <div className="flex items-center gap-1.5 text-[9px] font-black text-amber-500">
-                            <span className="w-2.5 h-2.5 rounded bg-amber-500 inline-block" /> Revenue
-                          </div>
+                        <p className="relative text-sm font-bold text-white/85 mt-6">Total Revenue</p>
+                        <div className="relative flex items-end gap-3 mt-2">
+                          <h3 className="text-2xl md:text-3xl font-black tracking-tight leading-none">{formatAsCurrency(stats?.totalRevenue || 0, "INR")}</h3>
+                          <span className="text-[10px] font-semibold text-white/70 leading-tight whitespace-pre-line">{"Revenue vs\nlast month"}</span>
                         </div>
                       </div>
 
-                      {/* The interactive bar container */}
-                      <div className={`flex items-end justify-between h-56 pt-8 px-2 border-b relative ${dividerClass}`}>
-                        {monthlyData.map((d, idx) => (
-                          <div key={idx} className="flex flex-col items-center flex-1 group relative">
-                            {/* Interactive tooltip */}
-                            <div className="absolute bottom-full mb-3 bg-stone-950 text-white text-[10px] font-bold py-1.5 px-3 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20 shadow-none whitespace-nowrap flex flex-col gap-0.5 border border-stone-800">
-                              <span>Month: <span className="text-primary-400">{d.month}</span></span>
-                              <span>Bookings: <span className="text-amber-400">{d.bookings}</span></span>
-                              <span>Revenue: <span className="text-emerald-400">{formatAsCurrency(d.revenue, "INR")}</span></span>
+                      {/* 2-4. White KPI cards */}
+                      {[
+                        { label: "Total Bookings", value: stats?.totalBookings ?? bookings.length, icon: CalendarCheck, badge: `${bookingsChange >= 0 ? "+" : ""}${bookingsChange}%`, positive: bookingsChange >= 0, sub: "Bookings vs\nlast month" },
+                        { label: "Registered Users", value: stats?.totalUsers ?? users.length, icon: Users, badge: `+${newUsersThisMonth}`, positive: true, sub: "New in\nlast 30 days" },
+                        { label: "Partner Vendors", value: stats?.totalVendors ?? vendors.length, icon: Building2, badge: `+${newVendorsThisMonth}`, positive: true, sub: "Joined in\nlast 30 days" },
+                      ].map((card, i) => (
+                        <div key={i} className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                          <div className="flex items-start justify-between">
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                              <card.icon className="w-5 h-5 text-primary-500" />
                             </div>
-
-                            {/* Dual side-by-side bars */}
-                            <div className="flex gap-1.5 items-end h-36 w-full justify-center">
-                              {/* Bookings bar */}
-                              <div 
-                                className="w-4 bg-primary-400 hover:bg-primary-500 rounded-t-lg transition-all duration-305"
-                                style={{ height: `${(d.bookings / maxBookings) * 100}%` }}
-                              />
-                              {/* Revenue bar */}
-                              <div 
-                                className="w-4 bg-amber-500 hover:bg-amber-600 rounded-t-lg transition-all duration-305"
-                                style={{ height: `${(d.revenue / maxRevenue) * 100}%` }}
-                              />
-                            </div>
-                            <span className="text-[10px] font-black text-stone-500 mt-2.5 uppercase tracking-wide">{d.month}</span>
+                            {deltaBadge(card.badge, card.positive)}
                           </div>
-                        ))}
-                      </div>
-
-                      <div className="flex justify-between items-center pt-3 text-[10px] text-stone-400 font-semibold">
-                        <span>Max Bookings: {maxBookings}</span>
-                        <span>Max Revenue: {formatAsCurrency(maxRevenue, "INR")}</span>
-                      </div>
+                          <p className="text-sm font-bold text-stone-500 mt-6">{card.label}</p>
+                          <div className="flex items-end gap-3 mt-2">
+                            <h3 className={`text-2xl md:text-3xl font-black tracking-tight leading-none ${headingText}`}>{card.value}</h3>
+                            <span className="text-[10px] font-semibold text-stone-400 leading-tight whitespace-pre-line">{card.sub}</span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
-                    {/* SVG Donut split */}
-                    <div className={`xl:col-span-1 rounded-3xl border p-6 shadow-none flex flex-col justify-between ${cardClass}`}>
-                      <div className={`pb-4 border-b ${dividerClass}`}>
-                        <h4 className={`font-extrabold text-sm tracking-tight ${headingText}`}>Event Split</h4>
-                        <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Ratio of Venues vs Rooms</p>
-                      </div>
-
-                      <div className="flex flex-col items-center justify-center py-6">
-                        <div className="relative w-36 h-36 flex items-center justify-center">
-                          {/* Radial Progress SVG */}
-                          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                            {/* Background circle */}
-                            <circle
-                              cx="50"
-                              cy="50"
-                              r="40"
-                              className={isDarkMode ? "stroke-stone-800" : "stroke-stone-100"}
-                              strokeWidth="8"
-                              fill="transparent"
-                            />
-                            {/* Venue progress circle */}
-                            <circle
-                              cx="50"
-                              cy="50"
-                              r="40"
-                              className="stroke-primary-500 transition-all duration-1000"
-                              strokeWidth="8"
-                              strokeDasharray={2 * Math.PI * 40}
-                              strokeDashoffset={2 * Math.PI * 40 * (1 - (venuePercentage || 50) / 100)}
-                              fill="transparent"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          {/* Center stats */}
-                          <div className="absolute text-center">
-                            <span className={`text-xl font-black tracking-tight ${headingText}`}>{venuePercentage}%</span>
-                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-0.5">Venues</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className={`flex flex-col gap-2.5 border-t pt-4 ${dividerClass}`}>
-                        <div className="flex justify-between items-center text-xs">
-                          <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-primary-500" />
-                            <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>Venues</span>
-                          </div>
-                          <span className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{totalVenueBookings} ({venuePercentage}%)</span>
-                        </div>
-                        <div className="flex justify-between items-center text-xs">
-                          <div className="flex items-center gap-2">
-                            <span className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-stone-700' : 'bg-stone-200'}`} />
-                            <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>Rooms</span>
-                          </div>
-                          <span className={`font-black ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{totalRoomBookings} ({roomPercentage}%)</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Logs & Monitor Row */}
-                  <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-                    {/* Live Audit Log Feed */}
-                    <div className={`xl:col-span-3 rounded-3xl border p-6 shadow-none ${cardClass}`}>
-                      <div className={`pb-4 border-b flex items-center justify-between mb-4 ${dividerClass}`}>
+                    {/* Booking Activity — paired bar chart */}
+                    <div className={`rounded-3xl border p-6 shadow-none ${cardClass}`}>
+                      <div className="flex items-start justify-between gap-4 flex-wrap">
                         <div>
-                          <h4 className={`font-extrabold text-sm tracking-tight ${headingText}`}>System Audit Log</h4>
-                          <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Real-time database transaction logs</p>
+                          <h4 className={`font-extrabold text-lg tracking-tight ${headingText}`}>Booking Activity</h4>
+                          <p className="text-[11px] text-stone-400 font-semibold mt-0.5">Track total vs confirmed bookings</p>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full text-[9px] font-black border uppercase tracking-wider dark:border-stone-800">
-                          LIVE LOGS
-                        </span>
+                        <button className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold cursor-default ${isDarkMode ? "border-stone-800 text-stone-300" : "border-stone-200 text-stone-600"}`}>
+                          Last 6 months
+                          <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                        </button>
                       </div>
 
-                      <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1">
-                        {activities.length === 0 ? (
-                          <p className="text-center py-12 text-stone-500 text-xs font-semibold">No recent logs recorded.</p>
-                        ) : (
-                          activities.map((act, idx) => (
-                            <div key={idx} className={`p-3 rounded-2xl border flex items-center justify-between gap-3.5 transition-all duration-200 ${
-                              isDarkMode ? "bg-stone-900/80 border-stone-800" : "bg-[#fafaf9] border-stone-200"
-                            }`}>
-                              <div className="min-w-0 flex-1">
-                                <p className={`text-xs font-bold ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{act.title}</p>
-                                <p className="text-[10px] text-stone-505 truncate mt-0.5">{act.desc}</p>
-                              </div>
-                              <span className="text-[9px] font-bold text-stone-450 whitespace-nowrap tracking-wide">{formatDate(act.time)}</span>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Server Latency & Health Console */}
-                    <div className={`xl:col-span-1 rounded-3xl border p-6 shadow-none flex flex-col justify-between ${cardClass}`}>
-                      <div className={`pb-4 border-b ${dividerClass}`}>
-                        <h4 className={`font-extrabold text-sm tracking-tight ${headingText}`}>System Monitor</h4>
-                      </div>
-
-                      <div className="bg-stone-900 rounded-2xl p-4 font-mono text-[9px] text-emerald-400 flex flex-col gap-1.5 mt-4">
-                        <div className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                          <span className="text-stone-400 font-bold">DATABASE: CONNECTED</span>
+                      {/* Legend */}
+                      <div className="flex items-center gap-5 mt-4">
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400">
+                          <span className={`w-2.5 h-2.5 rounded-full ${isDarkMode ? "bg-stone-700" : "bg-stone-300"}`} /> All bookings
                         </div>
-                        <div className="flex justify-between border-b border-stone-800 pb-1 mt-1 text-stone-400">
-                          <span>Connection</span>
-                          <span className="text-stone-300 font-bold">direct-replica</span>
-                        </div>
-                        <div className="flex justify-between border-b border-stone-800 pb-1 text-stone-400">
-                          <span>Ping Latency</span>
-                          <span className="text-stone-300 font-bold">24 ms</span>
-                        </div>
-                        <div className="flex justify-between border-b border-stone-800 pb-1 text-stone-400">
-                          <span>Admins</span>
-                          <span className="text-stone-300 font-bold">{stats?.totalAdmins ?? "1"} active</span>
-                        </div>
-                        <div className="flex justify-between text-stone-450">
-                          <span>Environment</span>
-                          <span className="text-stone-300 font-bold">Production</span>
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-primary-500">
+                          <span className="w-2.5 h-2.5 rounded-full bg-primary-500" /> Confirmed
                         </div>
                       </div>
 
-                      <button 
-                        onClick={runDiagnostics}
-                        disabled={checkingSystem}
-                        className="w-full mt-5 bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white font-bold text-xs py-3 rounded-2xl flex items-center justify-center gap-2 transition-all cursor-pointer"
-                      >
-                        {checkingSystem ? "Syncing..." : "Sync Monitor"}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* ── 7-Category Real-Time Listing Grid (Admin) ── */}
-                  {(() => {
-                    const venueListings = venuesList;
-                    const roomListings = servicesList.filter((s: any) => s.category === "rooms");
-                    const plannerListings = servicesList.filter((s: any) => s.category === "planners");
-                    const catererListings = servicesList.filter((s: any) => s.category === "caterers");
-                    const decoratorListings = servicesList.filter((s: any) => s.category === "decorators");
-
-                    const minPrice = (arr: any[], key = "priceFrom") =>
-                      arr.length === 0 ? null : Math.min(...arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0));
-
-                    const avgPrice = (arr: any[], key = "priceFrom") => {
-                      const valid = arr.map(i => Number(i[key] || i.price || 0)).filter(v => v > 0);
-                      return valid.length === 0 ? null : valid.reduce((a, b) => a + b, 0) / valid.length;
-                    };
-
-                    const getTopName = (arr: any[]) => arr.filter(v => v.active)[0]?.name || arr[0]?.name || null;
-
-                    const categories = [
-                      { id: "venues", label: "Venues", icon: Building2, color: "from-amber-500 to-orange-500", lightBg: "bg-amber-50 border-amber-100", darkBg: "bg-amber-950/20 border-amber-900/30", count: venueListings.length, price: minPrice(venueListings, "price"), avg: avgPrice(venueListings, "price"), unit: "per day", live: venueListings.filter((v: any) => v.active).length, topName: getTopName(venueListings) },
-                      { id: "rooms", label: "Rooms", icon: BedDouble, color: "from-blue-500 to-indigo-500", lightBg: "bg-blue-50 border-blue-100", darkBg: "bg-blue-950/20 border-blue-900/30", count: roomListings.length, price: minPrice(roomListings), avg: avgPrice(roomListings), unit: "per night", live: roomListings.filter((s: any) => s.active).length, topName: getTopName(roomListings) },
-                      { id: "planners", label: "Planners", icon: ClipboardList, color: "from-violet-500 to-purple-500", lightBg: "bg-violet-50 border-violet-100", darkBg: "bg-violet-950/20 border-violet-900/30", count: plannerListings.length, price: minPrice(plannerListings), avg: avgPrice(plannerListings), unit: "per event", live: plannerListings.filter((s: any) => s.active).length, topName: getTopName(plannerListings) },
-                      { id: "caterers", label: "Caterers", icon: Utensils, color: "from-emerald-500 to-teal-500", lightBg: "bg-emerald-50 border-emerald-100", darkBg: "bg-emerald-950/20 border-emerald-900/30", count: catererListings.length, price: minPrice(catererListings), avg: avgPrice(catererListings), unit: "per plate", live: catererListings.filter((s: any) => s.active).length, topName: getTopName(catererListings) },
-                      { id: "decorators", label: "Decorators", icon: Palette, color: "from-pink-500 to-rose-500", lightBg: "bg-pink-50 border-pink-100", darkBg: "bg-pink-950/20 border-pink-900/30", count: decoratorListings.length, price: minPrice(decoratorListings), avg: avgPrice(decoratorListings), unit: "per event", live: decoratorListings.filter((s: any) => s.active).length, topName: getTopName(decoratorListings) },
-                    ];
-
-                    return (
-                      <div className="flex flex-col gap-3">
-                        <div className="flex items-center justify-between">
-                          <h3 className={`font-extrabold text-sm tracking-tight ${headingText}`}>Platform Inventory by Category</h3>
-                          <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Live • {servicesList.length + venuesList.length} total listings</span>
+                      {/* Chart canvas */}
+                      <div className="flex gap-3 mt-6">
+                        {/* Y axis */}
+                        <div className="flex flex-col justify-between h-48 pb-6 text-[10px] font-bold text-stone-400 text-right shrink-0">
+                          <span>{maxBookings}</span>
+                          <span>{Math.round(maxBookings / 2)}</span>
+                          <span>0</span>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
-                          {categories.map((cat, idx) => (
-                            <div
-                              key={idx}
-                              className={`relative group flex flex-col gap-2 p-4 rounded-2xl border text-left transition-all duration-200 hover:-translate-y-0.5 cursor-default ${isDarkMode ? cat.darkBg : cat.lightBg}`}
-                            >
-                              {/* Emoji + live badge */}
-                              <div className="flex items-start justify-between mb-1">
-                                <div className="text-2xl mb-2 opacity-90"><cat.icon className="w-8 h-8 text-stone-700" /></div>
-                                {cat.live > 0 && (
-                                  <span className="flex items-center gap-1 text-[8px] font-black px-1.5 py-0.5 rounded-full bg-emerald-500 text-white uppercase tracking-wide">
-                                    <span className="w-1 h-1 rounded-full bg-white animate-ping inline-block" />
-                                    {cat.live} live
-                                  </span>
-                                )}
+                        <div className="flex-1 flex items-end justify-between gap-2">
+                          {monthlyData.map((d, idx) => (
+                            <div key={idx} className="flex flex-col items-center flex-1 group relative">
+                              {/* Tooltip */}
+                              <div className="absolute bottom-full mb-2 bg-stone-950 text-white text-[10px] font-bold py-2 px-3.5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20 whitespace-nowrap flex flex-col gap-1 border border-stone-800">
+                                <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-stone-400 inline-block" /> {d.bookings} bookings</span>
+                                <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-primary-400 inline-block" /> {d.confirmed} confirmed</span>
                               </div>
 
-                              {/* Label */}
-                              <div>
-                                <p className={`text-[10px] font-extrabold uppercase tracking-wide leading-tight ${isDarkMode ? "text-stone-400" : "text-stone-500"}`}>Top {cat.label}</p>
-                                {cat.topName ? (
-                                  <p className={`text-[13px] font-bold mt-0.5 line-clamp-2 leading-snug ${isDarkMode ? "text-stone-200" : "text-stone-800"}`} title={cat.topName}>
-                                    {cat.topName}
-                                  </p>
-                                ) : (
-                                  <p className={`text-[13px] font-bold mt-0.5 line-clamp-2 leading-snug ${isDarkMode ? "text-stone-500" : "text-stone-400"}`}>
-                                    No {cat.label.toLowerCase()}
-                                  </p>
-                                )}
+                              {/* Paired pill bars */}
+                              <div className="flex gap-1.5 items-end h-44 w-full justify-center">
+                                <div
+                                  className={`w-4 sm:w-5 rounded-full transition-all duration-300 ${isDarkMode ? "bg-stone-800 group-hover:bg-stone-700" : "bg-stone-200 group-hover:bg-stone-300"}`}
+                                  style={{ height: `${Math.max((d.bookings / maxBookings) * 100, 4)}%` }}
+                                />
+                                <div
+                                  className="w-4 sm:w-5 rounded-full bg-primary-500 group-hover:bg-primary-600 transition-all duration-300"
+                                  style={{ height: `${Math.max((d.confirmed / maxBookings) * 100, 4)}%` }}
+                                />
                               </div>
-
-                              {/* Count */}
-                              <div className="flex items-baseline gap-1 mt-1">
-                                <span className={`text-2xl font-black leading-none ${isDarkMode ? "text-white" : "text-stone-900"}`}>{cat.count}</span>
-                                <span className="text-[10px] font-bold text-stone-400">{cat.count === 1 ? "listing" : "listings"}</span>
-                              </div>
-
-                              {/* Price section */}
-                              <div className={`pt-2.5 border-t ${isDarkMode ? "border-stone-700" : "border-stone-200/70"} flex flex-col gap-1`}>
-                                {cat.price !== null && cat.price > 0 ? (
-                                  <>
-                                    <div className="flex flex-col gap-0.5">
-                                      <span className="text-[8px] font-black uppercase tracking-widest text-stone-400">from</span>
-                                      <span className={`text-[13px] font-black leading-none ${isDarkMode ? "text-white" : "text-stone-800"}`}>₹{cat.price.toLocaleString("en-IN")}</span>
-                                      <span className="text-[9px] text-stone-400 font-semibold">{cat.unit}</span>
-                                    </div>
-                                    {cat.avg !== null && cat.avg !== cat.price && (
-                                      <div className="flex items-center gap-1 mt-1">
-                                        <span className="text-[8px] text-stone-400 font-semibold">avg ₹{cat.avg.toLocaleString("en-IN")}</span>
-                                      </div>
-                                    )}
-                                  </>
-                                ) : (
-                                  <span className="text-[10px] text-stone-400 font-semibold">No price set</span>
-                                )}
-                              </div>
-
-                              {/* Gradient bottom line */}
-                              <div className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-b-2xl bg-gradient-to-r ${cat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
+                              <span className="text-[10px] font-bold text-stone-400 mt-2.5">{d.month}</span>
                             </div>
                           ))}
                         </div>
                       </div>
-                    );
-                  })()}
+                    </div>
+                  </div>
+
+                  {/* ── Right: listing statistics + vendor growth ── */}
+                  <div className="flex flex-col gap-6">
+
+                    {/* Listing Statistics — concentric radial arcs */}
+                    <div className={`rounded-3xl border p-6 shadow-none ${cardClass}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h4 className={`font-extrabold text-lg tracking-tight ${headingText}`}>Listing Statistics</h4>
+                          <p className="text-[11px] text-stone-400 font-semibold mt-0.5">Track listings by category</p>
+                        </div>
+                        <button className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold cursor-default shrink-0 ${isDarkMode ? "border-stone-800 text-stone-300" : "border-stone-200 text-stone-600"}`}>
+                          All time
+                          <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-2 mt-5">
+                        <svg className="w-36 h-36 -rotate-90 shrink-0" viewBox="0 0 120 120">
+                          {categoryStats.slice(0, 3).map((cat, i) => {
+                            const r = [52, 40, 28][i];
+                            const circ = 2 * Math.PI * r;
+                            const frac = 0.2 + 0.55 * (cat.count / (categoryStats[0].count || 1));
+                            return (
+                              <g key={cat.id}>
+                                <circle cx="60" cy="60" r={r} fill="transparent" strokeWidth="8" className={isDarkMode ? "stroke-stone-800" : "stroke-stone-100"} />
+                                <circle cx="60" cy="60" r={r} fill="transparent" strokeWidth="8" strokeLinecap="round" stroke={arcColors[i]} strokeDasharray={circ} strokeDashoffset={circ * (1 - frac)} className="transition-all duration-1000" />
+                              </g>
+                            );
+                          })}
+                        </svg>
+                        <div className="min-w-0">
+                          <h3 className={`text-3xl font-black tracking-tight leading-none ${headingText}`}>{totalListings}</h3>
+                          <p className="text-[11px] font-semibold text-stone-400 mt-1.5">Total Listings</p>
+                          <span className="inline-block mt-2">{deltaBadge(`${liveListings} live`, true)}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-3 mt-5">
+                        {categoryStats.map((cat, i) => (
+                          <div key={cat.id} className="flex items-center gap-2.5">
+                            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: i < 3 ? arcColors[i] : "#A8A29E" }} />
+                            <span className={`flex-1 text-xs font-bold ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{cat.label}</span>
+                            <span className={`text-sm font-black ${headingText}`}>{cat.count}</span>
+                            {deltaBadge(`${cat.live} live`, cat.live > 0)}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Vendor Growth — bubble cluster + city list */}
+                    <div className={`rounded-3xl border p-6 shadow-none ${cardClass}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h4 className={`font-extrabold text-lg tracking-tight ${headingText}`}>Vendor Growth</h4>
+                          <p className="text-[11px] text-stone-400 font-semibold mt-0.5">Track vendors by city</p>
+                        </div>
+                        <button className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold cursor-default shrink-0 ${isDarkMode ? "border-stone-800 text-stone-300" : "border-stone-200 text-stone-600"}`}>
+                          All time
+                          <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                        </button>
+                      </div>
+
+                      {topCities.length === 0 ? (
+                        <p className="text-xs font-semibold text-stone-400 text-center py-10">No vendor locations recorded yet.</p>
+                      ) : (
+                        <div className="flex items-center gap-5 mt-6 flex-wrap sm:flex-nowrap">
+                          {/* Bubble cluster */}
+                          <div className="relative w-40 h-44 shrink-0 mx-auto">
+                            {topCities.map(([city, count], i) => {
+                              const size = Math.round(40 + 60 * Math.sqrt(count / maxCityCount));
+                              const pos = [
+                                { top: 0, right: 0 },
+                                { bottom: 0, left: 0 },
+                                { top: 12, left: 4 },
+                                { bottom: 8, right: 4 },
+                              ][i];
+                              return (
+                                <div
+                                  key={city}
+                                  className={`absolute rounded-full flex items-center justify-center font-black text-xs ${bubbleColors[i]}`}
+                                  style={{ width: size, height: size, ...pos }}
+                                >
+                                  {count}
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* City list */}
+                          <div className="flex-1 min-w-[150px] flex flex-col gap-3.5">
+                            {topCities.map(([city, count], i) => (
+                              <div key={city} className="flex items-center gap-2.5">
+                                <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${bubbleDots[i]}`} />
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className={`text-xs font-bold truncate ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{city}</span>
+                                    <span className="text-[10px] font-black text-stone-400">{count}</span>
+                                  </div>
+                                  <div className={`h-1 rounded-full mt-1.5 ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                                    <div className="h-1 rounded-full bg-primary-500" style={{ width: `${(count / maxCityCount) * 100}%` }} />
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -1235,82 +1262,86 @@ export default function AdminDashboard() {
                       <h3 className={`font-extrabold text-base ${headingText}`}>New Vendor Registrations</h3>
                       <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Verify and moderate brand profile requests in the onboarding pipeline</p>
                     </div>
-                    <span className="text-[10px] font-black bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider dark:bg-amber-905/20 dark:border-amber-900/50">
-                      {filteredApprovals.length} pending verification
+                    <span className="text-[10px] font-black bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/25">
+                      {filteredApprovals.length} pending
                     </span>
                   </div>
 
-                  {filteredApprovals.length === 0 ? (
-                    <div className="py-20 flex flex-col items-center justify-center text-center">
-                      <h4 className="font-bold text-stone-800 text-sm dark:text-stone-200">Approvals Queue is Clear</h4>
-                      <p className="text-xs text-stone-500 max-w-xs mt-1">
-                        All submitted vendor profile requests have been moderated.
-                      </p>
+                  {loadingData && filteredApprovals.length === 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {[...Array(3)].map((_, i) => (
+                        <div key={i} className={`h-96 rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                      ))}
+                    </div>
+                  ) : filteredApprovals.length === 0 ? (
+                    <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                        <UserCheck className="w-6 h-6 text-stone-400" />
+                      </div>
+                      <h4 className={`font-bold text-sm ${headingText}`}>Approvals queue is clear</h4>
+                      <p className="text-xs text-stone-400 max-w-xs">All submitted vendor profile requests have been moderated.</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                       {filteredApprovals.map((v) => (
-                        <div 
-                          key={v._id}
-                          className="relative rounded-[24px] overflow-hidden shadow-none border border-slate-100 w-full h-auto min-h-[380px] cursor-pointer block group bg-gradient-to-br from-slate-800 to-slate-900"
-                        >
-                          {/* Ambient background decoration */}
-                          <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
-                          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
-
-                          {/* Tag pill top-left */}
-                          <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-white bg-slate-900/80 backdrop-blur-md">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            {v.category}
+                        <div key={v._id} className={`rounded-3xl border overflow-hidden flex flex-col transition-shadow hover:shadow-lg ${isDarkMode ? "border-stone-800 bg-stone-900/40 hover:shadow-black/30" : "border-stone-200 bg-white hover:shadow-stone-200/60"}`}>
+                          {/* Cover image */}
+                          <div className={`relative h-36 shrink-0 ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                            {v.images && v.images.length > 0 ? (
+                              <img src={v.images[0]} alt={v.businessName || "Vendor"} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <Camera className="w-7 h-7 text-stone-400" />
+                              </div>
+                            )}
+                            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wide bg-stone-950/70 text-white backdrop-blur-sm">{v.category}</span>
+                            <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wide bg-amber-400 text-amber-950">Pending</span>
                           </div>
 
-                          {/* Status pill top-right */}
-                          <div className="absolute top-4 right-4 z-20 px-3 py-1.5 rounded-full text-[10px] font-bold text-amber-800 bg-amber-100 uppercase tracking-widest shadow-none">
-                            Pending
-                          </div>
+                          {/* Body */}
+                          <div className="p-5 flex flex-col flex-1">
+                            <h3 className={`font-extrabold text-sm leading-snug line-clamp-1 ${headingText}`}>{v.businessName || "No Business Name"}</h3>
+                            <p className="flex items-center gap-1 text-[11px] font-semibold text-stone-400 mt-1">
+                              <MapPin className="w-3 h-3" /> {v.city || "Not specified"}
+                            </p>
 
-                          {/* Content Area */}
-                          <div className="absolute inset-x-0 bottom-0 z-20 px-5 pt-6 pb-5 flex flex-col h-full justify-end">
-                            <div className="mb-4">
-                              <h3 className="text-2xl font-bold leading-snug text-white line-clamp-2" style={{ fontFamily: "var(--font-heading)" }}>
-                                {v.businessName || "No Business Name"}
-                              </h3>
-                              <div className="flex items-center gap-1 mt-2">
-                                <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                                <span className="text-xs font-medium text-slate-300 line-clamp-1">{v.city || "Not Specified"}</span>
+                            <div className={`flex flex-col divide-y rounded-2xl border mt-4 text-[11px] ${isDarkMode ? "divide-stone-800 border-stone-800" : "divide-stone-100 border-stone-100"}`}>
+                              <div className="flex items-center gap-2 px-3 py-2">
+                                <Users className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                <span className={`font-bold truncate ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{v.name}</span>
+                              </div>
+                              <div className="flex items-center gap-2 px-3 py-2">
+                                <Mail className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                <span className={`font-semibold truncate ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{v.email}</span>
+                              </div>
+                              <div className="flex items-center gap-2 px-3 py-2">
+                                <Phone className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                <span className={`font-semibold ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{v.phone || "Not provided"}</span>
+                              </div>
+                              <div className="flex items-center gap-2 px-3 py-2">
+                                <CalendarDays className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                <span className={`font-semibold ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>Applied {formatDate(v.createdAt)}</span>
                               </div>
                             </div>
 
-                            <div className="flex flex-col gap-2.5 mb-5 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-none">
-                              <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Rep:</span> {v.name}</p>
-                              <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Email:</span> {v.email}</p>
-                              <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Phone:</span> {v.phone || "N/A"}</p>
-                              <p className="text-xs text-slate-200"><span className="font-semibold text-white uppercase tracking-wider text-[10px] mr-2">Applied:</span> {formatDate(v.createdAt)}</p>
-                              
-                              {v.images && v.images.length > 0 && (
-                                <div className="mt-2 border-t border-white/10 pt-2">
-                                  <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1.5">Showcase Gallery ({v.images.length}/6)</p>
-                                  <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-                                    {v.images.map((imgUrl: string, idx: number) => (
-                                      <div key={idx} className="relative w-12 h-12 rounded-lg overflow-hidden border border-white/15 shrink-0 bg-slate-950">
-                                        <img src={imgUrl} alt="Showcase Preview" className="w-full h-full object-cover" />
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                            {v.images && v.images.length > 1 && (
+                              <div className="flex gap-1.5 mt-3 overflow-x-auto pb-0.5" style={{ scrollbarWidth: "none" }}>
+                                {v.images.slice(1, 6).map((imgUrl: string, idx: number) => (
+                                  <img key={idx} src={imgUrl} alt="Showcase" className={`w-10 h-10 rounded-lg object-cover border shrink-0 ${isDarkMode ? "border-stone-800" : "border-stone-100"}`} />
+                                ))}
+                              </div>
+                            )}
 
-                            <div className="flex gap-3 mt-1">
+                            <div className="flex gap-2.5 mt-auto pt-4">
                               <button
                                 onClick={() => handleUpdateVendorStatus(v._id, true)}
-                                className="flex-1 bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 rounded-full text-xs transition-colors shadow-none cursor-pointer"
+                                className="flex-1 bg-primary-500 hover:bg-primary-600 text-white font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
                               >
                                 Approve
                               </button>
                               <button
                                 onClick={() => handleDeleteVendor(v._id)}
-                                className="flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-100 border border-red-500/30 font-bold py-3 rounded-full text-xs transition-colors cursor-pointer"
+                                className={`flex-1 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer border ${isDarkMode ? "bg-red-500/10 text-red-400 border-red-500/25 hover:bg-red-500/20" : "bg-red-50 text-red-600 border-red-100 hover:bg-red-100"}`}
                               >
                                 Reject
                               </button>
@@ -1333,15 +1364,25 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {filteredVendors.length === 0 ? (
-                    <div className="py-20 text-center text-stone-500 text-sm font-semibold">
-                      No vendor profiles match "{searchTerm}"
+                  {loadingData && filteredVendors.length === 0 ? (
+                    <div className="flex flex-col gap-3">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className={`h-14 rounded-2xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                      ))}
+                    </div>
+                  ) : filteredVendors.length === 0 ? (
+                    <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                        <SearchX className="w-6 h-6 text-stone-400" />
+                      </div>
+                      <h4 className={`font-bold text-sm ${headingText}`}>No vendors found</h4>
+                      <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : "No vendor profiles have been registered yet."}</p>
                     </div>
                   ) : (
                     <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className={`border-b text-stone-505 font-bold ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
+                          <tr className={`border-b text-[10px] uppercase tracking-wider font-black text-stone-400 ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
                             <th className="p-4">Brand / Owner</th>
                             <th className="p-4">Category</th>
                             <th className="p-4">City</th>
@@ -1352,13 +1393,20 @@ export default function AdminDashboard() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredVendors.map((v) => (
+                          {paginate(filteredVendors).map((v: any) => (
                             <tr key={v._id} className={`border-b last:border-0 transition-colors ${
                               isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
                             }`}>
                               <td className="p-4">
-                                <p className={`font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.businessName || "No Business Name"}</p>
-                                <p className="text-[10px] text-stone-400 font-semibold mt-0.5">{v.name} • {v.email}</p>
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center font-black text-xs uppercase ${isDarkMode ? "bg-primary-500/15 text-primary-400" : "bg-primary-50 text-primary-600"}`}>
+                                    {(v.businessName || v.name || "?").slice(0, 1)}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className={`font-black text-sm truncate ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{v.businessName || "No Business Name"}</p>
+                                    <p className="text-[10px] text-stone-400 font-semibold mt-0.5 truncate">{v.name} • {v.email}</p>
+                                  </div>
+                                </div>
                               </td>
                               <td className="p-4">
                                 <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black border uppercase tracking-wide ${
@@ -1369,7 +1417,11 @@ export default function AdminDashboard() {
                               </td>
                               <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{v.city || "N/A"}</td>
                               <td className="p-4">
-                                <span className={`font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>Rating: {v.rating || 0} ({v.reviewCount || 0})</span>
+                                <span className={`flex items-center gap-1 font-bold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
+                                  <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                                  {v.rating || 0}
+                                  <span className="text-[10px] text-stone-400 font-semibold">({v.reviewCount || 0})</span>
+                                </span>
                               </td>
                               <td className="p-4">
                                 <button
@@ -1398,9 +1450,10 @@ export default function AdminDashboard() {
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteVendor(v._id)}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-500 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
+                                  title="Delete vendor"
+                                  className={`p-2 rounded-xl transition-colors cursor-pointer ${isDarkMode ? "text-stone-500 hover:text-red-400 hover:bg-red-500/10" : "text-stone-400 hover:text-red-600 hover:bg-red-50"}`}
                                 >
-                                  [Delete]
+                                  <Trash2 className="w-4 h-4" />
                                 </button>
                               </td>
                             </tr>
@@ -1409,6 +1462,7 @@ export default function AdminDashboard() {
                       </table>
                     </div>
                   )}
+                  <TablePager total={filteredVendors.length} />
                 </div>
               )}
 
@@ -1422,15 +1476,25 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {filteredBookings.length === 0 ? (
-                    <div className="py-20 text-center text-stone-505 text-sm font-semibold">
-                      No bookings matching "{searchTerm}"
+                  {loadingData && filteredBookings.length === 0 ? (
+                    <div className="flex flex-col gap-3">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className={`h-14 rounded-2xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                      ))}
+                    </div>
+                  ) : filteredBookings.length === 0 ? (
+                    <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                        <SearchX className="w-6 h-6 text-stone-400" />
+                      </div>
+                      <h4 className={`font-bold text-sm ${headingText}`}>No bookings found</h4>
+                      <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : "No booking orders have been placed yet."}</p>
                     </div>
                   ) : (
                     <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className={`border-b text-stone-505 font-bold ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
+                          <tr className={`border-b text-[10px] uppercase tracking-wider font-black text-stone-400 ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
                             <th className="p-4">Booking Info</th>
                             <th className="p-4">Client Details</th>
                             <th className="p-4">Specifications</th>
@@ -1441,7 +1505,7 @@ export default function AdminDashboard() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredBookings.map((b) => (
+                          {paginate(filteredBookings).map((b: any) => (
                             <tr key={b._id} className={`border-b last:border-0 transition-colors ${
                               isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
                             }`}>
@@ -1449,11 +1513,12 @@ export default function AdminDashboard() {
                                 <p className={`font-black text-sm leading-tight ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{b.venueName}</p>
                                 <div className="flex items-center gap-1.5 mt-1">
                                   <span className="text-[9px] text-stone-400 font-mono">ID: {b._id.slice(0, 8)}...</span>
-                                  <button 
+                                  <button
                                     onClick={() => copyToClipboard(b._id)}
-                                    className="text-[9px] font-bold text-stone-500 hover:underline cursor-pointer"
+                                    title="Copy booking ID"
+                                    className={`p-1 rounded-md transition-colors cursor-pointer ${copiedId === b._id ? "text-emerald-500" : "text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"}`}
                                   >
-                                    {copiedId === b._id ? "[Copied]" : "[Copy ID]"}
+                                    {copiedId === b._id ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                                   </button>
                                 </div>
                               </td>
@@ -1508,9 +1573,10 @@ export default function AdminDashboard() {
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteBooking(b._id)}
-                                  className="px-2 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-450 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
+                                  title="Delete booking"
+                                  className={`p-2 rounded-xl transition-colors cursor-pointer ${isDarkMode ? "text-stone-500 hover:text-red-400 hover:bg-red-500/10" : "text-stone-400 hover:text-red-600 hover:bg-red-50"}`}
                                 >
-                                  [Delete]
+                                  <Trash2 className="w-4 h-4" />
                                 </button>
                               </td>
                             </tr>
@@ -1519,6 +1585,7 @@ export default function AdminDashboard() {
                       </table>
                     </div>
                   )}
+                  <TablePager total={filteredBookings.length} />
                 </div>
               )}
 
@@ -1532,15 +1599,25 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {filteredUsers.length === 0 ? (
-                    <div className="py-20 text-center text-stone-500 text-sm font-semibold">
-                      No user accounts match "{searchTerm}"
+                  {loadingData && filteredUsers.length === 0 ? (
+                    <div className="flex flex-col gap-3">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className={`h-14 rounded-2xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                      ))}
+                    </div>
+                  ) : filteredUsers.length === 0 ? (
+                    <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                        <SearchX className="w-6 h-6 text-stone-400" />
+                      </div>
+                      <h4 className={`font-bold text-sm ${headingText}`}>No users found</h4>
+                      <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : "No user accounts have been created yet."}</p>
                     </div>
                   ) : (
                     <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className={`border-b text-stone-500 font-bold ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
+                          <tr className={`border-b text-[10px] uppercase tracking-wider font-black text-stone-400 ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
                             <th className="p-4">Name</th>
                             <th className="p-4">Email Address</th>
                             <th className="p-4">Contact Phone</th>
@@ -1550,11 +1627,18 @@ export default function AdminDashboard() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredUsers.map((u) => (
+                          {paginate(filteredUsers).map((u: any) => (
                             <tr key={u._id} className={`border-b last:border-0 transition-colors ${
                               isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"
                             }`}>
-                              <td className={`p-4 font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{u.name}</td>
+                              <td className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center font-black text-xs uppercase ${isDarkMode ? "bg-primary-500/15 text-primary-400" : "bg-primary-50 text-primary-600"}`}>
+                                    {(u.name || "?").slice(0, 1)}
+                                  </div>
+                                  <span className={`font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{u.name}</span>
+                                </div>
+                              </td>
                               <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{u.email}</td>
                               <td className={`p-4 font-medium ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{u.phone || "N/A"}</td>
                               <td className="p-4">
@@ -1572,9 +1656,10 @@ export default function AdminDashboard() {
                               <td className="p-4 text-center">
                                 <button
                                   onClick={() => handleDeleteUser(u._id)}
-                                  className="px-2.5 py-1 text-xs border rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 border-transparent hover:border-red-200 dark:border-red-500/25 text-stone-450 hover:text-red-600 dark:hover:text-red-400 transition-all cursor-pointer"
+                                  title="Delete user"
+                                  className={`p-2 rounded-xl transition-colors cursor-pointer ${isDarkMode ? "text-stone-500 hover:text-red-400 hover:bg-red-500/10" : "text-stone-400 hover:text-red-600 hover:bg-red-50"}`}
                                 >
-                                  [Delete]
+                                  <Trash2 className="w-4 h-4" />
                                 </button>
                               </td>
                             </tr>
@@ -1583,84 +1668,213 @@ export default function AdminDashboard() {
                       </table>
                     </div>
                   )}
+                  <TablePager total={filteredUsers.length} />
                 </div>
               )}
 
               {/* ─── TAB: SETTINGS ─── */}
               {activeTab === "settings" && (
-                <div className={`border rounded-3xl overflow-hidden p-6 shadow-none max-w-2xl ${cardClass}`}>
-                  <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
-                    <div>
-                      <h3 className={`font-extrabold text-base ${headingText}`}>Account Settings</h3>
-                      <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Manage your administrator account security</p>
+                <div className="flex flex-col gap-8 max-w-3xl">
+
+                  {/* 1. PROFILE AVATAR */}
+                  <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                    <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
+                      <div>
+                        <h3 className={`font-extrabold text-base ${headingText}`}>Profile Avatar</h3>
+                        <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Your administrator profile picture</p>
+                      </div>
+                    </div>
+                    <AvatarUploader
+                      currentImage={admin?.profileImage || ""}
+                      userName={admin?.name || "Admin"}
+                      onAvatarChange={(newImage) => admin && setAdmin({ ...admin, profileImage: newImage })}
+                    />
+                  </div>
+
+                  {/* 2. APPEARANCE */}
+                  <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                    <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
+                      <div>
+                        <h3 className={`font-extrabold text-base ${headingText}`}>Appearance</h3>
+                        <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Customize the look and feel of your dashboard</p>
+                      </div>
+                      <Palette className="w-5 h-5 text-stone-300" />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Light Mode Card */}
+                      <button
+                        type="button"
+                        onClick={() => { if (isDarkMode) toggleTheme(); }}
+                        className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
+                          !isDarkMode
+                            ? "border-[#EE7429] bg-gradient-to-br from-orange-50/80 to-amber-50/60 shadow-lg shadow-orange-500/10"
+                            : "border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-md"
+                        }`}
+                      >
+                        {!isDarkMode && (
+                          <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#EE7429] flex items-center justify-center">
+                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                          </div>
+                        )}
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                          !isDarkMode
+                            ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
+                            : "bg-stone-100 dark:bg-stone-800 text-stone-400 group-hover:bg-stone-200 dark:group-hover:bg-stone-700"
+                        }`}>
+                          <Sun className="w-6 h-6" />
+                        </div>
+                        {/* Mini preview */}
+                        <div className="w-full rounded-xl border border-stone-200 bg-white p-3 space-y-2 transition-all">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-stone-100"></div>
+                            <div className="h-2 w-16 rounded-full bg-stone-200"></div>
+                          </div>
+                          <div className="h-2 w-full rounded-full bg-stone-100"></div>
+                          <div className="h-2 w-3/4 rounded-full bg-stone-100"></div>
+                        </div>
+                        <div className="text-center">
+                          <p className={`text-sm font-bold ${!isDarkMode ? "text-[#EE7429]" : "text-stone-600 dark:text-stone-400"}`}>Light</p>
+                          <p className="text-[10px] text-stone-400 mt-0.5">Clean & bright</p>
+                        </div>
+                      </button>
+
+                      {/* Dark Mode Card */}
+                      <button
+                        type="button"
+                        onClick={() => { if (!isDarkMode) toggleTheme(); }}
+                        className={`group relative flex flex-col items-center gap-4 p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
+                          isDarkMode
+                            ? "border-[#EE7429] bg-gradient-to-br from-stone-800/80 to-stone-900/60 shadow-lg shadow-orange-500/10"
+                            : "border-stone-200 hover:border-stone-300 hover:shadow-md"
+                        }`}
+                      >
+                        {isDarkMode && (
+                          <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#EE7429] flex items-center justify-center">
+                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                          </div>
+                        )}
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                          isDarkMode
+                            ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
+                            : "bg-stone-100 text-stone-400 group-hover:bg-stone-200"
+                        }`}>
+                          <Moon className="w-6 h-6" />
+                        </div>
+                        {/* Mini preview */}
+                        <div className="w-full rounded-xl border border-stone-700 bg-stone-900 p-3 space-y-2 transition-all">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-stone-800"></div>
+                            <div className="h-2 w-16 rounded-full bg-stone-700"></div>
+                          </div>
+                          <div className="h-2 w-full rounded-full bg-stone-800"></div>
+                          <div className="h-2 w-3/4 rounded-full bg-stone-800"></div>
+                        </div>
+                        <div className="text-center">
+                          <p className={`text-sm font-bold ${isDarkMode ? "text-[#EE7429]" : "text-stone-600"}`}>Dark</p>
+                          <p className="text-[10px] text-stone-400 mt-0.5">Easy on the eyes</p>
+                        </div>
+                      </button>
                     </div>
                   </div>
 
-                  <form onSubmit={handleChangePassword} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-semibold mb-1 text-stone-500">Current Password</label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
-                        <input
-                          type="password"
-                          required
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          className={`w-full pl-9 pr-4 py-2 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
-                          placeholder="••••••••"
-                        />
+                  {/* 3. ACCOUNT SECURITY */}
+                  <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                    <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
+                      <div>
+                        <h3 className={`font-extrabold text-base ${headingText}`}>Account Security</h3>
+                        <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Manage your administrator account password</p>
                       </div>
+                      <Shield className="w-5 h-5 text-stone-300" />
                     </div>
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <label className="block text-xs font-semibold text-stone-500">New Password</label>
-                        <button
-                          type="button"
-                          onClick={generateStrongPassword}
-                          className="text-[10px] flex items-center gap-1 font-bold text-primary-600 hover:text-primary-700 transition-colors"
-                        >
-                          <Wand2 className="h-3 w-3" />
-                          Generate Strong
-                        </button>
-                      </div>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          required
-                          minLength={6}
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          className={`w-full pl-9 pr-10 py-2 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
-                          placeholder="••••••••"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600 transition-colors"
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {passwordMessage.text && (
-                      <p className={`text-xs font-semibold p-2 rounded-lg ${passwordMessage.type === "error" ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"}`}>
-                        {passwordMessage.text}
-                      </p>
-                    )}
 
-                    <div className="pt-2">
-                      <button
-                        type="submit"
-                        disabled={isChangingPassword}
-                        className="flex items-center gap-2 bg-stone-900 hover:bg-stone-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-50"
-                      >
-                        {isChangingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                        Save New Password
-                      </button>
+                    <form onSubmit={handleChangePassword} className="space-y-5">
+                      <div>
+                        <label className="block text-xs font-bold mb-1.5 text-stone-500 uppercase tracking-wider">Current Password</label>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                          <input
+                            type="password"
+                            required
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            className={`w-full pl-9 pr-4 py-2.5 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
+                            placeholder="••••••••"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between items-center mb-1.5">
+                          <label className="block text-xs font-bold text-stone-500 uppercase tracking-wider">New Password</label>
+                          <button
+                            type="button"
+                            onClick={generateStrongPassword}
+                            className="text-[10px] flex items-center gap-1 font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                          >
+                            <Wand2 className="h-3 w-3" />
+                            Generate Strong
+                          </button>
+                        </div>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            required
+                            minLength={6}
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className={`w-full pl-9 pr-10 py-2.5 border rounded-xl text-sm outline-none transition-all ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-200 focus:border-primary-500" : "bg-stone-50 border-stone-200 focus:border-primary-400"}`}
+                            placeholder="••••••••"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600 transition-colors"
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-stone-400 mt-1.5">Minimum 6 characters. Use a mix of letters, numbers, and symbols.</p>
+                      </div>
+                      
+                      {passwordMessage.text && (
+                        <div className={`flex items-center gap-2 text-xs font-semibold p-3 rounded-xl ${passwordMessage.type === "error" ? "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-500/20" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20"}`}>
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                          {passwordMessage.text}
+                        </div>
+                      )}
+
+                      <div className="pt-1">
+                        <button
+                          type="submit"
+                          disabled={isChangingPassword}
+                          className="flex items-center gap-2 bg-stone-900 dark:bg-stone-800 hover:bg-primary-600 dark:hover:bg-primary-600 text-white px-6 py-3 rounded-full text-xs font-bold transition-all disabled:opacity-50 shadow-sm"
+                        >
+                          {isChangingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                          Save New Password
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* 4. SIGN OUT */}
+                  <div className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
+                    <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
+                      <div>
+                        <h3 className={`font-extrabold text-base ${headingText}`}>Session</h3>
+                        <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Sign out of your admin account on this device</p>
+                      </div>
+                      <LogOut className="w-5 h-5 text-stone-300" />
                     </div>
-                  </form>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 text-red-600 dark:text-red-400 px-6 py-3 rounded-full text-xs font-bold transition-all border border-red-100 dark:border-red-500/20"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </div>
+
                 </div>
               )}
 
@@ -1677,9 +1891,19 @@ export default function AdminDashboard() {
                     </span>
                   </div>
 
-                  {filteredVenuesList.length === 0 ? (
-                    <div className="py-20 text-center text-stone-500 text-sm font-semibold">
-                      No venues matching "{searchTerm}"
+                  {loadingData && filteredVenuesList.length === 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className={`h-[470px] rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                      ))}
+                    </div>
+                  ) : filteredVenuesList.length === 0 ? (
+                    <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                        <SearchX className="w-6 h-6 text-stone-400" />
+                      </div>
+                      <h4 className={`font-bold text-sm ${headingText}`}>No venues found</h4>
+                      <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : "No venue listings have been added yet."}</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -1714,11 +1938,15 @@ export default function AdminDashboard() {
                             }
                             action={
                               <button
-                                onClick={async () => {
-                                  if (!confirm(`Delete "${v.name}" permanently?`)) return;
-                                  await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
-                                  fetchAllData();
-                                }}
+                                onClick={() => setConfirmDialog({
+                                  title: `Delete "${v.name}"?`,
+                                  desc: "This venue listing will be permanently removed from the platform. This action cannot be undone.",
+                                  onConfirm: async () => {
+                                    await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
+                                    notify("Venue deleted");
+                                    fetchAllData();
+                                  },
+                                })}
                                 className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
                                 title="Delete venue"
                               >
@@ -1734,6 +1962,7 @@ export default function AdminDashboard() {
                                       headers: { "Content-Type": "application/json" },
                                       body: JSON.stringify({ venueId: v.venueId, verified: !v.verified }),
                                     });
+                                    notify(v.verified ? "Venue marked as pending" : "Venue verified");
                                     fetchAllData();
                                   }}
                                   className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
@@ -1751,6 +1980,7 @@ export default function AdminDashboard() {
                                       headers: { "Content-Type": "application/json" },
                                       body: JSON.stringify({ venueId: v.venueId, featured: !v.featured }),
                                     });
+                                    notify(v.featured ? "Removed from featured" : "Venue featured");
                                     fetchAllData();
                                   }}
                                   className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
@@ -1768,6 +1998,7 @@ export default function AdminDashboard() {
                                       headers: { "Content-Type": "application/json" },
                                       body: JSON.stringify({ venueId: v.venueId, active: !v.active }),
                                     });
+                                    notify(v.active ? "Venue hidden from site" : "Venue is now live");
                                     fetchAllData();
                                   }}
                                   className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${
@@ -1805,9 +2036,19 @@ export default function AdminDashboard() {
                       </span>
                     </div>
 
-                    {filteredServices.length === 0 ? (
-                      <div className="py-20 text-center text-stone-500 text-sm font-semibold">
-                        No {activeTab} matching "{searchTerm}"
+                    {loadingData && filteredServices.length === 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                        {[...Array(4)].map((_, i) => (
+                          <div key={i} className={`h-[450px] rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                        ))}
+                      </div>
+                    ) : filteredServices.length === 0 ? (
+                      <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                          <SearchX className="w-6 h-6 text-stone-400" />
+                        </div>
+                        <h4 className={`font-bold text-sm capitalize ${headingText}`}>No {activeTab} found</h4>
+                        <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : `No ${activeTab} listings have been added yet.`}</p>
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -1891,6 +2132,65 @@ export default function AdminDashboard() {
           </AnimatePresence>
         </main>
       </div>
+
+      {/* ─── Destructive-action confirmation dialog ─── */}
+      <AnimatePresence>
+        {confirmDialog && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-stone-950/50 backdrop-blur-sm"
+            onClick={() => setConfirmDialog(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.18 }}
+              onClick={(e) => e.stopPropagation()}
+              className={`w-full max-w-sm rounded-3xl border p-6 ${isDarkMode ? "bg-stone-900 border-stone-800" : "bg-white border-stone-200"}`}
+            >
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${isDarkMode ? "bg-red-500/10" : "bg-red-50"}`}>
+                <Trash2 className="w-5 h-5 text-red-500" />
+              </div>
+              <h3 className={`font-extrabold text-base ${headingText}`}>{confirmDialog.title}</h3>
+              <p className="text-xs text-stone-400 font-semibold mt-1.5 leading-relaxed">{confirmDialog.desc}</p>
+              <div className="flex gap-2.5 mt-6">
+                <button
+                  onClick={() => setConfirmDialog(null)}
+                  className={`flex-1 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer border ${isDarkMode ? "border-stone-700 text-stone-300 hover:bg-stone-800" : "border-stone-200 text-stone-600 hover:bg-stone-50"}`}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => { const fn = confirmDialog.onConfirm; setConfirmDialog(null); fn(); }}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ─── Toast notifications ─── */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.97 }}
+            className="fixed bottom-6 right-6 z-[95] flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-stone-950 text-white border border-stone-800 shadow-2xl"
+          >
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
+              {toast.type === "success" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <AlertCircle className="w-3.5 h-3.5 text-red-400" />}
+            </span>
+            <span className="text-xs font-bold">{toast.msg}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

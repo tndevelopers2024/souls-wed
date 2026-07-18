@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { CURRENCIES } from "@/lib/currency";
+import { useWishlistStore } from "@/lib/store/useWishlistStore";
 
 // --- CUSTOM SVG ICON COMPONENTS (replacing lucide-react) ---
 
@@ -141,13 +142,28 @@ const Menu = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const Heart = ({ className, fill = "none" }: { className?: string, fill?: string }) => (
+  <svg
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill={fill}
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  </svg>
+);
+
 // --- NAVIGATION CONFIG ---
 
 const navLinks = [
   { label: "Home", href: "/" },
   {
-    label: "The Collection",
-    href: "#",
+    label: "Categories",
+    href: "/categories",
     megaMenu: [
       {
         title: "VENUES & STAYS",
@@ -181,9 +197,9 @@ function DropdownMenu({ columns }: { columns: { title: string; items: { label: s
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 10, scale: 0.98 }}
       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-      className="absolute top-full left-1/2 -translate-x-1/2 mt-6 w-max min-w-[800px] rounded-[32px] z-50 p-8 flex gap-12 before:absolute before:-top-8 before:left-0 before:w-full before:h-8 before:bg-transparent"
+      className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-max min-w-[280px] rounded-[24px] z-50 p-6 flex flex-col gap-6 before:absolute before:-top-6 before:left-0 before:w-full before:h-6 before:bg-transparent"
       style={{
-        background: "var(--sw-nav-solid)",
+        background: "var(--sw-nav-default)",
         backdropFilter: "blur(20px)",
         border: "1px solid rgba(238,116,41,0.15)",
         boxShadow: "0 24px 60px rgba(238,116,41,0.12)",
@@ -191,7 +207,7 @@ function DropdownMenu({ columns }: { columns: { title: string; items: { label: s
       onMouseLeave={() => setHoveredItem(null)}
     >
       {columns.map((column, colIdx) => (
-        <div key={colIdx} className="flex-1 flex flex-col gap-4 min-w-[180px]">
+        <div key={colIdx} className="flex flex-col gap-4">
           <h4 className="text-xs font-black text-primary-600 uppercase tracking-widest pb-3 mb-1 border-b border-primary-600/20">{column.title}</h4>
           <div className="flex flex-col gap-2.5">
             {column.items.map((item) => {
@@ -234,14 +250,20 @@ function DropdownMenu({ columns }: { columns: { title: string; items: { label: s
 export default function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
   const [hoveredCurrency, setHoveredCurrency] = useState<string | null>(null);
   const { currency, setCurrency } = useCurrency();
+  const lastScrollY = useRef(0);
 
   const currencyRef = useRef<HTMLDivElement>(null);
-  const userRef = useRef<HTMLDivElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
+  
+  // Wishlist state
+  const wishlistItems = useWishlistStore((state) => state.items);
+  const [mounted, setMounted] = useState(false);
 
   const isAuthPage = pathname?.startsWith("/login") || pathname?.startsWith("/signup");
 
@@ -250,11 +272,13 @@ export default function Navbar() {
     name: string;
     email: string;
     role: string;
+    profileImage?: string;
   }
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setMounted(true);
     async function checkSession() {
       try {
         const res = await fetch("/api/auth/me");
@@ -289,13 +313,30 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      const currentScrollY = window.scrollY;
+      const scrollDelta = currentScrollY - lastScrollY.current;
+      
+      setScrolled(currentScrollY > 40);
+      
+      if (currentScrollY > 80 && !mobileOpen) {
+        if (scrollDelta > 4) {
+          // scrolling down
+          setHidden(true);
+        } else if (scrollDelta < -4) {
+          // scrolling up
+          setHidden(false);
+        }
+      } else if (currentScrollY <= 80) {
+        setHidden(false);
+      }
+      
+      lastScrollY.current = currentScrollY;
     };
     const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
       // Close dropdowns if the click/touch event is outside the menus
       if (
         currencyRef.current && !currencyRef.current.contains(e.target as Node) &&
-        userRef.current && !userRef.current.contains(e.target as Node)
+        accountRef.current && !accountRef.current.contains(e.target as Node)
       ) {
         setOpenDropdown(null);
       }
@@ -312,7 +353,7 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleOutsideClick);
       document.removeEventListener("touchstart", handleOutsideClick);
     };
-  }, []);
+  }, [mobileOpen]);
 
   useLayoutEffect(() => {
     return () => {
@@ -324,15 +365,19 @@ export default function Navbar() {
   if (isAuthPage) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6">
+    <motion.div 
+      className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 sm:px-6 sm:pt-6"
+      initial={{ y: 0 }}
+      animate={{ y: hidden ? "-100%" : 0 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    >
       {/* Floating capsule bar */}
       <div
         className="overflow-visible w-full md:w-fit mx-auto transition-all duration-300 ease-in-out"
         style={{
-          background: mobileOpen ? "var(--sw-nav-solid)" : (scrolled ? "var(--sw-nav-scrolled)" : "var(--sw-nav-default)"),
+          background: mobileOpen ? "var(--sw-nav-default)" : (scrolled ? "var(--sw-nav-scrolled)" : "var(--sw-nav-default)"),
           backdropFilter: "blur(24px) saturate(180%)",
           border: "1px solid rgba(238,116,41,0.15)",
-          boxShadow: scrolled ? "0 10px 40px rgba(238,116,41,0.08)" : "0 4px 20px rgba(238,116,41,0.04)",
           transform: scrolled ? "translateY(2px)" : "translateY(0)",
           borderRadius: mobileOpen ? "28px" : "9999px"
         }}
@@ -376,7 +421,7 @@ export default function Navbar() {
                   >
                     <Link
                       href={link.href}
-                      className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-primary-600 group z-10"
+                      className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 hover:text-primary-600 group z-10"
                       style={{ color: showPill ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                     >
                       {showPill && (
@@ -417,6 +462,35 @@ export default function Navbar() {
 
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-3">
+              {/* Wishlist Link */}
+              <Link 
+                href="/wishlist" 
+                className="relative flex items-center justify-center p-2.5 rounded-full transition-colors group z-10"
+                title="Wishlist"
+                onMouseEnter={() => setHoveredPath('/wishlist')}
+                onMouseLeave={() => setHoveredPath(null)}
+              >
+                {(hoveredPath === '/wishlist' || (!hoveredPath && pathname === '/wishlist')) && (
+                  <motion.div
+                    layoutId="nav-active-pill"
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                      border: "1px solid rgba(238, 116, 41, 0.1)",
+                      backdropFilter: "blur(12px) saturate(150%)",
+                      boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                      zIndex: -1,
+                    }}
+                    transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                  />
+                )}
+                <Heart className={`w-[18px] h-[18px] transition-colors relative z-10 ${(hoveredPath === '/wishlist' || pathname === '/wishlist') ? 'text-red-500' : 'text-slate-500'}`} />
+                {mounted && wishlistItems.length > 0 && (
+                  <span className="absolute top-1.5 right-1.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-red-500 text-white text-[9px] font-bold rounded-full shadow-sm z-10">
+                    {wishlistItems.length}
+                  </span>
+                )}
+              </Link>
 
               <div
                 className="relative"
@@ -432,7 +506,7 @@ export default function Navbar() {
               >
                 <button
                   onClick={() => setOpenDropdown(openDropdown === 'currency' ? null : 'currency')}
-                  className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-bold transition-all duration-300 hover:text-primary-600 group z-10"
+                  className="relative flex items-center gap-1 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 hover:text-primary-600 group z-10"
                   style={{ color: hoveredPath === 'currency' || openDropdown === 'currency' ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                   title="Change Currency"
                 >
@@ -469,7 +543,7 @@ export default function Navbar() {
                       transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                       className="absolute top-full right-0 mt-6 min-w-[140px] rounded-[28px] p-2 z-50 flex flex-col before:absolute before:-top-6 before:left-0 before:w-full before:h-6 before:bg-transparent"
                       style={{
-                        background: "var(--sw-nav-solid)",
+                        background: "var(--sw-nav-default)",
                         backdropFilter: "blur(20px)",
                         border: "1px solid rgba(238,116,41,0.15)",
                         boxShadow: "0 24px 60px rgba(238,116,41,0.12)",
@@ -524,9 +598,16 @@ export default function Navbar() {
               {/* Login / My Account */}
               <Link
                 href={user ? (user.role === "admin" ? "/admin/dashboard" : user.role === "vendor" ? "/vendor/dashboard" : "/dashboard") : "/login"}
-                className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 overflow-hidden group"
+                className="relative text-sm font-extrabold px-7 py-3 rounded-full text-white transition-all duration-300 overflow-hidden group flex items-center gap-2"
                 style={{ background: "var(--sw-primary)" }}
               >
+                {user && user.profileImage ? (
+                  user.profileImage.startsWith("/") || user.profileImage.startsWith("http") ? (
+                    <img src={user.profileImage} alt="" className="w-6 h-6 rounded-full object-cover border border-white/30 relative z-10" />
+                  ) : (
+                    <span className="relative z-10 text-base leading-none">{user.profileImage}</span>
+                  )
+                ) : null}
                 <span className="relative z-10">{user ? "My Account" : "Login"}</span>
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-[navbar-shimmer_1.5s_infinite] z-0" />
               </Link>
@@ -549,33 +630,19 @@ export default function Navbar() {
             }`}
           style={{ borderColor: "rgba(0,0,0,0.06)" }}
         >
-          <div className="px-4 py-3 flex flex-col gap-1">
+          <div className="px-4 py-3 pb-6 flex flex-col gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== "/" && pathname?.startsWith(link.href));
               return (
                 <div key={link.href} className="flex flex-col">
                   <Link
                     href={link.href}
-                    className={`font-bold py-2.5 px-3 rounded-full text-sm transition-colors hover:bg-primary-50 ${isActive ?'bg-primary-50':''}`}
+                    className={`font-semibold py-2.5 px-3 rounded-full text-sm transition-colors hover:bg-primary-50 ${isActive ?'bg-primary-50':''}`}
                     style={{ color: isActive ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
-                    onClick={() => !link.megaMenu && setMobileOpen(false)}
+                    onClick={() => setMobileOpen(false)}
                   >
                     {link.label}
                   </Link>
-                  {link.megaMenu && (
-                    <div className="pl-6 flex flex-col gap-1 mt-1 border-l-2 ml-4 border-primary-100">
-                      {link.megaMenu.flatMap(col => col.items).map(item => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className="py-1.5 text-sm font-bold text-slate-600 hover:text-primary-500"
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -605,9 +672,19 @@ export default function Navbar() {
               ) : user ? (
                 <>
                   <div className="px-3 py-2 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-primary-500 text-white flex items-center justify-center font-bold text-sm uppercase shadow-sm">
-                      {user.name.charAt(0)}
-                    </div>
+                    {user.profileImage && (user.profileImage.startsWith("/") || user.profileImage.startsWith("http")) ? (
+                      <div className="w-9 h-9 rounded-full overflow-hidden shadow-sm border border-white/20">
+                        <img src={user.profileImage} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    ) : user.profileImage && user.profileImage.length <= 10 ? (
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-stone-100 to-stone-200 flex items-center justify-center text-lg shadow-sm">
+                        {user.profileImage}
+                      </div>
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-primary-500 text-white flex items-center justify-center font-bold text-sm uppercase shadow-sm">
+                        {user.name.charAt(0)}
+                      </div>
+                    )}
                     <div>
                       <p className="text-sm font-bold text-slate-800">{user.name}</p>
                       <p className="text-xs text-slate-500 capitalize">{user.role} Profile</p>
@@ -622,6 +699,28 @@ export default function Navbar() {
                     <LayoutDashboard className="w-4 h-4 text-primary-500" />
                     <span>Dashboard</span>
                   </Link>
+
+                  {/* Mobile Wishlist Option */}
+                  <Link
+                    href="/wishlist"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between px-3 py-3 rounded-xl transition-colors hover:bg-slate-50 group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-red-50 transition-colors">
+                        <Heart className="w-4 h-4 text-slate-500 group-hover:text-red-500 transition-colors" />
+                      </div>
+                      <span className="text-sm font-semibold text-[var(--sw-navy)]">My Wishlist</span>
+                    </div>
+                    {mounted && wishlistItems.length > 0 && (
+                      <span className="flex items-center justify-center min-w-[20px] h-[20px] px-1.5 bg-red-500 text-white text-[11px] font-bold rounded-full shadow-sm">
+                        {wishlistItems.length}
+                      </span>
+                    )}
+                  </Link>
+
+                  <div className="h-px bg-slate-100 my-1 mx-3" />
+
                   <button
                     onClick={() => {
                       handleLogout();
@@ -710,6 +809,6 @@ export default function Navbar() {
           background-color: rgba(0, 0, 0, 0.3);
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 }

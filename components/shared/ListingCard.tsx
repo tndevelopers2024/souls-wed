@@ -28,6 +28,11 @@ export interface ListingCardProps {
   action?: React.ReactNode;
   /** Extra row beneath the price/action (e.g. admin moderation toggles). */
   footer?: React.ReactNode;
+  /** Free-form content between the tags row and the price/action row
+   *  (e.g. a booking's date/guest details). */
+  body?: React.ReactNode;
+  /** Height of the frosted scrim — raise it when `body` adds tall content. */
+  scrimHeightClass?: string;
   className?: string;
   imageSizes?: string;
 }
@@ -48,7 +53,7 @@ export default function ListingCard({
   price,
   priceDisplay,
   unit,
-  priceLabel = "from",
+  priceLabel,
   rating = 0,
   reviewCount,
   tags,
@@ -56,6 +61,8 @@ export default function ListingCard({
   topRight,
   action,
   footer,
+  body,
+  scrimHeightClass = "h-[69%]",
   className = "",
   imageSizes = "(max-width: 640px) 85vw, (max-width: 768px) 300px, 340px",
 }: ListingCardProps) {
@@ -64,14 +71,14 @@ export default function ListingCard({
 
   return (
     <div
-      className={`relative rounded-[32px] overflow-hidden shadow-sm border border-slate-100 dark:border-white/10 w-full h-full bg-white dark:bg-[var(--sw-surface)] [transform:translateZ(0)] ${className}`}
+      className={`relative rounded-[32px] overflow-hidden border border-slate-200 dark:border-white/10 w-full h-full bg-white dark:bg-[var(--sw-surface)] [transform:translateZ(0)] ${className}`}
     >
       <Image
         src={image}
         alt={name}
         fill
         sizes={imageSizes}
-        className="object-cover transition-transform duration-700 group-hover:scale-105"
+        className="object-cover"
       />
 
       {/* Top-left: custom badge, else an automatic rating pill */}
@@ -79,7 +86,7 @@ export default function ListingCard({
         badge
       ) : rating > 0 ? (
         <div
-          className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm"
+          className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
           style={{ background: "var(--sw-chip-bg-hover)", backdropFilter: "blur(10px)" }}
         >
           <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
@@ -90,7 +97,7 @@ export default function ListingCard({
       {topRight && <div className="absolute top-3 right-3 z-20">{topRight}</div>}
 
       {/* Progressive frosted blur + theme-aware scrim */}
-      <div className="absolute inset-x-0 bottom-0 h-[69%] z-10 pointer-events-none">
+      <div className={`absolute inset-x-0 bottom-0 ${scrimHeightClass} z-10 pointer-events-none`}>
         {[
           { blur: 1, solid: 55, fade: 100 },
           { blur: 3, solid: 42, fade: 78 },
@@ -149,11 +156,13 @@ export default function ListingCard({
 
         {tags && <div className="flex flex-wrap gap-2 mb-4">{tags}</div>}
 
+        {body}
+
         {(hasPrice || action) && (
           <div className="flex items-end justify-between gap-3 mt-auto">
             {hasPrice ? (
               <div className="flex flex-col">
-                <span className="text-[11px] font-medium text-slate-500 dark:text-stone-400 block mb-0.5">{priceLabel}</span>
+                {priceLabel && <span className="text-[11px] font-medium text-slate-500 dark:text-stone-400 block mb-0.5">{priceLabel}</span>}
                 <div className="flex items-baseline gap-1">
                   <span className="text-[22px] font-bold text-slate-900 dark:text-stone-100 leading-none tracking-tight">
                     {priceDisplay ?? convertPriceString(price as string | number, currency)}
@@ -183,7 +192,7 @@ export function CardTag({ children, tone = "neutral" }: { children: React.ReactN
       ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/25"
       : "bg-white/80 dark:bg-white/10 text-slate-700 dark:text-stone-300 border-slate-900/5 dark:border-white/10";
   return (
-    <span className={`flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full border shadow-sm ${toneClass}`}>
+    <span className={`flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full border ${toneClass}`}>
       {children}
     </span>
   );

@@ -256,7 +256,7 @@ export default function BookingForm({
         <p className="text-xs text-slate-400 mb-6">Pay {formatAsCurrency(priceBreakdown.advance, currency)} advance to confirm.</p>
         <button
           onClick={() => router.push(`/checkout/${bookingId}`)}
-          className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-full text-sm transition-colors shadow-sm"
+          className="w-full bg-primary-600 text-white font-bold py-3.5 rounded-full text-sm"
         >
           Proceed to Checkout
         </button>
@@ -275,7 +275,7 @@ export default function BookingForm({
               onClick={() => setBookingType(type.value)}
               className={`flex-1 min-w-fit px-3 py-2.5 text-xs font-bold transition-colors rounded-xl ${
                 bookingType === type.value
-                  ?"bg-white text-slate-900 shadow-sm"
+                  ?"bg-white text-slate-900"
                   :"text-slate-500 hover:text-slate-700"
               }`}
             >

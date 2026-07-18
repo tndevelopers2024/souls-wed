@@ -1098,15 +1098,15 @@ export const venues: Venue[] = [
 
 
 export const cities = [
-  { name: "Paris", image: "/soulswed/vendors/1213.jpg" },
-  { name: "New York", image: "/soulswed/vendors/1207.jpg" },
-  { name: "London", image: "/soulswed/vendors/1206.jpg" },
-  { name: "Tokyo", image: "/soulswed/acc_Photographers.jpg" },
-  { name: "Dubai", image: "/soulswed/pageimg_venues.jpg" },
-  { name: "Rome", image: "/soulswed/vendors/1213.jpg" },
-  { name: "Bali", image: "/soulswed/acc_decorators1.jpg" },
-  { name: "Sydney", image: "/soulswed/vendors/1207.jpg" },
-  { name: "Istanbul", image: "/soulswed/vendors/1206.jpg" },
+  { name: "Paris", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "New York", image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "London", image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Tokyo", image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Dubai", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Rome", image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Bali", image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Sydney", image: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Istanbul", image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=200&h=200&fit=crop&crop=center&q=80" },
 ];
 
 export function getVenueById(id: string): Venue | undefined {

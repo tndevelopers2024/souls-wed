@@ -16,8 +16,8 @@ export async function POST(req: Request) {
       sessionOptions
     );
 
-    if (!session.isLoggedIn || (session.role !== "vendor" && session.role !== "admin")) {
-      return NextResponse.json({ message: "Vendor or admin login required." }, { status: 401 });
+    if (!session.isLoggedIn) {
+      return NextResponse.json({ message: "Login required." }, { status: 401 });
     }
 
     const formData = await req.formData();

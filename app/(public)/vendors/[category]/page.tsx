@@ -2,8 +2,8 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, Loader2, Building2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Loader2, Building2 } from "lucide-react";
 import VendorCard from "@/components/vendors/VendorCard";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
 import Link from "next/link";
@@ -34,9 +34,8 @@ export default function VendorCategoryPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   
   const [search, setSearch] = useState("");
-  const [activeCity, setActiveCity] = useState("");
+  const [activeCities, setActiveCities] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState(12);
-  const [searchFocused, setSearchFocused] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Fetch vendors by category
@@ -89,12 +88,12 @@ export default function VendorCategoryPage() {
       );
     }
 
-    if (activeCity) {
-      list = list.filter((v) => v.city.toLowerCase().includes(activeCity.toLowerCase()));
+    if (activeCities.length > 0) {
+      list = list.filter((v) => activeCities.some((city) => v.city.toLowerCase().includes(city.toLowerCase())));
     }
 
     return list;
-  }, [search, activeCity, allVendors]);
+  }, [search, activeCities, allVendors]);
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -133,11 +132,12 @@ export default function VendorCategoryPage() {
   return (
     <div className="min-h-screen bg-[var(--sw-white)]">
       {/* ══════════════════════ HERO ══════════════════════ */}
-      <div
-        className="relative overflow-hidden pt-28 pb-20 px-4 text-center"
-        style={{ background: "linear-gradient(150deg, #fdf6f0 0%, #fceee3 40%, #f5dcc9 100%)" }}
-      >
-        <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative z-10">
+      <div className="pt-28 pb-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div
+          className="relative overflow-hidden pt-16 pb-16 px-4 text-center rounded-[40px] shadow-sm border border-[rgba(238,116,41,0.6)]"
+          style={{ background: "linear-gradient(150deg, #fdf6f0 0%, #fceee3 40%, #f5dcc9 100%)" }}
+        >
+          <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest text-[var(--sw-primary)] bg-[rgba(238,116,41,0.12)] border border-[rgba(238,116,41,0.25)]">
             Explore Expert {displayCategory}
           </div>
@@ -147,45 +147,25 @@ export default function VendorCategoryPage() {
           <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
             Discover the finest {displayCategory.toLowerCase()} curated to make your special day perfect.
           </p>
-
-          {/* Search bar */}
-          <motion.div className="max-w-2xl mx-auto relative" animate={{ scale: searchFocused ? 1.02 : 1 }}>
-            <div className={`flex items-center rounded-full px-5 py-3 gap-3 transition-all duration-300 bg-white ${searchFocused ?"border-2 border-[var(--sw-primary)] shadow-[0_8px_32px_rgba(238,116,41,0.18)]":"border-2 border-[rgba(0,0,0,0.08)] shadow-sm"}`}>
-              <Search className={`w-5 h-5 flex-shrink-0 transition-colors ${searchFocused ?"text-[var(--sw-primary)]":"text-slate-400"}`} />
-              <input
-                type="text"
-                placeholder={`Search ${displayCategory.toLowerCase()} by name or city...`}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                className="flex-1 text-sm font-medium outline-none bg-transparent text-[var(--sw-navy)]"
-              />
-              <AnimatePresence>
-                {search && (
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.7 }}
-                    onClick={() => setSearch("")}
-                    className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-black/5"
-                  >
-                    <X className="w-3.5 h-3.5 text-slate-500"/>
-                  </motion.button>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
         </motion.div>
+      </div>
       </div>
 
       {/* ══════════════════════ FILTER BAR ══════════════════════ */}
-      <VenueFilterBar activeCity={activeCity} onCityChange={setActiveCity} />
+      <VenueFilterBar
+        activeCities={activeCities}
+        onCityChange={setActiveCities}
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder={`Search ${displayCategory.toLowerCase()} by name or city...`}
+      />
 
       {/* ══════════════════════ MAIN CONTENT ══════════════════════ */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8">
           <p className="text-sm text-slate-500">
             Showing <span className="font-bold text-slate-800">{filtered.length}</span> {displayCategory.toLowerCase()}
-            {activeCity && <span> in <span className="font-bold text-[var(--sw-primary)]">{activeCity}</span></span>}
+            {activeCities.length > 0 && <span> in <span className="font-bold text-[var(--sw-primary)]">{activeCities.join(", ")}</span></span>}
           </p>
         </div>
 
@@ -194,15 +174,15 @@ export default function VendorCategoryPage() {
           <div className="text-center py-20 flex flex-col items-center">
             <p className="text-2xl font-bold mb-2 text-[var(--sw-navy)] font-heading">No {displayCategory.toLowerCase()} found</p>
             <p className="text-slate-400 text-sm mb-6 max-w-xs">We couldn't find any {displayCategory.toLowerCase()} matching your criteria.</p>
-            <button onClick={() => { setSearch(""); setActiveCity(""); }} className="px-6 py-2.5 rounded-full text-sm font-bold text-white bg-[var(--sw-primary)] shadow-[0_4px_14px_rgba(238,116,41,0.35)]">
+            <button onClick={() => { setSearch(""); setActiveCities([]); }} className="px-6 py-2.5 rounded-full text-sm font-bold text-white bg-[var(--sw-primary)] shadow-[0_4px_14px_rgba(238,116,41,0.35)]">
               Clear All Filters
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="flex flex-wrap justify-center gap-5">
             {visible.map((vendor, i) => (
-              <motion.div key={vendor._id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.4) }} className="h-[400px]">
-                <Link href={`/vendor/${vendor._id}`} className="block h-full">
+              <motion.div key={vendor._id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.4) }} className="w-full sm:w-[320px] md:w-[340px] lg:w-[360px] h-[460px] sm:h-[500px] lg:h-[540px]">
+                <Link href={`/vendor/${vendor._id}`} className="block h-full w-full">
                   <VendorCard
                     id={vendor._id}
                     name={vendor.businessName || vendor.name}
