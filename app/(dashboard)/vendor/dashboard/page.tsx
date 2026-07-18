@@ -14,6 +14,7 @@ import { useTheme } from "@/lib/ThemeContext";
 import AvatarUploader from "@/components/shared/AvatarUploader";
 import VendorAnalyticsChart from "@/components/vendors/VendorAnalyticsChart";
 import { VENDOR_CATEGORIES } from "@/lib/config/categories";
+import { PhoneInput } from "@/components/shared/PhoneInput";
 
 interface VendorSession {
   id: string;
@@ -1832,12 +1833,10 @@ export default function VendorDashboard() {
                           </div>
                           <div className="flex flex-col gap-1.5">
                             <label className="font-bold text-stone-500 uppercase tracking-wider">Phone</label>
-                            <input
-                              type="tel"
+                            <PhoneInput
                               name="phone"
                               defaultValue={vendor.phone}
-                              className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                                }`}
+                              className={`border rounded-xl outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                             />
                           </div>
                         </div>

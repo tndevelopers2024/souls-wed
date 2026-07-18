@@ -11,3 +11,11 @@ STRIPE_SECRET_KEY=sk_test_51TmsW809c0AavGXlaqIFrAOgp2tYD4HicS7aCCcedEjK08PJIMUCI
 
 # Maintenance Mode (true to show maintenance page, false or remove to show main site)
 MAINTENANCE_MODE=false
+
+# SMTP Email Configuration
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=free1for1all1@gmail.com
+SMTP_PASS=clrsvuidsfhsvhfb
+SMTP_FROM_NAME="SoulsWed Security"
+SMTP_FROM=free1for1all1@gmail.com

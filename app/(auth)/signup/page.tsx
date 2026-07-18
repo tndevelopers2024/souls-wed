@@ -21,7 +21,6 @@ import {
   Mail,
   Phone,
   Building,
-  MapPin,
   Loader2,
   AlertCircle,
   KeyRound,
@@ -31,7 +30,10 @@ import {
   Store,
   ShieldCheck,
   Sparkles,
+  Building2,
+  Phone as PhoneIcon,
 } from "lucide-react";
+import { PhoneInput } from "@/components/shared/PhoneInput";
 
 type UserRole = "user" | "vendor" | "admin";
 
@@ -467,16 +469,13 @@ function SignupContent() {
 
                   {/* Phone (user + vendor) */}
                   <Field label="Phone Number">
-                      <input
-                        type="tel"
-                        placeholder="Enter phone number"
+                      <PhoneInput
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className={INPUT_CLS}
-                        required={role === "vendor"}
-                        autoComplete="tel"
+                        onChange={setPhone}
+                        placeholder="Enter phone number"
+                        disabled={isLoading}
+                        className={shake ? "animate-shake" : ""}
                       />
-                      <Phone className={ICON_CLS} />
                     </Field>
 
                   {/* Email */}

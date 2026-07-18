@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { LayoutDashboard, BookHeart, Settings, Lock, Save, Wand2, Eye, EyeOff, Loader2 } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 import AvatarUploader from "@/components/shared/AvatarUploader";
+import { PhoneInput } from "@/components/shared/PhoneInput";
 
 interface UserSession {
   id: string;
@@ -402,12 +403,12 @@ export default function UserDashboard() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="font-bold text-slate-500 uppercase tracking-wider text-[11px]">Phone</label>
-                    <input 
-                      type="text" 
-                      placeholder="Add phone number" 
-                      defaultValue={user.phone} 
-                      className="border rounded-xl px-4 py-3 outline-none font-semibold bg-slate-50 border-slate-200 text-slate-800"
-                      disabled
+                    <PhoneInput
+                      name="phone"
+                      placeholder="Add phone number"
+                      defaultValue={user.phone}
+                      disabled={true}
+                      className="border rounded-xl outline-none font-semibold bg-slate-50 border-slate-200 text-slate-800"
                     />
                   </div>
                   <p className="text-xs text-slate-400 font-medium mt-2 mb-4">Profile parameters are currently managed by the administrator directory sync.</p>

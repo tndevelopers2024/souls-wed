@@ -57,7 +57,7 @@ function VerifyEmailContent() {
       setTimeout(() => {
         if (role === "admin") router.push("/admin/dashboard");
         else if (role === "vendor") router.push("/vendor/dashboard");
-        else router.push("/user/dashboard"); // Assuming user dashboard exists, adjust if needed
+        else router.push("/dashboard");
       }, 1500);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Verification failed. Please try again.");

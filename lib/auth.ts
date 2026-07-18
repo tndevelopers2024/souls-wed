@@ -71,9 +71,9 @@ export function validatePhone(phone: string): string | null {
   
   const cleanPhone = phone.replace(/[\s-]/g, "");
   
-  // Basic length and character check
-  if (!/^\+?[0-9]{10,15}$/.test(cleanPhone)) {
-    return "Invalid phone number format. Please provide a valid 10 to 15 digit number.";
+  // Basic length and character check (allowing country code + 4 to 15 digits)
+  if (!/^\+?[0-9]{5,15}$/.test(cleanPhone)) {
+    return "Invalid phone number format. Please provide a valid phone number.";
   }
 
   // Block sequential numbers (e.g., 1234567890, 0123456789, 9876543210)
@@ -82,13 +82,15 @@ export function validatePhone(phone: string): string | null {
   }
 
   // Block repetitive numbers (e.g., 9999999999, 1111111111)
-  if (/^(\d)\1{7,}$/.test(cleanPhone.replace('+', ''))) {
+  if (/^(\d)\1{6,}$/.test(cleanPhone.replace('+', ''))) {
     return "Please provide a real phone number, not repeated digits.";
   }
 
-  // If it's a standard 10 digit Indian number without country code, enforce 6-9 starting digit
-  if (/^\d{10}$/.test(cleanPhone)) {
-    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+  // Enforce specific rules for Indian numbers (+91 or exactly 10 digits without +)
+  const isIndianFormat = cleanPhone.startsWith('+91') || (/^\d{10}$/.test(cleanPhone));
+  if (isIndianFormat) {
+    const localPart = cleanPhone.startsWith('+91') ? cleanPhone.substring(3) : cleanPhone;
+    if (localPart.length === 10 && !/^[6-9]\d{9}$/.test(localPart)) {
       return "Indian mobile numbers must start with 6, 7, 8, or 9.";
     }
   }

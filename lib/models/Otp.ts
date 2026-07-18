@@ -5,6 +5,8 @@ const OtpSchema = new Schema({
   role: { type: String, required: true },
   otp: { type: String, required: true },
   registrationData: { type: Schema.Types.Mixed }, // Store pending registration fields here
+  sendCount: { type: Number, default: 1 },
+  lastSentAt: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now, expires: 900 }, // Expires after 15 minutes (900 seconds)
 });
 
