@@ -79,7 +79,8 @@ export async function POST(req: Request) {
     }
 
     // ─── Step 3.5: Check if email is verified ───
-    if (!user.isEmailVerified) {
+    // Exception: Allow admin@soulswed.com to bypass verification for easier testing/admin access
+    if (!user.isEmailVerified && user.email !== "admin@soulswed.com") {
       return NextResponse.json(
         { message: "Please verify your email using the OTP sent to you before logging in.", unverified: true },
         { status: 403 }
