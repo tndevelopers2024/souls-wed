@@ -225,6 +225,7 @@ export default function VendorDashboard() {
   const [venues, setVenues] = useState<VenueItem[]>([]);
 
   // Venue management UI state
+  const [venueLayout, setVenueLayout] = useState<"grid" | "list">("grid");
   const [venueView, setVenueView] = useState<"grid" | "add" | "edit">("grid");
   const [editingVenue, setEditingVenue] = useState<VenueItem | null>(null);
   const [venueForm, setVenueForm] = useState<VenueFormState>(defaultVenueForm);
@@ -234,6 +235,7 @@ export default function VendorDashboard() {
 
   // Services managed by this vendor account
   const [services, setServices] = useState<ServiceItem[]>([]);
+  const [serviceLayout, setServiceLayout] = useState<"grid" | "list">("grid");
   const [serviceView, setServiceView] = useState<"grid" | "add" | "edit">("grid");
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
   const [serviceForm, setServiceForm] = useState<ServiceFormState>(defaultServiceForm);
@@ -1296,6 +1298,20 @@ export default function VendorDashboard() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
+                    <div className={`flex rounded-lg p-1 mr-2 ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                      <button 
+                        onClick={() => setVenueLayout('grid')}
+                        className={`p-1.5 rounded-md transition-all ${venueLayout === 'grid' ? (isDarkMode ? 'bg-stone-700 shadow-sm text-primary-500' : 'bg-white shadow-sm text-primary-500') : 'text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'}`}
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => setVenueLayout('list')}
+                        className={`p-1.5 rounded-md transition-all ${venueLayout === 'list' ? (isDarkMode ? 'bg-stone-700 shadow-sm text-primary-500' : 'bg-white shadow-sm text-primary-500') : 'text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'}`}
+                      >
+                        <ClipboardList className="w-4 h-4" />
+                      </button>
+                    </div>
                     <button
                       onClick={openAddVenue}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-[11px] font-bold cursor-pointer transition-all"
@@ -1594,66 +1610,128 @@ export default function VendorDashboard() {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                    {venues.map((venue) => {
-                      const thumb = venue.image || (venue.gallery && venue.gallery[0]) || "";
-                      const price = venue.price || venue.pricePerPlateVeg || "—";
-                      const rating = venue.rating || 0;
-                      return (
-                        <div key={venue._id} className="group h-[420px]">
-                          <ListingCard
-                            name={venue.name}
-                            image={thumb}
-                            location={`${venue.location || venue.city}${venue.country ? `, ${venue.country}` : ""}`}
-                            rating={rating}
-                            reviewCount={venue.reviewCount}
-                            priceDisplay={`₹${Number(price).toLocaleString("en-IN") || "—"}`}
-                            unit={`/${venue.priceUnit || "per day"}`}
-                            priceLabel="starting from"
-                            badge={
-                              venue.featured ? (
-                                <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
-                                  <Star className="w-3 h-3 inline-block" /> Featured
+                  venueLayout === "grid" ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 max-w-6xl">
+                      {venues.map((venue) => {
+                        const thumb = venue.image || (venue.gallery && venue.gallery[0]) || "";
+                        const price = venue.price || venue.pricePerPlateVeg || "—";
+                        const rating = venue.rating || 0;
+                        return (
+                          <div key={venue._id} className="group h-[460px] sm:h-[500px] lg:h-[520px]">
+                            <ListingCard
+                              name={venue.name}
+                              image={thumb}
+                              location={`${venue.location || venue.city}${venue.country ? `, ${venue.country}` : ""}`}
+                              rating={rating}
+                              reviewCount={venue.reviewCount}
+                              priceDisplay={`₹${Number(price).toLocaleString("en-IN") || "—"}`}
+                              unit={`/${venue.priceUnit || "per day"}`}
+                              priceLabel="starting from"
+                              badge={
+                                venue.featured ? (
+                                  <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                    <Star className="w-3 h-3 inline-block" /> Featured
+                                  </div>
+                                ) : undefined
+                              }
+                              topRight={
+                                <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${venue.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                  {venue.active ? "Live" : "Pending"}
+                                </span>
+                              }
+                              tags={
+                                <>
+                                  <CardTag><Users className="w-3 h-3" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax</CardTag>
+                                  <CardTag><BedDouble className="w-3 h-3" /> {venue.rooms || 0} Rooms</CardTag>
+                                  <CardTag tone="accent">{venue.type || "Venue"}</CardTag>
+                                </>
+                              }
+                              action={
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeleteConfirmation({ isOpen: true, type: 'venue', id: venue._id, apiId: venue.venueId, name: venue.name });
+                                    }}
+                                    className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                    title="Delete Venue"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => openEditVenue(venue)}
+                                    className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
+                                  >
+                                    Edit <Edit2 className="w-3 h-3 inline-block" />
+                                  </button>
                                 </div>
-                              ) : undefined
-                            }
-                            topRight={
-                              <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${venue.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
-                                {venue.active ? "Live" : "Pending"}
-                              </span>
-                            }
-                            tags={
-                              <>
-                                <CardTag><Users className="w-3 h-3" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax</CardTag>
-                                <CardTag><BedDouble className="w-3 h-3" /> {venue.rooms || 0} Rooms</CardTag>
-                                <CardTag tone="accent">{venue.type || "Venue"}</CardTag>
-                              </>
-                            }
-                            action={
-                              <div className="flex gap-2">
+                              }
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      {venues.map((venue) => {
+                        const thumb = venue.image || (venue.gallery && venue.gallery[0]) || "";
+                        const price = venue.price || venue.pricePerPlateVeg || "—";
+                        const rating = venue.rating || 0;
+                        return (
+                          <div key={venue._id} className={`flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl border transition-all hover:border-primary-500/30 ${isDarkMode ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200"}`}>
+                            <div className="w-full sm:w-40 h-28 rounded-xl overflow-hidden shrink-0 relative">
+                               {thumb ? (
+                                 <img src={thumb} alt={venue.name} className="w-full h-full object-cover" />
+                               ) : (
+                                 <div className={`w-full h-full flex items-center justify-center ${isDarkMode ? "bg-stone-800 text-stone-500" : "bg-stone-100 text-stone-400"}`}>
+                                   <Building2 className="w-6 h-6 opacity-50" />
+                                 </div>
+                               )}
+                               <span className={`absolute top-2 left-2 text-[8px] font-black px-2 py-0.5 rounded-full uppercase shadow-sm ${venue.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                 {venue.active ? "Live" : "Pending"}
+                               </span>
+                            </div>
+                            <div className="flex-1 min-w-0 w-full">
+                               <div className="flex items-start justify-between gap-4">
+                                 <div>
+                                   <h4 className={`font-bold text-base truncate ${headingText}`}>{venue.name}</h4>
+                                   <p className="text-xs text-stone-500 flex items-center gap-1 mt-1 truncate">
+                                     <MapPin className="w-3 h-3" /> {`${venue.location || venue.city}${venue.country ? `, ${venue.country}` : ""}`}
+                                   </p>
+                                 </div>
+                                 <div className="text-right shrink-0 hidden sm:block">
+                                   <div className="text-xs text-stone-500">starting from</div>
+                                   <div className={`font-black text-lg ${isDarkMode ? "text-primary-400" : "text-primary-600"}`}>₹{Number(price).toLocaleString("en-IN") || "—"}<span className="text-xs text-stone-500 font-medium">/{venue.priceUnit || "per day"}</span></div>
+                                 </div>
+                               </div>
+                               <div className="flex items-center gap-3 mt-4 flex-wrap">
+                                 <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-stone-400" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax</span>
+                                 <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><BedDouble className="w-3.5 h-3.5 text-stone-400" /> {venue.rooms || 0} Rooms</span>
+                                 <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5">{venue.type || "Venue"}</span>
+                               </div>
+                            </div>
+                            <div className="flex sm:flex-col items-center sm:items-end gap-2 w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-l sm:border-t-0 border-stone-100 dark:border-stone-800 sm:pl-4">
+                                <button
+                                  onClick={() => openEditVenue(venue)}
+                                  className="flex-1 sm:flex-none text-[12px] font-bold px-4 py-2 rounded-xl text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex justify-center items-center gap-1.5 sm:w-full"
+                                >
+                                  Edit <Edit2 className="w-3 h-3" />
+                                </button>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setDeleteConfirmation({ isOpen: true, type: 'venue', id: venue._id, apiId: venue.venueId, name: venue.name });
                                   }}
-                                  className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
-                                  title="Delete Venue"
+                                  className="flex-1 sm:flex-none text-[12px] font-bold px-4 py-2 rounded-xl text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer flex justify-center items-center gap-1.5 sm:w-full"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  Delete <Trash2 className="w-3 h-3" />
                                 </button>
-                                <button
-                                  onClick={() => openEditVenue(venue)}
-                                  className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
-                                >
-                                  Edit <Edit2 className="w-3 h-3 inline-block" />
-                                </button>
-                              </div>
-                            }
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )
                 )
                 }
               </div>
@@ -2307,13 +2385,29 @@ export default function VendorDashboard() {
                   <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
                     <h3 className={`font-extrabold text-lg capitalize ${headingText}`}>My {catLabel}</h3>
                     {serviceView === "grid" && (
-                      <button
-                        onClick={() => openAddService(activeTab)}
-                        className="flex items-center gap-1.5 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold text-xs transition-colors shadow-none"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        Add New
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <div className={`flex rounded-lg p-1 mr-2 ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                          <button 
+                            onClick={() => setServiceLayout('grid')}
+                            className={`p-1.5 rounded-md transition-all ${serviceLayout === 'grid' ? (isDarkMode ? 'bg-stone-700 shadow-sm text-primary-500' : 'bg-white shadow-sm text-primary-500') : 'text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'}`}
+                          >
+                            <LayoutDashboard className="w-4 h-4" />
+                          </button>
+                          <button 
+                            onClick={() => setServiceLayout('list')}
+                            className={`p-1.5 rounded-md transition-all ${serviceLayout === 'list' ? (isDarkMode ? 'bg-stone-700 shadow-sm text-primary-500' : 'bg-white shadow-sm text-primary-500') : 'text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'}`}
+                          >
+                            <ClipboardList className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => openAddService(activeTab)}
+                          className="flex items-center gap-1.5 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold text-xs transition-colors shadow-none"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Add New
+                        </button>
+                      </div>
                     )}
                   </div>
 
@@ -2425,65 +2519,133 @@ export default function VendorDashboard() {
                   )}
 
                   {serviceView === "grid" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                      {services.filter(s => s.category === activeTab).length === 0 ? (
-                        <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
-                          <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 border border-stone-200">
-                            <ClipboardList className="w-6 h-6 text-stone-400" />
+                    serviceLayout === "grid" ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 max-w-6xl">
+                        {services.filter(s => s.category === activeTab).length === 0 ? (
+                          <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
+                            <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 border border-stone-200">
+                              <ClipboardList className="w-6 h-6 text-stone-400" />
+                            </div>
+                            <h4 className="font-bold text-stone-800 mb-1">No listings yet</h4>
+                            <p className="text-xs text-stone-500 mb-4 max-w-[200px]">Create your first {activeTab} listing to appear in the directory.</p>
                           </div>
-                          <h4 className="font-bold text-stone-800 mb-1">No listings yet</h4>
-                          <p className="text-xs text-stone-500 mb-4 max-w-[200px]">Create your first {activeTab} listing to appear in the directory.</p>
-                        </div>
-                      ) : (
-                        services.filter(s => s.category === activeTab).map((service) => (
-                          <div key={service.serviceId} className="group h-[420px]">
-                            <ListingCard
-                              name={service.name}
-                              image={service.image || ""}
-                              location={service.city}
-                              rating={service.rating || 0}
-                              reviewCount={service.reviewCount}
-                              priceDisplay={`₹${service.priceFrom?.toLocaleString("en-IN") || 0}`}
-                              unit={service.priceUnit ? `/${service.priceUnit}` : undefined}
-                              priceLabel="starting at"
-                              badge={
-                                service.featured ? (
-                                  <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
-                                    <Star className="w-3 h-3 inline-block" /> Featured
+                        ) : (
+                          services.filter(s => s.category === activeTab).map((service) => (
+                            <div key={service.serviceId} className="group h-[460px] sm:h-[500px] lg:h-[520px]">
+                              <ListingCard
+                                name={service.name}
+                                image={service.image || ""}
+                                location={service.city}
+                                rating={service.rating || 0}
+                                reviewCount={service.reviewCount}
+                                priceDisplay={`₹${service.priceFrom?.toLocaleString("en-IN") || 0}`}
+                                unit={service.priceUnit ? `/${service.priceUnit}` : undefined}
+                                priceLabel="starting from"
+                                badge={
+                                  service.featured ? (
+                                    <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                      <Star className="w-3 h-3 inline-block" /> Featured
+                                    </div>
+                                  ) : undefined
+                                }
+                                topRight={
+                                  <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                    {service.active ? "Live" : "Pending"}
+                                  </span>
+                                }
+                                tags={<CardTag tone="accent">{service.category}</CardTag>}
+                                action={
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setDeleteConfirmation({ isOpen: true, type: 'service', id: service.serviceId, apiId: service.serviceId, name: service.name });
+                                      }}
+                                      className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                      title="Delete Service"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                      onClick={() => openEditService(service)}
+                                      className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
+                                    >
+                                      Edit <Edit2 className="w-3 h-3 inline-block" />
+                                    </button>
                                   </div>
-                                ) : undefined
-                              }
-                              topRight={
-                                <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
-                                  {service.active ? "Live" : "Pending"}
-                                </span>
-                              }
-                              tags={<CardTag tone="accent">{service.category}</CardTag>}
-                              action={
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setDeleteConfirmation({ isOpen: true, type: 'service', id: service.serviceId, apiId: service.serviceId, name: service.name });
-                                    }}
-                                    className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
-                                    title="Delete Service"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button
-                                    onClick={() => openEditService(service)}
-                                    className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
-                                  >
-                                    Edit <Edit2 className="w-3 h-3 inline-block" />
-                                  </button>
-                                </div>
-                              }
-                            />
+                                }
+                              />
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        {services.filter(s => s.category === activeTab).length === 0 ? (
+                          <div className="py-12 flex flex-col items-center justify-center text-center">
+                            <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 border border-stone-200">
+                              <ClipboardList className="w-6 h-6 text-stone-400" />
+                            </div>
+                            <h4 className="font-bold text-stone-800 mb-1">No listings yet</h4>
+                            <p className="text-xs text-stone-500 mb-4 max-w-[200px]">Create your first {activeTab} listing to appear in the directory.</p>
                           </div>
-                        ))
-                      )}
-                    </div>
+                        ) : (
+                          services.filter(s => s.category === activeTab).map((service) => {
+                            const thumb = service.image || "";
+                            return (
+                              <div key={service.serviceId} className={`flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl border transition-all hover:border-primary-500/30 ${isDarkMode ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200"}`}>
+                                <div className="w-full sm:w-40 h-28 rounded-xl overflow-hidden shrink-0 relative">
+                                   {thumb ? (
+                                     <img src={thumb} alt={service.name} className="w-full h-full object-cover" />
+                                   ) : (
+                                     <div className={`w-full h-full flex items-center justify-center ${isDarkMode ? "bg-stone-800 text-stone-500" : "bg-stone-100 text-stone-400"}`}>
+                                       <ClipboardList className="w-6 h-6 opacity-50" />
+                                     </div>
+                                   )}
+                                   <span className={`absolute top-2 left-2 text-[8px] font-black px-2 py-0.5 rounded-full uppercase shadow-sm ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                     {service.active ? "Live" : "Pending"}
+                                   </span>
+                                </div>
+                                <div className="flex-1 min-w-0 w-full">
+                                   <div className="flex items-start justify-between gap-4">
+                                     <div>
+                                       <h4 className={`font-bold text-base truncate ${headingText}`}>{service.name}</h4>
+                                       <p className="text-xs text-stone-500 flex items-center gap-1 mt-1 truncate">
+                                         <MapPin className="w-3 h-3" /> {service.city}
+                                       </p>
+                                     </div>
+                                     <div className="text-right shrink-0 hidden sm:block">
+                                       <div className="text-xs text-stone-500">starting from</div>
+                                       <div className={`font-black text-lg ${isDarkMode ? "text-primary-400" : "text-primary-600"}`}>₹{service.priceFrom?.toLocaleString("en-IN") || 0}<span className="text-xs text-stone-500 font-medium">/{service.priceUnit || "per event"}</span></div>
+                                     </div>
+                                   </div>
+                                   <div className="flex items-center gap-3 mt-4 flex-wrap">
+                                     <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5">{service.category}</span>
+                                   </div>
+                                </div>
+                                <div className="flex sm:flex-col items-center sm:items-end gap-2 w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-l sm:border-t-0 border-stone-100 dark:border-stone-800 sm:pl-4">
+                                    <button
+                                      onClick={() => openEditService(service)}
+                                      className="flex-1 sm:flex-none text-[12px] font-bold px-4 py-2 rounded-xl text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex justify-center items-center gap-1.5 sm:w-full"
+                                    >
+                                      Edit <Edit2 className="w-3 h-3" />
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setDeleteConfirmation({ isOpen: true, type: 'service', id: service.serviceId, apiId: service.serviceId, name: service.name });
+                                      }}
+                                      className="flex-1 sm:flex-none text-[12px] font-bold px-4 py-2 rounded-xl text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer flex justify-center items-center gap-1.5 sm:w-full"
+                                    >
+                                      Delete <Trash2 className="w-3 h-3" />
+                                    </button>
+                                </div>
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    )
                   )}
                 </div>
               )
