@@ -28,8 +28,11 @@ const ServiceListingSchema = new Schema({
   features:    [{ type: String }],
   
   // Media
-  image:   { type: String },
-  gallery: [{ type: String }],
+  image:     { type: String },
+  heroImage: { type: String },
+  cardImage: { type: String },
+  gallery:   [{ type: String }],
+  videos:    [{ type: String }],
   
   // Ratings
   rating:      { type: Number, default: 0 },

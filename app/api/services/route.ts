@@ -101,7 +101,10 @@ export async function POST(req: Request) {
       priceFrom:          parseFloat(body.priceFrom) || 0,
       priceUnit:          body.priceUnit  || "per event",
       image:              body.image      || "",
+      heroImage:          body.heroImage  || "",
+      cardImage:          body.cardImage  || "",
       gallery:            Array.isArray(body.gallery) ? body.gallery : [],
+      videos:             Array.isArray(body.videos) ? body.videos : [],
       description:        body.description || "",
       features:           Array.isArray(body.features) ? body.features : [],
       verified: false,
@@ -139,7 +142,7 @@ export async function PATCH(req: Request) {
       "verified", "featured", "active",
       "name", "city", "location", "category", "description",
       "priceFrom", "priceUnit",
-      "image", "gallery", "features",
+      "image", "heroImage", "cardImage", "gallery", "videos", "features",
     ];
 
     const existingService = await ServiceListing.findOne({ serviceId });

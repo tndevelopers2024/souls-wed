@@ -107,6 +107,10 @@ interface VenueFormState {
   pricePerPlateNonVeg: string;
   rentalCost: string;
   image: string;
+  heroImage: string;
+  cardImage: string;
+  gallery: string;
+  videos: string;
   minGuests: string;
   maxGuests: string;
   rooms: string;
@@ -121,7 +125,7 @@ interface VenueFormState {
 const defaultVenueForm: VenueFormState = {
   name: "", city: "", location: "", country: "India", type: "Banquet Hall",
   price: "", priceUnit: "per day", pricePerPlateVeg: "", pricePerPlateNonVeg: "",
-  rentalCost: "", image: "", minGuests: "50", maxGuests: "500", rooms: "0",
+  rentalCost: "", image: "", heroImage: "", cardImage: "", gallery: "", videos: "", minGuests: "50", maxGuests: "500", rooms: "0",
   outdoor: false, indoor: true, parking: false, catering: false,
   description: "", features: "",
 };
@@ -134,13 +138,17 @@ interface ServiceFormState {
   priceFrom: string;
   priceUnit: string;
   image: string;
+  heroImage: string;
+  cardImage: string;
+  gallery: string;
+  videos: string;
   description: string;
   features: string;
 }
 
 const defaultServiceForm: ServiceFormState = {
   category: "planners", name: "", city: "", location: "",
-  priceFrom: "", priceUnit: "per event", image: "", description: "", features: "",
+  priceFrom: "", priceUnit: "per event", image: "", heroImage: "", cardImage: "", gallery: "", videos: "", description: "", features: "",
 };
 
 export default function VendorDashboard() {
@@ -213,6 +221,9 @@ export default function VendorDashboard() {
 
   // Showcase gallery states
   const [showcaseImages, setShowcaseImages] = useState<string[]>([]);
+  const [vendorHeroImage, setVendorHeroImage] = useState<string>("");
+  const [vendorCardImage, setVendorCardImage] = useState<string>("");
+  const [vendorVideos, setVendorVideos] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -285,6 +296,10 @@ export default function VendorDashboard() {
       pricePerPlateNonVeg: v.pricePerPlateNonVeg || "",
       rentalCost: v.rentalCost || "",
       image: v.image || "",
+      heroImage: v.heroImage || "",
+      cardImage: v.cardImage || "",
+      gallery: Array.isArray(v.gallery) ? v.gallery.join(", ") : "",
+      videos: Array.isArray(v.videos) ? v.videos.join(", ") : "",
       minGuests: String(v.minGuests ?? 50),
       maxGuests: String(v.maxGuests ?? 500),
       rooms: String(v.rooms ?? 0),
@@ -332,6 +347,8 @@ export default function VendorDashboard() {
         maxGuests: parseInt(venueForm.maxGuests) || 500,
         rooms: parseInt(venueForm.rooms) || 0,
         features: venueForm.features.split(",").map(f => f.trim()).filter(Boolean),
+        gallery: venueForm.gallery.split(",").map(g => g.trim()).filter(Boolean),
+        videos: venueForm.videos.split(",").map(v => v.trim()).filter(Boolean),
       };
       if (venueView === "add") {
         const res = await fetch("/api/venues", {
@@ -377,9 +394,13 @@ export default function VendorDashboard() {
       name: s.name || "",
       city: s.city || "",
       location: s.location || "",
-      priceFrom: String(s.priceFrom ?? ""),
+      priceFrom: String(s.priceFrom || ""),
       priceUnit: s.priceUnit || "per event",
       image: s.image || "",
+      heroImage: s.heroImage || "",
+      cardImage: s.cardImage || "",
+      gallery: Array.isArray(s.gallery) ? s.gallery.join(", ") : "",
+      videos: Array.isArray(s.videos) ? s.videos.join(", ") : "",
       description: s.description || "",
       features: Array.isArray(s.features) ? s.features.join(", ") : "",
     });
@@ -418,6 +439,8 @@ export default function VendorDashboard() {
         ...serviceForm,
         priceFrom: parseFloat(serviceForm.priceFrom) || 0,
         features: serviceForm.features.split(",").map(f => f.trim()).filter(Boolean),
+        gallery: serviceForm.gallery.split(",").map(g => g.trim()).filter(Boolean),
+        videos: serviceForm.videos.split(",").map(v => v.trim()).filter(Boolean),
       };
       if (serviceView === "add") {
         const res = await fetch("/api/services", {
@@ -473,6 +496,9 @@ export default function VendorDashboard() {
           if (data.authenticated && data.user.role === "vendor") {
             setVendor(data.user);
             setShowcaseImages(data.user.images || []);
+            setVendorHeroImage(data.user.heroImage || "");
+            setVendorCardImage(data.user.cardImage || "");
+            setVendorVideos(data.user.videos || []);
             setAvailable(data.user.available !== false);
             setUnavailableDates(
               (data.user.unavailableDates || []).map((d: string) => new Date(d).toISOString().split("T")[0])
@@ -561,35 +587,121 @@ export default function VendorDashboard() {
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    
+    e.target.value = ""; // clear input
 
-    if (showcaseImages.length >= 6) {
-      setUploadError("Maximum of 6 images allowed.");
+    if (showcaseImages.length + files.length > 20) {
+      setUploadError("Maximum of 20 images allowed.");
       return;
     }
 
     setUploadingImage(true);
     setUploadError(null);
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Failed to upload image.");
-      }
-
-      const data = await res.json();
-      setShowcaseImages((prev) => [...prev, data.url]);
+      const uploadPromises = files.map(file => genericUpload(file));
+      const urls = await Promise.all(uploadPromises);
+      setShowcaseImages(prev => [...prev, ...urls]);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Failed to upload image.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const genericUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/upload", { method: "POST", body: formData });
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || "Failed to upload.");
+    }
+    const data = await res.json();
+    return data.url;
+  };
+
+  const handleGenericUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    setUploadError(null);
+    try {
+      const url = await genericUpload(file);
+      setter(url);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Failed to upload.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    
+    e.target.value = ""; // clear input
+
+    if (vendorVideos.length + files.length > 5) {
+      setUploadError("Maximum of 5 videos allowed.");
+      return;
+    }
+
+    setUploadingImage(true);
+    setUploadError(null);
+    try {
+      const uploadPromises = files.map(file => genericUpload(file));
+      const urls = await Promise.all(uploadPromises);
+      setVendorVideos(prev => [...prev, ...urls]);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Failed to upload video.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleMultiUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldName: "gallery" | "videos",
+    formType: "venue" | "service"
+  ) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    
+    // Clear input so same files can be selected again
+    e.target.value = "";
+    
+    setUploadingImage(true);
+    if (formType === "venue") setVenueMessage(null);
+    else setServiceMessage(null);
+
+    try {
+      // Upload sequentially or map over them? We'll map, but could batch if needed.
+      const uploadPromises = files.map(file => genericUpload(file));
+      const urls = await Promise.all(uploadPromises);
+      
+      const updateForm = (prev: any) => {
+        const currentString = prev[fieldName];
+        // Ensure no trailing commas and clean up
+        const baseString = currentString ? currentString.trim().replace(/,+$/, '') : "";
+        const newString = baseString ? `${baseString}, ${urls.join(", ")}` : urls.join(", ");
+        return { ...prev, [fieldName]: newString };
+      };
+      
+      if (formType === "venue") {
+        setVenueForm(updateForm);
+      } else {
+        setServiceForm(updateForm);
+      }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : "Failed to upload files.";
+      if (formType === "venue") {
+        setVenueMessage(errorMsg);
+      } else {
+        setServiceMessage(errorMsg);
+      }
     } finally {
       setUploadingImage(false);
     }
@@ -627,8 +739,11 @@ export default function VendorDashboard() {
       description: String(formData.get("description") || ""),
       website: String(formData.get("website") || ""),
       instagram: String(formData.get("instagram") || ""),
-      priceFrom: String(formData.get("priceFrom") || ""),
+      priceFrom: document.querySelector<HTMLInputElement>('input[name="priceFrom"]')?.value,
       images: showcaseImages,
+      heroImage: vendorHeroImage,
+      cardImage: vendorCardImage,
+      videos: vendorVideos,
     };
 
     try {
@@ -641,6 +756,9 @@ export default function VendorDashboard() {
       if (!res.ok) throw new Error(data.message || "Failed to save vendor profile.");
       setVendor(data.vendor);
       setShowcaseImages(data.vendor.images || []);
+      setVendorHeroImage(data.vendor.heroImage || "");
+      setVendorCardImage(data.vendor.cardImage || "");
+      setVendorVideos(data.vendor.videos || []);
       setAvailable(data.vendor.available !== false);
       setProfileMessage(data.message || "Profile saved.");
     } catch (err) {
@@ -1518,6 +1636,73 @@ export default function VendorDashboard() {
                           </div>
                         </div>
 
+                        {/* ── Additional Media ── */}
+                        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Hero Image URL</label>
+                            <div className="flex items-start gap-3">
+                              {venueForm.heroImage && (
+                                <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                  <img src={venueForm.heroImage} alt="preview" className="w-full h-full object-cover" />
+                                </div>
+                              )}
+                              <div className="flex-1 flex flex-col gap-2">
+                                <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                  {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photo</span></>}
+                                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, url => setVenueForm(p => ({ ...p, heroImage: url })))} disabled={uploadingImage} />
+                                </label>
+                                <input type="url" value={venueForm.heroImage} onChange={e => setVenueForm(p => ({ ...p, heroImage: e.target.value }))} placeholder="https://..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Card Image URL</label>
+                            <div className="flex items-start gap-3">
+                              {venueForm.cardImage && (
+                                <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                  <img src={venueForm.cardImage} alt="preview" className="w-full h-full object-cover" />
+                                </div>
+                              )}
+                              <div className="flex-1 flex flex-col gap-2">
+                                <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                  {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photo</span></>}
+                                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, url => setVenueForm(p => ({ ...p, cardImage: url })))} disabled={uploadingImage} />
+                                </label>
+                                <input type="url" value={venueForm.cardImage} onChange={e => setVenueForm(p => ({ ...p, cardImage: e.target.value }))} placeholder="https://..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Gallery URLs (comma-separated)</label>
+                            <div className="flex flex-col gap-2">
+                              {venueForm.gallery && venueForm.gallery.split(',').some(u => u.trim()) && (
+                                <div className="flex gap-2 overflow-x-auto pb-1">
+                                  {venueForm.gallery.split(',').map(u => u.trim()).filter(Boolean).map((url, i) => (
+                                    <div key={i} className="relative w-16 h-12 rounded-lg overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                      <img src={url} alt="preview" className="w-full h-full object-cover" />
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photos</span></>}
+                                <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleMultiUpload(e, "gallery", "venue")} disabled={uploadingImage} />
+                              </label>
+                              <textarea value={venueForm.gallery} onChange={e => setVenueForm(p => ({ ...p, gallery: e.target.value }))} rows={2} placeholder="url1, url2..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Video URLs (comma-separated)</label>
+                            <div className="flex flex-col gap-2">
+                              <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Videos</span></>}
+                                <input type="file" accept="video/*" multiple className="hidden" onChange={(e) => handleMultiUpload(e, "videos", "venue")} disabled={uploadingImage} />
+                              </label>
+                              <textarea value={venueForm.videos} onChange={e => setVenueForm(p => ({ ...p, videos: e.target.value }))} rows={2} placeholder="url1, url2..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
+                            </div>
+                          </div>
+                        </div>
+
                         {/* ── Amenities toggles ── */}
                         <div className="mt-5 text-xs">
                           <label className="font-bold text-stone-500 uppercase tracking-wider block mb-3">Amenities</label>
@@ -1899,9 +2084,44 @@ export default function VendorDashboard() {
                               }`}
                           />
                         </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-bold text-stone-500 uppercase tracking-wider">Hero Image URL</label>
+                          <div className="flex gap-2">
+                            <input
+                              type="url"
+                              value={vendorHeroImage}
+                              onChange={(e) => setVendorHeroImage(e.target.value)}
+                              className={`flex-1 border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              placeholder="Or upload ->"
+                            />
+                            <label className="flex items-center justify-center px-4 py-2 bg-stone-900 dark:bg-stone-800 hover:bg-primary-500 text-white rounded-xl cursor-pointer font-bold text-xs">
+                              {uploadingImage ? "..." : "Upload"}
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, setVendorHeroImage)} disabled={uploadingImage} />
+                            </label>
+                          </div>
+                          {vendorHeroImage && <img src={vendorHeroImage} className="mt-2 w-full h-32 object-cover rounded-xl" alt="Hero preview" />}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-bold text-stone-500 uppercase tracking-wider">Card Image URL</label>
+                          <div className="flex gap-2">
+                            <input
+                              type="url"
+                              value={vendorCardImage}
+                              onChange={(e) => setVendorCardImage(e.target.value)}
+                              className={`flex-1 border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              placeholder="Or upload ->"
+                            />
+                            <label className="flex items-center justify-center px-4 py-2 bg-stone-900 dark:bg-stone-800 hover:bg-primary-500 text-white rounded-xl cursor-pointer font-bold text-xs">
+                              {uploadingImage ? "..." : "Upload"}
+                              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, setVendorCardImage)} disabled={uploadingImage} />
+                            </label>
+                          </div>
+                          {vendorCardImage && <img src={vendorCardImage} className="mt-2 w-full h-32 object-cover rounded-xl" alt="Card preview" />}
+                        </div>
+
                         <div className="flex flex-col gap-3">
                           <div className="flex justify-between items-center">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-xs">Showcase Gallery ({showcaseImages.length}/6)</label>
+                            <label className="font-bold text-stone-500 uppercase tracking-wider text-xs">Showcase Gallery ({showcaseImages.length}/20)</label>
                             {uploadError && <span className="text-red-500 font-bold text-[10px]">{uploadError}</span>}
                           </div>
 
@@ -1945,7 +2165,7 @@ export default function VendorDashboard() {
                               </div>
                             ))}
 
-                            {showcaseImages.length < 6 && (
+                            {showcaseImages.length < 20 && (
                               <label className="relative aspect-square rounded-3xl border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center cursor-pointer hover:border-primary-500 hover:bg-primary-500/5 transition-all text-stone-400 hover:text-primary-500">
                                 {uploadingImage ? (
                                   <>
@@ -1958,18 +2178,19 @@ export default function VendorDashboard() {
                                     <span className="text-[9px] font-bold uppercase tracking-wider">Upload Item</span>
                                   </>
                                 )}
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={handleImageUpload}
-                                  disabled={uploadingImage}
-                                  className="hidden"
-                                />
-                              </label>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageUpload}
+                                    disabled={uploadingImage}
+                                    className="hidden"
+                                  />
+                                </label>
                             )}
                           </div>
 
-                          {showcaseImages.length < 6 && (
+                          {showcaseImages.length < 20 && (
                             <div className="flex gap-2 mt-1">
                               <input
                                 type="url"
@@ -1983,8 +2204,8 @@ export default function VendorDashboard() {
                                     const input = e.currentTarget;
                                     const val = input.value.trim();
                                     if (val) {
-                                      if (showcaseImages.length >= 6) {
-                                        setUploadError("Maximum of 6 images allowed.");
+                                      if (showcaseImages.length >= 20) {
+                                        setUploadError("Maximum of 20 images allowed.");
                                         return;
                                       }
                                       setShowcaseImages((prev) => [...prev, val]);
@@ -1999,8 +2220,8 @@ export default function VendorDashboard() {
                                   const input = document.getElementById("manual-url-input") as HTMLInputElement | null;
                                   const val = input?.value.trim();
                                   if (val) {
-                                    if (showcaseImages.length >= 6) {
-                                      setUploadError("Maximum of 6 images allowed.");
+                                    if (showcaseImages.length >= 20) {
+                                      setUploadError("Maximum of 20 images allowed.");
                                       return;
                                     }
                                     setShowcaseImages((prev) => [...prev, val]);
@@ -2013,6 +2234,34 @@ export default function VendorDashboard() {
                               </button>
                             </div>
                           )}
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                          <div className="flex justify-between items-center">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider text-xs">Videos ({vendorVideos.length}/5)</label>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {vendorVideos.map((vidUrl, index) => (
+                              <div key={index} className="relative aspect-video rounded-3xl overflow-hidden border border-stone-200/20 group bg-stone-900">
+                                <video src={vidUrl} className="object-cover w-full h-full" controls />
+                                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button type="button" onClick={() => setVendorVideos(prev => prev.filter((_, i) => i !== index))} className="p-1.5 bg-red-600/95 text-white rounded-xl hover:bg-red-700">
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                            {vendorVideos.length < 5 && (
+                              <label className="relative aspect-video rounded-3xl border-2 border-dashed border-stone-300 dark:border-stone-700 flex flex-col items-center justify-center cursor-pointer hover:border-primary-500 text-stone-400">
+                                {uploadingImage ? (
+                                  <span className="text-[9px] font-bold uppercase tracking-wider">Uploading...</span>
+                                ) : (
+                                  <span className="text-[9px] font-bold uppercase tracking-wider">Upload Video</span>
+                                )}
+                                <input type="file" accept="video/mp4,video/webm,video/quicktime" multiple onChange={handleVideoUpload} disabled={uploadingImage} className="hidden" />
+                              </label>
+                            )}
+                          </div>
                         </div>
                         <div className="flex flex-col gap-1.5">
                           <label className="font-bold text-stone-500 uppercase tracking-wider">Public Description</label>
@@ -2398,6 +2647,72 @@ export default function VendorDashboard() {
                                 {uploadingServiceImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                                 <input type="file" accept="image/*" className="hidden" onChange={handleServiceImageUpload} disabled={uploadingServiceImage} />
                               </label>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Hero Image URL</label>
+                              <div className="flex items-start gap-3">
+                                {serviceForm.heroImage && (
+                                  <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                    <img src={serviceForm.heroImage} alt="preview" className="w-full h-full object-cover" />
+                                  </div>
+                                )}
+                                <div className="flex-1 flex flex-col gap-2">
+                                  <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                    {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photo</span></>}
+                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, url => setServiceForm(p => ({ ...p, heroImage: url })))} disabled={uploadingImage} />
+                                  </label>
+                                  <input type="url" value={serviceForm.heroImage} onChange={e => setServiceForm(p => ({ ...p, heroImage: e.target.value }))} placeholder="https://..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Card Image URL</label>
+                              <div className="flex items-start gap-3">
+                                {serviceForm.cardImage && (
+                                  <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                    <img src={serviceForm.cardImage} alt="preview" className="w-full h-full object-cover" />
+                                  </div>
+                                )}
+                                <div className="flex-1 flex flex-col gap-2">
+                                  <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                    {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photo</span></>}
+                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, url => setServiceForm(p => ({ ...p, cardImage: url })))} disabled={uploadingImage} />
+                                  </label>
+                                  <input type="url" value={serviceForm.cardImage} onChange={e => setServiceForm(p => ({ ...p, cardImage: e.target.value }))} placeholder="https://..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Gallery URLs (comma-separated)</label>
+                              <div className="flex flex-col gap-2">
+                                {serviceForm.gallery && serviceForm.gallery.split(',').some(u => u.trim()) && (
+                                  <div className="flex gap-2 overflow-x-auto pb-1">
+                                    {serviceForm.gallery.split(',').map(u => u.trim()).filter(Boolean).map((url, i) => (
+                                      <div key={i} className="relative w-16 h-12 rounded-lg overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                        <img src={url} alt="preview" className="w-full h-full object-cover" />
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                  {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photos</span></>}
+                                  <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleMultiUpload(e, "gallery", "service")} disabled={uploadingImage} />
+                                </label>
+                                <textarea value={serviceForm.gallery} onChange={e => setServiceForm({ ...serviceForm, gallery: e.target.value })} rows={2} className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} placeholder="url1, url2..." />
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Video URLs (comma-separated)</label>
+                              <div className="flex flex-col gap-2">
+                                <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                  {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Videos</span></>}
+                                  <input type="file" accept="video/*" multiple className="hidden" onChange={(e) => handleMultiUpload(e, "videos", "service")} disabled={uploadingImage} />
+                                </label>
+                                <textarea value={serviceForm.videos} onChange={e => setServiceForm({ ...serviceForm, videos: e.target.value })} rows={2} className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} placeholder="url1, url2..." />
+                              </div>
                             </div>
                           </div>
 

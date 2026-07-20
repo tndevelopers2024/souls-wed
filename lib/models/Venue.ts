@@ -43,8 +43,11 @@ const VenueSchema = new Schema({
   featured: { type: Boolean, default: false },
 
   // Media
-  image:   { type: String },
-  gallery: [{ type: String }],
+  image:     { type: String },
+  heroImage: { type: String },
+  cardImage: { type: String },
+  gallery:   [{ type: String }],
+  videos:    [{ type: String }],
 
   // Capacity & amenities
   minGuests: { type: Number },

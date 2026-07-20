@@ -7,22 +7,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   SlidersHorizontal, X, Check, Search,
   Users, Coins, Building2, Layers, Sparkles, Globe2,
-  LayoutGrid, BedDouble, CalendarHeart, ChefHat, Palette, 
+  LayoutGrid, BedDouble, CalendarHeart, ChefHat, Palette,
   ClipboardList, Utensils,
   ChevronRight, ChevronLeft
 } from "lucide-react";
 import { cities } from "@/lib/venues-data";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { formatAsCurrency, CURRENCIES } from "@/lib/currency";
-
-const categoryLinks = [
-  { label: "All", href: "/vendors", icon: LayoutGrid },
-  { label: "Venues", href: "/venues", icon: Building2 },
-  { label: "Rooms", href: "/rooms", icon: BedDouble },
-  { label: "Planners", href: "/planners", icon: ClipboardList },
-  { label: "Caterers", href: "/caterers", icon: Utensils },
-  { label: "Decorators", href: "/decorators", icon: Palette },
-];
 
 
 
@@ -36,12 +27,33 @@ interface Props {
 }
 
 export default function VenueFilterBar({ activeCities, onCityChange, activeCategory, search, onSearchChange, searchPlaceholder }: Props) {
-  const noCitySelected = activeCities.length === 0;
   const [searchFocused, setSearchFocused] = useState(false);
   const { currency, setCurrency } = useCurrency();
   const [openFilter, setOpenFilter] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const filterContainerRef = useRef<HTMLDivElement>(null);
+
+  // Local state for deferred filtering
+  const [localActiveCities, setLocalActiveCities] = useState<string[]>(activeCities);
+  const [localSearch, setLocalSearch] = useState<string>(search || "");
+
+  // Sync with props if they change externally
+  useEffect(() => {
+    setLocalActiveCities(activeCities);
+  }, [activeCities]);
+
+  useEffect(() => {
+    setLocalSearch(search || "");
+  }, [search]);
+
+  const handleApplyFilters = () => {
+    onCityChange(localActiveCities);
+    if (onSearchChange) {
+      onSearchChange(localSearch);
+    }
+  };
+
+  const noCitySelected = localActiveCities.length === 0;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -61,7 +73,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
       const p5L = formatAsCurrency(500000, currency);
       priceOptions = [`Under ${p50k}`, `${p50k}–${p2L}`, `${p2L}–${p5L}`, `${p5L}+`];
     }
-    
+
     return [
       {
         label: "Guests",
@@ -111,58 +123,11 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
 
   return (
     <div className="px-4 mt-6 mb-8 flex flex-col gap-6 max-w-7xl mx-auto">
-      
-      {/* ═══════════ ROW 0 — Creative Category Carousel ═══════════ */}
-      <div 
-        className="relative mx-auto rounded-[2rem] p-3 max-w-full"
-        style={{
-          background: "var(--sw-glass-panel)",
-          backdropFilter: "blur(24px) saturate(200%)",
-          border: "1px solid var(--sw-chip-bg)",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.5)",
-        }}
-      >
-        <div className="flex gap-2.5 flex-wrap justify-center items-center relative z-0">
-          {categoryLinks.map((item) => {
-            const isActive =
-              (!activeCategory && item.label === "Venues") ||
-              (activeCategory && item.label.toLowerCase() === activeCategory.toLowerCase());
-              
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-extrabold tracking-wide transition-all duration-300 group ${
-                  isActive
-                    ?"text-slate-900 bg-primary-50/80"
-                    :"text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-                }`}
-              >
-                <Icon 
-                  className={`w-4 h-4 ${
-                    isActive ?"text-primary-500":"text-slate-400"
-                  }`} 
-                  strokeWidth={isActive ? 2.5 : 2}
-                />
-                {item.label}
-                
-                {isActive && (
-                  <motion.div 
-                    layoutId="activeCategoryBorder"
-                    className="absolute inset-0 rounded-full border-2 border-primary-500 shadow-[0_4px_12px_rgba(238,116,41,0.2)]"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+
 
       {/* ═══════════ ROW 1 — Filter chips ═══════════ */}
-      <div 
-        ref={filterContainerRef} 
+      <div
+        ref={filterContainerRef}
         className="flex items-center justify-center gap-2 flex-wrap relative z-40 mx-auto"
         style={{ scrollbarWidth: "none" }}
       >
@@ -217,19 +182,19 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                     background: isActive
                       ? "linear-gradient(135deg, rgba(238,116,41,0.12) 0%, rgba(245,163,42,0.08) 100%)"
                       : isOpen
-                      ? "white"
-                      : "var(--sw-chip-bg)",
+                        ? "white"
+                        : "var(--sw-chip-bg)",
                     color: isActive ? "var(--sw-primary)" : "var(--sw-navy)",
                     border: isActive
                       ? "1.5px solid rgba(238,116,41,0.3)"
                       : isOpen
-                      ? "1.5px solid rgba(55,71,90,0.15)"
-                      : "1.5px solid rgba(55,71,90,0.08)",
+                        ? "1.5px solid rgba(55,71,90,0.15)"
+                        : "1.5px solid rgba(55,71,90,0.08)",
                     boxShadow: isActive
                       ? "0 4px 12px rgba(238,116,41,0.12)"
                       : isOpen
-                      ? "0 8px 24px rgba(0,0,0,0.06)"
-                      : "0 2px 8px rgba(0,0,0,0.03)",
+                        ? "0 8px 24px rgba(0,0,0,0.06)"
+                        : "0 2px 8px rgba(0,0,0,0.03)",
                     backdropFilter: "blur(12px)",
                   }}
                 >
@@ -356,7 +321,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
           <motion.button
             whileHover={{ y: -4, scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
-            onClick={() => onCityChange([])}
+            onClick={() => setLocalActiveCities([])}
             className="flex-shrink-0 flex flex-col items-center gap-2.5"
           >
             <div
@@ -383,7 +348,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                 }}
               >
                 {noCitySelected && (
-                   <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none" />
+                  <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none" />
                 )}
                 <Globe2
                   className="w-7 h-7 relative z-10"
@@ -404,7 +369,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
 
           {/* City circles */}
           {cities.map((city) => {
-            const isActive = activeCities.includes(city.name);
+            const isActive = localActiveCities.includes(city.name);
             return (
               <motion.button
                 key={city.name}
@@ -412,9 +377,9 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                 whileTap={{ scale: 0.96 }}
                 onClick={() => {
                   if (isActive) {
-                    onCityChange(activeCities.filter((c) => c !== city.name));
+                    setLocalActiveCities(localActiveCities.filter((c) => c !== city.name));
                   } else {
-                    onCityChange([...activeCities, city.name]);
+                    setLocalActiveCities([...localActiveCities, city.name]);
                   }
                 }}
                 className="flex-shrink-0 flex flex-col items-center gap-2.5 group"
@@ -513,27 +478,45 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
             <input
               type="text"
               placeholder={searchPlaceholder || "Search by name, city, or specialty…"}
-              value={search || ""}
-              onChange={(e) => onSearchChange(e.target.value)}
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleApplyFilters();
+                }
+              }}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
               className="flex-1 text-sm font-medium outline-none bg-transparent"
               style={{ color: "var(--sw-navy)" }}
             />
             <AnimatePresence>
-              {search && (
+              {localSearch && (
                 <motion.button
                   initial={{ opacity: 0, scale: 0.7 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.7 }}
-                  onClick={() => onSearchChange("")}
-                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
+                  onClick={() => {
+                    setLocalSearch("");
+                    if (onSearchChange) onSearchChange("");
+                  }}
+                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors mr-2"
                   style={{ background: "rgba(0,0,0,0.08)" }}
                 >
                   <X className="w-3.5 h-3.5 text-slate-500" />
                 </motion.button>
               )}
             </AnimatePresence>
+            <button
+              onClick={handleApplyFilters}
+              className="px-6 py-2 rounded-full font-bold text-sm text-white transition-all flex items-center gap-2"
+              style={{
+                background: "var(--sw-primary)",
+                boxShadow: "0 4px 12px rgba(238,116,41,0.25)"
+              }}
+            >
+              Search
+            </button>
           </div>
         </motion.div>
       )}

@@ -30,14 +30,16 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────
 interface BookingCalendarProps {
-  /** "single" for venues (one date), "range" for rooms (check-in → check-out) */
-  mode: "single" | "range";
+  /** "single" for venues (one date), "range" for rooms (check-in → check-out), "multiple" for multiple non-contiguous dates */
+  mode: "single" | "range" | "multiple";
   /** Array of "YYYY-MM-DD" strings that are already booked and should be greyed out */
   bookedDates: string[];
   /** Called when user selects a date (single mode) */
   onDateSelect?: (date: string) => void;
   /** Called when user selects a date range (range mode) */
   onRangeSelect?: (checkIn: string, checkOut: string) => void;
+  /** Called when user selects multiple dates (multiple mode) */
+  onMultipleSelect?: (dates: string[]) => void;
   /** Called when month changes — parent fetches new availability data */
   onMonthChange?: (yearMonth: string) => void;
   /** Provider ID — used for fetching availability */
@@ -46,6 +48,8 @@ interface BookingCalendarProps {
   selectedDate?: string | null;
   /** The currently selected range from the parent component (for range mode) */
   selectedRange?: { start: string; end: string } | null;
+  /** The currently selected dates from the parent component (for multiple mode) */
+  selectedDates?: string[];
 }
 
 // Day names for the header row
@@ -108,10 +112,12 @@ export default function BookingCalendar({
   bookedDates,
   onDateSelect,
   onRangeSelect,
+  onMultipleSelect,
   onMonthChange,
   providerId,
   selectedDate: externalSelectedDate,
   selectedRange: externalSelectedRange,
+  selectedDates: externalSelectedDates,
 }: BookingCalendarProps) {
   // Current month being displayed
   const [currentMonth, setCurrentMonth] = useState(() => {
@@ -143,6 +149,14 @@ export default function BookingCalendar({
       setRangeEnd(externalSelectedRange?.end || null);
     }
   }, [externalSelectedRange]);
+
+  const [multipleDates, setMultipleDates] = useState<string[]>(externalSelectedDates || []);
+
+  useEffect(() => {
+    if (externalSelectedDates !== undefined) {
+      setMultipleDates(externalSelectedDates);
+    }
+  }, [externalSelectedDates]);
 
   // Hover state for range preview
   const [hoverDate, setHoverDate] = useState<string | null>(null);
@@ -189,6 +203,15 @@ export default function BookingCalendar({
       // SINGLE MODE: Click to select, click again to deselect
       setSelectedDate(dateStr);
       onDateSelect?.(dateStr);
+    } else if (mode === "multiple") {
+      // MULTIPLE MODE: Toggle date in array
+      setMultipleDates((prev) => {
+        const newDates = prev.includes(dateStr)
+          ? prev.filter((d) => d !== dateStr)
+          : [...prev, dateStr];
+        onMultipleSelect?.(newDates);
+        return newDates;
+      });
     } else {
       // RANGE MODE: First click = check-in, second click = check-out
       if (!rangeStart || rangeEnd) {
@@ -220,7 +243,7 @@ export default function BookingCalendar({
         }
       }
     }
-  }, [mode, rangeStart, rangeEnd, bookedDates, onDateSelect, onRangeSelect]);
+  }, [mode, rangeStart, rangeEnd, multipleDates, bookedDates, onDateSelect, onRangeSelect, onMultipleSelect]);
 
   // ─── Determine cell styling for each date ───
   const getCellStyle = (dateStr: string) => {
@@ -234,6 +257,11 @@ export default function BookingCalendar({
 
     // Single mode selection
     if (mode === "single" && selectedDate === dateStr) {
+      return "bg-primary-500 text-white font-bold";
+    }
+
+    // Multiple mode selection
+    if (mode === "multiple" && multipleDates.includes(dateStr)) {
       return "bg-primary-500 text-white font-bold";
     }
 

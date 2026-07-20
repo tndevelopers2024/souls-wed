@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Loader2, Building2 } from "lucide-react";
 import VendorCard from "@/components/vendors/VendorCard";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
+import CategorySubNav from "@/components/shared/CategorySubNav";
 import Link from "next/link";
 
 interface Vendor {
@@ -25,14 +26,14 @@ interface Vendor {
 export default function VendorCategoryPage() {
   const params = useParams();
   const categoryParam = params.category as string;
-  
+
   // Format category for display (e.g. "planners" -> "Planners")
   const displayCategory = categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1);
 
   const [allVendors, setAllVendors] = useState<Vendor[]>([]);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  
+
   const [search, setSearch] = useState("");
   const [activeCities, setActiveCities] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState(12);
@@ -138,17 +139,22 @@ export default function VendorCategoryPage() {
           style={{ background: "linear-gradient(150deg, #fdf6f0 0%, #fceee3 40%, #f5dcc9 100%)" }}
         >
           <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest text-[var(--sw-primary)] bg-[rgba(238,116,41,0.12)] border border-[rgba(238,116,41,0.25)]">
-            Explore Expert {displayCategory}
-          </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-5 leading-[1.1] text-[var(--sw-navy)] font-heading">
-            Wedding <span className="text-transparent bg-clip-text bg-gradient-to-br from-[var(--sw-primary)] to-[#f5a623]">{displayCategory}</span>
-          </h1>
-          <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
-            Discover the finest {displayCategory.toLowerCase()} curated to make your special day perfect.
-          </p>
-        </motion.div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest text-[var(--sw-primary)] bg-[rgba(238,116,41,0.12)] border border-[rgba(238,116,41,0.25)]">
+              Explore Expert {displayCategory}
+            </div>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-5 leading-[1.1] text-[var(--sw-navy)] font-heading">
+              Wedding <span className="text-transparent bg-clip-text bg-gradient-to-br from-[var(--sw-primary)] to-[#f5a623]">{displayCategory}</span>
+            </h1>
+            <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
+              Discover the finest {displayCategory.toLowerCase()} curated to make your special day perfect.
+            </p>
+          </motion.div>
+        </div>
       </div>
+
+      {/* ══════════════════════ CATEGORY SUBNAV ══════════════════════ */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <CategorySubNav activeCategory={categoryParam} />
       </div>
 
       {/* ══════════════════════ FILTER BAR ══════════════════════ */}

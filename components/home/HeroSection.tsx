@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "@/components/shared/CustomImage";
-import { ChevronDown, MapPin, Calendar, Users, Layers, Search } from "lucide-react";
+import { ChevronDown, MapPin, Calendar, Users, Layers, Search, Check } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 import BookingCalendar from "@/components/booking/BookingCalendar";
@@ -45,10 +45,10 @@ const bgVideos = [
 export default function HeroSection() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [openDropdown, setOpenDropdown] = useState<"destination" | "category" | "date" | "guests" | null>(null);
-  const [destination, setDestination] = useState("");
-  const [category, setCategory] = useState("");
+  const [destinationsState, setDestinationsState] = useState<string[]>([]);
+  const [categoriesState, setCategoriesState] = useState<string[]>([]);
   const [guests, setGuests] = useState("");
-  const [dateRange, setDateRange] = useState<{ start: string; end: string } | null>(null);
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
   const [hoveredDestination, setHoveredDestination] = useState<string | null>(null);
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [hoveredGuests, setHoveredGuests] = useState<string | null>(null);
@@ -201,8 +201,8 @@ export default function HeroSection() {
                 )}
                 <label className="relative z-10 text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-[var(--sw-primary)] cursor-pointer mb-0.5 pointer-events-none">Destination</label>
                 <div className="relative z-10 w-full text-[15px] font-semibold truncate leading-tight flex items-center justify-between">
-                  <span className={destination ? "text-gray-900" : "text-gray-500"}>
-                    {destination || "Where to?"}
+                  <span className={destinationsState.length > 0 ? "text-gray-900" : "text-gray-500"}>
+                    {destinationsState.length > 0 ? (destinationsState.length <= 2 ? destinationsState.join(", ") : `${destinationsState.length} Destinations`) : "Where to?"}
                   </span>
                 </div>
 
@@ -224,7 +224,7 @@ export default function HeroSection() {
                     >
                       <div className="flex flex-col gap-1 max-h-[320px] overflow-y-auto custom-scrollbar pr-1" onMouseLeave={() => setHoveredDestination(null)}>
                         {destinations.map((d) => {
-                          const isActive = destination === d;
+                          const isActive = destinationsState.includes(d);
                           const isHovered = hoveredDestination === d;
                           const showPill = isHovered || (!hoveredDestination && isActive);
 
@@ -234,8 +234,7 @@ export default function HeroSection() {
                               className="relative flex items-center px-4 py-2.5 text-sm font-medium transition-colors z-10 w-full text-left rounded-full"
                               style={{ color: isActive || showPill ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                               onClick={() => {
-                                setDestination(d);
-                                setOpenDropdown(null);
+                                setDestinationsState(prev => prev.includes(d) ? prev.filter(item => item !== d) : [...prev, d]);
                               }}
                               onMouseEnter={() => setHoveredDestination(d)}
                             >
@@ -252,7 +251,8 @@ export default function HeroSection() {
                                   transition={{ type: "spring", stiffness: 150, damping: 20 }}
                                 />
                               )}
-                              <span className="relative z-10 w-full font-bold">{d}</span>
+                              <span className="relative z-10 flex-1 font-bold">{d}</span>
+                              {isActive && <Check className="w-4 h-4 relative z-10 ml-2" />}
                             </button>
                           );
                         })}
@@ -286,15 +286,17 @@ export default function HeroSection() {
                 )}
                 <label className="relative z-10 text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-[var(--sw-primary)] cursor-pointer mb-0.5 pointer-events-none">Dates</label>
                 <div className="relative z-10 w-full text-[15px] font-semibold truncate leading-tight flex items-center justify-between">
-                  <span className={dateRange ? "text-gray-900" : "text-gray-500"}>
-                    {dateRange ? (() => {
+                  <span className={selectedDates.length > 0 ? "text-gray-900" : "text-gray-500"}>
+                    {selectedDates.length > 0 ? (() => {
                       const formatDate = (ds: string) => {
                         const [y, m, d] = ds.split('-').map(Number);
                         return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                       };
-                      return dateRange.start === dateRange.end
-                        ? formatDate(dateRange.start)
-                        : `${formatDate(dateRange.start)} - ${formatDate(dateRange.end)}`;
+                      if (selectedDates.length <= 2) {
+                        return selectedDates.map(formatDate).join(", ");
+                      } else {
+                        return `${selectedDates.length} Dates`;
+                      }
                     })() : "Add dates"}
                   </span>
                 </div>
@@ -316,13 +318,12 @@ export default function HeroSection() {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <BookingCalendar
-                        mode="range"
+                        mode="multiple"
                         bookedDates={[]}
                         providerId="home-search"
-                        selectedRange={dateRange}
-                        onRangeSelect={(start, end) => {
-                          setDateRange({ start, end });
-                          setOpenDropdown(null);
+                        selectedDates={selectedDates}
+                        onMultipleSelect={(dates) => {
+                          setSelectedDates(dates);
                         }}
                       />
                     </motion.div>
@@ -439,8 +440,8 @@ export default function HeroSection() {
                 )}
                 <label className="relative z-10 text-[10px] font-extrabold uppercase tracking-wider text-gray-500 group-hover:text-[var(--sw-primary)] cursor-pointer mb-0.5 pointer-events-none">Category</label>
                 <div className="relative z-10 w-full text-[15px] font-semibold truncate leading-tight flex items-center justify-between">
-                  <span className={category ? "text-gray-900" : "text-gray-500"}>
-                    {category ? VENDOR_CATEGORIES.find(c => c.slug === category)?.name : "All Categories"}
+                  <span className={categoriesState.length > 0 ? "text-gray-900" : "text-gray-500"}>
+                    {categoriesState.length > 0 ? (categoriesState.length <= 2 ? categoriesState.map(c => VENDOR_CATEGORIES.find(vc => vc.slug === c)?.name).join(", ") : `${categoriesState.length} Categories`) : "All Categories"}
                   </span>
                 </div>
 
@@ -462,7 +463,7 @@ export default function HeroSection() {
                     >
                       <div className="flex flex-col gap-1 max-h-[320px] overflow-y-auto custom-scrollbar pr-1" onMouseLeave={() => setHoveredCategory(null)}>
                         {VENDOR_CATEGORIES.map((c) => {
-                          const isActive = category === c.slug;
+                          const isActive = categoriesState.includes(c.slug);
                           const isHovered = hoveredCategory === c.slug;
                           const showPill = isHovered || (!hoveredCategory && isActive);
 
@@ -472,8 +473,7 @@ export default function HeroSection() {
                               className="relative flex items-center px-4 py-2.5 text-sm font-medium transition-colors z-10 w-full text-left rounded-full"
                               style={{ color: isActive || showPill ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                               onClick={() => {
-                                setCategory(c.slug);
-                                setOpenDropdown(null);
+                                setCategoriesState(prev => prev.includes(c.slug) ? prev.filter(item => item !== c.slug) : [...prev, c.slug]);
                               }}
                               onMouseEnter={() => setHoveredCategory(c.slug)}
                             >
@@ -490,7 +490,8 @@ export default function HeroSection() {
                                   transition={{ type: "spring", stiffness: 150, damping: 20 }}
                                 />
                               )}
-                              <span className="relative z-10 w-full font-bold">{c.name}</span>
+                              <span className="relative z-10 flex-1 font-bold">{c.name}</span>
+                              {isActive && <Check className="w-4 h-4 relative z-10 ml-2" />}
                             </button>
                           );
                         })}
