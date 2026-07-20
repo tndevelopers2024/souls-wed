@@ -18,10 +18,7 @@ const VendorSchema = new Schema({
   advancePercentage: { type: Number, default: 30 }, // Default 30% advance
   unavailableDates: [{ type: Date }],
   profileImage: { type: String, default: "" },
-  heroImage:    { type: String, default: "" },
-  cardImage:    { type: String, default: "" },
   images:       [{ type: String }],
-  videos:       [{ type: String }],
   featured:     { type: Boolean, default: false },
   verified:     { type: Boolean, default: false }, // Admin verification
   isEmailVerified: { type: Boolean, default: false }, // Email OTP verification

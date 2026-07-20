@@ -5,11 +5,8 @@ import { SessionData, sessionOptions } from "@/lib/session";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
-const ALLOWED_MIME_TYPES = new Set([
-  "image/jpeg", "image/png", "image/webp", "image/gif",
-  "video/mp4", "video/webm", "video/quicktime"
-]);
-const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
+const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 export async function POST(req: Request) {
   try {
@@ -32,7 +29,7 @@ export async function POST(req: Request) {
     // Validate MIME type
     if (!ALLOWED_MIME_TYPES.has(file.type)) {
       return NextResponse.json(
-        { message: "Invalid file type. Only standard images and videos (MP4, WebM, MOV) are allowed." },
+        { message: "Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed." },
         { status: 400 }
       );
     }
@@ -40,7 +37,7 @@ export async function POST(req: Request) {
     // Validate file size
     if (file.size > MAX_FILE_SIZE_BYTES) {
       return NextResponse.json(
-        { message: "File too large. Maximum allowed size is 50 MB." },
+        { message: "File too large. Maximum allowed size is 5 MB." },
         { status: 400 }
       );
     }
@@ -54,7 +51,7 @@ export async function POST(req: Request) {
     await mkdir(uploadDir, { recursive: true });
 
     // Generate unique name — keep only the extension from the original file
-    const ext = file.name.split(".").pop()?.replace(/[^a-zA-Z0-9]/g, "") ?? "bin";
+    const ext = file.name.split(".").pop()?.replace(/[^a-zA-Z0-9]/g, "") ?? "jpg";
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const filename = `${uniqueSuffix}.${ext}`;
     const filePath = path.join(uploadDir, filename);

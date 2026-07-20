@@ -107,9 +107,6 @@ export async function PATCH(req: Request) {
       "instagram",
       "priceFrom",
       "images",
-      "videos",
-      "heroImage",
-      "cardImage",
     ];
 
     // profileImage is safe to update without triggering re-approval
@@ -164,12 +161,12 @@ function sanitizeVendorField(field: string, value: unknown) {
     return Number.isFinite(price) && price >= 0 ? price : undefined;
   }
 
-  if (field === "images" || field === "videos") {
+  if (field === "images") {
     if (Array.isArray(value)) {
-      return value.map(String).map((item) => item.trim()).filter(Boolean).slice(0, 20);
+      return value.map(String).map((item) => item.trim()).filter(Boolean).slice(0, 6);
     }
     if (typeof value === "string") {
-      return value.split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 20);
+      return value.split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 6);
     }
     return [];
   }

@@ -103,10 +103,7 @@ export async function POST(req: Request) {
       pricePerPlateNonVeg:body.pricePerPlateNonVeg || "",
       rentalCost:         body.rentalCost || "",
       image:              body.image      || "",
-      heroImage:          body.heroImage  || "",
-      cardImage:          body.cardImage  || "",
       gallery:            Array.isArray(body.gallery) ? body.gallery : [],
-      videos:             Array.isArray(body.videos) ? body.videos : [],
       minGuests:          parseInt(body.minGuests) || 50,
       maxGuests:          parseInt(body.maxGuests) || 500,
       rooms:              parseInt(body.rooms)     || 0,
@@ -153,7 +150,7 @@ export async function PATCH(req: Request) {
       "price", "priceUnit", "pricePerPlateVeg", "pricePerPlateNonVeg", "rentalCost",
       "minGuests", "maxGuests", "rooms",
       "outdoor", "indoor", "parking", "catering",
-      "image", "heroImage", "cardImage", "gallery", "videos", "features",
+      "image", "gallery", "features",
     ];
 
     const existingVenue = await Venue.findOne({ venueId });

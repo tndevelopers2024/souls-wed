@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronDown, X, MapPin, Star, Building2, Globe, LayoutGrid, List, Loader2, Sparkles } from "lucide-react";
 import VenueCard from "@/components/venues/VenueCard";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
-import CategorySubNav from "@/components/shared/CategorySubNav";
 import type { Venue } from "@/lib/venues-data";
 
 const sortOptions = ["Recommended", "Price: Low to High", "Price: High to Low", "Highest Rated"];
@@ -143,7 +142,6 @@ export default function VenuesPage() {
     <div className="min-h-screen" style={{ background: "var(--sw-white)" }}>
 
       {/* ══════════════════════ HERO ══════════════════════ */}
-      {/* ══════════════════════ HERO ══════════════════════ */}
       <div className="pt-28 pb-4 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div
           className="relative overflow-hidden pt-16 pb-16 px-4 text-center rounded-[40px] border border-primary-50/60"
@@ -151,79 +149,74 @@ export default function VenuesPage() {
             background: "var(--sw-hero-gradient)",
           }}
         >
-          {/* Floating orbs */}
-          <div
-            className="absolute -top-16 -left-16 w-80 h-80 rounded-full pointer-events-none"
-            style={{
-              background: "radial-gradient(circle, rgba(238,116,41,0.18) 0%, transparent 70%)",
-              filter: "blur(40px)",
-              animation: "orb-float 9s ease-in-out infinite",
-            }}
-          />
-          <div
-            className="absolute top-10 -right-20 w-96 h-96 rounded-full pointer-events-none"
-            style={{
-              background: "radial-gradient(circle, rgba(252,203,17,0.2) 0%, transparent 70%)",
-              filter: "blur(48px)",
-              animation: "orb-float 12s ease-in-out infinite reverse",
-            }}
-          />
-          <div
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-40 rounded-full pointer-events-none"
-            style={{
-              background: "radial-gradient(ellipse, rgba(238,116,41,0.08) 0%, transparent 70%)",
-              filter: "blur(30px)",
-            }}
-          />
+        {/* Floating orbs */}
+        <div
+          className="absolute -top-16 -left-16 w-80 h-80 rounded-full pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, rgba(238,116,41,0.18) 0%, transparent 70%)",
+            filter: "blur(40px)",
+            animation: "orb-float 9s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute top-10 -right-20 w-96 h-96 rounded-full pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, rgba(252,203,17,0.2) 0%, transparent 70%)",
+            filter: "blur(48px)",
+            animation: "orb-float 12s ease-in-out infinite reverse",
+          }}
+        />
+        <div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-40 rounded-full pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse, rgba(238,116,41,0.08) 0%, transparent 70%)",
+            filter: "blur(30px)",
+          }}
+        />
 
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10"
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-10"
+        >
+          {/* Eyebrow pill */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest"
+            style={{
+              background: "rgba(238,116,41,0.12)",
+              color: "var(--sw-primary)",
+              border: "1px solid rgba(238,116,41,0.25)",
+            }}
           >
-            {/* Eyebrow pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5 text-xs font-bold uppercase tracking-widest"
+            <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
+            Explore Dream Venues
+          </div>
+
+          <h1
+            className="text-5xl sm:text-6xl md:text-7xl font-bold mb-5 leading-[1.1]"
+            style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
+          >
+            Wedding{" "}
+            <span
+              className="relative inline-block"
               style={{
-                background: "rgba(238,116,41,0.12)",
-                color: "var(--sw-primary)",
-                border: "1px solid rgba(238,116,41,0.25)",
+                background: "linear-gradient(135deg, var(--sw-primary) 0%, #f5a623 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
               }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
-              Explore Dream Venues
-            </div>
+              Venues
+            </span>
+          </h1>
 
-            <h1
-              className="text-5xl sm:text-6xl md:text-7xl font-bold mb-5 leading-[1.1]"
-              style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
-            >
-              Wedding{" "}
-              <span
-                className="relative inline-block"
-                style={{
-                  background: "linear-gradient(135deg, var(--sw-primary) 0%, #f5a623 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Venues
-              </span>
-            </h1>
+          <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
+            Discover extraordinary spaces — from regal palaces to serene backwater resorts — curated for your perfect celebration.
+          </p>
 
-            <p className="text-base sm:text-lg text-slate-500 mb-10 max-w-xl mx-auto leading-relaxed">
-              Discover extraordinary spaces — from regal palaces to serene backwater resorts — curated for your perfect celebration.
-            </p>
+        </motion.div>
 
-          </motion.div>
-
-        </div>
       </div>
-
-      {/* ══════════════════════ CATEGORY SUBNAV ══════════════════════ */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-        <CategorySubNav activeCategory="venues" />
       </div>
 
       {/* ══════════════════════ STICKY FILTER BAR ══════════════════════ */}
@@ -300,20 +293,22 @@ export default function VenuesPage() {
             <div className="hidden sm:flex bg-slate-100 p-1 rounded-full border border-slate-200">
               <button
                 onClick={() => setViewType("grid")}
-                className={`p-1.5 rounded-full transition-all ${viewType === "grid"
-                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 hover:text-slate-600"
-                  }`}
+                className={`p-1.5 rounded-full transition-all ${
+                  viewType === "grid" 
+                    ?"bg-white shadow-sm text-[var(--sw-primary)]"
+                    :"text-slate-400 hover:text-slate-600"
+                }`}
                 aria-label="Grid view"
               >
                 <LayoutGrid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewType("list")}
-                className={`p-1.5 rounded-full transition-all ${viewType === "list"
-                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 hover:text-slate-600"
-                  }`}
+                className={`p-1.5 rounded-full transition-all ${
+                  viewType === "list" 
+                    ?"bg-white shadow-sm text-[var(--sw-primary)]"
+                    :"text-slate-400 hover:text-slate-600"
+                }`}
                 aria-label="List view"
               >
                 <List className="w-4 h-4" />
