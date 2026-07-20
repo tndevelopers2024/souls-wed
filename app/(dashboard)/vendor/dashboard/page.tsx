@@ -52,7 +52,10 @@ interface VenueItem {
   location?: string;
   country?: string;
   image?: string;
+  heroImage?: string;
+  cardImage?: string;
   gallery?: string[];
+  videos?: string[];
   rating?: number;
   reviewCount?: number;
   price?: string;
@@ -83,7 +86,10 @@ interface ServiceItem {
   city: string;
   location?: string;
   image?: string;
+  heroImage?: string;
+  cardImage?: string;
   gallery?: string[];
+  videos?: string[];
   rating?: number;
   reviewCount?: number;
   priceFrom?: number;
@@ -2555,251 +2561,307 @@ export default function VendorDashboard() {
                 <div className={`rounded-3xl p-0 border-0 shadow-none min-h-[400px]`}>
                   <div className={`flex items-center justify-between pb-4 border-b mb-6 ${dividerClass}`}>
                     <h3 className={`font-extrabold text-lg capitalize ${headingText}`}>My {catLabel}</h3>
-                    {serviceView === "grid" && (
-                      <button
-                        onClick={() => openAddService(activeTab)}
-                        className="flex items-center gap-1.5 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold text-xs transition-colors shadow-none"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        Add New
-                      </button>
-                    )}
+                    <button
+                      onClick={() => openAddService(activeTab)}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold text-xs transition-colors shadow-none cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add New {catLabel}
+                    </button>
                   </div>
 
-                  {serviceView !== "grid" && (
-                    <div className="max-w-2xl">
-                      <button
-                        onClick={() => setServiceView("grid")}
-                        className="flex items-center gap-1 text-xs font-bold text-stone-500 hover:text-stone-800 mb-6 transition-colors"
+                  {/* ── ADD / EDIT SERVICE POPUP MODAL ── */}
+                  <AnimatePresence>
+                    {(serviceView === "add" || serviceView === "edit") && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm"
                       >
-                        <ArrowLeft className="w-3.5 h-3.5" />
-                        Back to grid
-                      </button>
-
-                      {serviceMessage && (
-                        <div className={`mb-6 rounded-2xl border px-4 py-3 text-xs font-bold ${serviceMessage.includes("Failed") || serviceMessage.includes("required")
-                          ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-100"
-                          : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100"
-                          }`}>
-                          {serviceMessage}
-                        </div>
-                      )}
-
-                      <div className={`p-6 rounded-3xl border ${cardClass}`}>
-                        <div className="flex flex-col gap-5">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Service Name *</label>
-                              <input
-                                type="text"
-                                value={serviceForm.name}
-                                onChange={e => setServiceForm({ ...serviceForm, name: e.target.value })}
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                                placeholder="e.g. Royal Catering"
-                              />
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">City *</label>
-                              <input
-                                type="text"
-                                value={serviceForm.city}
-                                onChange={e => setServiceForm({ ...serviceForm, city: e.target.value })}
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Starting Price (₹)</label>
-                              <input
-                                type="number"
-                                value={serviceForm.priceFrom}
-                                onChange={e => setServiceForm({ ...serviceForm, priceFrom: e.target.value })}
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                              />
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Price Unit</label>
-                              <select
-                                value={serviceForm.priceUnit}
-                                onChange={e => setServiceForm({ ...serviceForm, priceUnit: e.target.value })}
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                              >
-                                <option value="per event">per event</option>
-                                <option value="per day">per day</option>
-                                <option value="per plate">per plate</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div className="flex flex-col gap-1.5">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Main Image URL (or upload)</label>
-                            <div className="flex gap-2">
-                              <input
-                                type="url"
-                                value={serviceForm.image}
-                                onChange={e => setServiceForm({ ...serviceForm, image: e.target.value })}
-                                className={`flex-1 border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                                placeholder="https://..."
-                              />
-                              <label className="flex items-center justify-center px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl cursor-pointer transition-colors border border-stone-200">
-                                {uploadingServiceImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                                <input type="file" accept="image/*" className="hidden" onChange={handleServiceImageUpload} disabled={uploadingServiceImage} />
-                              </label>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Hero Image URL</label>
-                              <div className="flex items-start gap-3">
-                                {serviceForm.heroImage && (
-                                  <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
-                                    <img src={serviceForm.heroImage} alt="preview" className="w-full h-full object-cover" />
-                                  </div>
-                                )}
-                                <div className="flex-1 flex flex-col gap-2">
-                                  <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
-                                    {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photo</span></>}
-                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, url => setServiceForm(p => ({ ...p, heroImage: url })))} disabled={uploadingImage} />
-                                  </label>
-                                  <input type="url" value={serviceForm.heroImage} onChange={e => setServiceForm(p => ({ ...p, heroImage: e.target.value }))} placeholder="https://..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Card Image URL</label>
-                              <div className="flex items-start gap-3">
-                                {serviceForm.cardImage && (
-                                  <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
-                                    <img src={serviceForm.cardImage} alt="preview" className="w-full h-full object-cover" />
-                                  </div>
-                                )}
-                                <div className="flex-1 flex flex-col gap-2">
-                                  <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
-                                    {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photo</span></>}
-                                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, url => setServiceForm(p => ({ ...p, cardImage: url })))} disabled={uploadingImage} />
-                                  </label>
-                                  <input type="url" value={serviceForm.cardImage} onChange={e => setServiceForm(p => ({ ...p, cardImage: e.target.value }))} placeholder="https://..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Gallery URLs (comma-separated)</label>
-                              <div className="flex flex-col gap-2">
-                                {serviceForm.gallery && serviceForm.gallery.split(',').some(u => u.trim()) && (
-                                  <div className="flex gap-2 overflow-x-auto pb-1">
-                                    {serviceForm.gallery.split(',').map(u => u.trim()).filter(Boolean).map((url, i) => (
-                                      <div key={i} className="relative w-16 h-12 rounded-lg overflow-hidden border border-stone-200/20 flex-shrink-0">
-                                        <img src={url} alt="preview" className="w-full h-full object-cover" />
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                                <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
-                                  {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photos</span></>}
-                                  <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleMultiUpload(e, "gallery", "service")} disabled={uploadingImage} />
-                                </label>
-                                <textarea value={serviceForm.gallery} onChange={e => setServiceForm({ ...serviceForm, gallery: e.target.value })} rows={2} className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} placeholder="url1, url2..." />
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Video URLs (comma-separated)</label>
-                              <div className="flex flex-col gap-2">
-                                <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
-                                  {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Videos</span></>}
-                                  <input type="file" accept="video/*" multiple className="hidden" onChange={(e) => handleMultiUpload(e, "videos", "service")} disabled={uploadingImage} />
-                                </label>
-                                <textarea value={serviceForm.videos} onChange={e => setServiceForm({ ...serviceForm, videos: e.target.value })} rows={2} className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} placeholder="url1, url2..." />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex flex-col gap-1.5">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Description</label>
-                            <textarea
-                              value={serviceForm.description}
-                              onChange={e => setServiceForm({ ...serviceForm, description: e.target.value })}
-                              rows={3}
-                              className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                            />
-                          </div>
-
+                        <motion.div
+                          initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                          animate={{ scale: 1, opacity: 1, y: 0 }}
+                          exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                          className={`w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 md:p-8 border shadow-none relative ${cardClass}`}
+                          style={{ scrollbarWidth: 'none' }}
+                        >
                           <button
-                            onClick={handleSaveService}
-                            disabled={savingService}
-                            className="w-full mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
+                            onClick={() => setServiceView("grid")}
+                            className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 transition-colors z-10 cursor-pointer"
                           >
-                            {savingService && <Loader2 className="w-4 h-4 animate-spin" />}
-                            {savingService ? "Saving..." : "Save Listing"}
+                            <X className="w-3.5 h-3.5" />
                           </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                          <h3 className={`font-extrabold text-lg mb-6 ${headingText}`}>
+                            {serviceView === "add" ? `Add New ${catLabel}` : `Edit ${catLabel}: ${editingService?.name}`}
+                          </h3>
 
-                  {serviceView === "grid" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                      {services.filter(s => s.category === activeTab).length === 0 ? (
-                        <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
-                          <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 border border-stone-200">
-                            <ClipboardList className="w-6 h-6 text-stone-400" />
-                          </div>
-                          <h4 className="font-bold text-stone-800 mb-1">No listings yet</h4>
-                          <p className="text-xs text-stone-500 mb-4 max-w-[200px]">Create your first {activeTab} listing to appear in the directory.</p>
-                        </div>
-                      ) : (
-                        services.filter(s => s.category === activeTab).map((service) => (
-                          <div key={service.serviceId} className="group h-[420px]">
-                            <ListingCard
-                              name={service.name}
-                              image={service.image || ""}
-                              location={service.city}
-                              rating={service.rating || 0}
-                              reviewCount={service.reviewCount}
-                              priceDisplay={`₹${service.priceFrom?.toLocaleString("en-IN") || 0}`}
-                              unit={service.priceUnit ? `/${service.priceUnit}` : undefined}
-                              priceLabel="starting at"
-                              badge={
-                                service.featured ? (
-                                  <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
-                                    <Star className="w-3 h-3 inline-block" /> Featured
+                          {serviceMessage && (
+                            <div className={`mb-6 rounded-2xl border px-4 py-3 text-xs font-bold ${serviceMessage.includes("Failed") || serviceMessage.includes("required")
+                              ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25"
+                              : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25"
+                              }`}>
+                              {serviceMessage}
+                            </div>
+                          )}
+
+                          <div className="flex flex-col gap-5 text-xs">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="flex flex-col gap-1.5">
+                                <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Service Name *</label>
+                                <input
+                                  type="text"
+                                  value={serviceForm.name}
+                                  onChange={e => setServiceForm({ ...serviceForm, name: e.target.value })}
+                                  className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                  placeholder={`e.g. Royal ${catLabel}`}
+                                />
+                              </div>
+                              <div className="flex flex-col gap-1.5">
+                                <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">City *</label>
+                                <input
+                                  type="text"
+                                  value={serviceForm.city}
+                                  onChange={e => setServiceForm({ ...serviceForm, city: e.target.value })}
+                                  className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                  placeholder="e.g. Mumbai"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="flex flex-col gap-1.5">
+                                <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Starting Price (₹)</label>
+                                <input
+                                  type="number"
+                                  value={serviceForm.priceFrom}
+                                  onChange={e => setServiceForm({ ...serviceForm, priceFrom: e.target.value })}
+                                  className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                  placeholder="e.g. 25000"
+                                />
+                              </div>
+                              <div className="flex flex-col gap-1.5">
+                                <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Price Unit</label>
+                                <select
+                                  value={serviceForm.priceUnit}
+                                  onChange={e => setServiceForm({ ...serviceForm, priceUnit: e.target.value })}
+                                  className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                >
+                                  <option value="per event">per event</option>
+                                  <option value="per day">per day</option>
+                                  <option value="per plate">per plate</option>
+                                  <option value="per hour">per hour</option>
+                                  <option value="per package">per package</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            {/* Location / Address */}
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Location / Address</label>
+                              <input
+                                type="text"
+                                value={serviceForm.location}
+                                onChange={e => setServiceForm({ ...serviceForm, location: e.target.value })}
+                                placeholder="e.g. Bandra West, Mumbai"
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+
+                            {/* Main Image */}
+                            <div className="flex flex-col gap-1.5 text-xs">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Main Service Image</label>
+                              <div className="flex items-start gap-4">
+                                {serviceForm.image && (
+                                  <div className="relative w-32 h-24 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                    <img src={serviceForm.image} alt="preview" className="w-full h-full object-cover" />
                                   </div>
-                                ) : undefined
-                              }
-                              topRight={
-                                <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
-                                  {service.active ? "Live" : "Pending"}
-                                </span>
-                              }
-                              tags={<CardTag tone="accent">{service.category}</CardTag>}
-                              action={
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setDeleteConfirmation({ isOpen: true, type: 'service', id: service.serviceId, apiId: service.serviceId, name: service.name });
-                                    }}
-                                    className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
-                                    title="Delete Service"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button
-                                    onClick={() => openEditService(service)}
-                                    className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
-                                  >
-                                    Edit <Edit2 className="w-3 h-3 inline-block" />
-                                  </button>
+                                )}
+                                <div className="flex-1 flex flex-col gap-2">
+                                  <label className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                    {uploadingServiceImage ? <><Loader2 className="w-4 h-4 animate-spin text-primary-500" /> Uploading...</> : <><Upload className="w-4 h-4" /> Upload Photo</>}
+                                    <input type="file" accept="image/*" className="hidden" onChange={handleServiceImageUpload} disabled={uploadingServiceImage} />
+                                  </label>
+                                  <input
+                                    type="url"
+                                    value={serviceForm.image}
+                                    onChange={e => setServiceForm({ ...serviceForm, image: e.target.value })}
+                                    className={`border rounded-xl px-4 py-2 outline-none font-semibold text-[11px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                    placeholder="Or paste image URL..."
+                                  />
                                 </div>
-                              }
-                            />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="flex flex-col gap-1.5">
+                                <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Hero Image URL</label>
+                                <div className="flex items-start gap-3">
+                                  {serviceForm.heroImage && (
+                                    <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                      <img src={serviceForm.heroImage} alt="preview" className="w-full h-full object-cover" />
+                                    </div>
+                                  )}
+                                  <div className="flex-1 flex flex-col gap-2">
+                                    <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                      {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photo</span></>}
+                                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, url => setServiceForm(p => ({ ...p, heroImage: url })))} disabled={uploadingImage} />
+                                    </label>
+                                    <input type="url" value={serviceForm.heroImage} onChange={e => setServiceForm(p => ({ ...p, heroImage: e.target.value }))} placeholder="https://..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-1.5">
+                                <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Card Image URL</label>
+                                <div className="flex items-start gap-3">
+                                  {serviceForm.cardImage && (
+                                    <div className="relative w-24 h-16 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                      <img src={serviceForm.cardImage} alt="preview" className="w-full h-full object-cover" />
+                                    </div>
+                                  )}
+                                  <div className="flex-1 flex flex-col gap-2">
+                                    <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                      {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photo</span></>}
+                                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleGenericUpload(e, url => setServiceForm(p => ({ ...p, cardImage: url })))} disabled={uploadingImage} />
+                                    </label>
+                                    <input type="url" value={serviceForm.cardImage} onChange={e => setServiceForm(p => ({ ...p, cardImage: e.target.value }))} placeholder="https://..." className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} />
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-1.5">
+                                <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Gallery URLs (comma-separated)</label>
+                                <div className="flex flex-col gap-2">
+                                  {serviceForm.gallery && serviceForm.gallery.split(',').some(u => u.trim()) && (
+                                    <div className="flex gap-2 overflow-x-auto pb-1">
+                                      {serviceForm.gallery.split(',').map(u => u.trim()).filter(Boolean).map((url, i) => (
+                                        <div key={i} className="relative w-16 h-12 rounded-lg overflow-hidden border border-stone-200/20 flex-shrink-0">
+                                          <img src={url} alt="preview" className="w-full h-full object-cover" />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                    {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Photos</span></>}
+                                    <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleMultiUpload(e, "gallery", "service")} disabled={uploadingImage} />
+                                  </label>
+                                  <textarea value={serviceForm.gallery} onChange={e => setServiceForm({ ...serviceForm, gallery: e.target.value })} rows={2} className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} placeholder="url1, url2..." />
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-1.5">
+                                <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Video URLs (comma-separated)</label>
+                                <div className="flex flex-col gap-2">
+                                  <label className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"}`}>
+                                    {uploadingImage ? <><Loader2 className="w-3 h-3 animate-spin text-primary-500" /> <span className="text-[10px]">Uploading...</span></> : <><Upload className="w-3 h-3" /> <span className="text-[10px]">Upload Videos</span></>}
+                                    <input type="file" accept="video/*" multiple className="hidden" onChange={(e) => handleMultiUpload(e, "videos", "service")} disabled={uploadingImage} />
+                                  </label>
+                                  <textarea value={serviceForm.videos} onChange={e => setServiceForm({ ...serviceForm, videos: e.target.value })} rows={2} className={`border rounded-xl px-3 py-2 outline-none font-semibold text-[10px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`} placeholder="url1, url2..." />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Features (comma-separated)</label>
+                              <input
+                                type="text"
+                                value={serviceForm.features}
+                                onChange={e => setServiceForm({ ...serviceForm, features: e.target.value })}
+                                placeholder="e.g. Traditional Decor, Pre-wedding Shoot, Custom Themes"
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Description</label>
+                              <textarea
+                                value={serviceForm.description}
+                                onChange={e => setServiceForm({ ...serviceForm, description: e.target.value })}
+                                rows={4}
+                                placeholder="Describe your service offerings, expertise, and package inclusions."
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold text-xs resize-none ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+
+                            <div className="mt-4 flex items-center gap-3">
+                              <button
+                                onClick={handleSaveService}
+                                disabled={savingService}
+                                className="flex items-center gap-2 px-6 py-3 rounded-full bg-primary-500 hover:bg-primary-600 disabled:opacity-50 text-white text-xs font-bold cursor-pointer transition-all"
+                              >
+                                {savingService ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> :
+                                  serviceView === "add" ? "Submit Listing" : "Save Changes"}
+                              </button>
+                              <p className="text-[10px] text-stone-400">
+                                {serviceView === "add"
+                                  ? "New listings will be reviewed by admin."
+                                  : "Changes are saved immediately."}
+                              </p>
+                            </div>
                           </div>
-                        ))
-                      )}
-                    </div>
-                  )}
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* ── SERVICES GRID ── */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {services.filter(s => s.category === activeTab).length === 0 ? (
+                      <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
+                        <div className="w-16 h-16 bg-stone-100 dark:bg-stone-800 rounded-full flex items-center justify-center mb-4 border border-stone-200 dark:border-stone-700">
+                          <ClipboardList className="w-6 h-6 text-stone-400" />
+                        </div>
+                        <h4 className={`font-bold text-sm mb-1 ${headingText}`}>No {catLabel.toLowerCase()} listings yet</h4>
+                        <p className="text-xs text-stone-400 mb-4 max-w-[200px]">Create your first {catLabel.toLowerCase()} listing to appear in the directory.</p>
+                      </div>
+                    ) : (
+                      services.filter(s => s.category === activeTab).map((service) => (
+                        <div key={service.serviceId} className="group h-[420px]">
+                          <ListingCard
+                            name={service.name}
+                            image={service.image || ""}
+                            location={service.city}
+                            rating={service.rating || 0}
+                            reviewCount={service.reviewCount}
+                            priceDisplay={`₹${service.priceFrom?.toLocaleString("en-IN") || 0}`}
+                            unit={service.priceUnit ? `/${service.priceUnit}` : undefined}
+                            priceLabel="starting at"
+                            badge={
+                              service.featured ? (
+                                <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                  <Star className="w-3 h-3 inline-block" /> Featured
+                                </div>
+                              ) : undefined
+                            }
+                            topRight={
+                              <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${service.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                {service.active ? "Live" : "Pending"}
+                              </span>
+                            }
+                            tags={<CardTag tone="accent">{service.category}</CardTag>}
+                            action={
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeleteConfirmation({ isOpen: true, type: 'service', id: service.serviceId, apiId: service.serviceId, name: service.name });
+                                  }}
+                                  className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                  title="Delete Service"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => openEditService(service)}
+                                  className="text-[13px] font-bold px-4 py-2.5 rounded-full text-white bg-primary-500 hover:bg-primary-600 transition-all cursor-pointer flex items-center gap-1 shadow-sm whitespace-nowrap"
+                                >
+                                  Edit <Edit2 className="w-3 h-3 inline-block" />
+                                </button>
+                              </div>
+                            }
+                          />
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
               )
             })()}

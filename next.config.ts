@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname),
   },
-  serverExternalPackages: ["mongoose"],
+  serverExternalPackages: ["mongoose", "nodemailer"],
   images: {
     remotePatterns: [
       {

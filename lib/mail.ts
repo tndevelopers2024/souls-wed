@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+// Module refreshed for Turbopack
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || "",
