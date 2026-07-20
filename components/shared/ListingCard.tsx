@@ -28,23 +28,17 @@ export interface ListingCardProps {
   action?: React.ReactNode;
   /** Extra row beneath the price/action (e.g. admin moderation toggles). */
   footer?: React.ReactNode;
-  /** Free-form content between the tags row and the price/action row
-   *  (e.g. a booking's date/guest details). */
+  /** Free-form content between the tags row and the price/action row. */
   body?: React.ReactNode;
-  /** Height of the frosted scrim — raise it when `body` adds tall content. */
+  /** Height of scrim (legacy prop maintained for compatibility). */
   scrimHeightClass?: string;
   className?: string;
   imageSizes?: string;
 }
 
 /**
- * The single card design used across the whole app — public listings, vendor
- * dashboard, admin moderation and (visually) bookings.
- *
- * Full-bleed image with a progressive frosted-blur scrim so the text stays
- * readable over any photo in both themes. Overlays and the bottom control are
- * slots so each surface can supply its own badges/actions without forking the
- * design.
+ * Modern Split-Card Design:
+ * Top crisp photo container + bottom clean details card with zero blurry scrim overlays.
  */
 export default function ListingCard({
   name,
@@ -53,7 +47,7 @@ export default function ListingCard({
   price,
   priceDisplay,
   unit,
-  priceLabel,
+  priceLabel = "starting from",
   rating = 0,
   reviewCount,
   tags,
@@ -62,7 +56,6 @@ export default function ListingCard({
   action,
   footer,
   body,
-  scrimHeightClass = "h-[69%]",
   className = "",
   imageSizes = "(max-width: 640px) 85vw, (max-width: 768px) 300px, 340px",
 }: ListingCardProps) {
@@ -71,115 +64,104 @@ export default function ListingCard({
 
   return (
     <div
-      className={`relative rounded-[32px] overflow-hidden border border-slate-200 dark:border-white/10 w-full h-full bg-white dark:bg-[var(--sw-surface)] [transform:translateZ(0)] ${className}`}
+      className={`group relative flex flex-col rounded-[28px] overflow-hidden glass-card w-full h-full hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl hover:shadow-[#EE7429]/10 ${className}`}
     >
-      <Image
-        src={image}
-        alt={name}
-        fill
-        sizes={imageSizes}
-        className="object-cover"
-      />
+      {/* ── TOP: Crisp High-Res Image Header ── */}
+      <div className="relative w-full h-[220px] sm:h-[230px] shrink-0 overflow-hidden bg-slate-100/50 dark:bg-stone-800/50">
+        <Image
+          src={image}
+          alt={name}
+          fill
+          sizes={imageSizes}
+          className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+        />
 
-      {/* Top-left: custom badge, else an automatic rating pill */}
-      {badge ? (
-        badge
-      ) : rating > 0 ? (
-        <div
-          className="absolute top-3 left-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
-          style={{ background: "var(--sw-chip-bg-hover)", backdropFilter: "blur(10px)" }}
-        >
-          <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
-          <span className="text-slate-800 dark:text-stone-200">{rating.toFixed(1)}</span>
+        {/* Gentle dark gradient at bottom for smooth contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+
+        {/* Top-left: Featured Badge or Rating Pill */}
+        <div className="absolute top-3 left-3 z-20 flex items-center gap-2">
+          {badge ? (
+            badge
+          ) : rating > 0 ? (
+            <div className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-extrabold bg-black/50 backdrop-blur-md border border-white/20 text-white shadow-sm">
+              <Star className="w-3.5 h-3.5 fill-[#FCCB11] text-[#FCCB11]" />
+              <span>{rating.toFixed(1)}</span>
+            </div>
+          ) : null}
         </div>
-      ) : null}
 
-      {topRight && <div className="absolute top-3 right-3 z-20">{topRight}</div>}
-
-      {/* Progressive frosted blur + theme-aware scrim */}
-      <div className={`absolute inset-x-0 bottom-0 ${scrimHeightClass} z-10 pointer-events-none`}>
-        {[
-          { blur: 1, solid: 55, fade: 100 },
-          { blur: 3, solid: 42, fade: 78 },
-          { blur: 6, solid: 28, fade: 58 },
-          { blur: 12, solid: 16, fade: 40 },
-          { blur: 24, solid: 6, fade: 24 },
-        ].map((l, idx) => (
-          <div
-            key={idx}
-            className="absolute inset-0"
-            style={{
-              backdropFilter: `blur(${l.blur}px)`,
-              WebkitBackdropFilter: `blur(${l.blur}px)`,
-              maskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)`,
-              WebkitMaskImage: `linear-gradient(to top, black ${l.solid}%, transparent ${l.fade}%)`,
-            }}
-          />
-        ))}
-        <div className="absolute inset-0" style={{ background: "var(--sw-card-scrim)" }} />
+        {/* Top-right: Heart shortlist or Live badge */}
+        {topRight && <div className="absolute top-3 right-3 z-20">{topRight}</div>}
       </div>
 
-      {/* Content */}
-      <div className="absolute inset-x-0 bottom-0 z-20 px-4 pt-5 pb-4 flex flex-col">
-        <h3
-          className="text-[22px] font-bold leading-snug text-slate-900 dark:text-stone-100 line-clamp-2 mb-1"
-          style={{ fontFamily: "var(--font-heading)" }}
-        >
-          {name}
-        </h3>
+      {/* ── BOTTOM: Clean Content Body ── */}
+      <div className="p-5 flex flex-col justify-between flex-1 bg-transparent rounded-b-[28px] relative z-10 backdrop-blur-sm">
+        <div>
+          {/* Title */}
+          <h3
+            className="text-lg sm:text-[19px] font-extrabold leading-snug text-slate-900 dark:text-stone-100 line-clamp-1 group-hover:text-[#EE7429] transition-colors mb-1"
+            style={{ fontFamily: "var(--font-heading)" }}
+            title={name}
+          >
+            {name}
+          </h3>
 
-        {location && (
-          <div className="flex items-center gap-1 mb-1">
-            <MapPin className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400 flex-shrink-0" />
-            <span className="text-[13px] font-medium text-slate-600 dark:text-stone-300 line-clamp-1">{location}</span>
-          </div>
-        )}
+          {/* Location & Rating */}
+          <div className="flex items-center justify-between gap-2 mb-3">
+            {location ? (
+              <div className="flex items-center gap-1 text-slate-500 dark:text-stone-400 min-w-0">
+                <MapPin className="w-3.5 h-3.5 text-[#EE7429] shrink-0" />
+                <span className="text-xs font-semibold truncate">{location}</span>
+              </div>
+            ) : <div />}
 
-        {rating > 0 && (
-          <div className="flex items-center mb-3 mt-1">
-            <div className="flex items-center gap-0.5 mr-1.5">
-              {[...Array(5)].map((_, idx) => (
-                <Star
-                  key={idx}
-                  className="w-3.5 h-3.5"
-                  style={{ color: "var(--sw-secondary)" }}
-                  fill={idx < Math.round(rating) ? "var(--sw-secondary)" : "transparent"}
-                />
-              ))}
-            </div>
-            <span className="text-[13px] font-bold text-slate-800 dark:text-stone-200">{rating.toFixed(1)}</span>
-            {reviewCount !== undefined && (
-              <span className="text-[13px] text-slate-500 dark:text-stone-400 font-medium ml-1">({reviewCount} reviews)</span>
+            {rating > 0 && !badge && (
+              <div className="flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-stone-300 shrink-0">
+                <Star className="w-3.5 h-3.5 fill-[#FCCB11] text-[#FCCB11]" />
+                <span>{rating.toFixed(1)}</span>
+                {reviewCount !== undefined && (
+                  <span className="text-[11px] text-slate-400 font-normal">({reviewCount})</span>
+                )}
+              </div>
             )}
           </div>
-        )}
 
-        {tags && <div className="flex flex-wrap gap-2 mb-4">{tags}</div>}
+          {/* Tags row */}
+          {tags && <div className="flex flex-wrap gap-1.5 mb-3">{tags}</div>}
 
-        {body}
+          {/* Body slot */}
+          {body}
+        </div>
 
+        {/* Footer: Price & Action */}
         {(hasPrice || action) && (
-          <div className="flex items-end justify-between gap-3 mt-auto">
+          <div className="pt-3.5 mt-auto border-t border-slate-200/50 dark:border-stone-700/50 flex items-center justify-between gap-3">
             {hasPrice ? (
               <div className="flex flex-col">
-                {priceLabel && <span className="text-[11px] font-medium text-slate-500 dark:text-stone-400 block mb-0.5">{priceLabel}</span>}
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-stone-500 block mb-0.5">
+                  {priceLabel}
+                </span>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-[22px] font-bold text-slate-900 dark:text-stone-100 leading-none tracking-tight">
+                  <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-stone-100 leading-none tracking-tight">
                     {priceDisplay ?? convertPriceString(price as string | number, currency)}
                   </span>
                   {unit && (
-                    <span className="text-[12px] font-medium text-slate-500 dark:text-stone-400 capitalize">{unit}</span>
+                    <span className="text-xs font-semibold text-slate-400 dark:text-stone-500 capitalize">
+                      {unit.startsWith("/") ? unit : `/${unit}`}
+                    </span>
                   )}
                 </div>
               </div>
             ) : (
-              <span />
+              <div />
             )}
+
             {action}
           </div>
         )}
 
-        {footer && <div className="mt-3 pt-3 border-t border-slate-900/10 dark:border-white/10">{footer}</div>}
+        {footer && <div className="mt-3 pt-3 border-t border-slate-100 dark:border-stone-800">{footer}</div>}
       </div>
     </div>
   );
@@ -189,11 +171,12 @@ export default function ListingCard({
 export function CardTag({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "neutral" | "accent" }) {
   const toneClass =
     tone === "accent"
-      ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/25"
-      : "bg-white/80 dark:bg-white/10 text-slate-700 dark:text-stone-300 border-slate-900/5 dark:border-white/10";
+      ? "bg-[#EE7429]/10 text-[#EE7429] dark:bg-[#EE7429]/20 dark:text-[#f58638] border-[#EE7429]/20"
+      : "bg-slate-100 dark:bg-stone-800 text-slate-600 dark:text-stone-300 border-slate-200/60 dark:border-stone-700/60";
   return (
-    <span className={`flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full border ${toneClass}`}>
+    <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full border ${toneClass}`}>
       {children}
     </span>
   );
 }
+

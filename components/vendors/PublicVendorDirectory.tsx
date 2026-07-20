@@ -483,60 +483,57 @@ function DirectoryItemCard({ vendor, index, view }: { vendor: PublicVendor; inde
   if (view === "list") {
     return (
       <Link href={detailHref} className="group block">
-        <div className="bg-white rounded-[32px] border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row">
-          <div className="relative w-full sm:w-[280px] h-[220px] sm:h-auto flex-shrink-0">
-            <Image src={image} alt={vendor.businessName || vendor.name} fill sizes="(max-width: 640px) 100vw, 280px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+        <div className="glass-card rounded-[28px] overflow-hidden hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl hover:shadow-[#EE7429]/10 flex flex-col sm:flex-row backdrop-blur-sm">
+          <div className="relative w-full sm:w-[280px] h-[220px] sm:h-auto flex-shrink-0 bg-slate-100/50 dark:bg-stone-800/50 overflow-hidden">
+            <Image src={image} alt={vendor.businessName || vendor.name} fill sizes="(max-width: 640px) 100vw, 280px" className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
             {vendor.featured && (
-              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                <Crown className="w-3.5 h-3.5" style={{ color: "var(--sw-primary)" }} />
-                <span className="text-xs font-bold text-slate-800 tracking-wide">Featured</span>
+              <div className="absolute top-3 left-3 bg-gradient-to-r from-[#EE7429] to-[#f58638] text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm text-xs font-bold">
+                <Crown className="w-3.5 h-3.5" />
+                <span>Featured</span>
               </div>
             )}
-            <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm text-slate-400 hover:text-red-500 hover:bg-white transition-colors" onClick={(e) => e.preventDefault()}>
-              <Heart className="w-4 h-4" />
-            </button>
           </div>
           <div className="p-6 flex flex-col justify-between flex-grow">
             <div>
               <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-bold text-slate-900 line-clamp-1" style={{ fontFamily: "var(--font-heading)" }}>{vendor.businessName || vendor.name}</h3>
+                <h3 className="text-xl font-extrabold text-slate-900 dark:text-stone-100 group-hover:text-[#EE7429] transition-colors line-clamp-1" style={{ fontFamily: "var(--font-heading)" }}>
+                  {vendor.businessName || vendor.name}
+                </h3>
                 {rating > 0 && (
-                  <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg">
-                    <Star className="w-3.5 h-3.5" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
-                    <span className="text-sm font-bold text-slate-800">{rating.toFixed(1)}</span>
+                  <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-extrabold text-white">
+                    <Star className="w-3.5 h-3.5 fill-[#FCCB11] text-[#FCCB11]" />
+                    <span>{rating.toFixed(1)}</span>
                   </div>
                 )}
               </div>
               <div className="flex items-center gap-1.5 mb-4">
-                <MapPin className="w-4 h-4 text-slate-500" />
-                <span className="text-sm text-slate-600">{vendor.city}</span>
+                <MapPin className="w-4 h-4 text-[#EE7429]" />
+                <span className="text-sm font-semibold text-slate-600 dark:text-stone-300">{vendor.city}</span>
               </div>
               <div className="flex flex-wrap gap-2 mb-4 sm:mb-0">
-                <div className="flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 px-2.5 py-1 rounded-md">
-                  <span>{vendor.category}</span>
-                </div>
+                <CardTag tone="accent">{vendor.category}</CardTag>
                 {vendor.verified && (
-                  <div className="flex items-center gap-1.5 text-sm text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">
-                    <BadgeCheck className="w-4 h-4" />
-                    <span>Verified</span>
-                  </div>
+                  <CardTag>
+                    <BadgeCheck className="w-3.5 h-3.5 text-emerald-500" />
+                    Verified
+                  </CardTag>
                 )}
               </div>
             </div>
-            <div className="flex items-end justify-between pt-4 border-t border-slate-50 mt-4">
+            <div className="flex items-end justify-between pt-4 border-t border-slate-100 dark:border-stone-800 mt-4">
               <div>
                 {vendor.priceFrom ? (
                   <>
-                    <span className="text-xs font-medium text-slate-500 block mb-0.5">Starting from</span>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-stone-500 block mb-0.5">Starting from</span>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-xl font-bold text-slate-900">{formatAsCurrency(vendor.priceFrom, currency)}</span>
+                      <span className="text-xl font-black text-slate-900 dark:text-stone-100">{formatAsCurrency(vendor.priceFrom, currency)}</span>
                     </div>
                   </>
                 ) : (
-                  <span className="text-xl font-bold text-slate-900">On request</span>
+                  <span className="text-xl font-black text-slate-900 dark:text-stone-100">On request</span>
                 )}
               </div>
-              <span className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-900 text-sm font-bold rounded-full transition-colors border border-slate-200">
+              <span className="text-xs font-bold px-5 py-2.5 rounded-full text-white bg-gradient-to-r from-[#EE7429]/90 to-[#f58638]/90 backdrop-blur-md shadow-md shadow-[#EE7429]/20 border border-white/20 hover:shadow-lg hover:shadow-[#EE7429]/40 hover:-translate-y-0.5 transition-all whitespace-nowrap cursor-pointer">
                 Book +
               </span>
             </div>
@@ -547,8 +544,8 @@ function DirectoryItemCard({ vendor, index, view }: { vendor: PublicVendor; inde
   }
 
   return (
-    <Link href={detailHref} className="block group">
-      <div className="h-[460px] sm:h-[500px] lg:h-[540px]">
+    <Link href={detailHref} className="block group h-full">
+      <div className="h-[420px] sm:h-[440px]">
         <VendorCard
           id={vendor._id}
           name={vendor.businessName || vendor.name}
@@ -556,13 +553,12 @@ function DirectoryItemCard({ vendor, index, view }: { vendor: PublicVendor; inde
           location={vendor.city}
           rating={rating}
           reviewCount={vendor.reviewCount || 0}
-          price={vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
+          price={vendor.priceFrom ? vendor.priceFrom : "On request"}
           unit=""
           badge={
             vendor.featured ? (
               <div
-                className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm"
-                style={{ background: "var(--sw-primary)" }}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white shadow-sm bg-gradient-to-r from-[#EE7429] to-[#f58638]"
               >
                 <Crown className="w-3.5 h-3.5" />
                 Featured
@@ -571,17 +567,12 @@ function DirectoryItemCard({ vendor, index, view }: { vendor: PublicVendor; inde
           }
           tags={
             <>
-              <div 
-                className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm"
-                style={{ color: "var(--sw-primary)" }}
-              >
-                {vendor.category}
-              </div>
+              <CardTag tone="accent">{vendor.category}</CardTag>
               {vendor.verified && (
-                <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-emerald-700 shadow-sm">
-                  <BadgeCheck className="w-3.5 h-3.5" />
+                <CardTag>
+                  <BadgeCheck className="w-3.5 h-3.5 text-emerald-500" />
                   Verified
-                </div>
+                </CardTag>
               )}
             </>
           }

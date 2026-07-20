@@ -64,10 +64,11 @@ export default function VendorCard({
       topRight={
         <motion.button
           whileTap={{ scale: 0.85 }}
-          className="p-2 rounded-full transition-colors flex items-center justify-center relative overflow-hidden"
+          className="w-9 h-9 rounded-full transition-all flex items-center justify-center relative overflow-hidden backdrop-blur-md shadow-sm cursor-pointer"
           style={{
-            background: isSaved ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.85)",
-            color: isSaved ? "#ef4444" : "#94a3b8"
+            background: isSaved ? "#ffffff" : "rgba(0,0,0,0.4)",
+            color: isSaved ? "#ef4444" : "#ffffff",
+            border: isSaved ? "1px solid #fee2e2" : "1px solid rgba(255,255,255,0.25)"
           }}
           onClick={toggleWishlist}
           aria-label="Shortlist"
@@ -90,7 +91,7 @@ export default function VendorCard({
         </motion.button>
       }
       action={
-        <span className="text-[14px] font-bold px-5 py-2.5 rounded-full text-slate-900 bg-white border border-slate-200 whitespace-nowrap">
+        <span className="text-xs font-bold px-4 py-2 rounded-full text-white bg-gradient-to-r from-[#EE7429]/90 to-[#f58638]/90 backdrop-blur-md shadow-md shadow-[#EE7429]/20 border border-white/20 hover:shadow-lg hover:shadow-[#EE7429]/40 hover:-translate-y-0.5 transition-all whitespace-nowrap cursor-pointer">
           Book +
         </span>
       }
