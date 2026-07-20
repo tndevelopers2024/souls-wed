@@ -8,6 +8,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Home, Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff, AlertCircle, IdCard, Moon, Sun, Monitor, SlidersHorizontal, LogOut, Shield, BadgeCheck, MessageSquare, TrendingUp } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
+import ImageUploadInput from "@/components/shared/ImageUploadInput";
+import MediaGalleryInput from "@/components/shared/MediaGalleryInput";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
@@ -74,6 +76,10 @@ interface VenueItem {
   catering?: boolean;
   description?: string;
   features?: string[];
+  contactPhone?: string;
+  mapLink?: string;
+  heroImage?: string;
+  videos?: string[];
 }
 
 interface ServiceItem {
@@ -88,11 +94,25 @@ interface ServiceItem {
   reviewCount?: number;
   priceFrom?: number;
   priceUnit?: string;
+  pricePerPlateVeg?: string;
+  pricePerPlateNonVeg?: string;
+  rentalCost?: string;
+  minGuests?: number;
+  maxGuests?: number;
+  rooms?: number;
+  outdoor?: boolean;
+  indoor?: boolean;
+  parking?: boolean;
+  catering?: boolean;
   featured?: boolean;
   verified?: boolean;
   active?: boolean;
   description?: string;
   features?: string[];
+  contactPhone?: string;
+  mapLink?: string;
+  heroImage?: string;
+  videos?: string[];
 }
 
 interface VenueFormState {
@@ -116,6 +136,11 @@ interface VenueFormState {
   catering: boolean;
   description: string;
   features: string;
+  contactPhone: string;
+  mapLink: string;
+  heroImage: string;
+  gallery: string[];
+  videos: string[];
 }
 
 const defaultVenueForm: VenueFormState = {
@@ -124,6 +149,7 @@ const defaultVenueForm: VenueFormState = {
   rentalCost: "", image: "", minGuests: "50", maxGuests: "500", rooms: "0",
   outdoor: false, indoor: true, parking: false, catering: false,
   description: "", features: "",
+  contactPhone: "", mapLink: "", heroImage: "", gallery: [], videos: [],
 };
 
 interface ServiceFormState {
@@ -133,14 +159,34 @@ interface ServiceFormState {
   location: string;
   priceFrom: string;
   priceUnit: string;
+  pricePerPlateVeg: string;
+  pricePerPlateNonVeg: string;
+  rentalCost: string;
+  minGuests: string;
+  maxGuests: string;
+  rooms: string;
+  outdoor: boolean;
+  indoor: boolean;
+  parking: boolean;
+  catering: boolean;
   image: string;
   description: string;
   features: string;
+  contactPhone: string;
+  mapLink: string;
+  heroImage: string;
+  gallery: string[];
+  videos: string[];
 }
 
 const defaultServiceForm: ServiceFormState = {
   category: "planners", name: "", city: "", location: "",
-  priceFrom: "", priceUnit: "per event", image: "", description: "", features: "",
+  priceFrom: "", priceUnit: "per event", 
+  pricePerPlateVeg: "", pricePerPlateNonVeg: "", rentalCost: "",
+  minGuests: "50", maxGuests: "500", rooms: "0",
+  outdoor: false, indoor: true, parking: false, catering: false,
+  image: "", description: "", features: "",
+  contactPhone: "", mapLink: "", heroImage: "", gallery: [], videos: [],
 };
 
 export default function VendorDashboard() {
@@ -231,7 +277,6 @@ export default function VendorDashboard() {
   const [venueForm, setVenueForm] = useState<VenueFormState>(defaultVenueForm);
   const [savingVenue, setSavingVenue] = useState(false);
   const [venueMessage, setVenueMessage] = useState<string | null>(null);
-  const [uploadingVenueImage, setUploadingVenueImage] = useState(false);
 
   // Services managed by this vendor account
   const [services, setServices] = useState<ServiceItem[]>([]);
@@ -241,7 +286,6 @@ export default function VendorDashboard() {
   const [serviceForm, setServiceForm] = useState<ServiceFormState>(defaultServiceForm);
   const [savingService, setSavingService] = useState(false);
   const [serviceMessage, setServiceMessage] = useState<string | null>(null);
-  const [uploadingServiceImage, setUploadingServiceImage] = useState(false);
 
   const fetchVenues = async (vendorId: string) => {
     try {
@@ -254,6 +298,23 @@ export default function VendorDashboard() {
       console.error("Failed to fetch venues", err);
     }
   };
+
+  // Auto-save logic
+  useEffect(() => {
+    if (venueView !== "edit" || !editingVenue) return;
+    const timer = setTimeout(() => {
+      handleSaveVenue(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [venueForm, venueView, editingVenue]);
+
+  useEffect(() => {
+    if (serviceView !== "edit" || !editingService) return;
+    const timer = setTimeout(() => {
+      handleSaveService(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [serviceForm, serviceView, editingService]);
 
   const fetchServices = async (vendorId: string) => {
     try {
@@ -296,37 +357,24 @@ export default function VendorDashboard() {
       catering: Boolean(v.catering),
       description: v.description || "",
       features: Array.isArray(v.features) ? v.features.join(", ") : "",
+      contactPhone: v.contactPhone || "",
+      mapLink: v.mapLink || "",
+      heroImage: v.heroImage || "",
+      gallery: Array.isArray(v.gallery) ? v.gallery : [],
+      videos: Array.isArray(v.videos) ? v.videos : [],
     });
     setEditingVenue(v);
     setVenueMessage(null);
     setVenueView("edit");
   };
 
-  const handleVenueImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingVenueImage(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) throw new Error("Upload failed");
-      const data = await res.json();
-      setVenueForm(prev => ({ ...prev, image: data.url }));
-    } catch {
-      setVenueMessage("Image upload failed. Try pasting a URL instead.");
-    } finally {
-      setUploadingVenueImage(false);
-    }
-  };
-
-  const handleSaveVenue = async () => {
+  const handleSaveVenue = async (isAutoSave = false) => {
     if (!venueForm.name.trim() || !venueForm.city.trim()) {
-      setVenueMessage("Venue name and city are required.");
+      if (!isAutoSave) setVenueMessage("Venue name and city are required.");
       return;
     }
-    setSavingVenue(true);
-    setVenueMessage(null);
+    if (!isAutoSave) setSavingVenue(true);
+    if (!isAutoSave) setVenueMessage(null);
     try {
       const payload = {
         ...venueForm,
@@ -334,8 +382,11 @@ export default function VendorDashboard() {
         maxGuests: parseInt(venueForm.maxGuests) || 500,
         rooms: parseInt(venueForm.rooms) || 0,
         features: venueForm.features.split(",").map(f => f.trim()).filter(Boolean),
+        gallery: venueForm.gallery.map(u => u.trim()).filter(Boolean),
+        videos: venueForm.videos.map(u => u.trim()).filter(Boolean),
       };
       if (venueView === "add") {
+        if (isAutoSave) return; // Don't auto-save while creating a new venue until explicitly submitted
         const res = await fetch("/api/venues", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -354,14 +405,20 @@ export default function VendorDashboard() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to update venue.");
-        setVenueMessage("Venue updated successfully!");
+        if (!isAutoSave) {
+          setVenueMessage("Venue updated successfully!");
+        }
         if (vendor?.id) await fetchVenues(vendor.id);
-        setTimeout(() => setVenueView("grid"), 1200);
+        if (!isAutoSave) {
+          setTimeout(() => setVenueView("grid"), 1200);
+        }
       }
     } catch (err) {
-      setVenueMessage(err instanceof Error ? err.message : "Something went wrong.");
+      if (!isAutoSave) {
+        setVenueMessage(err instanceof Error ? err.message : "Something went wrong.");
+      }
     } finally {
-      setSavingVenue(false);
+      if (!isAutoSave) setSavingVenue(false);
     }
   };
 
@@ -381,47 +438,50 @@ export default function VendorDashboard() {
       location: s.location || "",
       priceFrom: String(s.priceFrom ?? ""),
       priceUnit: s.priceUnit || "per event",
+      pricePerPlateVeg: s.pricePerPlateVeg || "",
+      pricePerPlateNonVeg: s.pricePerPlateNonVeg || "",
+      rentalCost: s.rentalCost || "",
+      minGuests: String(s.minGuests ?? 50),
+      maxGuests: String(s.maxGuests ?? 500),
+      rooms: String(s.rooms ?? 0),
+      outdoor: Boolean(s.outdoor),
+      indoor: s.indoor !== false,
+      parking: Boolean(s.parking),
+      catering: Boolean(s.catering),
       image: s.image || "",
       description: s.description || "",
       features: Array.isArray(s.features) ? s.features.join(", ") : "",
+      contactPhone: s.contactPhone || "",
+      mapLink: s.mapLink || "",
+      heroImage: s.heroImage || "",
+      gallery: Array.isArray(s.gallery) ? s.gallery : [],
+      videos: Array.isArray(s.videos) ? s.videos : [],
     });
     setEditingService(s);
     setServiceMessage(null);
     setServiceView("edit");
   };
 
-  const handleServiceImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingServiceImage(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) throw new Error("Upload failed");
-      const data = await res.json();
-      setServiceForm(prev => ({ ...prev, image: data.url }));
-    } catch {
-      setServiceMessage("Image upload failed. Try pasting a URL instead.");
-    } finally {
-      setUploadingServiceImage(false);
-    }
-  };
-
-  const handleSaveService = async () => {
+  const handleSaveService = async (isAutoSave = false) => {
     if (!serviceForm.name.trim() || !serviceForm.city.trim()) {
-      setServiceMessage("Name and city are required.");
+      if (!isAutoSave) setServiceMessage("Name and city are required.");
       return;
     }
-    setSavingService(true);
-    setServiceMessage(null);
+    if (!isAutoSave) setSavingService(true);
+    if (!isAutoSave) setServiceMessage(null);
     try {
       const payload = {
         ...serviceForm,
         priceFrom: parseFloat(serviceForm.priceFrom) || 0,
+        minGuests: parseInt(serviceForm.minGuests) || 50,
+        maxGuests: parseInt(serviceForm.maxGuests) || 500,
+        rooms: parseInt(serviceForm.rooms) || 0,
         features: serviceForm.features.split(",").map(f => f.trim()).filter(Boolean),
+        gallery: serviceForm.gallery.map(u => u.trim()).filter(Boolean),
+        videos: serviceForm.videos.map(u => u.trim()).filter(Boolean),
       };
       if (serviceView === "add") {
+        if (isAutoSave) return;
         const res = await fetch("/api/services", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -440,14 +500,20 @@ export default function VendorDashboard() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to update service.");
-        setServiceMessage("Service updated successfully!");
+        if (!isAutoSave) {
+          setServiceMessage("Service updated successfully!");
+        }
         if (vendor?.id) await fetchServices(vendor.id);
-        setTimeout(() => setServiceView("grid"), 1200);
+        if (!isAutoSave) {
+          setTimeout(() => setServiceView("grid"), 1200);
+        }
       }
     } catch (err) {
-      setServiceMessage(err instanceof Error ? err.message : "Something went wrong.");
+      if (!isAutoSave) {
+        setServiceMessage(err instanceof Error ? err.message : "Something went wrong.");
+      }
     } finally {
-      setSavingService(false);
+      if (!isAutoSave) setSavingService(false);
     }
   };
 
@@ -1406,6 +1472,30 @@ export default function VendorDashboard() {
                             />
                           </div>
 
+                          {/* Contact Phone */}
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Contact Phone</label>
+                            <PhoneInput
+                              value={venueForm.contactPhone}
+                              onChange={val => setVenueForm(p => ({ ...p, contactPhone: val }))}
+                              placeholder="e.g. +91 9876543210"
+                              className={`border rounded-xl outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                }`}
+                            />
+                          </div>
+
+                          {/* Map Link */}
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Google Map Link</label>
+                            <input
+                              type="text" value={venueForm.mapLink}
+                              onChange={e => setVenueForm(p => ({ ...p, mapLink: e.target.value }))}
+                              placeholder="e.g. https://maps.google.com/..."
+                              className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
+                                }`}
+                            />
+                          </div>
+
                           {/* Price */}
                           <div className="flex flex-col gap-1.5">
                             <label className="font-bold text-stone-500 uppercase tracking-wider">Starting Price</label>
@@ -1505,33 +1595,14 @@ export default function VendorDashboard() {
                         </div>
 
                         {/* ── Main Image ── */}
-                        <div className="mt-5 flex flex-col gap-2 text-xs">
-                          <label className="font-bold text-stone-500 uppercase tracking-wider">Main Venue Image</label>
-                          <div className="flex items-start gap-4">
-                            {venueForm.image && (
-                              <div className="relative w-32 h-24 rounded-xl overflow-hidden border border-stone-200/20 flex-shrink-0">
-                                <img src={venueForm.image} alt="preview" className="w-full h-full object-cover" />
-                              </div>
-                            )}
-                            <div className="flex-1 flex flex-col gap-2">
-                              <label className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed cursor-pointer transition-all hover:border-primary-500 hover:bg-primary-50/5 text-stone-400 hover:text-primary-500 w-fit ${isDarkMode ? "border-stone-700" : "border-stone-300"
-                                }`}>
-                                {uploadingVenueImage ? (
-                                  <><Loader2 className="w-4 h-4 animate-spin text-primary-500" /> Uploading...</>
-                                ) : (
-                                  <><Upload className="w-4 h-4" /> Upload Photo</>
-                                )}
-                                <input type="file" accept="image/*" onChange={handleVenueImageUpload} disabled={uploadingVenueImage} className="hidden" />
-                              </label>
-                              <input
-                                type="url" value={venueForm.image}
-                                onChange={e => setVenueForm(p => ({ ...p, image: e.target.value }))}
-                                placeholder="Or paste image URL..."
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-[11px] ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
-                                  }`}
-                              />
-                            </div>
-                          </div>
+                        <div className="mt-5 flex flex-col gap-1.5 md:col-span-2">
+                          <label className="font-bold text-stone-500 uppercase tracking-wider">Preview Card Image</label>
+                          <ImageUploadInput
+                            value={venueForm.image}
+                            onChange={(val) => setVenueForm(p => ({ ...p, image: val }))}
+                            placeholder="e.g. /soulswed/venue.jpg or upload one"
+                            isDarkMode={isDarkMode}
+                          />
                         </div>
 
                         {/* ── Amenities toggles ── */}
@@ -1558,6 +1629,43 @@ export default function VendorDashboard() {
                           </div>
                         </div>
 
+                        {/* ── Additional Media ── */}
+                        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+                          {/* Hero Image */}
+                          <div className="flex flex-col gap-1.5 md:col-span-2">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Hero Banner Image URL</label>
+                            <ImageUploadInput
+                              value={venueForm.heroImage}
+                              onChange={(val) => setVenueForm(p => ({ ...p, heroImage: val }))}
+                              placeholder="URL of a large, high-quality image"
+                              isDarkMode={isDarkMode}
+                            />
+                          </div>
+
+                          {/* Gallery */}
+                          <div className="flex flex-col gap-1.5 md:col-span-2">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Gallery Photos</label>
+                            <MediaGalleryInput
+                              mode="image"
+                              items={venueForm.gallery}
+                              onChange={(items) => setVenueForm(p => ({ ...p, gallery: items }))}
+                              isDarkMode={isDarkMode}
+                            />
+                          </div>
+
+                          {/* Videos */}
+                          <div className="flex flex-col gap-1.5 md:col-span-2">
+                            <label className="font-bold text-stone-500 uppercase tracking-wider">Videos</label>
+                            <MediaGalleryInput
+                              mode="video"
+                              items={venueForm.videos}
+                              onChange={(items) => setVenueForm(p => ({ ...p, videos: items }))}
+                              isDarkMode={isDarkMode}
+                              max={10}
+                            />
+                          </div>
+                        </div>
+
                         {/* ── Description ── */}
                         <div className="mt-5 flex flex-col gap-1.5 text-xs">
                           <label className="font-bold text-stone-500 uppercase tracking-wider">Description</label>
@@ -1573,7 +1681,7 @@ export default function VendorDashboard() {
                         {/* ── Save button ── */}
                         <div className="mt-6 flex items-center gap-3">
                           <button
-                            onClick={handleSaveVenue}
+                            onClick={() => handleSaveVenue(false)}
                             disabled={savingVenue}
                             className="flex items-center gap-2 px-6 py-3 rounded-full bg-primary-500 hover:bg-primary-600 disabled:opacity-50 text-white text-xs font-bold cursor-pointer transition-all"
                           >
@@ -2411,112 +2519,255 @@ export default function VendorDashboard() {
                     )}
                   </div>
 
-                  {serviceView !== "grid" && (
-                    <div className="max-w-2xl">
-                      <button
-                        onClick={() => setServiceView("grid")}
-                        className="flex items-center gap-1 text-xs font-bold text-stone-500 hover:text-stone-800 mb-6 transition-colors"
+                  <AnimatePresence>
+                    {(serviceView === "add" || serviceView === "edit") && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm"
                       >
-                        <ArrowLeft className="w-3.5 h-3.5" />
-                        Back to grid
-                      </button>
+                        <motion.div
+                          initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                          animate={{ scale: 1, opacity: 1, y: 0 }}
+                          exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                          className={`w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 md:p-8 border shadow-none relative ${cardClass}`}
+                          style={{ scrollbarWidth: 'none' }}
+                        >
+                          <button
+                            onClick={() => setServiceView("grid")}
+                            className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 transition-colors z-10 cursor-pointer"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                          
+                          <h3 className={`font-extrabold text-lg mb-6 ${headingText}`}>
+                            {serviceView === "add" ? `Add New ${activeTab}` : `Edit ${activeTab}: ${editingService?.name}`}
+                          </h3>
 
-                      {serviceMessage && (
-                        <div className={`mb-6 rounded-2xl border px-4 py-3 text-xs font-bold ${serviceMessage.includes("Failed") || serviceMessage.includes("required")
-                          ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-100"
-                          : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100"
-                          }`}>
-                          {serviceMessage}
-                        </div>
-                      )}
+                          {serviceMessage && (
+                            <div className={`mb-5 rounded-3xl px-4 py-3 text-xs font-bold border ${serviceMessage.includes("Failed") || serviceMessage.includes("required")
+                              ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/25"
+                              : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/25"
+                              }`}>{serviceMessage}</div>
+                          )}
 
-                      <div className={`p-6 rounded-3xl border ${cardClass}`}>
-                        <div className="flex flex-col gap-5">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
                             <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Service Name *</label>
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Service Name *</label>
                               <input
-                                type="text"
-                                value={serviceForm.name}
+                                type="text" value={serviceForm.name} required
                                 onChange={e => setServiceForm({ ...serviceForm, name: e.target.value })}
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                                 placeholder="e.g. Royal Catering"
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">City *</label>
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">City *</label>
                               <input
-                                type="text"
-                                value={serviceForm.city}
+                                type="text" value={serviceForm.city} required
                                 onChange={e => setServiceForm({ ...serviceForm, city: e.target.value })}
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                placeholder="e.g. Mumbai"
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                               />
                             </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Starting Price (₹)</label>
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Location / Address</label>
                               <input
-                                type="number"
-                                value={serviceForm.priceFrom}
-                                onChange={e => setServiceForm({ ...serviceForm, priceFrom: e.target.value })}
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                type="text" value={serviceForm.location}
+                                onChange={e => setServiceForm({ ...serviceForm, location: e.target.value })}
+                                placeholder="e.g. Andheri West"
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
-                              <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Price Unit</label>
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Contact Phone</label>
+                              <PhoneInput
+                                value={serviceForm.contactPhone}
+                                onChange={val => setServiceForm({ ...serviceForm, contactPhone: val })}
+                                placeholder="e.g. +91 9876543210"
+                                className={`border rounded-xl outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Google Map Link</label>
+                              <input
+                                type="text" value={serviceForm.mapLink}
+                                onChange={e => setServiceForm({ ...serviceForm, mapLink: e.target.value })}
+                                placeholder="e.g. https://maps.google.com/..."
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Starting Price (₹)</label>
+                              <input
+                                type="number" value={serviceForm.priceFrom}
+                                onChange={e => setServiceForm({ ...serviceForm, priceFrom: e.target.value })}
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Price Unit</label>
                               <select
                                 value={serviceForm.priceUnit}
                                 onChange={e => setServiceForm({ ...serviceForm, priceUnit: e.target.value })}
-                                className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                               >
                                 <option value="per event">per event</option>
                                 <option value="per day">per day</option>
                                 <option value="per plate">per plate</option>
                               </select>
                             </div>
-                          </div>
-
-                          <div className="flex flex-col gap-1.5">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Main Image URL (or upload)</label>
-                            <div className="flex gap-2">
+                            {/* Detailed Pricing & Capacity */}
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Price/Plate (Veg)</label>
                               <input
-                                type="url"
-                                value={serviceForm.image}
-                                onChange={e => setServiceForm({ ...serviceForm, image: e.target.value })}
-                                className={`flex-1 border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                                placeholder="https://..."
+                                type="text" value={serviceForm.pricePerPlateVeg}
+                                onChange={e => setServiceForm({ ...serviceForm, pricePerPlateVeg: e.target.value })}
+                                placeholder="e.g. 800"
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                               />
-                              <label className="flex items-center justify-center px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl cursor-pointer transition-colors border border-stone-200">
-                                {uploadingServiceImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                                <input type="file" accept="image/*" className="hidden" onChange={handleServiceImageUpload} disabled={uploadingServiceImage} />
-                              </label>
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Price/Plate (Non-Veg)</label>
+                              <input
+                                type="text" value={serviceForm.pricePerPlateNonVeg}
+                                onChange={e => setServiceForm({ ...serviceForm, pricePerPlateNonVeg: e.target.value })}
+                                placeholder="e.g. 1200"
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Min Guests</label>
+                              <input
+                                type="number" min="1" value={serviceForm.minGuests}
+                                onChange={e => setServiceForm({ ...serviceForm, minGuests: e.target.value })}
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Max Guests</label>
+                              <input
+                                type="number" min="1" value={serviceForm.maxGuests}
+                                onChange={e => setServiceForm({ ...serviceForm, maxGuests: e.target.value })}
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Number of Rooms</label>
+                              <input
+                                type="number" min="0" value={serviceForm.rooms}
+                                onChange={e => setServiceForm({ ...serviceForm, rooms: e.target.value })}
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            {/* ── Main Image ── */}
+                            <div className="flex flex-col gap-1.5 md:col-span-2 mt-4">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Preview Card Image</label>
+                              <ImageUploadInput
+                                value={serviceForm.image}
+                                onChange={(val) => setServiceForm(p => ({ ...p, image: val }))}
+                                placeholder="e.g. /soulswed/vendors/1128.webp or upload one"
+                                isDarkMode={isDarkMode}
+                              />
+                            </div>
+
+                            {/* ── Amenities toggles ── */}
+                            <div className="md:col-span-2 mt-2 text-xs">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider block mb-3">Amenities</label>
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                {(["outdoor", "indoor", "parking", "catering"] as const).map(key => (
+                                  <button
+                                    key={key}
+                                    type="button"
+                                    onClick={() => setServiceForm(p => ({ ...p, [key]: !p[key as keyof ServiceFormState] }))}
+                                    className={`flex items-center justify-between px-4 py-2.5 rounded-xl border font-bold capitalize cursor-pointer transition-all ${serviceForm[key as keyof ServiceFormState]
+                                      ? "bg-primary-500 border-primary-500 text-white"
+                                      : isDarkMode
+                                        ? "border-stone-700 text-stone-400 hover:border-stone-600"
+                                        : "border-stone-200 text-stone-500 hover:border-stone-300"
+                                      }`}
+                                  >
+                                    <span>{key}</span>
+                                    <span className={`w-2.5 h-2.5 rounded-full ${serviceForm[key as keyof ServiceFormState] ? "bg-white" : isDarkMode ? "bg-stone-700" : "bg-stone-200"
+                                      }`} />
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            <div className="flex flex-col gap-1.5 md:col-span-2 mt-3">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Hero Banner Image URL</label>
+                              <ImageUploadInput
+                                value={serviceForm.heroImage}
+                                onChange={(val) => setServiceForm(p => ({ ...p, heroImage: val }))}
+                                placeholder="URL of a large, high-quality image"
+                                isDarkMode={isDarkMode}
+                              />
+                            </div>
+                            
+                            <div className="flex flex-col gap-1.5 md:col-span-2">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Gallery Photos</label>
+                              <MediaGalleryInput
+                                mode="image"
+                                items={serviceForm.gallery}
+                                onChange={(items) => setServiceForm(p => ({ ...p, gallery: items }))}
+                                isDarkMode={isDarkMode}
+                              />
+                            </div>
+
+                            <div className="flex flex-col gap-1.5 md:col-span-2">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Videos</label>
+                              <MediaGalleryInput
+                                mode="video"
+                                items={serviceForm.videos}
+                                onChange={(items) => setServiceForm(p => ({ ...p, videos: items }))}
+                                isDarkMode={isDarkMode}
+                                max={10}
+                              />
+                            </div>
+
+                            <div className="flex flex-col gap-1.5 md:col-span-2 mt-3">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Features (comma-separated)</label>
+                              <input
+                                type="text" value={serviceForm.features}
+                                onChange={e => setServiceForm({ ...serviceForm, features: e.target.value })}
+                                placeholder="e.g. Traditional, Modern, Destination Wedding"
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1.5 md:col-span-2">
+                              <label className="font-bold text-stone-500 uppercase tracking-wider">Description</label>
+                              <textarea
+                                value={serviceForm.description}
+                                onChange={e => setServiceForm({ ...serviceForm, description: e.target.value })}
+                                rows={4}
+                                className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                              />
                             </div>
                           </div>
 
-                          <div className="flex flex-col gap-1.5">
-                            <label className="font-bold text-stone-500 uppercase tracking-wider text-[10px]">Description</label>
-                            <textarea
-                              value={serviceForm.description}
-                              onChange={e => setServiceForm({ ...serviceForm, description: e.target.value })}
-                              rows={3}
-                              className={`border rounded-xl px-4 py-2 outline-none font-semibold text-xs ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
-                            />
+                          <div className="mt-8 pt-6 border-t flex justify-end gap-3" style={{ borderColor: "var(--sw-light-gray)" }}>
+                            <button
+                              onClick={() => setServiceView("grid")}
+                              className="px-6 py-2.5 rounded-full text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => handleSaveService()}
+                              disabled={savingService}
+                              className="flex items-center gap-2 px-8 py-2.5 rounded-full bg-[var(--sw-primary)] hover:brightness-110 text-white text-xs font-bold cursor-pointer transition-all shadow-md disabled:opacity-50"
+                            >
+                              {savingService && <Loader2 className="w-4 h-4 animate-spin" />}
+                              {savingService ? "Saving..." : "Save Service"}
+                            </button>
                           </div>
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-                          <button
-                            onClick={handleSaveService}
-                            disabled={savingService}
-                            className="w-full mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-3 text-xs font-bold text-white transition-colors hover:bg-primary-600 disabled:opacity-50"
-                          >
-                            {savingService && <Loader2 className="w-4 h-4 animate-spin" />}
-                            {savingService ? "Saving..." : "Save Listing"}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
 
                   {serviceView === "grid" && (
                     serviceLayout === "grid" ? (

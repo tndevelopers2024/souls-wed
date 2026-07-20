@@ -93,6 +93,7 @@ export default function Footer() {
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const currencyRef = useRef<HTMLDivElement>(null);
   const [showFab, setShowFab] = useState(false);
+  const [openSection, setOpenSection] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -196,10 +197,10 @@ export default function Footer() {
           </div>
 
           {/* Middle Row: Links Grid (Asymmetrical Layout) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6">
 
             {/* Col 1 — Brand (Spans 2 columns on lg for gorgeous breathing room) */}
-            <div className="lg:col-span-2 lg:pr-12">
+            <div className="lg:col-span-2 lg:pr-12 mb-4 lg:mb-0">
               <Link href="/" className="flex items-center mb-5 inline-flex">
                 <Image 
                   src="/logo/logo-by-soulswed.png"
@@ -232,159 +233,183 @@ export default function Footer() {
             </div>
 
             {/* Col 2 — About Us */}
-            <div>
-              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
-                About Us
-              </h4>
-              <ul className="flex flex-col gap-1">
-                {aboutLinks.map((item) => {
-                  const isHovered = hoveredLink === item.href;
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ?'text-amber-600':'text-slate-600'}`}
-                        onMouseEnter={() => setHoveredLink(item.href)}
-                        onMouseLeave={() => setHoveredLink(null)}
-                      >
-                        <AnimatePresence>
-                          {isHovered && (
-                            <motion.div
-                              layoutId="footer-about-pill"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              className="absolute inset-0 rounded-full"
-                              style={{
-                                background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
-                                border: "1px solid rgba(238, 116, 41, 0.1)",
-                                backdropFilter: "blur(12px) saturate(150%)",
-                                boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
-                                zIndex: -1,
-                              }}
-                              transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
-                            />
-                          )}
-                        </AnimatePresence>
-                        <span className="relative z-10">{item.label}</span>
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
+            <div className="border-b border-amber-600/10 lg:border-none pb-4 lg:pb-0">
+              <button 
+                onClick={() => setOpenSection(openSection === "about" ? null : "about")}
+                className="w-full flex items-center justify-between lg:block text-left"
+              >
+                <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest lg:pb-3 lg:mb-4 lg:border-b lg:border-amber-600/20">
+                  About Us
+                </h4>
+                <ChevronUp className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "about" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "about" ? "rotate(0deg)" : "rotate(180deg)" }} />
+              </button>
+              <div className={`overflow-hidden transition-all duration-300 ${openSection === "about" ? "max-h-96 mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
+                <ul className="flex flex-col gap-1">
+                  {aboutLinks.map((item) => {
+                    const isHovered = hoveredLink === item.href;
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ?'text-amber-600':'text-slate-600'}`}
+                          onMouseEnter={() => setHoveredLink(item.href)}
+                          onMouseLeave={() => setHoveredLink(null)}
+                        >
+                          <AnimatePresence>
+                            {isHovered && (
+                              <motion.div
+                                layoutId="footer-about-pill"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 rounded-full hidden lg:block"
+                                style={{
+                                  background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                                  border: "1px solid rgba(238, 116, 41, 0.1)",
+                                  backdropFilter: "blur(12px) saturate(150%)",
+                                  boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                  zIndex: -1,
+                                }}
+                                transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                              />
+                            )}
+                          </AnimatePresence>
+                          <span className="relative z-10">{item.label}</span>
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
             </div>
 
             {/* Col 3 — Our Services */}
-            <div>
-              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
-                Our Services
-              </h4>
-              <ul className="flex flex-col gap-1">
-                {services.map((item) => {
-                  const isHovered = hoveredLink === item.href;
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ?'text-amber-600':'text-slate-600'}`}
-                        onMouseEnter={() => setHoveredLink(item.href)}
-                        onMouseLeave={() => setHoveredLink(null)}
-                      >
-                        <AnimatePresence>
-                          {isHovered && (
-                            <motion.div
-                              layoutId="footer-services-pill"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              className="absolute inset-0 rounded-full"
-                              style={{
-                                background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
-                                border: "1px solid rgba(238, 116, 41, 0.1)",
-                                backdropFilter: "blur(12px) saturate(150%)",
-                                boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
-                                zIndex: -1,
-                              }}
-                              transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
-                            />
-                          )}
-                        </AnimatePresence>
-                        <span className="relative z-10">{item.label}</span>
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
+            <div className="border-b border-amber-600/10 lg:border-none pb-4 lg:pb-0">
+              <button 
+                onClick={() => setOpenSection(openSection === "services" ? null : "services")}
+                className="w-full flex items-center justify-between lg:block text-left"
+              >
+                <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest lg:pb-3 lg:mb-4 lg:border-b lg:border-amber-600/20">
+                  Our Services
+                </h4>
+                <ChevronUp className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "services" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "services" ? "rotate(0deg)" : "rotate(180deg)" }} />
+              </button>
+              <div className={`overflow-hidden transition-all duration-300 ${openSection === "services" ? "max-h-96 mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
+                <ul className="flex flex-col gap-1">
+                  {services.map((item) => {
+                    const isHovered = hoveredLink === item.href;
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ?'text-amber-600':'text-slate-600'}`}
+                          onMouseEnter={() => setHoveredLink(item.href)}
+                          onMouseLeave={() => setHoveredLink(null)}
+                        >
+                          <AnimatePresence>
+                            {isHovered && (
+                              <motion.div
+                                layoutId="footer-services-pill"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 rounded-full hidden lg:block"
+                                style={{
+                                  background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                                  border: "1px solid rgba(238, 116, 41, 0.1)",
+                                  backdropFilter: "blur(12px) saturate(150%)",
+                                  boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                  zIndex: -1,
+                                }}
+                                transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                              />
+                            )}
+                          </AnimatePresence>
+                          <span className="relative z-10">{item.label}</span>
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
             </div>
 
             {/* Col 4 — Contact Info */}
-            <div>
-              <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest pb-3 mb-4 border-b border-amber-600/20">
-                Contact Info
-              </h4>
-              <ul className="flex flex-col gap-1.5">
-                {contactItems.map((item) => {
-                  const Icon = item.icon;
-                  const isHovered = hoveredLink === item.label;
-                  return (
-                    <li key={item.label}>
-                      <div 
-                        className="relative block py-2 px-4 -ml-4 z-10 transition-colors cursor-pointer"
-                        onMouseEnter={() => setHoveredLink(item.label)}
-                        onMouseLeave={() => setHoveredLink(null)}
-                      >
-                        <AnimatePresence>
-                          {isHovered && (
-                            <motion.div
-                              layoutId="footer-contact-pill"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              className="absolute inset-0 rounded-3xl"
-                              style={{
-                                background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
-                                border: "1px solid rgba(238, 116, 41, 0.1)",
-                                backdropFilter: "blur(12px) saturate(150%)",
-                                boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
-                                zIndex: -1,
-                              }}
-                              transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
-                            />
-                          )}
-                        </AnimatePresence>
-                        <div className="relative z-10 flex items-start gap-3">
-                           <Icon className={`w-4 h-4 mt-0.5 ${isHovered ?'text-amber-600':'text-amber-500'} transition-colors`} />
-                           <div>
-                             <p className={`text-[13px] font-bold ${isHovered ?'text-amber-700':'text-slate-800'} transition-colors`}>{item.label}</p>
-                             <div className="flex flex-col gap-0.5 mt-0.5">
-                               {item.lines.map((line) => (
-                                 <p key={line} className="text-[12px] text-slate-500 font-medium">{line}</p>
-                               ))}
+            <div className="pb-2 lg:pb-0">
+              <button 
+                onClick={() => setOpenSection(openSection === "contact" ? null : "contact")}
+                className="w-full flex items-center justify-between lg:block text-left"
+              >
+                <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest lg:pb-3 lg:mb-4 lg:border-b lg:border-amber-600/20">
+                  Contact Info
+                </h4>
+                <ChevronUp className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "contact" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "contact" ? "rotate(0deg)" : "rotate(180deg)" }} />
+              </button>
+              <div className={`overflow-hidden transition-all duration-300 ${openSection === "contact" ? "max-h-[500px] mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
+                <ul className="flex flex-col gap-1.5">
+                  {contactItems.map((item) => {
+                    const Icon = item.icon;
+                    const isHovered = hoveredLink === item.label;
+                    return (
+                      <li key={item.label}>
+                        <div 
+                          className="relative block py-2 px-4 -ml-4 z-10 transition-colors cursor-pointer"
+                          onMouseEnter={() => setHoveredLink(item.label)}
+                          onMouseLeave={() => setHoveredLink(null)}
+                        >
+                          <AnimatePresence>
+                            {isHovered && (
+                              <motion.div
+                                layoutId="footer-contact-pill"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 rounded-3xl hidden lg:block"
+                                style={{
+                                  background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
+                                  border: "1px solid rgba(238, 116, 41, 0.1)",
+                                  backdropFilter: "blur(12px) saturate(150%)",
+                                  boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
+                                  zIndex: -1,
+                                }}
+                                transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
+                              />
+                            )}
+                          </AnimatePresence>
+                          <div className="relative z-10 flex items-start gap-3">
+                             <Icon className={`w-4 h-4 mt-0.5 ${isHovered ?'text-amber-600':'text-amber-500'} transition-colors`} />
+                             <div>
+                               <p className={`text-[13px] font-bold ${isHovered ?'text-amber-700':'text-slate-800'} transition-colors`}>{item.label}</p>
+                               <div className="flex flex-col gap-0.5 mt-0.5">
+                                 {item.lines.map((line) => (
+                                   <p key={line} className="text-[12px] text-slate-500 font-medium">{line}</p>
+                                 ))}
+                               </div>
                              </div>
-                           </div>
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
 
         <div
-          className="relative z-10 border-t py-4 px-6"
+          className="relative z-10 border-t py-6 px-4 md:px-6"
           style={{ borderColor: "rgba(238, 116, 41, 0.15)" }}
         >
-          <div className="max-w-none mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-slate-400 font-semibold">
+          <div className="max-w-none mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <p className="text-xs text-slate-400 font-semibold text-center md:text-left">
               © 2026 SoulsWed. All rights reserved.
             </p>
-            <div className="flex items-center gap-6">
-              <Link href="/privacy"className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-3 md:gap-6 text-center">
+              <Link href="/privacy" className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
                 Privacy Policy
               </Link>
-              <Link href="/terms"className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
+              <Link href="/terms" className="text-xs text-slate-400 hover:text-amber-600 transition-colors font-semibold">
                 Terms of Service
               </Link>
               <span className="text-xs flex items-center gap-1 text-slate-400 font-semibold">
@@ -392,10 +417,10 @@ export default function Footer() {
                 <Heart className="w-3 h-3 fill-current mx-0.5 text-red-500 animate-pulse" />
                 in India
               </span>
-              <div className="relative" ref={currencyRef}>
+              <div className="relative mt-2 w-full sm:w-auto sm:mt-0 flex justify-center" ref={currencyRef}>
                 <button 
                   onClick={() => setCurrencyOpen(!currencyOpen)}
-                  className="px-3 py-1.5 ml-2 text-xs font-bold rounded-full bg-slate-800 text-slate-200 hover:bg-primary-500 hover:text-white transition-all duration-300 cursor-pointer flex items-center gap-1 shadow-sm border border-slate-700 hover:border-primary-500"
+                  className="px-4 py-2 text-xs font-bold rounded-full bg-slate-800 text-slate-200 hover:bg-primary-500 hover:text-white transition-all duration-300 cursor-pointer flex items-center gap-1 shadow-sm border border-slate-700 hover:border-primary-500"
                   title="Change Currency"
                 >
                   <span className="opacity-70 text-[10px]">Currency:</span> {currency}

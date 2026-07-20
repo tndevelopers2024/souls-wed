@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles, MessageCircle, Maximize2 } from "lucide-react";
+import { X, Sparkles, MessageCircle, Maximize2, Bot } from "lucide-react";
 import Image from "@/components/shared/CustomImage";
 
 export default function ChatbotWidget() {
@@ -65,26 +65,22 @@ export default function ChatbotWidget() {
               </button>
             </div>
 
-            {/* 3D Robot Avatar */}
-            <div className="absolute -top-20 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+            {/* AI Avatar Icon (Replaced 3D Robot) */}
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
               <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                className="relative w-36 h-36"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                className="relative w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl border-[6px] border-amber-50"
               >
-                <Image
-                  src="/robot-avatar-orange.png"
-                  alt="AI Assistant"
-                  fill
-                  className="object-contain drop-shadow-2xl"
-                  unoptimized
-                />
+                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500 to-primary-600 flex items-center justify-center">
+                  <Bot className="w-8 h-8 text-white" />
+                </div>
               </motion.div>
-              {/* Fake shadow underneath robot */}
+              {/* Fake shadow underneath avatar */}
               <motion.div 
-                animate={{ scale: [1, 0.7, 1], opacity: [0.3, 0.1, 0.3] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                className="w-16 h-2 bg-black/30 rounded-full mx-auto mt-2 blur-[4px]"
+                animate={{ scale: [1, 0.8, 1], opacity: [0.2, 0.1, 0.2] }}
+                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                className="w-12 h-2 bg-black/30 rounded-full mx-auto mt-2 blur-[4px]"
               />
             </div>
 
@@ -94,21 +90,23 @@ export default function ChatbotWidget() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
+                onClick={() => setInputValue("Find a venue in Goa under ₹10L")}
                 className="bg-white rounded-[18px] p-4 shadow-sm self-end max-w-[85%] border border-slate-100 cursor-pointer hover:shadow-md transition-shadow"
               >
                 <p className="text-[14px] font-bold text-[var(--sw-primary)] mb-0.5 font-heading">Find a venue</p>
-                <p className="text-[14px] text-slate-700">in Maldives under $5k</p>
+                <p className="text-[14px] text-slate-700">in Goa under ₹10L</p>
               </motion.div>
 
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
+                onClick={() => setInputValue("Plan a destination wedding for 200 guests...")}
                 className="bg-white rounded-[18px] p-4 shadow-sm self-start max-w-[85%] border border-slate-100 cursor-pointer hover:shadow-md transition-shadow"
               >
                 <p className="text-[14px] text-slate-700 font-medium">
-                  Plan a relaxing getaway for <br/>
-                  <span className="text-[var(--sw-primary)] font-bold font-heading">my parents...</span>
+                  Plan a destination wedding for <br/>
+                  <span className="text-[var(--sw-primary)] font-bold font-heading">200 guests...</span>
                 </p>
               </motion.div>
             </div>

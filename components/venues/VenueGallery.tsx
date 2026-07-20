@@ -3,17 +3,21 @@
 import { useState } from "react";
 import Image from "@/components/shared/CustomImage";
 import { X, ChevronLeft, ChevronRight, Images } from "lucide-react";
+import { isDirectVideoUrl, toVideoEmbedUrl } from "@/lib/media";
 
 interface VenueGalleryProps {
   images: string[];
+  videos?: string[];
   venueName: string;
 }
 
-export default function VenueGallery({ images, venueName }: VenueGalleryProps) {
+export default function VenueGallery({ images, videos = [], venueName }: VenueGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"portfolio" | "albums" | "videos">("portfolio");
 
-  const allImages = images.length > 0 ? images : ["/soulswed/pageimg_venues.jpg"];
+  const cleanImages = images.filter((img) => img && img.trim());
+  const cleanVideos = videos.filter((vid) => vid && vid.trim());
+  const allImages = cleanImages.length > 0 ? cleanImages : ["/soulswed/venue.jpg"];
 
   const prev = () =>
     setLightboxIndex((i) => (i === null ? 0 : (i - 1 + allImages.length) % allImages.length));
@@ -52,7 +56,7 @@ export default function VenueGallery({ images, venueName }: VenueGalleryProps) {
               : "font-semibold text-slate-400 hover:text-slate-600"
           }`}
         >
-          VIDEOS (2)
+          VIDEOS ({cleanVideos.length})
         </button>
       </div>
 
@@ -92,10 +96,37 @@ export default function VenueGallery({ images, venueName }: VenueGalleryProps) {
       )}
 
       {activeTab === "videos" && (
-        <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
-          <Images className="w-12 h-12 text-slate-300 mb-4" />
-          <p className="text-slate-500 font-medium">No videos uploaded yet.</p>
-        </div>
+        cleanVideos.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {cleanVideos.map((vid, idx) => (
+              <div key={idx} className="aspect-video w-full rounded-xl overflow-hidden bg-slate-100">
+                {isDirectVideoUrl(vid) ? (
+                  <video
+                    src={vid}
+                    controls
+                    preload="metadata"
+                    playsInline
+                    className="w-full h-full object-cover bg-black"
+                  />
+                ) : (
+                  <iframe
+                    src={toVideoEmbedUrl(vid)}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                    title={`${venueName} – video ${idx + 1}`}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
+            <Images className="w-12 h-12 text-slate-300 mb-4" />
+            <p className="text-slate-500 font-medium">No videos uploaded yet.</p>
+          </div>
+        )
       )}
 
       {/* "View all photos" button */}

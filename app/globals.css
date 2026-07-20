@@ -465,6 +465,10 @@ h6 {
     @apply bg-background text-foreground;
   }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   html {
     @apply font-sans;
   }

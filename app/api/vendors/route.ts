@@ -40,7 +40,12 @@ export async function GET(req: Request) {
             featured: service.featured,
             verified: service.verified,
             description: service.description,
-            features: service.features
+            features: service.features,
+            heroImage: service.heroImage,
+            gallery: Array.isArray(service.gallery) ? service.gallery : [],
+            videos: Array.isArray(service.videos) ? service.videos : [],
+            contactPhone: service.contactPhone,
+            mapLink: service.mapLink
           };
         }
       }

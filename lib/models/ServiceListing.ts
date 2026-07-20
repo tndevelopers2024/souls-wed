@@ -19,17 +19,34 @@ const ServiceListingSchema = new Schema({
   city:      { type: String, required: true },
   location:  { type: String },
   
+  // Contact & Location Details
+  contactPhone: { type: String },
+  mapLink:      { type: String },
+  // Capacity & Amenities
+  minGuests: { type: Number },
+  maxGuests: { type: Number },
+  rooms:     { type: Number, default: 0 },
+  outdoor:   { type: Boolean, default: false },
+  indoor:    { type: Boolean, default: true },
+  parking:   { type: Boolean, default: false },
+  catering:  { type: Boolean, default: false },
+  
   // Pricing
-  priceFrom: { type: Number, required: true },
-  priceUnit: { type: String },
+  priceFrom:          { type: Number, required: true },
+  priceUnit:          { type: String },
+  pricePerPlateVeg:   { type: String },
+  pricePerPlateNonVeg:{ type: String },
+  rentalCost:         { type: String },
   
   // Description and Features
   description: { type: String, default: "" },
   features:    [{ type: String }],
   
   // Media
-  image:   { type: String },
-  gallery: [{ type: String }],
+  image:     { type: String },
+  heroImage: { type: String },
+  gallery:   [{ type: String }],
+  videos:    [{ type: String }],
   
   // Ratings
   rating:      { type: Number, default: 0 },

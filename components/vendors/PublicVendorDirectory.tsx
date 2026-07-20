@@ -14,6 +14,7 @@ import { useCurrency } from "@/lib/CurrencyContext";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import VendorCard from "@/components/vendors/VendorCard";
+import WeddingCategoriesSection from "@/components/home/WeddingCategoriesSection";
 
 export interface PublicVendor {
   _id: string;
@@ -27,6 +28,11 @@ export interface PublicVendor {
   reviewCount?: number;
   priceFrom?: number;
   images?: string[];
+  gallery?: string[];
+  videos?: string[];
+  heroImage?: string;
+  contactPhone?: string;
+  mapLink?: string;
   featured?: boolean;
   verified?: boolean;
   phone?: string;
@@ -209,6 +215,11 @@ export default function PublicVendorDirectory({
         </div>
       </div>
 
+      {/* ══════════════════════ CATEGORIES ══════════════════════ */}
+      <div className="bg-white">
+        <WeddingCategoriesSection />
+      </div>
+
       {/* ══════════════════════ STICKY FILTER BAR ══════════════════════ */}
       <VenueFilterBar
         activeCities={activeCities}
@@ -286,8 +297,8 @@ export default function PublicVendorDirectory({
               <button
                 onClick={() => setViewType("grid")}
                 className={`p-1.5 rounded-full transition-all ${viewType === "grid"
-                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 hover:text-slate-600"
+                  ? "bg-white shadow-sm text-[var(--sw-primary)]"
+                  : "text-slate-400 hover:text-slate-600"
                   }`}
                 aria-label="Grid view"
               >
@@ -296,8 +307,8 @@ export default function PublicVendorDirectory({
               <button
                 onClick={() => setViewType("list")}
                 className={`p-1.5 rounded-full transition-all ${viewType === "list"
-                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 hover:text-slate-600"
+                  ? "bg-white shadow-sm text-[var(--sw-primary)]"
+                  : "text-slate-400 hover:text-slate-600"
                   }`}
                 aria-label="List view"
               >
@@ -571,7 +582,7 @@ function DirectoryItemCard({ vendor, index, view }: { vendor: PublicVendor; inde
           }
           tags={
             <>
-              <div 
+              <div
                 className="flex items-center text-[11px] font-bold px-3 py-1.5 rounded-full bg-white shadow-sm"
                 style={{ color: "var(--sw-primary)" }}
               >

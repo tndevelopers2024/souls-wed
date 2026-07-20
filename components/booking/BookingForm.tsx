@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import BookingCalendar from "./BookingCalendar";
 import { useCurrency } from "@/lib/CurrencyContext";
+import { PhoneInput } from "@/components/shared/PhoneInput";
 
 // ─── Types ───────────────────────────────────────────────────
 interface BookingFormProps {
@@ -323,7 +324,7 @@ export default function BookingForm({
                 max={maxGuests}
                 value={guestCount}
                 onChange={(e) => setGuestCount(Number(e.target.value))}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base md:text-sm outline-none focus:border-primary-400 transition-colors"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -331,7 +332,7 @@ export default function BookingForm({
               <select
                 value={menuType}
                 onChange={(e) => setMenuType(e.target.value as "veg" | "nonveg")}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base md:text-sm outline-none focus:border-primary-400 transition-colors"
               >
                 <option value="veg">Vegetarian</option>
                 <option value="nonveg">Non-Vegetarian</option>
@@ -352,7 +353,7 @@ export default function BookingForm({
                 max={totalRooms}
                 value={roomCount}
                 onChange={(e) => setRoomCount(Number(e.target.value))}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base md:text-sm outline-none focus:border-primary-400 transition-colors"
               />
             </div>
           </>
@@ -368,7 +369,7 @@ export default function BookingForm({
               min={1}
               value={hours}
               onChange={(e) => setHours(Number(e.target.value))}
-              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
+              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base md:text-sm outline-none focus:border-primary-400 transition-colors"
             />
           </div>
         )}
@@ -378,12 +379,10 @@ export default function BookingForm({
         <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
           <Phone className="w-3.5 h-3.5 text-primary-500" /> Contact Phone
         </label>
-        <input
-          type="tel"
+        <PhoneInput
           placeholder="Enter contact number"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary-400 transition-colors"
+          onChange={setPhone}
         />
       </div>
 

@@ -245,7 +245,7 @@ export default function VenueDetailPage() {
               >
                 Gallery
               </h2>
-              <VenueGallery images={venue.gallery} venueName={venue.name} />
+              <VenueGallery images={venue.gallery || []} videos={venue.videos || []} venueName={venue.name} />
             </section>
 
             {/* Pricing Table */}

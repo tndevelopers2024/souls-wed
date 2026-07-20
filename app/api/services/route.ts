@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "@/lib/session";
+import { sanitizeMediaList, toVideoEmbedUrl } from "@/lib/media";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET — public (active only); vendors/admins see all including inactive
@@ -100,8 +101,22 @@ export async function POST(req: Request) {
       city:               body.city,
       priceFrom:          parseFloat(body.priceFrom) || 0,
       priceUnit:          body.priceUnit  || "per event",
+      pricePerPlateVeg:   body.pricePerPlateVeg || "",
+      pricePerPlateNonVeg:body.pricePerPlateNonVeg || "",
+      rentalCost:         body.rentalCost || "",
+      minGuests:          parseInt(body.minGuests) || 0,
+      maxGuests:          parseInt(body.maxGuests) || 0,
+      rooms:              parseInt(body.rooms) || 0,
+      outdoor:            Boolean(body.outdoor),
+      indoor:             body.indoor !== false,
+      parking:            Boolean(body.parking),
+      catering:           Boolean(body.catering),
+      contactPhone:       body.contactPhone || "",
+      mapLink:            body.mapLink || "",
+      heroImage:          body.heroImage || "",
+      videos:             sanitizeMediaList(body.videos).map(toVideoEmbedUrl),
       image:              body.image      || "",
-      gallery:            Array.isArray(body.gallery) ? body.gallery : [],
+      gallery:            sanitizeMediaList(body.gallery),
       description:        body.description || "",
       features:           Array.isArray(body.features) ? body.features : [],
       verified: false,
@@ -138,8 +153,10 @@ export async function PATCH(req: Request) {
     const safeFields = [
       "verified", "featured", "active",
       "name", "city", "location", "category", "description",
-      "priceFrom", "priceUnit",
-      "image", "gallery", "features",
+      "contactPhone", "mapLink",
+      "priceFrom", "priceUnit", "pricePerPlateVeg", "pricePerPlateNonVeg", "rentalCost",
+      "minGuests", "maxGuests", "rooms", "outdoor", "indoor", "parking", "catering",
+      "image", "heroImage", "gallery", "videos", "features",
     ];
 
     const existingService = await ServiceListing.findOne({ serviceId });
@@ -153,6 +170,9 @@ export async function PATCH(req: Request) {
     for (const field of safeFields) {
       if (updates[field] !== undefined) allowed[field] = updates[field];
     }
+
+    if (allowed.gallery !== undefined) allowed.gallery = sanitizeMediaList(allowed.gallery);
+    if (allowed.videos !== undefined) allowed.videos = sanitizeMediaList(allowed.videos).map(toVideoEmbedUrl);
 
     // Vendors cannot flip admin-only flags
     if (session.role === "vendor") {

@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: ["mongoose"],
   images: {
+    qualities: [75, 85],
     remotePatterns: [
       {
         protocol: "https",

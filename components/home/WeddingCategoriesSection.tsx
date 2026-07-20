@@ -16,11 +16,14 @@ const itemVariants = {
   visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
 };
 
-export default function WeddingCategoriesSection() {
+export default function WeddingCategoriesSection({ singleRow = false }: { singleRow?: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // 8 items per row on desktop. 2 rows = 16 items.
-  const displayedCategories = isExpanded ? VENDOR_CATEGORIES : VENDOR_CATEGORIES.slice(0, 16);
+  // If single row, show all items (horizontally scrollable). 
+  // Else, use expansion logic (8 items initially -> all).
+  const displayedCategories = singleRow 
+    ? VENDOR_CATEGORIES 
+    : (isExpanded ? VENDOR_CATEGORIES : VENDOR_CATEGORIES.slice(0, 8));
 
   return (
     <section className="py-12 px-4">
@@ -58,7 +61,7 @@ export default function WeddingCategoriesSection() {
               transition={{ duration: 0.4, delay: Math.min(i * 0.03, 0.3) }}
               className="group min-w-[100px] w-[100px] md:min-w-0 md:w-[120px] flex flex-col items-center justify-start gap-2.5 p-1 flex-shrink-0 snap-start"
             >
-              <div 
+              <div
                 className="w-12 h-12 rounded-full flex items-center justify-center"
                 style={{
                   background: "linear-gradient(135deg, rgba(238, 116, 41, 0.1) 0%, rgba(238, 116, 41, 0.02) 100%)",
@@ -69,7 +72,7 @@ export default function WeddingCategoriesSection() {
                 <cat.icon className="w-5 h-5 stroke-[1.5]" />
               </div>
               <div className="text-center flex flex-col items-center">
-                <h3 
+                <h3
                   className="text-[14px] font-bold text-slate-900 group-hover:text-[var(--sw-primary)] transition-colors"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
@@ -83,7 +86,7 @@ export default function WeddingCategoriesSection() {
           ))}
         </div>
 
-        {VENDOR_CATEGORIES.length > 16 && (
+        {!singleRow && VENDOR_CATEGORIES.length > 8 && (
           <div className="flex justify-center mt-8">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
@@ -96,7 +99,7 @@ export default function WeddingCategoriesSection() {
                 </>
               ) : (
                 <>
-                  View {VENDOR_CATEGORIES.length - 16} More Categories <ChevronDown className="w-4 h-4" />
+                  View {VENDOR_CATEGORIES.length - 8} More Categories <ChevronDown className="w-4 h-4" />
                 </>
               )}
             </button>

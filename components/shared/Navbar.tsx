@@ -295,6 +295,17 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflowY = "hidden";
+    } else {
+      document.body.style.overflowY = "";
+    }
+    return () => {
+      document.body.style.overflowY = "";
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
     setMounted(true);
     async function checkSession() {
       try {

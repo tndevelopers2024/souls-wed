@@ -24,7 +24,11 @@ export interface Venue {
   verified: boolean;
   featured: boolean;
   image: string;
+  heroImage?: string;
   gallery: string[];
+  videos?: string[];
+  contactPhone?: string;
+  mapLink?: string;
   minGuests: number;
   maxGuests: number;
   rooms: number;

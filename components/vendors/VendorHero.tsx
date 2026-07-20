@@ -62,7 +62,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
       {/* Hero Image */}
       <div className="relative w-full h-[400px] rounded-t-3xl overflow-hidden">
         <Image
-          src={image}
+          src={vendor.heroImage || image}
           alt={name}
           fill
           priority
@@ -91,6 +91,11 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
             <div className="flex items-center gap-1.5 text-slate-600 text-sm font-medium">
               <MapPin className="w-4 h-4 text-slate-400"/>
               {vendor.city}, India
+              {vendor.mapLink && (
+                <a href={vendor.mapLink} target="_blank" rel="noopener noreferrer" className="text-primary-600 font-semibold ml-2 hover:underline text-xs">
+                  (View on Map)
+                </a>
+              )}
             </div>
             
             <p className="text-xs text-slate-500 max-w-lg mt-1">
@@ -114,10 +119,10 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
 
         {/* Contact Strip */}
         <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
-          {vendor.phone ? (
-            <a href={`tel:${vendor.phone}`} className="flex items-center gap-2 text-green-600 font-semibold text-sm">
+          {vendor.contactPhone || vendor.phone ? (
+            <a href={`tel:${vendor.contactPhone || vendor.phone}`} className="flex items-center gap-2 text-green-600 font-semibold text-sm">
               <Phone className="w-4 h-4" />
-              Contact
+              {vendor.contactPhone || vendor.phone || "Contact"}
             </a>
           ) : (
             <button className="flex items-center gap-2 text-green-600 font-semibold text-sm">

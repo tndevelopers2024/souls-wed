@@ -11,20 +11,8 @@ import { formatAsCurrency } from "@/lib/currency";
 import type { PublicVendor } from "@/components/vendors/PublicVendorDirectory";
 import VendorHero from "@/components/vendors/VendorHero";
 import VendorSidebar from "@/components/vendors/VendorSidebar";
+import VenueGallery from "@/components/venues/VenueGallery";
 
-// Basic mocked gallery component to mimic VenueGallery
-function VendorGallery({ images, name }: { images: string[]; name: string }) {
-  if (!images || images.length === 0) return <p className="text-sm text-slate-500">No images available.</p>;
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-      {images.map((img, idx) => (
-        <div key={idx} className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200">
-          <Image src={img} alt={`${name} gallery ${idx + 1}`} fill className="object-cover" />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 // Basic mocked reviews component to mimic VenueReviews
 function VendorReviews({ rating, reviewCount }: { rating: number; reviewCount: number }) {
@@ -201,7 +189,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
               <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
                 Gallery
               </h2>
-              <VendorGallery images={images} name={vendor.businessName || vendor.name} />
+              <VenueGallery images={vendor.gallery?.length ? vendor.gallery : images} videos={vendor.videos || []} venueName={vendor.businessName || vendor.name} />
             </section>
 
             {/* Pricing Section */}

@@ -27,6 +27,10 @@ const VenueSchema = new Schema({
   country:   { type: String, default: "Global" },
   type:      { type: String },
 
+  // Contact & Location Details
+  contactPhone: { type: String },
+  mapLink:      { type: String },
+
   // Pricing
   price:              { type: String },
   priceUnit:          { type: String },
@@ -43,8 +47,10 @@ const VenueSchema = new Schema({
   featured: { type: Boolean, default: false },
 
   // Media
-  image:   { type: String },
-  gallery: [{ type: String }],
+  image:     { type: String },
+  heroImage: { type: String },
+  gallery:   [{ type: String }],
+  videos:    [{ type: String }],
 
   // Capacity & amenities
   minGuests: { type: Number },

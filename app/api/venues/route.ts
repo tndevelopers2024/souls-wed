@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "@/lib/session";
+import { sanitizeMediaList, toVideoEmbedUrl } from "@/lib/media";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET — public (active only); vendors/admins see all including inactive
@@ -102,8 +103,12 @@ export async function POST(req: Request) {
       pricePerPlateVeg:   body.pricePerPlateVeg    || "",
       pricePerPlateNonVeg:body.pricePerPlateNonVeg || "",
       rentalCost:         body.rentalCost || "",
+      contactPhone:       body.contactPhone || "",
+      mapLink:            body.mapLink || "",
+      heroImage:          body.heroImage || "",
+      videos:             sanitizeMediaList(body.videos).map(toVideoEmbedUrl),
       image:              body.image      || "",
-      gallery:            Array.isArray(body.gallery) ? body.gallery : [],
+      gallery:            sanitizeMediaList(body.gallery),
       minGuests:          parseInt(body.minGuests) || 50,
       maxGuests:          parseInt(body.maxGuests) || 500,
       rooms:              parseInt(body.rooms)     || 0,
@@ -147,10 +152,11 @@ export async function PATCH(req: Request) {
     const safeFields = [
       "verified", "featured", "active",
       "name", "city", "location", "country", "type", "description",
+      "contactPhone", "mapLink",
       "price", "priceUnit", "pricePerPlateVeg", "pricePerPlateNonVeg", "rentalCost",
       "minGuests", "maxGuests", "rooms",
       "outdoor", "indoor", "parking", "catering",
-      "image", "gallery", "features",
+      "image", "heroImage", "gallery", "videos", "features",
     ];
 
     const existingVenue = await Venue.findOne({ venueId });
@@ -164,6 +170,9 @@ export async function PATCH(req: Request) {
     for (const field of safeFields) {
       if (updates[field] !== undefined) allowed[field] = updates[field];
     }
+
+    if (allowed.gallery !== undefined) allowed.gallery = sanitizeMediaList(allowed.gallery);
+    if (allowed.videos !== undefined) allowed.videos = sanitizeMediaList(allowed.videos).map(toVideoEmbedUrl);
 
     // Vendors cannot flip admin-only flags
     if (session.role === "vendor") {

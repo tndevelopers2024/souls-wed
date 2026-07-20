@@ -57,7 +57,7 @@ export default function VenueHero({ venue }: VenueHeroProps) {
       {/* Hero Image Container */}
       <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-[32px] overflow-hidden mb-8">
         <Image
-          src={venue.image}
+          src={venue.heroImage || venue.image}
           alt={venue.name}
           fill
           priority
@@ -95,9 +95,15 @@ export default function VenueHero({ venue }: VenueHeroProps) {
           <div className="flex items-center gap-2 text-slate-500 text-sm font-medium pt-1">
             <MapPin className="w-4 h-4 text-slate-400"/>
             {venue.location}, {venue.country}
-            <a href="#" className="text-primary-600 font-semibold ml-2 hover:underline text-xs">
-              (View on Map)
-            </a>
+            {venue.mapLink ? (
+              <a href={venue.mapLink} target="_blank" rel="noopener noreferrer" className="text-primary-600 font-semibold ml-2 hover:underline text-xs">
+                (View on Map)
+              </a>
+            ) : (
+              <span className="text-primary-600 font-semibold ml-2 hover:underline text-xs cursor-pointer">
+                (View on Map)
+              </span>
+            )}
           </div>
         </div>
 
@@ -115,10 +121,10 @@ export default function VenueHero({ venue }: VenueHeroProps) {
             </div>
           )}
           
-          <button className="flex items-center justify-center gap-2 w-full md:w-auto bg-green-50 text-green-700 font-bold px-6 py-2.5 rounded-xl border border-green-200">
+          <a href={venue.contactPhone ? `tel:${venue.contactPhone}` : "#"} className="flex items-center justify-center gap-2 w-full md:w-auto bg-green-50 text-green-700 font-bold px-6 py-2.5 rounded-xl border border-green-200 hover:bg-green-100 transition-colors">
             <Phone className="w-4 h-4" />
-            Contact Venue
-          </button>
+            {venue.contactPhone ? venue.contactPhone : "Contact Venue"}
+          </a>
         </div>
       </div>
 
