@@ -115,7 +115,16 @@ export default function CheckoutPage() {
                 <p className="font-semibold text-stone-800 capitalize">{booking.bookingType}</p>
               </div>
               
-              {booking.eventDate && (
+              {booking.eventDates && booking.eventDates.length > 0 ? (
+                <div className="col-span-2">
+                  <p className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-1">Event Dates</p>
+                  <p className="font-semibold text-stone-800">
+                    {booking.eventDates.map((d: any) => new Date(d).toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric' })).join(", ")}
+                    {", "}
+                    {new Date(booking.eventDates[0]).getFullYear()}
+                  </p>
+                </div>
+              ) : booking.eventDate && (
                 <div>
                   <p className="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-1">Event Date</p>
                   <p className="font-semibold text-stone-800">

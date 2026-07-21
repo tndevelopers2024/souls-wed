@@ -81,7 +81,7 @@ export default function BookingForm({
   const [bookingType, setBookingType] = useState<string>(bookingTypes[0]?.value || "venue");
 
   const [bookedDates, setBookedDates] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
   const [checkIn, setCheckIn] = useState<string | null>(null);
   const [checkOut, setCheckOut] = useState<string | null>(null);
   const [loadingDates, setLoadingDates] = useState(false);
@@ -140,19 +140,20 @@ export default function BookingForm({
       const vegPrice = parsePrice(pricePerPlateVeg);
       const nonVegPrice = parsePrice(pricePerPlateNonVeg);
       const baseRental = parsePrice(rentalCost);
+      const daysCount = Math.max(1, selectedDates.length);
       
       if (vegPrice > 0 || nonVegPrice > 0) {
         perUnit = menuType === "veg" ? vegPrice : nonVegPrice;
-        total = guestCount * perUnit;
+        total = guestCount * perUnit * daysCount;
         unitLabel = "per plate";
-        quantity = guestCount;
-        quantityLabel = "guests";
+        quantity = guestCount * daysCount;
+        quantityLabel = `guests (${daysCount} ${daysCount === 1 ? 'day' : 'days'})`;
       } else {
         perUnit = baseRental;
-        total = baseRental;
-        unitLabel = "fixed rental fee";
-        quantity = 1;
-        quantityLabel = "venue";
+        total = baseRental * daysCount;
+        unitLabel = "fixed rental fee per day";
+        quantity = daysCount;
+        quantityLabel = daysCount === 1 ? 'day' : 'days';
       }
     } else if (bookingType === "room") {
       perUnit = pricePerRoom || Math.round(parsePrice(rentalCost) / (totalRooms || 1));
@@ -163,33 +164,34 @@ export default function BookingForm({
       quantityLabel = "rooms";
     } else {
       // Vendor categories
+      const daysCount = Math.max(1, selectedDates.length);
       if (hourlyPrice) {
         perUnit = hourlyPrice;
-        total = hours * perUnit;
+        total = hours * perUnit * daysCount;
         unitLabel = "per hour";
-        quantity = hours;
-        quantityLabel = "hours";
+        quantity = hours * daysCount;
+        quantityLabel = `hours (${daysCount} ${daysCount === 1 ? 'day' : 'days'})`;
       } else {
         perUnit = fixedPrice || 0;
-        total = perUnit;
-        unitLabel = "fixed fee";
-        quantity = 1;
-        quantityLabel = "session";
+        total = perUnit * daysCount;
+        unitLabel = "fixed fee per day";
+        quantity = daysCount;
+        quantityLabel = daysCount === 1 ? 'day' : 'days';
       }
     }
 
     const advance = Math.round(total * (advancePercentage / 100));
 
     return { perUnit, unitLabel, quantity, quantityLabel, nights, total, advance };
-  }, [bookingType, guestCount, roomCount, hours, menuType, checkIn, checkOut,
+  }, [bookingType, guestCount, roomCount, hours, menuType, checkIn, checkOut, selectedDates,
       pricePerPlateVeg, pricePerPlateNonVeg, pricePerRoom, rentalCost, totalRooms, fixedPrice, hourlyPrice, advancePercentage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (bookingType !== "room" && !selectedDate) {
-      setError("Please select an event date on the calendar.");
+    if (bookingType !== "room" && selectedDates.length === 0) {
+      setError("Please select at least one event date on the calendar.");
       return;
     }
     if (bookingType === "room" && (!checkIn || !checkOut)) {
@@ -211,7 +213,7 @@ export default function BookingForm({
           providerId,
           providerName,
           bookingType,
-          eventDate: bookingType !== "room" ? selectedDate : undefined,
+          eventDates: bookingType !== "room" ? selectedDates : undefined,
           checkIn: bookingType === "room" ? checkIn : undefined,
           checkOut: bookingType === "room" ? checkOut : undefined,
           guestCount: bookingType === "venue" ? guestCount : undefined,
@@ -299,10 +301,11 @@ export default function BookingForm({
         )}
 
         <BookingCalendar
-          mode={bookingType === "room" ? "range" : "single"}
+          mode={bookingType === "room" ? "range" : "multiple"}
           bookedDates={bookedDates}
           providerId={providerId}
-          onDateSelect={(date) => setSelectedDate(date)}
+          selectedDates={selectedDates}
+          onDatesSelect={(dates) => setSelectedDates(dates)}
           onRangeSelect={(ci, co) => {
             setCheckIn(ci);
             setCheckOut(co);
@@ -325,6 +328,7 @@ export default function BookingForm({
                 value={guestCount}
                 onChange={(e) => setGuestCount(Number(e.target.value))}
                 className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base md:text-sm outline-none focus:border-primary-400 transition-colors"
+                required
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -354,6 +358,7 @@ export default function BookingForm({
                 value={roomCount}
                 onChange={(e) => setRoomCount(Number(e.target.value))}
                 className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base md:text-sm outline-none focus:border-primary-400 transition-colors"
+                required
               />
             </div>
           </>
@@ -367,9 +372,11 @@ export default function BookingForm({
             <input
               type="number"
               min={1}
+              max={24}
               value={hours}
               onChange={(e) => setHours(Number(e.target.value))}
               className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-base md:text-sm outline-none focus:border-primary-400 transition-colors"
+              required
             />
           </div>
         )}

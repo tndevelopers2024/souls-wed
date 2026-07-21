@@ -34,10 +34,15 @@ export async function GET(req: Request) {
           bookedDates.push(currentDate.toISOString().split("T")[0]);
           currentDate.setDate(currentDate.getDate() + 1);
         }
-      } else if (booking.eventDate) {
-        bookedDates.push(new Date(booking.eventDate).toISOString().split("T")[0]);
+      } else {
+        if (booking.eventDates && booking.eventDates.length > 0) {
+          booking.eventDates.forEach((d: Date) => {
+            if (d) bookedDates.push(new Date(d).toISOString().split("T")[0]);
+          });
+        } else if (booking.eventDate) {
+          bookedDates.push(new Date(booking.eventDate).toISOString().split("T")[0]);
+        }
       }
-    });
 
     // Also get unavailable dates directly from Vendor model if this is a vendor
     let unavailableDates: string[] = [];

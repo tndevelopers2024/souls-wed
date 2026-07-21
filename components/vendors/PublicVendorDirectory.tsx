@@ -2,7 +2,8 @@
 
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, X, MapPin, Star, Heart, BadgeCheck,
@@ -68,8 +69,11 @@ export default function PublicVendorDirectory({
   vendors: PublicVendor[];
   activeCategory?: string;
 }) {
+  const searchParams = useSearchParams();
+  const initialCity = searchParams?.get("city");
+
   const [search, setSearch] = useState("");
-  const [activeCities, setActiveCities] = useState<string[]>([]);
+  const [activeCities, setActiveCities] = useState<string[]>(initialCity ? [initialCity] : []);
   const [sort, setSort] = useState("Recommended");
   const [sortOpen, setSortOpen] = useState(false);
   const [viewType, setViewType] = useState<"grid" | "list">("grid");

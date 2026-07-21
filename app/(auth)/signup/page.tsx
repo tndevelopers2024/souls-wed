@@ -435,6 +435,8 @@ function SignupContent() {
                       onChange={(e) => setName(e.target.value)}
                       className={INPUT_CLS}
                       required
+                      minLength={2}
+                      maxLength={50}
                       autoComplete="name"
                     />
                     <User className={ICON_CLS} />
@@ -451,6 +453,8 @@ function SignupContent() {
                           onChange={(e) => setBusinessName(e.target.value)}
                           className={INPUT_CLS}
                           required
+                          minLength={2}
+                          maxLength={100}
                         />
                         <Building className={ICON_CLS} />
                       </Field>
@@ -498,6 +502,7 @@ function SignupContent() {
                       onChange={(e) => setEmail(e.target.value)}
                       className={INPUT_CLS}
                       required
+                      maxLength={100}
                       autoComplete="email"
                     />
                     <Mail className={ICON_CLS} />
@@ -526,6 +531,7 @@ function SignupContent() {
                       required
                       autoComplete="new-password"
                       minLength={8}
+                      maxLength={100}
                     />
                     <KeyRound className={ICON_CLS} />
                     <button

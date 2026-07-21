@@ -55,6 +55,7 @@ export async function POST(req: Request) {
       providerName,
       bookingType,
       eventDate,
+      eventDates,
       checkIn,
       checkOut,
       guestCount,
@@ -84,9 +85,9 @@ export async function POST(req: Request) {
     }
 
     // Validate booking-type-specific dates
-    if (bookingType !== "room" && !eventDate) {
+    if (bookingType !== "room" && (!eventDates || eventDates.length === 0)) {
       return NextResponse.json(
-        { message: "Event date is required for this booking." },
+        { message: "At least one event date is required for this booking." },
         { status: 400 }
       );
     }
@@ -113,7 +114,11 @@ export async function POST(req: Request) {
       conflictQuery.checkIn = { $lt: new Date(checkOut) };
       conflictQuery.checkOut = { $gt: new Date(checkIn) };
     } else {
-      conflictQuery.eventDate = new Date(eventDate);
+      const datesAsObjects = eventDates.map((d: string) => new Date(d));
+      conflictQuery.$or = [
+        { eventDate: { $in: datesAsObjects } },
+        { eventDates: { $in: datesAsObjects } }
+      ];
     }
 
 
@@ -142,7 +147,7 @@ export async function POST(req: Request) {
             currentDate.setDate(currentDate.getDate() + 1);
           }
         } else {
-          requestedDates = [new Date(eventDate).toISOString().split("T")[0]];
+          requestedDates = eventDates.map((d: string) => new Date(d).toISOString().split("T")[0]);
         }
 
         if (requestedDates.some((d) => blocked.has(d))) {
@@ -168,7 +173,8 @@ export async function POST(req: Request) {
       providerId,
       providerName,
       bookingType,
-      eventDate: bookingType !== "room" ? new Date(eventDate) : undefined,
+      eventDates: bookingType !== "room" ? eventDates.map((d: string) => new Date(d)) : undefined,
+      eventDate: bookingType !== "room" && eventDates.length > 0 ? new Date(eventDates[0]) : undefined,
       checkIn: bookingType === "room" ? new Date(checkIn) : undefined,
       checkOut: bookingType === "room" ? new Date(checkOut) : undefined,
       guestCount,

@@ -69,7 +69,9 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
         <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
           <CalendarDays className="w-4 h-4 text-primary-500" />
           <span className="font-medium">
-            {booking.eventDate ? (
+            {booking.eventDates && booking.eventDates.length > 0 ? (
+              booking.eventDates.map((d: any) => format(new Date(d), "MMM d")).join(", ") + ", " + format(new Date(booking.eventDates[0]), "yyyy")
+            ) : booking.eventDate ? (
               format(new Date(booking.eventDate), "EEE, MMM d, yyyy")
             ) : (
               "Date pending"

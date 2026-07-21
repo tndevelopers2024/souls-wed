@@ -69,7 +69,12 @@ export async function GET(
       venueId,
       status: { $in: ["confirmed", "pending"] }, // Both block dates
       $or: [
-        // Venue bookings: eventDate within the month
+        // Venue bookings: eventDates within the month
+        {
+          bookingType: "venue",
+          eventDates: { $elemMatch: { $gte: startOfMonth, $lte: endOfMonth } },
+        },
+        // Venue bookings: eventDate within the month (backward compatibility)
         {
           bookingType: "venue",
           eventDate: { $gte: startOfMonth, $lte: endOfMonth },
@@ -88,9 +93,14 @@ export async function GET(
     const bookedDates = new Set<string>();
 
     for (const booking of bookings) {
-      if (booking.bookingType === "venue" && booking.eventDate) {
-        // Venue: just one date
-        bookedDates.add(formatDate(booking.eventDate));
+      if (booking.bookingType === "venue") {
+        if (booking.eventDates && booking.eventDates.length > 0) {
+          for (const d of booking.eventDates) {
+            if (d) bookedDates.add(formatDate(d));
+          }
+        } else if (booking.eventDate) {
+          bookedDates.add(formatDate(booking.eventDate));
+        }
       } else if (booking.bookingType === "room" && booking.checkIn && booking.checkOut) {
         // Room: every date from checkIn to checkOut (exclusive of checkout day)
         // If someone checks in July 5 and checks out July 8,

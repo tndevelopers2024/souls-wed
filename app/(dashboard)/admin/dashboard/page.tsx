@@ -1524,8 +1524,14 @@ export default function AdminDashboard() {
                                 </p>
                               </td>
                               <td className="p-4">
-                                {b.bookingType === "venue" ? (
-                                  <p className={`font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{formatDate(b.eventDate)}</p>
+                                {b.bookingType !== "room" ? (
+                                  <div className={`font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
+                                    {b.eventDates && b.eventDates.length > 0 ? (
+                                      <p className="text-xs">{b.eventDates.map((d: any) => format(new Date(d), "MMM d")).join(", ")}</p>
+                                    ) : (
+                                      <p className="text-xs">{formatDate(b.eventDate)}</p>
+                                    )}
+                                  </div>
                                 ) : (
                                   <div className={`font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
                                     <p className="text-xs">In: {formatDate(b.checkIn)}</p>

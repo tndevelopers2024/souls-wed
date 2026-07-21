@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, BookHeart, Settings, Lock, Save, Wand2, Eye, EyeOff, Loader2 } from "lucide-react";
+import { LayoutDashboard, BookHeart, Settings, Lock, Save, Wand2, Eye, EyeOff, Loader2, Search } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 import AvatarUploader from "@/components/shared/AvatarUploader";
 import { PhoneInput } from "@/components/shared/PhoneInput";
@@ -32,6 +32,7 @@ export default function UserDashboard() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState({ text: "", type: "" });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const generateStrongPassword = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
@@ -45,8 +46,8 @@ export default function UserDashboard() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword.length < 6) {
-      setPasswordMessage({ text: "New password must be at least 6 characters.", type: "error" });
+    if (newPassword.length < 8) {
+      setPasswordMessage({ text: "New password must be at least 8 characters.", type: "error" });
       return;
     }
     setIsChangingPassword(true);
@@ -178,28 +179,40 @@ export default function UserDashboard() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center gap-6 border-b border-slate-200 mb-8 overflow-x-auto"style={{ scrollbarWidth:"none"}}>
-          {menuItems.map((item) => {
-            const isActive = activeTab === item.id;
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id as TabType)}
-                className={`flex items-center gap-2 pb-3 px-1 border-b-2 font-bold text-sm whitespace-nowrap transition-colors ${
-                  isActive ?"border-primary-500 text-primary-600":"border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
-                }`}
-              >
-                <Icon className="w-4 h-4 shrink-0" />
-                {item.label}
-                {item.count !== undefined && item.count !== null && (
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] ml-1 ${isActive ?'bg-primary-100 text-primary-700':'bg-slate-100 text-slate-600'}`}>
-                    {item.count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 mb-8">
+          <div className="flex items-center gap-6 overflow-x-auto" style={{ scrollbarWidth:"none"}}>
+            {menuItems.map((item) => {
+              const isActive = activeTab === item.id;
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as TabType)}
+                  className={`flex items-center gap-2 pb-3 px-1 border-b-2 font-bold text-sm whitespace-nowrap transition-colors ${
+                    isActive ?"border-primary-500 text-primary-600":"border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  {item.label}
+                  {item.count !== undefined && item.count !== null && (
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] ml-1 ${isActive ?'bg-primary-100 text-primary-700':'bg-slate-100 text-slate-600'}`}>
+                      {item.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <div className="relative pb-3 sm:pb-0 shrink-0">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 sm:-translate-y-[calc(50%+6px)]" />
+            <input
+              type="text"
+              placeholder="Search your bookings..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-full text-xs outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 w-full sm:w-64 transition-all text-slate-700 font-semibold mb-3 sm:mb-0"
+            />
+          </div>
         </div>
 
         {/* Tab contents */}
@@ -311,22 +324,30 @@ export default function UserDashboard() {
                       </button>
                     </div>
 
-                    {bookings.length === 0 ? (
+                    {bookings.filter(b => {
+                      const val = searchTerm.toLowerCase();
+                      return !val || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                    }).length === 0 ? (
                       <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-                        <h4 className="font-bold text-sm text-slate-700">No upcoming bookings yet</h4>
+                        <h4 className="font-bold text-sm text-slate-700">No upcoming bookings found</h4>
                         <p className="text-xs text-slate-400 max-w-xs mt-1 font-medium">
-                          Start by browsing our premium verified venues directory.
+                          {searchTerm ? "No bookings match your search." : "Start by browsing our premium verified venues directory."}
                         </p>
-                        <Link
-                          href="/venues"
-                          className="mt-5 px-6 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-full text-xs font-bold transition-all shadow-sm"
-                        >
-                          Browse Venues
-                        </Link>
+                        {!searchTerm && (
+                          <Link
+                            href="/venues"
+                            className="mt-5 px-6 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-full text-xs font-bold transition-all shadow-sm"
+                          >
+                            Browse Venues
+                          </Link>
+                        )}
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pb-2">
-                        {bookings.slice(0, 4).map((booking) => (
+                        {bookings.filter(b => {
+                          const val = searchTerm.toLowerCase();
+                          return !val || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                        }).slice(0, 4).map((booking) => (
                           <div key={booking._id} className="w-full">
                             <BookingCard booking={booking} />
                           </div>
@@ -348,16 +369,22 @@ export default function UserDashboard() {
                   </span>
                 </div>
 
-                {bookings.length === 0 ? (
+                {bookings.filter(b => {
+                  const val = searchTerm.toLowerCase();
+                  return !val || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                }).length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center py-16">
                     <h4 className="font-bold text-slate-700 text-sm">No bookings recorded</h4>
                     <p className="text-xs text-slate-400 max-w-xs mt-1 font-medium">
-                      Checkouts and active vendor deposits will show here.
+                      {searchTerm ? "No bookings match your search." : "Checkouts and active vendor deposits will show here."}
                     </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-4">
-                    {bookings.map((booking) => (
+                    {bookings.filter(b => {
+                      const val = searchTerm.toLowerCase();
+                      return !val || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                    }).map((booking) => (
                       <div key={booking._id} className="w-full">
                         <BookingCard booking={booking} />
                       </div>
@@ -423,6 +450,7 @@ export default function UserDashboard() {
                           <input
                             type="password"
                             required
+                            maxLength={100}
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
                             className="w-full pl-9 pr-4 py-2 border rounded-xl text-sm outline-none transition-all bg-slate-50 border-slate-200 focus:border-primary-400 text-slate-800"
@@ -447,7 +475,8 @@ export default function UserDashboard() {
                           <input
                             type={showPassword ? "text" : "password"}
                             required
-                            minLength={6}
+                            minLength={8}
+                            maxLength={100}
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                             className="w-full pl-9 pr-10 py-2 border rounded-xl text-sm outline-none transition-all bg-slate-50 border-slate-200 focus:border-primary-400 text-slate-800"

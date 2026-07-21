@@ -247,6 +247,8 @@ function ResetPasswordContent() {
                         style={{ "--tw-ring-color": accent.from } as React.CSSProperties}
                         required
                         minLength={8}
+                        maxLength={100}
+                        autoComplete="new-password"
                       />
                       <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"/>
                       <button

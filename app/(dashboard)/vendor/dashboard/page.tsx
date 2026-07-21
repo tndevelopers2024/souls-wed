@@ -205,6 +205,7 @@ export default function VendorDashboard() {
   const [isDeletingItem, setIsDeletingItem] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -956,6 +957,17 @@ export default function VendorDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Search */}
+            <div className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border max-w-[200px] transition-colors focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 ${isDarkMode ? "bg-stone-800/50 border-stone-700" : "bg-white border-stone-200"}`}>
+              <Search className="w-4 h-4 text-stone-400" />
+              <input 
+                type="text" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search..." 
+                className="bg-transparent border-none outline-none text-xs font-bold w-full placeholder:text-stone-400"
+              />
+            </div>
             <ThemeToggle />
             <button
               onClick={fetchBookings}
@@ -1282,16 +1294,22 @@ export default function VendorDashboard() {
                         </button>
                       </div>
 
-                      {bookings.length === 0 ? (
+                      {bookings.filter(b => {
+                        const val = searchTerm.toLowerCase();
+                        return !val || (b.userName || "").toLowerCase().includes(val) || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                      }).length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
                           <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>All Caught Up!</h4>
                           <p className="text-xs text-stone-400 max-w-xs mt-1 font-medium">
-                            No active couple requests currently. Complete your business information to start appearing in search queries.
+                            {searchTerm ? "No active leads match your search." : "No active couple requests currently. Complete your business information to start appearing in search queries."}
                           </p>
                         </div>
                       ) : (
                         <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-                          {bookings.slice(0, 6).map((booking) => (
+                          {bookings.filter(b => {
+                            const val = searchTerm.toLowerCase();
+                            return !val || (b.userName || "").toLowerCase().includes(val) || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                          }).slice(0, 6).map((booking) => (
                             <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
                               <BookingCard booking={booking} isVendor={true} />
                             </div>
@@ -1317,16 +1335,22 @@ export default function VendorDashboard() {
                   </span>
                 </div>
 
-                {bookings.length === 0 ? (
+                {bookings.filter(b => {
+                  const val = searchTerm.toLowerCase();
+                  return !val || (b.userName || "").toLowerCase().includes(val) || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                }).length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center py-16">
                     <h4 className="font-bold text-stone-705 text-sm">No inquiries recorded</h4>
                     <p className="text-xs text-stone-400 max-w-xs mt-1">
-                      Couple checkout orders and price requests will show here.
+                      {searchTerm ? "No inquiries match your search." : "Couple checkout orders and price requests will show here."}
                     </p>
                   </div>
                 ) : (
                   <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-                    {bookings.map((booking) => (
+                    {bookings.filter(b => {
+                      const val = searchTerm.toLowerCase();
+                      return !val || (b.userName || "").toLowerCase().includes(val) || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                    }).map((booking) => (
                       <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
                         <BookingCard booking={booking} isVendor={true} />
                       </div>
@@ -1430,6 +1454,8 @@ export default function VendorDashboard() {
                               placeholder="e.g. Grand Palace Banquet"
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
+                              minLength={2}
+                              maxLength={100}
                             />
                           </div>
 
@@ -1457,6 +1483,8 @@ export default function VendorDashboard() {
                               placeholder="e.g. Mumbai"
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
+                              minLength={2}
+                              maxLength={50}
                             />
                           </div>
 
@@ -1469,6 +1497,7 @@ export default function VendorDashboard() {
                               placeholder="e.g. Andheri West"
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
+                              maxLength={255}
                             />
                           </div>
 
@@ -1488,11 +1517,12 @@ export default function VendorDashboard() {
                           <div className="flex flex-col gap-1.5">
                             <label className="font-bold text-stone-500 uppercase tracking-wider">Google Map Link</label>
                             <input
-                              type="text" value={venueForm.mapLink}
+                              type="url" value={venueForm.mapLink}
                               onChange={e => setVenueForm(p => ({ ...p, mapLink: e.target.value }))}
                               placeholder="e.g. https://maps.google.com/..."
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
+                              maxLength={255}
                             />
                           </div>
 
@@ -1505,6 +1535,9 @@ export default function VendorDashboard() {
                               placeholder="e.g. 50000"
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
+                              type="number"
+                              min={0}
+                              max={100000000}
                             />
                           </div>
 
@@ -1720,7 +1753,10 @@ export default function VendorDashboard() {
                 ) : (
                   venueLayout === "grid" ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 max-w-6xl">
-                      {venues.map((venue) => {
+                      {venues.filter(v => {
+                        const val = searchTerm.toLowerCase();
+                        return !val || (v.name || "").toLowerCase().includes(val) || (v.city || "").toLowerCase().includes(val) || (v.type || "").toLowerCase().includes(val);
+                      }).map((venue) => {
                         const thumb = venue.image || (venue.gallery && venue.gallery[0]) || "";
                         const price = venue.price || venue.pricePerPlateVeg || "—";
                         const rating = venue.rating || 0;
@@ -1781,7 +1817,10 @@ export default function VendorDashboard() {
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3">
-                      {venues.map((venue) => {
+                      {venues.filter(v => {
+                        const val = searchTerm.toLowerCase();
+                        return !val || (v.name || "").toLowerCase().includes(val) || (v.city || "").toLowerCase().includes(val) || (v.type || "").toLowerCase().includes(val);
+                      }).map((venue) => {
                         const thumb = venue.image || (venue.gallery && venue.gallery[0]) || "";
                         const price = venue.price || venue.pricePerPlateVeg || "—";
                         const rating = venue.rating || 0;
@@ -2003,6 +2042,8 @@ export default function VendorDashboard() {
                             className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                               }`}
                             required
+                            minLength={2}
+                            maxLength={100}
                           />
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2015,6 +2056,8 @@ export default function VendorDashboard() {
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
                               required
+                              minLength={2}
+                              maxLength={50}
                             />
                           </div>
                           <div className="flex flex-col gap-1.5">
@@ -2049,6 +2092,8 @@ export default function VendorDashboard() {
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
                               required
+                              minLength={2}
+                              maxLength={50}
                             />
                           </div>
                         </div>
@@ -2062,6 +2107,7 @@ export default function VendorDashboard() {
                               defaultValue={vendor.priceFrom || ""}
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
+                              max={100000000}
                             />
                           </div>
                           <div className="flex flex-col gap-1.5">
@@ -2072,17 +2118,19 @@ export default function VendorDashboard() {
                               defaultValue={vendor.website}
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                                 }`}
+                              maxLength={255}
                             />
                           </div>
                         </div>
                         <div className="flex flex-col gap-1.5">
                           <label className="font-bold text-stone-500 uppercase tracking-wider">Instagram</label>
                           <input
-                            type="text"
+                            type="url"
                             name="instagram"
                             defaultValue={vendor.instagram}
                             className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"
                               }`}
+                            maxLength={255}
                           />
                         </div>
                         <div className="flex flex-col gap-3">
@@ -2560,6 +2608,8 @@ export default function VendorDashboard() {
                                 onChange={e => setServiceForm({ ...serviceForm, name: e.target.value })}
                                 placeholder="e.g. Royal Catering"
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                minLength={2}
+                                maxLength={100}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
@@ -2569,6 +2619,8 @@ export default function VendorDashboard() {
                                 onChange={e => setServiceForm({ ...serviceForm, city: e.target.value })}
                                 placeholder="e.g. Mumbai"
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                minLength={2}
+                                maxLength={50}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
@@ -2578,6 +2630,7 @@ export default function VendorDashboard() {
                                 onChange={e => setServiceForm({ ...serviceForm, location: e.target.value })}
                                 placeholder="e.g. Andheri West"
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                maxLength={255}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
@@ -2592,10 +2645,11 @@ export default function VendorDashboard() {
                             <div className="flex flex-col gap-1.5">
                               <label className="font-bold text-stone-500 uppercase tracking-wider">Google Map Link</label>
                               <input
-                                type="text" value={serviceForm.mapLink}
+                                type="url" value={serviceForm.mapLink}
                                 onChange={e => setServiceForm({ ...serviceForm, mapLink: e.target.value })}
                                 placeholder="e.g. https://maps.google.com/..."
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                maxLength={255}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
@@ -2604,6 +2658,8 @@ export default function VendorDashboard() {
                                 type="number" value={serviceForm.priceFrom}
                                 onChange={e => setServiceForm({ ...serviceForm, priceFrom: e.target.value })}
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                min={0}
+                                max={100000000}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
@@ -2622,25 +2678,29 @@ export default function VendorDashboard() {
                             <div className="flex flex-col gap-1.5">
                               <label className="font-bold text-stone-500 uppercase tracking-wider">Price/Plate (Veg)</label>
                               <input
-                                type="text" value={serviceForm.pricePerPlateVeg}
+                                type="number" value={serviceForm.pricePerPlateVeg}
                                 onChange={e => setServiceForm({ ...serviceForm, pricePerPlateVeg: e.target.value })}
                                 placeholder="e.g. 800"
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                min={0}
+                                max={100000000}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
                               <label className="font-bold text-stone-500 uppercase tracking-wider">Price/Plate (Non-Veg)</label>
                               <input
-                                type="text" value={serviceForm.pricePerPlateNonVeg}
+                                type="number" value={serviceForm.pricePerPlateNonVeg}
                                 onChange={e => setServiceForm({ ...serviceForm, pricePerPlateNonVeg: e.target.value })}
                                 placeholder="e.g. 1200"
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
+                                min={0}
+                                max={100000000}
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
                               <label className="font-bold text-stone-500 uppercase tracking-wider">Min Guests</label>
                               <input
-                                type="number" min="1" value={serviceForm.minGuests}
+                                type="number" min="1" max={100000} value={serviceForm.minGuests}
                                 onChange={e => setServiceForm({ ...serviceForm, minGuests: e.target.value })}
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                               />
@@ -2648,7 +2708,7 @@ export default function VendorDashboard() {
                             <div className="flex flex-col gap-1.5">
                               <label className="font-bold text-stone-500 uppercase tracking-wider">Max Guests</label>
                               <input
-                                type="number" min="1" value={serviceForm.maxGuests}
+                                type="number" min="1" max={100000} value={serviceForm.maxGuests}
                                 onChange={e => setServiceForm({ ...serviceForm, maxGuests: e.target.value })}
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                               />
@@ -2656,7 +2716,7 @@ export default function VendorDashboard() {
                             <div className="flex flex-col gap-1.5">
                               <label className="font-bold text-stone-500 uppercase tracking-wider">Number of Rooms</label>
                               <input
-                                type="number" min="0" value={serviceForm.rooms}
+                                type="number" min="0" max={10000} value={serviceForm.rooms}
                                 onChange={e => setServiceForm({ ...serviceForm, rooms: e.target.value })}
                                 className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"}`}
                               />
@@ -2772,16 +2832,22 @@ export default function VendorDashboard() {
                   {serviceView === "grid" && (
                     serviceLayout === "grid" ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 max-w-6xl">
-                        {services.filter(s => s.category === activeTab).length === 0 ? (
+                        {services.filter(s => s.category === activeTab).filter(s => {
+                          const val = searchTerm.toLowerCase();
+                          return !val || (s.name || "").toLowerCase().includes(val) || (s.city || "").toLowerCase().includes(val) || (s.category || "").toLowerCase().includes(val);
+                        }).length === 0 ? (
                           <div className="col-span-full py-12 flex flex-col items-center justify-center text-center">
                             <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 border border-stone-200">
                               <ClipboardList className="w-6 h-6 text-stone-400" />
                             </div>
                             <h4 className="font-bold text-stone-800 mb-1">No listings yet</h4>
-                            <p className="text-xs text-stone-500 mb-4 max-w-[200px]">Create your first {activeTab} listing to appear in the directory.</p>
+                            <p className="text-xs text-stone-500 mb-4 max-w-[200px]">{searchTerm ? "No services match your search." : `Create your first ${activeTab} listing to appear in the directory.`}</p>
                           </div>
                         ) : (
-                          services.filter(s => s.category === activeTab).map((service) => (
+                          services.filter(s => s.category === activeTab).filter(s => {
+                            const val = searchTerm.toLowerCase();
+                            return !val || (s.name || "").toLowerCase().includes(val) || (s.city || "").toLowerCase().includes(val) || (s.category || "").toLowerCase().includes(val);
+                          }).map((service) => (
                             <div key={service.serviceId} className="group h-[460px] sm:h-[500px] lg:h-[520px]">
                               <ListingCard
                                 name={service.name}
@@ -2832,16 +2898,22 @@ export default function VendorDashboard() {
                       </div>
                     ) : (
                       <div className="flex flex-col gap-3">
-                        {services.filter(s => s.category === activeTab).length === 0 ? (
+                        {services.filter(s => s.category === activeTab).filter(s => {
+                          const val = searchTerm.toLowerCase();
+                          return !val || (s.name || "").toLowerCase().includes(val) || (s.city || "").toLowerCase().includes(val) || (s.category || "").toLowerCase().includes(val);
+                        }).length === 0 ? (
                           <div className="py-12 flex flex-col items-center justify-center text-center">
                             <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 border border-stone-200">
                               <ClipboardList className="w-6 h-6 text-stone-400" />
                             </div>
                             <h4 className="font-bold text-stone-800 mb-1">No listings yet</h4>
-                            <p className="text-xs text-stone-500 mb-4 max-w-[200px]">Create your first {activeTab} listing to appear in the directory.</p>
+                            <p className="text-xs text-stone-500 mb-4 max-w-[200px]">{searchTerm ? "No services match your search." : `Create your first ${activeTab} listing to appear in the directory.`}</p>
                           </div>
                         ) : (
-                          services.filter(s => s.category === activeTab).map((service) => {
+                          services.filter(s => s.category === activeTab).filter(s => {
+                            const val = searchTerm.toLowerCase();
+                            return !val || (s.name || "").toLowerCase().includes(val) || (s.city || "").toLowerCase().includes(val) || (s.category || "").toLowerCase().includes(val);
+                          }).map((service) => {
                             const thumb = service.image || "";
                             return (
                               <div key={service.serviceId} className={`flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl border transition-all hover:border-primary-500/30 ${isDarkMode ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200"}`}>

@@ -54,7 +54,9 @@ const BookingSchema = new Schema({
   },
 
   // ─── WHEN? ────────────────────────────────────────────────
-  // For VENUE bookings: just one date (the event day)
+  // For VENUE/VENDOR bookings: an array of multiple event dates
+  eventDates: [{ type: Date }],
+  // Keeping eventDate for backward compatibility
   eventDate: { type: Date },
 
   // For ROOM bookings: a range (check-in to check-out)

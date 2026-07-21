@@ -6,6 +6,7 @@ import { ChevronDown, MapPin, Calendar, Users, Layers, Search } from "lucide-rea
 import { useState, useEffect, useRef } from "react";
 import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 import BookingCalendar from "@/components/booking/BookingCalendar";
+import { useRouter } from "next/navigation";
 
 const destinations = [
   "Paris",
@@ -43,6 +44,7 @@ const bgVideos = [
 ];
 
 export default function HeroSection() {
+  const router = useRouter();
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [openDropdown, setOpenDropdown] = useState<"destination" | "category" | "date" | "guests" | null>(null);
   const [destination, setDestination] = useState("");
@@ -71,6 +73,18 @@ export default function HeroSection() {
     }, 6000);
     return () => clearInterval(timer);
   }, []);
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (destination) params.append("city", destination);
+    if (guests) params.append("guests", guests);
+    if (dateRange) {
+      params.append("start", dateRange.start);
+      params.append("end", dateRange.end);
+    }
+    const path = category ? `/${category}` : "/vendors";
+    router.push(`${path}?${params.toString()}`);
+  };
 
   return (
     <div className="w-full px-3 md:px-2 lg:px-2 pt-3">
@@ -503,6 +517,7 @@ export default function HeroSection() {
               {/* CTA */}
               <div className="w-full md:w-auto mt-2 md:mt-0 md:ml-2">
                 <button
+                  onClick={handleSearch}
                   className="w-full md:w-auto flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-8 py-4 md:py-3.5 rounded-full font-bold transition-colors duration-300 h-[52px]"
                   style={{ transform: 'none' }}
                 >

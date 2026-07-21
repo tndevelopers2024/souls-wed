@@ -177,6 +177,7 @@ export default function ForgotPasswordPage() {
                         className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none focus:ring-2 transition-all pl-11"
                         style={{ "--tw-ring-color": accent.from } as React.CSSProperties}
                         required
+                        maxLength={100}
                         autoComplete="email"
                       />
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"/>
