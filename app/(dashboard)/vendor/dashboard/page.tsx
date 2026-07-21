@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Home, Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff, AlertCircle, IdCard, Moon, Sun, Monitor, SlidersHorizontal, LogOut, Shield, BadgeCheck, MessageSquare, TrendingUp } from "lucide-react";
+import { User, Home, Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff, AlertCircle, IdCard, Moon, Sun, Monitor, SlidersHorizontal, LogOut, Shield, BadgeCheck, MessageSquare, TrendingUp, Search } from "lucide-react";
 import BookingCard from "@/components/booking/BookingCard";
 import ImageUploadInput from "@/components/shared/ImageUploadInput";
 import MediaGalleryInput from "@/components/shared/MediaGalleryInput";
@@ -1361,17 +1361,47 @@ export default function VendorDashboard() {
             )}
 
             {activeTab === "services" && (
-              <div className={`mb-6 p-4 border rounded-3xl ${cardClass} overflow-x-auto custom-scrollbar flex items-center gap-2`} style={{ scrollbarWidth: 'none' }}>
-                {VENDOR_CATEGORIES.map(cat => (
-                  <button
-                    key={cat.slug}
-                    onClick={() => setSelectedCategory(cat.slug)}
-                    className={`flex shrink-0 items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${selectedCategory === cat.slug ? "bg-primary-500 text-white" : isDarkMode ? "bg-stone-800/60 text-stone-400 hover:bg-stone-800" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}
-                  >
-                    <cat.icon className="w-3.5 h-3.5" />
-                    {cat.name}
-                  </button>
-                ))}
+              <div className={`mb-6 p-5 border rounded-3xl ${cardClass} flex flex-col gap-4`}>
+                <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/50">
+                  <div>
+                    <h3 className={`font-extrabold text-base ${isDarkMode ? "text-white" : "text-slate-900"}`}>Categories</h3>
+                    <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Filter your listings by vendor category</p>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto custom-scrollbar flex items-start gap-4 pb-2" style={{ scrollbarWidth: 'none' }}>
+                  {VENDOR_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.slug}
+                      onClick={() => setSelectedCategory(cat.slug)}
+                      className={`flex flex-col items-center gap-3 shrink-0 transition-all p-2 rounded-2xl w-[100px] ${
+                        selectedCategory === cat.slug ? "opacity-100" : "opacity-70 hover:opacity-100"
+                      }`}
+                    >
+                      <div className={`w-[60px] h-[60px] rounded-full flex items-center justify-center border transition-all ${
+                        selectedCategory === cat.slug 
+                          ? "border-[var(--sw-primary)] bg-white shadow-sm" 
+                          : isDarkMode ? "border-stone-700 bg-stone-800/50" : "border-orange-200 bg-white"
+                      }`}>
+                        <cat.icon className={`w-[22px] h-[22px] ${selectedCategory === cat.slug ? "text-[var(--sw-primary)]" : isDarkMode ? "text-stone-400" : "text-orange-400"}`} strokeWidth={selectedCategory === cat.slug ? 2 : 1.5} />
+                      </div>
+                      <div className="flex flex-col items-center gap-1 text-center">
+                        <span className={`text-[12px] font-extrabold leading-tight ${
+                          selectedCategory === cat.slug 
+                            ? "text-[var(--sw-primary)]" 
+                            : isDarkMode ? "text-stone-200" : "text-slate-900"
+                        }`}>
+                          {cat.name}
+                        </span>
+                        {cat.tagline && (
+                          <span className={`text-[9px] font-bold uppercase tracking-wider leading-[1.2] ${isDarkMode ? "text-stone-500" : "text-slate-400"}`}>
+                            {cat.tagline}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 

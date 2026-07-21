@@ -14,6 +14,7 @@ import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
 import AvatarUploader from "@/components/shared/AvatarUploader";
 import { VENDOR_CATEGORIES } from "@/lib/config/categories";
+import InvoicesManager from "@/components/dashboard/InvoicesManager";
 
 interface AdminSession {
   id: string;
@@ -23,7 +24,7 @@ interface AdminSession {
   profileImage?: string;
 }
 
-type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "services" | "settings";
+type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "services" | "invoices" | "settings";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -34,7 +35,10 @@ export default function AdminDashboard() {
   // Tab control & search
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [selectedCategory, setSelectedCategory] = useState("venues");
+  const [selectedVendorFilter, setSelectedVendorFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [venueLayout, setVenueLayout] = useState<"grid" | "list">("grid");
+  const [serviceLayout, setServiceLayout] = useState<"grid" | "list">("grid");
   const [error, setError] = useState<string | null>(null);
 
   // Live database data
@@ -520,6 +524,7 @@ export default function AdminDashboard() {
   });
 
   const filteredVenuesList = venuesList.filter(v => {
+    if (selectedVendorFilter !== "all" && v.vendorId !== selectedVendorFilter) return false;
     const val = searchTerm.toLowerCase();
     return (
       (v.name || "").toLowerCase().includes(val) ||
@@ -599,6 +604,7 @@ export default function AdminDashboard() {
     { id: "vendors", label: "Vendors", count: vendors.length || null, icon: Building2 },
     { id: "users", label: "Customers", count: users.length || null, icon: Users },
     { id: "bookings", label: "Bookings", count: bookings.length || null, icon: BookOpen },
+    { id: "invoices", label: "Invoices", count: null, icon: ClipboardList },
     { id: "settings", label: "Settings", count: null, icon: Settings },
     { id: "home", label: "Back to Home", icon: Home, href: "/" },
   ];
@@ -1869,17 +1875,60 @@ export default function AdminDashboard() {
               {activeTab === "services" && (
                 <div className="flex flex-col gap-6">
                   {/* Category Selector */}
-                  <div className={`p-4 border rounded-3xl ${cardClass} overflow-x-auto custom-scrollbar flex items-center gap-2`} style={{ scrollbarWidth: 'none' }}>
-                    {VENDOR_CATEGORIES.map(cat => (
-                      <button
-                        key={cat.slug}
-                        onClick={() => setSelectedCategory(cat.slug)}
-                        className={`flex shrink-0 items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${selectedCategory === cat.slug ? "bg-primary-500 text-white" : isDarkMode ? "bg-stone-800/60 text-stone-400 hover:bg-stone-800" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}
-                      >
-                        <cat.icon className="w-3.5 h-3.5" />
-                        {cat.name}
-                      </button>
-                    ))}
+                  <div className={`p-5 border rounded-3xl ${cardClass} flex flex-col gap-4`}>
+                    <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/50">
+                      <div>
+                        <h3 className={`font-extrabold text-base ${isDarkMode ? "text-white" : "text-slate-900"}`}>Categories</h3>
+                        <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Filter the directory by vendor category</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className={`text-[11px] font-black uppercase tracking-wider ${isDarkMode ? "text-stone-500" : "text-stone-400"}`}>Vendor:</span>
+                        <select 
+                          value={selectedVendorFilter}
+                          onChange={e => setSelectedVendorFilter(e.target.value)}
+                          className={`text-xs font-bold rounded-xl px-3 py-2 outline-none border transition-colors cursor-pointer ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 focus:border-primary-500/50" : "bg-white border-stone-200 text-stone-700 focus:border-primary-500/50"}`}
+                        >
+                          <option value="all">All Vendors</option>
+                          {vendors.map(v => (
+                            <option key={v._id} value={v._id}>{v.businessName || v.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="overflow-x-auto custom-scrollbar flex items-start gap-4 pb-2" style={{ scrollbarWidth: 'none' }}>
+                      {VENDOR_CATEGORIES.map(cat => (
+                        <button
+                          key={cat.slug}
+                          onClick={() => setSelectedCategory(cat.slug)}
+                          className={`flex flex-col items-center gap-3 shrink-0 transition-all p-2 rounded-2xl w-[100px] ${
+                            selectedCategory === cat.slug ? "opacity-100" : "opacity-70 hover:opacity-100"
+                          }`}
+                        >
+                          <div className={`w-[60px] h-[60px] rounded-full flex items-center justify-center border transition-all ${
+                            selectedCategory === cat.slug 
+                              ? "border-[var(--sw-primary)] bg-white shadow-sm" 
+                              : isDarkMode ? "border-stone-700 bg-stone-800/50" : "border-orange-200 bg-white"
+                          }`}>
+                            <cat.icon className={`w-[22px] h-[22px] ${selectedCategory === cat.slug ? "text-[var(--sw-primary)]" : isDarkMode ? "text-stone-400" : "text-orange-400"}`} strokeWidth={selectedCategory === cat.slug ? 2 : 1.5} />
+                          </div>
+                          <div className="flex flex-col items-center gap-1 text-center">
+                            <span className={`text-[12px] font-extrabold leading-tight ${
+                              selectedCategory === cat.slug 
+                                ? "text-[var(--sw-primary)]" 
+                                : isDarkMode ? "text-stone-200" : "text-slate-900"
+                            }`}>
+                              {cat.name}
+                            </span>
+                            {cat.tagline && (
+                              <span className={`text-[9px] font-bold uppercase tracking-wider leading-[1.2] ${isDarkMode ? "text-stone-500" : "text-slate-400"}`}>
+                                {cat.tagline}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {selectedCategory === "venues" ? (
@@ -1889,15 +1938,31 @@ export default function AdminDashboard() {
                       <h3 className={`font-extrabold text-base ${headingText}`}>Venue Directory</h3>
                       <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Toggle live status, verified flags, and details on all listings</p>
                     </div>
-                    <span className="text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1.5 rounded-full uppercase tracking-wider dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900">
-                      {filteredVenuesList.length} venues total
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1.5 rounded-full uppercase tracking-wider dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900">
+                        {filteredVenuesList.length} venues total
+                      </span>
+                      <div className="hidden sm:flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-200 dark:border-stone-700">
+                        <button
+                          onClick={() => setVenueLayout('grid')}
+                          className={`p-1.5 rounded-md transition-all ${venueLayout === 'grid' ? (isDarkMode ? 'bg-stone-700 shadow-sm text-primary-500' : 'bg-white shadow-sm text-primary-500') : 'text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'}`}
+                        >
+                          <LayoutDashboard className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => setVenueLayout('list')}
+                          className={`p-1.5 rounded-md transition-all ${venueLayout === 'list' ? (isDarkMode ? 'bg-stone-700 shadow-sm text-primary-500' : 'bg-white shadow-sm text-primary-500') : 'text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'}`}
+                        >
+                          <ClipboardList className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   {loadingData && filteredVenuesList.length === 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 max-w-6xl">
                       {[...Array(4)].map((_, i) => (
-                        <div key={i} className={`h-[470px] rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                        <div key={i} className={`h-[460px] sm:h-[500px] lg:h-[520px] rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
                       ))}
                     </div>
                   ) : filteredVenuesList.length === 0 ? (
@@ -1909,121 +1974,252 @@ export default function AdminDashboard() {
                       <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : "No venue listings have been added yet."}</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                      {filteredVenuesList.map((v) => (
-                        <div key={v._id} className="group h-[470px]">
-                          <ListingCard
-                            name={v.name}
-                            image={v.image || (v.gallery && v.gallery[0]) || ""}
-                            location={v.city}
-                            rating={v.rating || 0}
-                            reviewCount={v.reviewCount}
-                            priceDisplay={v.price ? `₹${Number(v.price).toLocaleString("en-IN")}` : "—"}
-                            unit={`/${v.priceUnit || "per day"}`}
-                            priceLabel="starting from"
-                            badge={
-                              v.featured ? (
-                                <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
-                                  <Star className="w-3 h-3 inline-block" /> Featured
-                                </div>
-                              ) : undefined
-                            }
-                            topRight={
-                              <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${v.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
-                                {v.active ? "Live" : "Hidden"}
-                              </span>
-                            }
-                            tags={
-                              <>
-                                <CardTag><Users className="w-3 h-3" /> {v.minGuests}–{v.maxGuests} pax</CardTag>
-                                {v.type && <CardTag tone="accent">{v.type}</CardTag>}
-                              </>
-                            }
-                            action={
-                              <button
-                                onClick={() => setConfirmDialog({
-                                  title: `Delete "${v.name}"?`,
-                                  desc: "This venue listing will be permanently removed from the platform. This action cannot be undone.",
-                                  onConfirm: async () => {
-                                    await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
-                                    notify("Venue deleted");
-                                    fetchAllData();
-                                  },
-                                })}
-                                className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
-                                title="Delete venue"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            }
-                            footer={
-                              <div className="flex flex-wrap gap-1.5">
-                                <button
-                                  onClick={async () => {
-                                    await fetch("/api/venues", {
-                                      method: "PATCH",
-                                      headers: { "Content-Type": "application/json" },
-                                      body: JSON.stringify({ venueId: v.venueId, verified: !v.verified }),
-                                    });
-                                    notify(v.verified ? "Venue marked as pending" : "Venue verified");
-                                    fetchAllData();
-                                  }}
-                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${v.verified
-                                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
-                                    : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
-                                    }`}
-                                >
-                                  {v.verified ? "Verified" : "Pending"}
-                                </button>
-                                <button
-                                  onClick={async () => {
-                                    await fetch("/api/venues", {
-                                      method: "PATCH",
-                                      headers: { "Content-Type": "application/json" },
-                                      body: JSON.stringify({ venueId: v.venueId, featured: !v.featured }),
-                                    });
-                                    notify(v.featured ? "Removed from featured" : "Venue featured");
-                                    fetchAllData();
-                                  }}
-                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${v.featured
-                                    ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30"
-                                    : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
-                                    }`}
-                                >
-                                  {v.featured ? "Featured" : "Regular"}
-                                </button>
-                                <button
-                                  onClick={async () => {
-                                    await fetch("/api/venues", {
-                                      method: "PATCH",
-                                      headers: { "Content-Type": "application/json" },
-                                      body: JSON.stringify({ venueId: v.venueId, active: !v.active }),
-                                    });
-                                    notify(v.active ? "Venue hidden from site" : "Venue is now live");
-                                    fetchAllData();
-                                  }}
-                                  className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${v.active
-                                    ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
-                                    : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30"
-                                    }`}
-                                >
+                    venueLayout === "grid" ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 max-w-6xl">
+                        {filteredVenuesList.map((v) => {
+                          const vendor = vendors.find(vend => vend._id === v.vendorId);
+                          const vendorName = vendor ? (vendor.businessName || vendor.name) : "Unknown Vendor";
+                          return (
+                          <div key={v._id} className="group h-[460px] sm:h-[500px] lg:h-[520px]">
+                            <ListingCard
+                              name={v.name}
+                              image={v.image || (v.gallery && v.gallery[0]) || ""}
+                              location={`${v.location || v.city}${v.country ? `, ${v.country}` : ""}`}
+                              rating={v.rating || 0}
+                              reviewCount={v.reviewCount}
+                              priceDisplay={v.price ? `₹${Number(v.price).toLocaleString("en-IN")}` : "—"}
+                              unit={`/${v.priceUnit || "per day"}`}
+                              priceLabel="starting from"
+                              badge={
+                                v.featured ? (
+                                  <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                    <Star className="w-3 h-3 inline-block" /> Featured
+                                  </div>
+                                ) : undefined
+                              }
+                              topRight={
+                                <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${v.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
                                   {v.active ? "Live" : "Hidden"}
+                                </span>
+                              }
+                              tags={
+                                <>
+                                  <CardTag><Users className="w-3 h-3" /> {v.minGuests}–{v.maxGuests} pax</CardTag>
+                                  {v.type && <CardTag tone="accent">{v.type}</CardTag>}
+                                </>
+                              }
+                              body={
+                                <div className="flex items-center gap-1.5 mb-2 mt-[-4px]">
+                                  <User className="w-3 h-3 text-slate-500 dark:text-stone-400" />
+                                  <span className="text-[11px] font-medium text-slate-600 dark:text-stone-300 line-clamp-1">By {vendorName}</span>
+                                </div>
+                              }
+                              action={
+                                <button
+                                  onClick={() => setConfirmDialog({
+                                    title: `Delete "${v.name}"?`,
+                                    desc: "This venue listing will be permanently removed from the platform. This action cannot be undone.",
+                                    onConfirm: async () => {
+                                      await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
+                                      notify("Venue deleted");
+                                      fetchAllData();
+                                    },
+                                  })}
+                                  className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 bg-stone-100 dark:bg-stone-800 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                  title="Delete venue"
+                                >
+                                  <Trash2 className="w-4 h-4" />
                                 </button>
+                              }
+                              footer={
+                                <div className="flex flex-wrap gap-2 mt-[-4px]">
+                                  <button
+                                    onClick={async () => {
+                                      await fetch("/api/venues", {
+                                        method: "PATCH",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ venueId: v.venueId, verified: !v.verified }),
+                                      });
+                                      notify(v.verified ? "Venue marked as pending" : "Venue verified");
+                                      fetchAllData();
+                                    }}
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${v.verified
+                                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 hover:bg-emerald-500/20"
+                                      : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                      }`}
+                                  >
+                                    {v.verified ? "Verified" : "Pending"}
+                                  </button>
+                                  <button
+                                    onClick={async () => {
+                                      await fetch("/api/venues", {
+                                        method: "PATCH",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ venueId: v.venueId, featured: !v.featured }),
+                                      });
+                                      notify(v.featured ? "Removed from featured" : "Venue featured");
+                                      fetchAllData();
+                                    }}
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${v.featured
+                                      ? "bg-orange-500/10 text-orange-600 dark:text-orange-500 hover:bg-orange-500/20"
+                                      : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                      }`}
+                                  >
+                                    {v.featured ? "Featured" : "Regular"}
+                                  </button>
+                                  <button
+                                    onClick={async () => {
+                                      await fetch("/api/venues", {
+                                        method: "PATCH",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ venueId: v.venueId, active: !v.active }),
+                                      });
+                                      notify(v.active ? "Venue hidden from site" : "Venue is now live");
+                                      fetchAllData();
+                                    }}
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${v.active
+                                      ? "bg-blue-500/10 text-blue-600 dark:text-blue-500 hover:bg-blue-500/20"
+                                      : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                      }`}
+                                  >
+                                    {v.active ? "Live" : "Hidden"}
+                                  </button>
+                                </div>
+                              }
+                            />
+                          </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        {filteredVenuesList.map((v) => {
+                          const vendor = vendors.find(vend => vend._id === v.vendorId);
+                          const vendorName = vendor ? (vendor.businessName || vendor.name) : "Unknown Vendor";
+                          const thumb = v.image || (v.gallery && v.gallery[0]) || "";
+                          const price = v.price || "—";
+                          
+                          return (
+                            <div key={v._id} className={`flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl border transition-all hover:border-primary-500/30 ${isDarkMode ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200"}`}>
+                              <div className="w-full sm:w-40 h-28 rounded-xl overflow-hidden shrink-0 relative">
+                                 {thumb ? (
+                                   <img src={thumb} alt={v.name} className="w-full h-full object-cover" />
+                                 ) : (
+                                   <div className={`w-full h-full flex items-center justify-center ${isDarkMode ? "bg-stone-800 text-stone-500" : "bg-stone-100 text-stone-400"}`}>
+                                     <Building2 className="w-6 h-6 opacity-50" />
+                                   </div>
+                                 )}
+                                 <span className={`absolute top-2 left-2 text-[8px] font-black px-2 py-0.5 rounded-full uppercase shadow-sm ${v.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                   {v.active ? "Live" : "Pending"}
+                                 </span>
                               </div>
-                            }
-                          />
-                        </div>
-                      ))}
-                    </div>
+                              <div className="flex-1 min-w-0 w-full">
+                                 <div className="flex items-start justify-between gap-4">
+                                   <div>
+                                     <h4 className={`font-bold text-base truncate ${headingText}`}>{v.name}</h4>
+                                     <div className="flex flex-col gap-1 mt-1">
+                                       <p className="text-xs text-stone-500 flex items-center gap-1 truncate">
+                                         <MapPin className="w-3 h-3" /> {`${v.location || v.city}${v.country ? `, ${v.country}` : ""}`}
+                                       </p>
+                                       <p className="text-xs text-stone-500 flex items-center gap-1 truncate">
+                                         <User className="w-3 h-3" /> By {vendorName}
+                                       </p>
+                                     </div>
+                                   </div>
+                                   <div className="text-right shrink-0 hidden sm:block">
+                                     <div className="text-xs text-stone-500">starting from</div>
+                                     <div className={`font-black text-lg ${isDarkMode ? "text-primary-400" : "text-primary-600"}`}>₹{Number(price).toLocaleString("en-IN") || "—"}<span className="text-xs text-stone-500 font-medium">/{v.priceUnit || "per day"}</span></div>
+                                   </div>
+                                 </div>
+                                 <div className="flex items-center gap-3 mt-4 flex-wrap">
+                                   <button
+                                     onClick={async () => {
+                                       await fetch("/api/venues", {
+                                         method: "PATCH",
+                                         headers: { "Content-Type": "application/json" },
+                                         body: JSON.stringify({ venueId: v.venueId, verified: !v.verified }),
+                                       });
+                                       notify(v.verified ? "Venue marked as pending" : "Venue verified");
+                                       fetchAllData();
+                                     }}
+                                     className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${v.verified
+                                       ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 hover:bg-emerald-500/20"
+                                       : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                       }`}
+                                   >
+                                     {v.verified ? "Verified" : "Pending"}
+                                   </button>
+                                   <button
+                                     onClick={async () => {
+                                       await fetch("/api/venues", {
+                                         method: "PATCH",
+                                         headers: { "Content-Type": "application/json" },
+                                         body: JSON.stringify({ venueId: v.venueId, featured: !v.featured }),
+                                       });
+                                       notify(v.featured ? "Removed from featured" : "Venue featured");
+                                       fetchAllData();
+                                     }}
+                                     className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${v.featured
+                                       ? "bg-orange-500/10 text-orange-600 dark:text-orange-500 hover:bg-orange-500/20"
+                                       : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                       }`}
+                                   >
+                                     {v.featured ? "Featured" : "Regular"}
+                                   </button>
+                                   <button
+                                     onClick={async () => {
+                                       await fetch("/api/venues", {
+                                         method: "PATCH",
+                                         headers: { "Content-Type": "application/json" },
+                                         body: JSON.stringify({ venueId: v.venueId, active: !v.active }),
+                                       });
+                                       notify(v.active ? "Venue hidden from site" : "Venue is now live");
+                                       fetchAllData();
+                                     }}
+                                     className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${v.active
+                                       ? "bg-blue-500/10 text-blue-600 dark:text-blue-500 hover:bg-blue-500/20"
+                                       : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                       }`}
+                                   >
+                                     {v.active ? "Live" : "Hidden"}
+                                   </button>
+                                   <span className="text-[11px] ml-auto font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-stone-400" /> {v.minGuests || 50}–{v.maxGuests || 500} pax</span>
+                                   <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5">{v.type || "Venue"}</span>
+                                 </div>
+                              </div>
+                              <div className="flex sm:flex-col items-center sm:items-end gap-2 w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-l sm:border-t-0 border-stone-100 dark:border-stone-800 sm:pl-4">
+                                  <button
+                                    onClick={() => setConfirmDialog({
+                                      title: `Delete "${v.name}"?`,
+                                      desc: "This venue listing will be permanently removed from the platform. This action cannot be undone.",
+                                      onConfirm: async () => {
+                                        await fetch(`/api/venues?venueId=${v.venueId}`, { method: "DELETE" });
+                                        notify("Venue deleted");
+                                        fetchAllData();
+                                      },
+                                    })}
+                                    className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 bg-stone-100 dark:bg-stone-800 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                    title="Delete venue"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )
                   )}
                 </div>
               ) : (() => {
                 const currentCat = VENDOR_CATEGORIES.find(c => c.slug === selectedCategory);
                     const catLabel = currentCat ? currentCat.name : selectedCategory;
-                    const filteredServices = servicesList.filter(s => s.category === selectedCategory && (
-                  s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  s.city.toLowerCase().includes(searchTerm.toLowerCase())
-                ));
+                    const filteredServices = servicesList.filter(s => {
+                      if (s.category !== selectedCategory) return false;
+                      if (selectedVendorFilter !== "all" && s.vendorId !== selectedVendorFilter) return false;
+                      const term = searchTerm.toLowerCase();
+                      return s.name.toLowerCase().includes(term) || s.city.toLowerCase().includes(term);
+                    });
                 return (
                   <div className={`border rounded-3xl overflow-hidden p-6 shadow-none ${cardClass}`}>
                     <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
@@ -2031,15 +2227,31 @@ export default function AdminDashboard() {
                         <h3 className={`font-extrabold text-base capitalize ${headingText}`}>{catLabel} Directory</h3>
                         <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Toggle live status, verified flags, and details on all listings</p>
                       </div>
-                      <span className="text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1.5 rounded-full uppercase tracking-wider dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900">
-                        {filteredServices.length} {catLabel} total
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200 px-3.5 py-1.5 rounded-full uppercase tracking-wider dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900">
+                          {filteredServices.length} {catLabel} total
+                        </span>
+                        <div className="hidden sm:flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-200 dark:border-stone-700">
+                          <button
+                            onClick={() => setServiceLayout('grid')}
+                            className={`p-1.5 rounded-md transition-all ${serviceLayout === 'grid' ? (isDarkMode ? 'bg-stone-700 shadow-sm text-primary-500' : 'bg-white shadow-sm text-primary-500') : 'text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'}`}
+                          >
+                            <LayoutDashboard className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setServiceLayout('list')}
+                            className={`p-1.5 rounded-md transition-all ${serviceLayout === 'list' ? (isDarkMode ? 'bg-stone-700 shadow-sm text-primary-500' : 'bg-white shadow-sm text-primary-500') : 'text-stone-500 hover:text-stone-700 dark:hover:text-stone-300'}`}
+                          >
+                            <ClipboardList className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     {loadingData && filteredServices.length === 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 max-w-6xl">
                         {[...Array(4)].map((_, i) => (
-                          <div key={i} className={`h-[450px] rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                          <div key={i} className={`h-[460px] sm:h-[500px] lg:h-[520px] rounded-3xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
                         ))}
                       </div>
                     ) : filteredServices.length === 0 ? (
@@ -2051,79 +2263,182 @@ export default function AdminDashboard() {
                         <p className="text-xs text-stone-400 max-w-xs">{searchTerm ? `Nothing matches "${searchTerm}" — try a different search.` : `No ${catLabel} listings have been added yet.`}</p>
                       </div>
                     ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {filteredServices.map(s => (
-                          <div key={s._id} className={`group h-[450px] ${!s.active ? "opacity-70" : ""}`}>
-                            <ListingCard
-                              name={s.name}
-                              image={s.image || ""}
-                              location={s.city}
-                              rating={s.rating || 0}
-                              reviewCount={s.reviewCount}
-                              priceDisplay={`₹${Number(s.priceFrom || 0).toLocaleString("en-IN")}`}
-                              unit={s.priceUnit ? `/${s.priceUnit}` : undefined}
-                              priceLabel="starting at"
-                              badge={
-                                s.featured ? (
-                                  <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
-                                    <Star className="w-3 h-3 inline-block" /> Featured
+                      serviceLayout === "grid" ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 max-w-6xl">
+                          {filteredServices.map(s => {
+                            const vendor = vendors.find(vend => vend._id === s.vendorId);
+                            const vendorName = vendor ? (vendor.businessName || vendor.name) : "Unknown Vendor";
+                            return (
+                            <div key={s._id} className={`group h-[460px] sm:h-[500px] lg:h-[520px] ${!s.active ? "opacity-70" : ""}`}>
+                              <ListingCard
+                                name={s.name}
+                                image={s.image || ""}
+                                location={s.city}
+                                rating={s.rating || 0}
+                                reviewCount={s.reviewCount}
+                                priceDisplay={`₹${Number(s.priceFrom || 0).toLocaleString("en-IN")}`}
+                                unit={s.priceUnit ? `/${s.priceUnit}` : undefined}
+                                priceLabel="starting at"
+                                badge={
+                                  s.featured ? (
+                                    <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white shadow-sm" style={{ background: "var(--sw-primary)" }}>
+                                      <Star className="w-3 h-3 inline-block" /> Featured
+                                    </div>
+                                  ) : undefined
+                                }
+                                topRight={
+                                  <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${s.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                    {s.active ? "Live" : "Hidden"}
+                                  </span>
+                                }
+                                tags={<CardTag tone="accent">{s.category}</CardTag>}
+                                body={
+                                  <div className="flex items-center gap-1.5 mb-2 mt-[-4px]">
+                                    <User className="w-3 h-3 text-slate-500 dark:text-stone-400" />
+                                    <span className="text-[11px] font-medium text-slate-600 dark:text-stone-300 line-clamp-1">By {vendorName}</span>
                                   </div>
-                                ) : undefined
-                              }
-                              topRight={
-                                <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm ${s.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
-                                  {s.active ? "Live" : "Hidden"}
-                                </span>
-                              }
-                              tags={<CardTag tone="accent">{s.category}</CardTag>}
-                              action={
-                                <button
-                                  onClick={() => handleDeleteService(s.serviceId)}
-                                  className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 dark:text-red-400 bg-white/90 dark:bg-white/10 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
-                                  title="Delete listing"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              }
-                              footer={
-                                <div className="flex flex-wrap gap-1.5">
+                                }
+                                action={
+                                  <button
+                                    onClick={() => handleDeleteService(s.serviceId)}
+                                    className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 bg-stone-100 dark:bg-stone-800 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                    title="Delete listing"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                }
+                                footer={
+                                <div className="flex flex-wrap gap-2 mt-[-4px]">
                                   <button
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, !s.verified, s.featured, s.active)}
-                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${s.verified
-                                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30"
-                                      : "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${s.verified
+                                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 hover:bg-emerald-500/20"
+                                      : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
                                       }`}
                                   >
                                     {s.verified ? "Verified" : "Pending"}
                                   </button>
                                   <button
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, !s.featured, s.active)}
-                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${s.featured
-                                      ? "bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30"
-                                      : "bg-white/70 dark:bg-white/10 text-slate-500 dark:text-stone-400 border-slate-900/10 dark:border-white/15"
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${s.featured
+                                      ? "bg-orange-500/10 text-orange-600 dark:text-orange-500 hover:bg-orange-500/20"
+                                      : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
                                       }`}
                                   >
                                     {s.featured ? "Featured" : "Regular"}
                                   </button>
                                   <button
                                     onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, s.featured, !s.active)}
-                                    className={`px-2.5 py-1 rounded-full text-[10px] font-black cursor-pointer border transition-all ${s.active
-                                      ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30"
-                                      : "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30"
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${s.active
+                                      ? "bg-blue-500/10 text-blue-600 dark:text-blue-500 hover:bg-blue-500/20"
+                                      : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
                                       }`}
                                   >
                                     {s.active ? "Live" : "Hidden"}
                                   </button>
                                 </div>
-                              }
-                            />
-                          </div>
-                        ))}
-                      </div>
+                                }
+                              />
+                            </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-3">
+                          {filteredServices.map(s => {
+                            const vendor = vendors.find(vend => vend._id === s.vendorId);
+                            const vendorName = vendor ? (vendor.businessName || vendor.name) : "Unknown Vendor";
+                            const thumb = s.image || "";
+                            const price = s.priceFrom || 0;
+                            
+                            return (
+                              <div key={s._id} className={`flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl border transition-all hover:border-primary-500/30 ${!s.active ? "opacity-70" : ""} ${isDarkMode ? "bg-stone-900/60 border-stone-800" : "bg-white border-stone-200"}`}>
+                                <div className="w-full sm:w-40 h-28 rounded-xl overflow-hidden shrink-0 relative">
+                                   {thumb ? (
+                                     <img src={thumb} alt={s.name} className="w-full h-full object-cover" />
+                                   ) : (
+                                     <div className={`w-full h-full flex items-center justify-center ${isDarkMode ? "bg-stone-800 text-stone-500" : "bg-stone-100 text-stone-400"}`}>
+                                       <Brush className="w-6 h-6 opacity-50" />
+                                     </div>
+                                   )}
+                                   <span className={`absolute top-2 left-2 text-[8px] font-black px-2 py-0.5 rounded-full uppercase shadow-sm ${s.active ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"}`}>
+                                     {s.active ? "Live" : "Pending"}
+                                   </span>
+                                </div>
+                                <div className="flex-1 min-w-0 w-full">
+                                   <div className="flex items-start justify-between gap-4">
+                                     <div>
+                                       <h4 className={`font-bold text-base truncate ${headingText}`}>{s.name}</h4>
+                                       <div className="flex flex-col gap-1 mt-1">
+                                         <p className="text-xs text-stone-500 flex items-center gap-1 truncate">
+                                           <MapPin className="w-3 h-3" /> {s.city}
+                                         </p>
+                                         <p className="text-xs text-stone-500 flex items-center gap-1 truncate">
+                                           <User className="w-3 h-3" /> By {vendorName}
+                                         </p>
+                                       </div>
+                                     </div>
+                                     <div className="text-right shrink-0 hidden sm:block">
+                                       <div className="text-xs text-stone-500">starting at</div>
+                                       <div className={`font-black text-lg ${isDarkMode ? "text-primary-400" : "text-primary-600"}`}>₹{Number(price).toLocaleString("en-IN")}<span className="text-xs text-stone-500 font-medium">/{s.priceUnit || "event"}</span></div>
+                                     </div>
+                                   </div>
+                                   <div className="flex items-center gap-3 mt-4 flex-wrap">
+                                     <button
+                                       onClick={() => handleUpdateServiceStatus(s.serviceId, !s.verified, s.featured, s.active)}
+                                       className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${s.verified
+                                         ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 hover:bg-emerald-500/20"
+                                         : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                         }`}
+                                     >
+                                       {s.verified ? "Verified" : "Pending"}
+                                     </button>
+                                     <button
+                                       onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, !s.featured, s.active)}
+                                       className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${s.featured
+                                         ? "bg-orange-500/10 text-orange-600 dark:text-orange-500 hover:bg-orange-500/20"
+                                         : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                         }`}
+                                     >
+                                       {s.featured ? "Featured" : "Regular"}
+                                     </button>
+                                     <button
+                                       onClick={() => handleUpdateServiceStatus(s.serviceId, s.verified, s.featured, !s.active)}
+                                       className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all ${s.active
+                                         ? "bg-blue-500/10 text-blue-600 dark:text-blue-500 hover:bg-blue-500/20"
+                                         : "bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700"
+                                         }`}
+                                     >
+                                       {s.active ? "Live" : "Hidden"}
+                                     </button>
+                                     <span className="text-[11px] ml-auto font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><Star className="w-3.5 h-3.5 text-stone-400" /> {s.rating || 0} ({s.reviewCount || 0})</span>
+                                     <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5">{s.category || "Service"}</span>
+                                   </div>
+                                </div>
+                                <div className="flex sm:flex-col items-center sm:items-end gap-2 w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-l sm:border-t-0 border-stone-100 dark:border-stone-800 sm:pl-4">
+                                    <button
+                                      onClick={() => handleDeleteService(s.serviceId)}
+                                      className="flex items-center justify-center w-9 h-9 rounded-full text-red-500 bg-stone-100 dark:bg-stone-800 hover:bg-red-500 hover:text-white transition-all cursor-pointer shadow-sm"
+                                      title="Delete listing"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )
                     )}
                   </div>
                 );
               })()}
+              </div>
+            )}
+
+            {activeTab === "invoices" && (
+              <div className="h-full pt-10">
+                <InvoicesManager />
               </div>
             )}
 

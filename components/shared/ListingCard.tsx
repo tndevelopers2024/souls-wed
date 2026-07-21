@@ -71,7 +71,7 @@ export default function ListingCard({
 
   return (
     <div
-      className={`relative rounded-[32px] overflow-hidden border border-slate-200 dark:border-white/10 w-full h-full bg-white dark:bg-[var(--sw-surface)] [transform:translateZ(0)] ${className}`}
+      className={`relative rounded-[32px] overflow-hidden border border-slate-200 dark:border-white/10 w-full h-full bg-white dark:bg-[var(--sw-surface)] [transform:translateZ(0)] [clip-path:inset(0_round_32px)] ${className}`}
     >
       <Image
         src={image}
@@ -97,7 +97,7 @@ export default function ListingCard({
       {topRight && <div className="absolute top-3 right-3 z-20">{topRight}</div>}
 
       {/* Progressive frosted blur + theme-aware scrim */}
-      <div className={`absolute inset-x-0 bottom-0 ${scrimHeightClass} z-10 pointer-events-none`}>
+      <div className={`absolute inset-x-0 bottom-0 ${scrimHeightClass} z-10 pointer-events-none rounded-b-[32px] overflow-hidden`}>
         {[
           { blur: 1, solid: 55, fade: 100 },
           { blur: 3, solid: 42, fade: 78 },

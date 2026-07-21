@@ -110,7 +110,7 @@ function LoginContent() {
           else router.replace("/dashboard");
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [router]);
 
   useLayoutEffect(() => {
@@ -167,8 +167,8 @@ function LoginContent() {
     role === "admin"
       ? { from: "#7c3aed", to: "#6d28d9", glow: "rgba(124,58,237,0.25)", badge: "bg-violet-100 text-violet-700 border-violet-200" }
       : role === "vendor"
-      ? { from: "#0ea5e9", to: "#0284c7", glow: "rgba(14,165,233,0.25)", badge: "bg-sky-100 text-sky-700 border-sky-200" }
-      : { from:"#f97316", to:"#ea580c", glow:"rgba(249,115,22,0.25)", badge:"bg-primary-100 text-primary-700 border-primary-200"};
+        ? { from: "#0ea5e9", to: "#0284c7", glow: "rgba(14,165,233,0.25)", badge: "bg-sky-100 text-sky-700 border-sky-200" }
+        : { from: "#f97316", to: "#ea580c", glow: "rgba(249,115,22,0.25)", badge: "bg-primary-100 text-primary-700 border-primary-200" };
 
   return (
     <div
@@ -237,9 +237,8 @@ function LoginContent() {
                   params.set("role", r.id);
                   router.replace(`?${params.toString()}`, { scroll: false });
                 }}
-                className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-bold transition-all cursor-pointer relative ${
-                  role === r.id ?"text-slate-900":"text-slate-400 hover:text-slate-600"
-                }`}
+                className={`flex-1 flex flex-col items-center gap-1 py-3.5 text-[11px] font-bold transition-all cursor-pointer relative ${role === r.id ? "text-slate-900" : "text-slate-400 hover:text-slate-600"
+                  }`}
               >
                 <span
                   className={`flex items-center gap-1.5 transition-all ${role === r.id ? "scale-110" : ""}`}
@@ -377,7 +376,7 @@ function LoginContent() {
                         maxLength={100}
                         autoComplete="email"
                       />
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"/>
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     </div>
                   </div>
 
@@ -399,7 +398,7 @@ function LoginContent() {
                         maxLength={100}
                         autoComplete="current-password"
                       />
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"/>
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
@@ -448,11 +447,11 @@ function LoginContent() {
                   {role !== "admin" && (
                     <>
                       <div className="relative flex items-center py-1">
-                        <div className="flex-grow border-t border-slate-200"/>
+                        <div className="flex-grow border-t border-slate-200" />
                         <span className="flex-shrink-0 mx-4 text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
                           or
                         </span>
-                        <div className="flex-grow border-t border-slate-200"/>
+                        <div className="flex-grow border-t border-slate-200" />
                       </div>
                       <button
                         type="button"

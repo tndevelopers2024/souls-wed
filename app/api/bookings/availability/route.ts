@@ -43,8 +43,9 @@ export async function GET(req: Request) {
           bookedDates.push(new Date(booking.eventDate).toISOString().split("T")[0]);
         }
       }
+    });
 
-    // Also get unavailable dates directly from Vendor model if this is a vendor
+    // Fetch unavailable dates directly from Vendor model if this is a vendor
     let unavailableDates: string[] = [];
     try {
       const vendor = await Vendor.findById(providerId);
