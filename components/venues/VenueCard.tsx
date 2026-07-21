@@ -2,7 +2,10 @@
 
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
-import { MapPin, Star, Users, BedDouble, Crown, Heart } from "lucide-react";
+import { Star, BedDouble, Crown } from "lucide-react";
+import { MapPinIcon } from "@/components/ui/map-pin";
+import { UsersIcon } from "@/components/ui/users";
+import { HeartIcon } from "@/components/ui/heart";
 import type { Venue } from "@/lib/venues-data";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { convertPriceString } from "@/lib/currency";
@@ -58,7 +61,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
               onClick={toggleWishlist} 
               aria-label="Shortlist"
             >
-              <Heart className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
+              <HeartIcon className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
             </button>
           </div>
           <div className="p-6 flex flex-col justify-between flex-grow">
@@ -73,12 +76,12 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
                 )}
               </div>
               <div className="flex items-center gap-1.5 mb-4">
-                <MapPin className="w-4 h-4 text-slate-500 dark:text-stone-400" />
+                <MapPinIcon className="w-4 h-4 text-slate-500 dark:text-stone-400" />
                 <span className="text-sm text-slate-600 dark:text-stone-300">{venue.location}, {venue.country}</span>
               </div>
               <div className="flex flex-wrap gap-4 mb-4 sm:mb-0">
                 <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
-                  <Users className="w-4 h-4 text-slate-400 dark:text-stone-500" />
+                  <UsersIcon className="w-4 h-4 text-slate-400 dark:text-stone-500" />
                   <span>{venue.minGuests}-{venue.maxGuests} pax</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
@@ -132,7 +135,7 @@ export default function VenueCard({ venue, view = "grid" }: VenueCardProps) {
           tags={
             <>
               <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700">
-                <Users className="w-3.5 h-3.5 text-slate-500" />
+                <UsersIcon className="w-3.5 h-3.5 text-slate-500" />
                 {venue.minGuests}-{venue.maxGuests} pax
               </div>
               <div className="flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full bg-white text-slate-700">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Home } from "lucide-react";
+import { HomeIcon } from "@/components/ui/home";
 
 export default function NotFound() {
   return (
@@ -157,8 +157,8 @@ export default function NotFound() {
           </p>
 
           <Link href="/" className="contact-btn">
-              <Home className="w-4 h-4" />
-              Back to Home
+              <HomeIcon className="w-4 h-4" />
+              Back to HomeIcon
           </Link>
       </div>
     </div>

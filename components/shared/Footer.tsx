@@ -5,7 +5,12 @@ import Image from "@/components/shared/CustomImage";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Phone, Mail, MessageCircle, ChevronUp, Sparkles } from "lucide-react";
+import { Mail } from "lucide-react";
+import { HeartIcon } from "@/components/ui/heart";
+import { PhoneIcon } from "@/components/ui/phone";
+import { MessageCircleIcon } from "@/components/ui/message-circle";
+import { ChevronUpIcon } from "@/components/ui/chevron-up";
+import { SparklesIcon } from "@/components/ui/sparkles";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { CURRENCIES } from "@/lib/currency";
 import ChatbotWidget from "@/components/shared/ChatbotWidget";
@@ -59,17 +64,17 @@ const services = [
 
 const contactItems = [
   {
-    icon: Phone,
+    icon: PhoneIcon,
     label: "24/7 Support",
     lines: ["+91 98765 43210", "+91 98765 43211"],
   },
   {
-    icon: MessageCircle,
+    icon: MessageCircleIcon,
     label: "WhatsApp Enquiry",
     lines: ["+91 96000 43002"],
   },
   {
-    icon: Phone,
+    icon: PhoneIcon,
     label: "For Bookings",
     lines: ["+91 80412 48273"],
   },
@@ -165,7 +170,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-8 mb-8 border-b border-amber-100/50">
             <div className="lg:col-span-7">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest text-amber-700 bg-amber-50 border border-amber-100/60 mb-3 uppercase">
-                <Sparkles className="w-3.5 h-3.5 inline-block mr-1 text-amber-500" />
+                <SparklesIcon className="w-3.5 h-3.5 inline-block mr-1 text-amber-500" />
                 Exclusive Club
               </span>
               <h3 className="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-slate-800">
@@ -241,7 +246,7 @@ export default function Footer() {
                 <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest lg:pb-3 lg:mb-4 lg:border-b lg:border-amber-600/20">
                   About Us
                 </h4>
-                <ChevronUp className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "about" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "about" ? "rotate(0deg)" : "rotate(180deg)" }} />
+                <ChevronUpIcon className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "about" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "about" ? "rotate(0deg)" : "rotate(180deg)" }} />
               </button>
               <div className={`overflow-hidden transition-all duration-300 ${openSection === "about" ? "max-h-96 mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
                 <ul className="flex flex-col gap-1">
@@ -292,7 +297,7 @@ export default function Footer() {
                 <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest lg:pb-3 lg:mb-4 lg:border-b lg:border-amber-600/20">
                   Our Services
                 </h4>
-                <ChevronUp className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "services" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "services" ? "rotate(0deg)" : "rotate(180deg)" }} />
+                <ChevronUpIcon className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "services" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "services" ? "rotate(0deg)" : "rotate(180deg)" }} />
               </button>
               <div className={`overflow-hidden transition-all duration-300 ${openSection === "services" ? "max-h-96 mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
                 <ul className="flex flex-col gap-1">
@@ -343,7 +348,7 @@ export default function Footer() {
                 <h4 className="text-xs font-black text-amber-700 uppercase tracking-widest lg:pb-3 lg:mb-4 lg:border-b lg:border-amber-600/20">
                   Contact Info
                 </h4>
-                <ChevronUp className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "contact" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "contact" ? "rotate(0deg)" : "rotate(180deg)" }} />
+                <ChevronUpIcon className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "contact" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "contact" ? "rotate(0deg)" : "rotate(180deg)" }} />
               </button>
               <div className={`overflow-hidden transition-all duration-300 ${openSection === "contact" ? "max-h-[500px] mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
                 <ul className="flex flex-col gap-1.5">
@@ -414,7 +419,7 @@ export default function Footer() {
               </Link>
               <span className="text-xs flex items-center gap-1 text-slate-400 font-semibold">
                 Made with
-                <Heart className="w-3 h-3 fill-current mx-0.5 text-red-500 animate-pulse" />
+                <HeartIcon className="w-3 h-3 fill-current mx-0.5 text-red-500 animate-pulse" />
                 in India
               </span>
               <div className="relative mt-2 w-full sm:w-auto sm:mt-0 flex justify-center" ref={currencyRef}>
@@ -424,7 +429,7 @@ export default function Footer() {
                   title="Change Currency"
                 >
                   <span className="opacity-70 text-[10px]">Currency:</span> {currency}
-                  <ChevronUp className={`w-3 h-3 transition-transform duration-300 ${currencyOpen ? 'rotate-180' : ''}`} />
+                  <ChevronUpIcon className={`w-3 h-3 transition-transform duration-300 ${currencyOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <AnimatePresence>
                   {currencyOpen && (
@@ -481,7 +486,7 @@ export default function Footer() {
                 }}
                 aria-label="Scroll to top"
               >
-                <ChevronUp className="w-5 h-5 text-white transition-colors" />
+                <ChevronUpIcon className="w-5 h-5 text-white transition-colors" />
               </button>
               
               {/* WhatsApp */}

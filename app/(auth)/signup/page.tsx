@@ -16,24 +16,15 @@ import Link from "next/link";
 import Image from "@/components/shared/CustomImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  User,
-  Mail,
-  Phone,
-  Building,
-  Loader2,
-  AlertCircle,
-  KeyRound,
-  Eye,
-  EyeOff,
-  ArrowLeft,
-  Store,
-  ShieldCheck,
-  Sparkles,
-  Building2,
-  Phone as PhoneIcon,
-  Wand2,
-} from "lucide-react";
+import { Mail, Building, Loader2, AlertCircle, KeyRound, Store, Building2, Wand2 } from "lucide-react";
+import { UserIcon } from "@/components/ui/user";
+import { PhoneIcon } from "@/components/ui/phone";
+import { EyeIcon } from "@/components/ui/eye";
+import { EyeOffIcon } from "@/components/ui/eye-off";
+import { ArrowLeftIcon } from "@/components/ui/arrow-left";
+import { ShieldCheckIcon } from "@/components/ui/shield-check";
+import { SparklesIcon } from "@/components/ui/sparkles";
+
 import { PhoneInput } from "@/components/shared/PhoneInput";
 
 type UserRole = "user" | "vendor" | "admin";
@@ -48,7 +39,7 @@ const ROLES: { id: UserRole; label: string; icon: React.ReactNode; subtitle: str
   {
     id: "user",
     label: "User",
-    icon: <User className="w-4 h-4" />,
+    icon: <UserIcon className="w-4 h-4" />,
     subtitle: "Create an account to explore venues & manage bookings",
   },
   {
@@ -61,7 +52,7 @@ const ROLES: { id: UserRole; label: string; icon: React.ReactNode; subtitle: str
   {
     id: "admin",
     label: "Admin",
-    icon: <ShieldCheck className="w-4 h-4" />,
+    icon: <ShieldCheckIcon className="w-4 h-4" />,
     subtitle: "Restricted — authorized personnel only",
   },
 ];
@@ -389,7 +380,7 @@ function SignupContent() {
                   className="flex flex-col items-center justify-center py-6 text-center"
                 >
                   <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 mb-6 text-2xl">
-                    <ShieldCheck className="w-7 h-7" />
+                    <ShieldCheckIcon className="w-7 h-7" />
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 mb-2">Admin Portal</h3>
                   <p className="text-sm text-slate-500 mb-8 px-2">
@@ -438,7 +429,7 @@ function SignupContent() {
                       maxLength={50}
                       autoComplete="name"
                     />
-                    <User className={ICON_CLS} />
+                    <UserIcon className={ICON_CLS} />
                   </Field>
 
                   {/* Vendor-only: Business Name + Category + City */}
@@ -481,7 +472,7 @@ function SignupContent() {
                     </>
                   )}
 
-                  {/* Phone (user + vendor) */}
+                  {/* PhoneIcon (user + vendor) */}
                   <Field label="Phone Number">
                     <PhoneInput
                       value={phone}
@@ -538,7 +529,7 @@ function SignupContent() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
@@ -605,7 +596,7 @@ function SignupContent() {
             href="/"
             className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeftIcon className="w-3.5 h-3.5" />
             Back to SoulsWed
           </Link>
         </div>

@@ -1,44 +1,9 @@
-import {
-  Building2,
-  BedDouble,
-  ClipboardList,
-  UtensilsCrossed,
-  Flower2,
-  Camera,
-  Plane,
-  Sparkles,
-  Scissors,
-  Palette,
-  Flower,
-  Activity,
-  Mic,
-  Headphones,
-  Car,
-  Map,
-  Shirt,
-  Crown,
-  Briefcase,
-  Search,
-  DoorOpen,
-  ShoppingBag,
-  BookOpen,
-  Star,
-  Zap,
-  ShoppingCart,
-  Package,
-  Gem,
-  Mail,
-  Cake,
-  Gift,
-  Smile,
-  Bath,
-  Dumbbell,
-  Droplet,
-  Apple,
-  Brain,
-  Heart,
-  UserCheck
-} from "lucide-react";
+import { Building2, BedDouble, ClipboardList, UtensilsCrossed, Flower2, Camera, Plane, Scissors, Palette, Flower, Activity, Mic, Headphones, Car, Map, Shirt, Crown, Briefcase, DoorOpen, ShoppingBag, BookOpen, Star, Zap, ShoppingCart, Package, Gem, Mail, Cake, Gift, Bath, Dumbbell, Droplet, Apple, Brain } from "lucide-react";
+import { SparklesIcon } from "@/components/ui/sparkles";
+import { SearchIcon } from "@/components/ui/search";
+import { SmileIcon } from "@/components/ui/smile";
+import { HeartIcon } from "@/components/ui/heart";
+import { UserCheckIcon } from "@/components/ui/user-check";
 import { LucideIcon } from "lucide-react";
 
 export interface VendorCategory {
@@ -104,7 +69,7 @@ export const VENDOR_CATEGORIES: VendorCategory[] = [
     name: "Makeup Artists",
     tagline: "Flawless bridal beauty",
     slug: "makeup",
-    icon: Sparkles,
+    icon: SparklesIcon,
     features: "Booking feature with calendar and payment"
   },
   {
@@ -188,7 +153,7 @@ export const VENDOR_CATEGORIES: VendorCategory[] = [
     name: "Detectives",
     tagline: "Background checks & security",
     slug: "detectives",
-    icon: Search,
+    icon: SearchIcon,
     features: "Booking feature with calendar and payment"
   },
   {
@@ -272,7 +237,7 @@ export const VENDOR_CATEGORIES: VendorCategory[] = [
     name: "Cosmetic Dentist",
     tagline: "Perfect your wedding smile",
     slug: "cosmetic-dentist",
-    icon: Smile,
+    icon: SmileIcon,
     features: "Booking feature with calendar and payment"
   },
   {
@@ -314,14 +279,14 @@ export const VENDOR_CATEGORIES: VendorCategory[] = [
     name: "Sexologists",
     tagline: "Intimacy experts",
     slug: "sexologists",
-    icon: Heart,
+    icon: HeartIcon,
     features: "Booking feature with calendar and payment"
   },
   {
     name: "Image Consulting",
     tagline: "Personal styling & grooming",
     slug: "image-consulting",
-    icon: UserCheck,
+    icon: UserCheckIcon,
     features: "Booking feature with calendar and payment"
   }
 ];

@@ -1,6 +1,8 @@
 "use client";
 
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail } from "lucide-react";
+import { PhoneIcon } from "@/components/ui/phone";
+import { MapPinIcon } from "@/components/ui/map-pin";
 import { motion } from "framer-motion";
 
 export default function ContactPage() {
@@ -43,7 +45,7 @@ export default function ContactPage() {
           >
             {[
               {
-                icon: Phone,
+                icon: PhoneIcon,
                 title: "Call Us",
                 content: <><p>+91 98765 43210</p><p>+91 80412 48273</p></>
               },
@@ -53,7 +55,7 @@ export default function ContactPage() {
                 content: <><p>hello@soulswed.com</p><p>vendors@soulswed.com</p></>
               },
               {
-                icon: MapPin,
+                icon: MapPinIcon,
                 title: "Visit Us",
                 content: <p className="leading-relaxed">123 Wedding Boulevard,<br/>Mumbai, India 400001</p>
               }

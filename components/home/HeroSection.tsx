@@ -2,7 +2,12 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "@/components/shared/CustomImage";
-import { ChevronDown, MapPin, Calendar, Users, Layers, Search } from "lucide-react";
+import { Calendar } from "lucide-react";
+import { ChevronDownIcon } from "@/components/ui/chevron-down";
+import { MapPinIcon } from "@/components/ui/map-pin";
+import { UsersIcon } from "@/components/ui/users";
+import { LayersIcon } from "@/components/ui/layers";
+import { SearchIcon } from "@/components/ui/search";
 import { useState, useEffect, useRef } from "react";
 import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 import BookingCalendar from "@/components/booking/BookingCalendar";
@@ -175,7 +180,7 @@ export default function HeroSection() {
             Book premier venues, flights, and vendors all in one place.
           </motion.p>
 
-          {/* Floating Search Bar */}
+          {/* Floating SearchIcon Bar */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -521,7 +526,7 @@ export default function HeroSection() {
                   className="w-full md:w-auto flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-8 py-4 md:py-3.5 rounded-full font-bold transition-colors duration-300 h-[52px]"
                   style={{ transform: 'none' }}
                 >
-                  <Search className="w-4 h-4 text-white font-bold" strokeWidth={3} />
+                  <SearchIcon className="w-4 h-4 text-white font-bold" strokeWidth={3} />
                   <span className="text-[15px]">Search</span>
                 </button>
               </div>

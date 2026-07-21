@@ -9,17 +9,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { formatAsCurrency, CURRENCIES } from "@/lib/currency";
-import {
-  Users,
-  BedDouble,
-  CalendarDays,
-  IndianRupee,
-  Loader2,
-  AlertCircle,
-  CheckCircle2,
-  Phone,
-  Clock,
-} from "lucide-react";
+import { BedDouble, Loader2, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { UsersIcon } from "@/components/ui/users";
+import { CalendarDaysIcon } from "@/components/ui/calendar-days";
+import { IndianRupeeIcon } from "@/components/ui/indian-rupee";
+import { PhoneIcon } from "@/components/ui/phone";
 import BookingCalendar from "./BookingCalendar";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { PhoneInput } from "@/components/shared/PhoneInput";
@@ -290,7 +284,7 @@ export default function BookingForm({
 
       <div className="bg-white border border-slate-100 rounded-2xl p-4">
         <h4 className="text-xs font-bold text-slate-600 mb-3 flex items-center gap-1.5">
-          <CalendarDays className="w-3.5 h-3.5 text-primary-500" />
+          <CalendarDaysIcon className="w-3.5 h-3.5 text-primary-500" />
           {bookingType === "room" ? "Select Stay Dates" : "Select Event Date"}
         </h4>
 
@@ -319,7 +313,7 @@ export default function BookingForm({
           <>
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-primary-500" /> Guests
+                <UsersIcon className="w-3.5 h-3.5 text-primary-500" /> Guests
               </label>
               <input
                 type="number"
@@ -384,7 +378,7 @@ export default function BookingForm({
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-bold text-slate-600 flex items-center gap-1">
-          <Phone className="w-3.5 h-3.5 text-primary-500" /> Contact Phone
+          <PhoneIcon className="w-3.5 h-3.5 text-primary-500" /> Contact PhoneIcon
         </label>
         <PhoneInput
           placeholder="Enter contact number"
@@ -396,7 +390,7 @@ export default function BookingForm({
       <div className="bg-primary-50/50 border border-primary-100 rounded-2xl p-4 mt-2">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-            <IndianRupee className="w-3.5 h-3.5 text-primary-500" /> Price Breakdown
+            <IndianRupeeIcon className="w-3.5 h-3.5 text-primary-500" /> Price Breakdown
           </h4>
         </div>
         <div className="flex flex-col gap-2 text-sm">

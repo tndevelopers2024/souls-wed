@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus, HelpCircle } from "lucide-react";
+import { Minus, HelpCircle } from "lucide-react";
+import { PlusIcon } from "@/components/ui/plus";
 
 const faqs = [
   {
@@ -85,7 +86,7 @@ export default function FaqSection() {
                       border: isOpen ? "none" : "1px solid var(--sw-light-gray)"
                     }}
                   >
-                    {isOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                    {isOpen ? <Minus className="w-5 h-5" /> : <PlusIcon className="w-5 h-5" />}
                   </div>
                 </button>
                 

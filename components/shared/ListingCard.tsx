@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "@/components/shared/CustomImage";
-import { MapPin, Star } from "lucide-react";
+import { Star } from "lucide-react";
+import { MapPinIcon } from "@/components/ui/map-pin";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { convertPriceString } from "@/lib/currency";
 
@@ -130,7 +131,7 @@ export default function ListingCard({
 
         {location && (
           <div className="flex items-center gap-1 mb-1">
-            <MapPin className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400 flex-shrink-0" />
+            <MapPinIcon className="w-3.5 h-3.5 text-slate-500 dark:text-stone-400 flex-shrink-0" />
             <span className="text-[13px] font-medium text-slate-600 dark:text-stone-300 line-clamp-1">{location}</span>
           </div>
         )}

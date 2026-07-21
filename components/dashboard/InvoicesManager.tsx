@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Search, FileText, MoreVertical, Send, Download, Trash2, Loader2 } from "lucide-react";
+import { MoreVertical, Trash2, Loader2 } from "lucide-react";
+import { PlusIcon } from "@/components/ui/plus";
+import { SearchIcon } from "@/components/ui/search";
+import { FileTextIcon } from "@/components/ui/file-text";
+import { SendIcon } from "@/components/ui/send";
+import { DownloadIcon } from "@/components/ui/download";
 import InvoiceGenerator from "./InvoiceGenerator";
 
 export default function InvoicesManager() {
@@ -88,13 +93,13 @@ export default function InvoicesManager() {
           onClick={handleCreateNew}
           className="flex items-center gap-2 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-4 py-2 rounded-xl text-sm font-bold hover:bg-stone-800 dark:hover:bg-stone-200 transition-colors"
         >
-          <Plus className="w-4 h-4" /> Create Invoice
+          <PlusIcon className="w-4 h-4" /> Create Invoice
         </button>
       </div>
 
       <div className="flex items-center gap-4 mb-6">
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+          <SearchIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
           <input 
             type="text" 
             placeholder="Search by reference or client..." 
@@ -113,7 +118,7 @@ export default function InvoicesManager() {
         ) : filteredInvoices.length === 0 ? (
           <div className="h-64 flex flex-col items-center justify-center text-center border-2 border-dashed border-stone-200 dark:border-stone-800 rounded-2xl">
             <div className="w-12 h-12 bg-stone-100 dark:bg-stone-800 rounded-full flex items-center justify-center mb-4">
-              <FileText className="w-6 h-6 text-stone-400" />
+              <FileTextIcon className="w-6 h-6 text-stone-400" />
             </div>
             <h3 className="text-sm font-bold text-stone-900 dark:text-white mb-1">No invoices found</h3>
             <p className="text-xs text-stone-500 mb-4">Create your first invoice to get started.</p>

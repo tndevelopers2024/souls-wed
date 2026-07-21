@@ -5,7 +5,8 @@ import Link from "next/link";
 import Image from "@/components/shared/CustomImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Loader2, AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeftIcon } from "@/components/ui/arrow-left";
 
 export default function VerifyEmailPage() {
   return (
@@ -149,7 +150,7 @@ function VerifyEmailContent() {
             href="/signup"
             className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeftIcon className="w-3.5 h-3.5" />
             Back to Sign up
           </Link>
         </div>

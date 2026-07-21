@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "@/components/shared/CustomImage";
-import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRightIcon } from "@/components/ui/arrow-right";
+import { ChevronDownIcon } from "@/components/ui/chevron-down";
+import { ChevronUpIcon } from "@/components/ui/chevron-up";
 import { VENDOR_CATEGORIES } from "@/lib/config/categories";
 
 const containerVariants = {
@@ -21,8 +23,8 @@ export default function WeddingCategoriesSection({ singleRow = false }: { single
 
   // If single row, show all items (horizontally scrollable). 
   // Else, use expansion logic (8 items initially -> all).
-  const displayedCategories = singleRow 
-    ? VENDOR_CATEGORIES 
+  const displayedCategories = singleRow
+    ? VENDOR_CATEGORIES
     : (isExpanded ? VENDOR_CATEGORIES : VENDOR_CATEGORIES.slice(0, 8));
 
   return (
@@ -95,11 +97,11 @@ export default function WeddingCategoriesSection({ singleRow = false }: { single
             >
               {isExpanded ? (
                 <>
-                  Show Less <ChevronUp className="w-4 h-4" />
+                  Show Less <ChevronUpIcon className="w-4 h-4" />
                 </>
               ) : (
                 <>
-                  View {VENDOR_CATEGORIES.length - 8} More Categories <ChevronDown className="w-4 h-4" />
+                  View {VENDOR_CATEGORIES.length - 8} More Categories <ChevronDownIcon className="w-4 h-4" />
                 </>
               )}
             </button>

@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Search, ArrowRight } from "lucide-react";
+import { HeartIcon } from "@/components/ui/heart";
+import { SearchIcon } from "@/components/ui/search";
+import { ArrowRightIcon } from "@/components/ui/arrow-right";
 import { useWishlistStore } from "@/lib/store/useWishlistStore";
 import VendorCard from "@/components/vendors/VendorCard";
 
@@ -37,7 +39,7 @@ export default function WishlistPage() {
         >
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4 text-xs font-bold uppercase tracking-widest text-[var(--sw-primary)] bg-[rgba(238,116,41,0.12)] border border-[rgba(238,116,41,0.25)]">
-              <Heart className="w-3.5 h-3.5 fill-[var(--sw-primary)]" />
+              <HeartIcon className="w-3.5 h-3.5 fill-[var(--sw-primary)]" />
               Your Favorites
             </div>
             
@@ -64,7 +66,7 @@ export default function WishlistPage() {
             className="flex flex-col items-center justify-center py-20 px-4 text-center"
           >
             <div className="w-24 h-24 mb-6 rounded-full bg-slate-50 flex items-center justify-center border-2 border-dashed border-slate-200">
-              <Heart className="w-10 h-10 text-slate-300" />
+              <HeartIcon className="w-10 h-10 text-slate-300" />
             </div>
             <h2 className="text-2xl font-bold text-[var(--sw-navy)] mb-2 font-heading">
               Your wishlist is empty
@@ -78,7 +80,7 @@ export default function WishlistPage() {
                 href="/venues"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-white bg-[var(--sw-primary)] hover:bg-[#e06822] transition-colors shadow-[0_4px_14px_rgba(238,116,41,0.35)]"
               >
-                <Search className="w-4 h-4" />
+                <SearchIcon className="w-4 h-4" />
                 Explore Venues
               </Link>
               <Link 
@@ -86,7 +88,7 @@ export default function WishlistPage() {
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-[var(--sw-navy)] bg-white border-2 border-slate-200 hover:border-[var(--sw-primary)] hover:text-[var(--sw-primary)] transition-colors"
               >
                 Browse Vendors
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRightIcon className="w-4 h-4" />
               </Link>
             </div>
           </motion.div>

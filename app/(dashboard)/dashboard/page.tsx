@@ -4,7 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, BookHeart, Settings, Lock, Save, Wand2, Eye, EyeOff, Loader2, Search } from "lucide-react";
+import { LayoutDashboard, BookHeart, Save, Wand2, Loader2 } from "lucide-react";
+import { SettingsIcon } from "@/components/ui/settings";
+import { LockIcon } from "@/components/ui/lock";
+import { EyeIcon } from "@/components/ui/eye";
+import { EyeOffIcon } from "@/components/ui/eye-off";
+import { SearchIcon } from "@/components/ui/search";
 import BookingCard from "@/components/booking/BookingCard";
 import AvatarUploader from "@/components/shared/AvatarUploader";
 import { PhoneInput } from "@/components/shared/PhoneInput";
@@ -140,7 +145,7 @@ export default function UserDashboard() {
   const menuItems = [
     { id: "overview", label: "My Hub", icon: LayoutDashboard },
     { id: "bookings", label: "My Bookings", count: bookings.length || null, icon: BookHeart },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "settings", label: "Settings", icon: SettingsIcon },
   ];
 
   // Clean & Simple UI Theme Classes
@@ -204,7 +209,7 @@ export default function UserDashboard() {
             })}
           </div>
           <div className="relative pb-3 sm:pb-0 shrink-0">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 sm:-translate-y-[calc(50%+6px)]" />
+            <SearchIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 sm:-translate-y-[calc(50%+6px)]" />
             <input
               type="text"
               placeholder="Search your bookings..."
@@ -446,7 +451,7 @@ export default function UserDashboard() {
                       <div>
                         <label className="block text-xs font-bold mb-1 text-slate-500">Current Password</label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400"/>
+                          <LockIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400"/>
                           <input
                             type="password"
                             required
@@ -471,7 +476,7 @@ export default function UserDashboard() {
                           </button>
                         </div>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400"/>
+                          <LockIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400"/>
                           <input
                             type={showPassword ? "text" : "password"}
                             required
@@ -487,7 +492,7 @@ export default function UserDashboard() {
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 transition-colors"
                           >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                           </button>
                         </div>
                       </div>

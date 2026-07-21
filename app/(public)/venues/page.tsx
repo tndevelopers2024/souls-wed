@@ -2,7 +2,13 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ChevronDown, X, MapPin, Star, Building2, Globe, LayoutGrid, List, Loader2, Sparkles } from "lucide-react";
+import { Star, Building2, Globe, List, Loader2 } from "lucide-react";
+import { SearchIcon } from "@/components/ui/search";
+import { ChevronDownIcon } from "@/components/ui/chevron-down";
+import { XIcon } from "@/components/ui/x";
+import { MapPinIcon } from "@/components/ui/map-pin";
+import { LayoutGridIcon } from "@/components/ui/layout-grid";
+import { SparklesIcon } from "@/components/ui/sparkles";
 import VenueCard from "@/components/venues/VenueCard";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
 import type { Venue } from "@/lib/venues-data";
@@ -278,7 +284,7 @@ export default function VenuesPage() {
                       }}
                     >
                       {f.label}
-                      <X className="w-3 h-3" />
+                      <XIcon className="w-3 h-3" />
                     </motion.button>
                   ))}
                   {activeFilters.length > 1 && (
@@ -305,7 +311,7 @@ export default function VenuesPage() {
                   }`}
                 aria-label="Grid view"
               >
-                <LayoutGrid className="w-4 h-4" />
+                <LayoutGridIcon className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewType("list")}
@@ -333,7 +339,7 @@ export default function VenuesPage() {
               >
                 <span className="hidden sm:inline text-slate-400 font-normal text-xs">Sort:</span>
                 {sort}
-                <ChevronDown
+                <ChevronDownIcon
                   className="w-4 h-4 transition-transform duration-200"
                   style={{ transform: sortOpen ? "rotate(180deg)" : "rotate(0)" }}
                 />
@@ -475,9 +481,9 @@ export default function VenuesPage() {
             animate={{ opacity: 1 }}
             className="text-center mt-12 flex items-center justify-center gap-2 text-xs text-slate-400 font-medium"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <SparklesIcon className="w-3.5 h-3.5" />
             You've seen all {filtered.length} venues
-            <Sparkles className="w-3.5 h-3.5" />
+            <SparklesIcon className="w-3.5 h-3.5" />
           </motion.div>
         )}
       </div>

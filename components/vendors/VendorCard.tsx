@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart } from "lucide-react";
+import { HeartIcon } from "@/components/ui/heart";
 import { motion, AnimatePresence } from "framer-motion";
 import ListingCard from "@/components/shared/ListingCard";
 import { useWishlistStore } from "@/lib/store/useWishlistStore";
@@ -83,7 +83,7 @@ export default function VendorCard({
               />
             )}
           </AnimatePresence>
-          <Heart 
+          <HeartIcon 
             className="w-4 h-4 relative z-10 transition-colors duration-200" 
             fill={isSaved ? "currentColor" : "none"} 
           />

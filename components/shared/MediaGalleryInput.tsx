@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { UploadCloud, Loader2, X, Plus, Film, PlayCircle, AlertCircle, Link as LinkIcon } from "lucide-react";
+import { UploadCloud, Loader2, Film, PlayCircle, AlertCircle } from "lucide-react";
+import { XIcon } from "@/components/ui/x";
+import { PlusIcon } from "@/components/ui/plus";
+import { LinkIcon } from "@/components/ui/link";
 import { isDirectVideoUrl, toVideoEmbedUrl } from "@/lib/media";
 
 interface MediaGalleryInputProps {
@@ -152,7 +155,7 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
                 aria-label="Remove"
                 className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
               >
-                <X className="w-3.5 h-3.5" />
+                <XIcon className="w-3.5 h-3.5" />
               </button>
             </div>
           );
@@ -177,7 +180,7 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
           >
             <UploadCloud className="w-6 h-6" />
             <span className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-0.5">
-              <Plus className="w-3 h-3" /> {isVideo ? "Add video" : "Add photos"}
+              <PlusIcon className="w-3 h-3" /> {isVideo ? "Add video" : "Add photos"}
             </span>
           </button>
         )}

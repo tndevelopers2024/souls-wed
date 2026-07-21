@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { MapPinIcon } from "@/components/ui/map-pin";
 
 const destinations = [
   {
@@ -72,7 +72,7 @@ export default function DestinationsPage() {
                 
                 <div className="absolute bottom-0 left-0 w-full p-6 text-white">
                   <div className="flex items-center gap-2 mb-2">
-                    <MapPin className="w-4 h-4 text-[var(--sw-primary)]" />
+                    <MapPinIcon className="w-4 h-4 text-[var(--sw-primary)]" />
                     <h3 className="text-2xl font-bold font-heading">{dest.name}</h3>
                   </div>
                   <p className="text-sm text-white/80 font-medium">Explore {dest.venues} luxury venues &rarr;</p>

@@ -4,13 +4,17 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  SlidersHorizontal, X, Check, Search,
-  Users, Coins, Building2, Layers, Sparkles, Globe2,
-  LayoutGrid, BedDouble, CalendarHeart, ChefHat, Palette,
-  ClipboardList, Utensils,
-  ChevronRight, ChevronLeft
-} from "lucide-react";
+import { Coins, Building2, Globe2, BedDouble, CalendarHeart, ChefHat, Palette, ClipboardList, Utensils } from "lucide-react";
+import { SlidersHorizontalIcon } from "@/components/ui/sliders-horizontal";
+import { XIcon } from "@/components/ui/x";
+import { CheckIcon } from "@/components/ui/check";
+import { SearchIcon } from "@/components/ui/search";
+import { UsersIcon } from "@/components/ui/users";
+import { LayersIcon } from "@/components/ui/layers";
+import { SparklesIcon } from "@/components/ui/sparkles";
+import { LayoutGridIcon } from "@/components/ui/layout-grid";
+import { ChevronRightIcon } from "@/components/ui/chevron-right";
+import { ChevronLeftIcon } from "@/components/ui/chevron-left";
 import { cities } from "@/lib/venues-data";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { formatAsCurrency, CURRENCIES } from "@/lib/currency";
@@ -54,7 +58,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
     return [
       {
         label: "Guests",
-        Icon: Users,
+        Icon: UsersIcon,
         options: ["Up to 100", "100–300", "300–600", "600+"],
       },
       {
@@ -69,12 +73,12 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
       },
       {
         label: "Space",
-        Icon: Layers,
+        Icon: LayersIcon,
         options: ["Indoor", "Outdoor", "Both"],
       },
       {
         label: "Features",
-        Icon: Sparkles,
+        Icon: SparklesIcon,
         options: ["In-house Catering", "Parking", "Bridal Suite", "Overnight Stay"],
       },
     ];
@@ -123,7 +127,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
               : "0 6px 20px rgba(55,71,90,0.28)",
           }}
         >
-          <SlidersHorizontal className="w-4 h-4" />
+          <SlidersHorizontalIcon className="w-4 h-4" />
           <span>Filters</span>
           <AnimatePresence>
             {activeCount > 0 && (
@@ -189,7 +193,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                       className="w-4 h-4 rounded-full flex items-center justify-center cursor-pointer ml-1"
                       style={{ background: "rgba(238,116,41,0.18)" }}
                     >
-                      <X className="w-2.5 h-2.5" style={{ color: "var(--sw-primary)" }} />
+                      <XIcon className="w-2.5 h-2.5" style={{ color: "var(--sw-primary)" }} />
                     </motion.span>
                   ) : (
                     <motion.span
@@ -250,7 +254,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                                 animate={{ scale: isSelected ? 1 : 0, opacity: isSelected ? 1 : 0 }}
                                 transition={{ duration: 0.15 }}
                               >
-                                <Check className="w-4 h-4" style={{ color: "var(--sw-primary)" }} />
+                                <CheckIcon className="w-4 h-4" style={{ color: "var(--sw-primary)" }} />
                               </motion.span>
                             </button>
                           );
@@ -396,7 +400,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                     )}
                   </div>
 
-                  {/* Check badge */}
+                  {/* CheckIcon badge */}
                   {isActive && (
                     <motion.div
                       initial={{ scale: 0 }}
@@ -409,7 +413,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                         boxShadow: "0 4px 12px rgba(238,116,41,0.5)",
                       }}
                     >
-                      <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                      <CheckIcon className="w-3.5 h-3.5 text-white" strokeWidth={3} />
                     </motion.div>
                   )}
                 </div>
@@ -430,7 +434,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
         </div>
       </div>
 
-      {/* ═══════════ ROW 3 — Search Bar ═══════════ */}
+      {/* ═══════════ ROW 3 — SearchIcon Bar ═══════════ */}
       {onSearchChange && (
         <motion.div
           className="max-w-2xl mx-auto w-full relative"
@@ -449,7 +453,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                 : "0 4px 16px rgba(0,0,0,0.06)",
             }}
           >
-            <Search
+            <SearchIcon
               className="w-5 h-5 flex-shrink-0 transition-colors duration-300"
               style={{ color: searchFocused ? "var(--sw-primary)" : "#94a3b8" }}
             />
@@ -473,7 +477,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                   className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
                   style={{ background: "rgba(0,0,0,0.08)" }}
                 >
-                  <X className="w-3.5 h-3.5 text-slate-500" />
+                  <XIcon className="w-3.5 h-3.5 text-slate-500" />
                 </motion.button>
               )}
             </AnimatePresence>

@@ -6,7 +6,29 @@ import { useRouter } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Home, Trash2, ArrowLeft, ArrowRight, Upload, Plus, Loader2, LayoutDashboard, Inbox, MapPin, Settings, ClipboardList, Camera, Brush, Utensils, Briefcase, ChevronDown, ChevronRight, BedDouble, Building2, Palette, Package, Star, Edit2, X, Users, Lock, Save, Wand2, Eye, EyeOff, AlertCircle, IdCard, Moon, Sun, Monitor, SlidersHorizontal, LogOut, Shield, BadgeCheck, MessageSquare, TrendingUp, Search } from "lucide-react";
+import { Trash2, Loader2, LayoutDashboard, Inbox, ClipboardList, Camera, Brush, Utensils, Briefcase, BedDouble, Building2, Palette, Package, Star, Edit2, Save, Wand2, AlertCircle, Monitor, LogOut, Shield, BadgeCheck } from "lucide-react";
+import { UserIcon } from "@/components/ui/user";
+import { HomeIcon } from "@/components/ui/home";
+import { ArrowLeftIcon } from "@/components/ui/arrow-left";
+import { ArrowRightIcon } from "@/components/ui/arrow-right";
+import { UploadIcon } from "@/components/ui/upload";
+import { PlusIcon } from "@/components/ui/plus";
+import { MapPinIcon } from "@/components/ui/map-pin";
+import { SettingsIcon } from "@/components/ui/settings";
+import { ChevronDownIcon } from "@/components/ui/chevron-down";
+import { ChevronRightIcon } from "@/components/ui/chevron-right";
+import { XIcon } from "@/components/ui/x";
+import { UsersIcon } from "@/components/ui/users";
+import { LockIcon } from "@/components/ui/lock";
+import { EyeIcon } from "@/components/ui/eye";
+import { EyeOffIcon } from "@/components/ui/eye-off";
+import { IdCardIcon } from "@/components/ui/id-card";
+import { MoonIcon } from "@/components/ui/moon";
+import { SunIcon } from "@/components/ui/sun";
+import { SlidersHorizontalIcon } from "@/components/ui/sliders-horizontal";
+import { MessageSquareIcon } from "@/components/ui/message-square";
+import { TrendingUpIcon } from "@/components/ui/trending-up";
+import { SearchIcon } from "@/components/ui/search";
 import BookingCard from "@/components/booking/BookingCard";
 import ImageUploadInput from "@/components/shared/ImageUploadInput";
 import MediaGalleryInput from "@/components/shared/MediaGalleryInput";
@@ -739,9 +761,9 @@ export default function VendorDashboard() {
       count: venues.length + services.length || null
     },
     { id: "leads", label: "Booking Inquiries", count: bookings.length || null, icon: Inbox },
-    { id: "settings", label: "Business Profile", icon: Settings },
-    { id: "account-settings", label: "Settings", icon: SlidersHorizontal },
-    { id: "home", label: "Back to Home", icon: Home, href: "/" },
+    { id: "settings", label: "Business Profile", icon: SettingsIcon },
+    { id: "account-settings", label: "Settings", icon: SlidersHorizontalIcon },
+    { id: "home", label: "Back to Home", icon: HomeIcon, href: "/" },
   ];
 
   // Dark Mode helper CSS classes (corrected color classes to standard Tailwind tokens)
@@ -811,7 +833,7 @@ export default function VendorDashboard() {
                   title={item.label}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-[18px] h-[18px] shrink-0" />
+                    <Icon className="w-[18px] h-[18px] shrink-0" {...(Icon.displayName?.includes("Icon") || Icon.name?.includes("Icon") ? { isAnimating: isActive } : {})} />
                     {!sidebarCollapsed && <span>{item.label}</span>}
                   </div>
                   {!sidebarCollapsed && item.count !== undefined && item.count !== null && !hasSubItems && (
@@ -821,7 +843,7 @@ export default function VendorDashboard() {
                     </span>
                   )}
                   {!sidebarCollapsed && hasSubItems && (
-                    servicesExpanded ? <ChevronDown className="w-4 h-4 opacity-70" /> : <ChevronRight className="w-4 h-4 opacity-70" />
+                    servicesExpanded ? <ChevronDownIcon className="w-4 h-4 opacity-70" /> : <ChevronRightIcon className="w-4 h-4 opacity-70" />
                   )}
                   {sidebarCollapsed && item.count !== undefined && item.count !== null && !hasSubItems && (
                     <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${isActive ? "bg-white text-primary-600" : "bg-stone-100 text-stone-500 border border-stone-200"
@@ -854,7 +876,7 @@ export default function VendorDashboard() {
                               }`}
                           >
                             <div className="flex items-center gap-2.5">
-                              <SubIcon className="w-[15px] h-[15px] shrink-0" />
+                              <SubIcon className="w-[15px] h-[15px] shrink-0" {...(SubIcon.displayName?.includes("Icon") || SubIcon.name?.includes("Icon") ? { isAnimating: isSubItemActive } : {})} />
                               <span>{subItem.label}</span>
                             </div>
                             {subItem.count !== undefined && subItem.count !== null && (
@@ -901,7 +923,7 @@ export default function VendorDashboard() {
                 <img src={vendor.profileImage} alt={vendor.businessName || vendor.name} className="w-8 h-8 shrink-0 rounded-full object-cover" />
               ) : (
                 <div className="w-8 h-8 shrink-0 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 flex items-center justify-center">
-                  <User className="w-4 h-4" />
+                  <UserIcon className="w-4 h-4" />
                 </div>
               )}
               {!sidebarCollapsed && (
@@ -957,9 +979,9 @@ export default function VendorDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Search */}
+            {/* SearchIcon */}
             <div className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl border max-w-[200px] transition-colors focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 ${isDarkMode ? "bg-stone-800/50 border-stone-700" : "bg-white border-stone-200"}`}>
-              <Search className="w-4 h-4 text-stone-400" />
+              <SearchIcon className="w-4 h-4 text-stone-400" />
               <input 
                 type="text" 
                 value={searchTerm}
@@ -1024,7 +1046,7 @@ export default function VendorDashboard() {
                           </span>
                         )}
                         {hasSubItems && (
-                          servicesExpanded ? <ChevronDown className="w-4 h-4 opacity-70" /> : <ChevronRight className="w-4 h-4 opacity-70" />
+                          servicesExpanded ? <ChevronDownIcon className="w-4 h-4 opacity-70" /> : <ChevronRightIcon className="w-4 h-4 opacity-70" />
                         )}
                       </div>
                     </button>
@@ -1120,7 +1142,7 @@ export default function VendorDashboard() {
                         {
                           label: "Total Reviews",
                           count: "0",
-                          icon: MessageSquare,
+                          icon: MessageSquareIcon,
                           color: "text-blue-500 dark:text-blue-400",
                           bg: "bg-blue-50 dark:bg-blue-500/10",
                           desc: "Awaiting your first review"
@@ -1128,7 +1150,7 @@ export default function VendorDashboard() {
                         {
                           label: "Active Leads",
                           count: bookings.length,
-                          icon: TrendingUp,
+                          icon: TrendingUpIcon,
                           color: "text-emerald-500 dark:text-emerald-400",
                           bg: "bg-emerald-50 dark:bg-emerald-500/10",
                           desc: "Respond quickly to win"
@@ -1296,7 +1318,7 @@ export default function VendorDashboard() {
 
                       {bookings.filter(b => {
                         const val = searchTerm.toLowerCase();
-                        return !val || (b.userName || "").toLowerCase().includes(val) || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                        return !val || String(b.userName || "").toLowerCase().includes(val) || String(b.providerName || b.venueName || "").toLowerCase().includes(val) || String(b.status || "").toLowerCase().includes(val) || String(b._id || "").toLowerCase().includes(val);
                       }).length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
                           <h4 className={`font-bold text-sm ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>All Caught Up!</h4>
@@ -1308,7 +1330,7 @@ export default function VendorDashboard() {
                         <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
                           {bookings.filter(b => {
                             const val = searchTerm.toLowerCase();
-                            return !val || (b.userName || "").toLowerCase().includes(val) || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                            return !val || String(b.userName || "").toLowerCase().includes(val) || String(b.providerName || b.venueName || "").toLowerCase().includes(val) || String(b.status || "").toLowerCase().includes(val) || String(b._id || "").toLowerCase().includes(val);
                           }).slice(0, 6).map((booking) => (
                             <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
                               <BookingCard booking={booking} isVendor={true} />
@@ -1436,7 +1458,7 @@ export default function VendorDashboard() {
                       onClick={openAddVenue}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-[11px] font-bold cursor-pointer transition-all"
                     >
-                      <Plus className="w-3.5 h-3.5" /> Add New Venue
+                      <PlusIcon className="w-3.5 h-3.5" /> Add New Venue
                     </button>
                   </div>
                 </div>
@@ -1461,7 +1483,7 @@ export default function VendorDashboard() {
                           onClick={() => setVenueView("grid")}
                           className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 transition-colors z-10 cursor-pointer"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <XIcon className="w-3.5 h-3.5" />
                         </button>
                         <h3 className={`font-extrabold text-lg mb-6 ${headingText}`}>
                           {venueView === "add" ? "Add New Venue" : `Edit Venue: ${editingVenue?.name}`}
@@ -1777,7 +1799,7 @@ export default function VendorDashboard() {
                       onClick={openAddVenue}
                       className="flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-primary-500 hover:bg-primary-600 text-white text-xs font-bold cursor-pointer transition-all"
                     >
-                      <Plus className="w-3.5 h-3.5" /> Add Your First Venue
+                      <PlusIcon className="w-3.5 h-3.5" /> Add Your First Venue
                     </button>
                   </div>
                 ) : (
@@ -1815,7 +1837,7 @@ export default function VendorDashboard() {
                               }
                               tags={
                                 <>
-                                  <CardTag><Users className="w-3 h-3" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax</CardTag>
+                                  <CardTag><UsersIcon className="w-3 h-3" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax</CardTag>
                                   <CardTag><BedDouble className="w-3 h-3" /> {venue.rooms || 0} Rooms</CardTag>
                                   <CardTag tone="accent">{venue.type || "Venue"}</CardTag>
                                 </>
@@ -1873,7 +1895,7 @@ export default function VendorDashboard() {
                                  <div>
                                    <h4 className={`font-bold text-base truncate ${headingText}`}>{venue.name}</h4>
                                    <p className="text-xs text-stone-500 flex items-center gap-1 mt-1 truncate">
-                                     <MapPin className="w-3 h-3" /> {`${venue.location || venue.city}${venue.country ? `, ${venue.country}` : ""}`}
+                                     <MapPinIcon className="w-3 h-3" /> {`${venue.location || venue.city}${venue.country ? `, ${venue.country}` : ""}`}
                                    </p>
                                  </div>
                                  <div className="text-right shrink-0 hidden sm:block">
@@ -1882,7 +1904,7 @@ export default function VendorDashboard() {
                                  </div>
                                </div>
                                <div className="flex items-center gap-3 mt-4 flex-wrap">
-                                 <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-stone-400" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax</span>
+                                 <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><UsersIcon className="w-3.5 h-3.5 text-stone-400" /> {venue.minGuests || 50}–{venue.maxGuests || 500} pax</span>
                                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><BedDouble className="w-3.5 h-3.5 text-stone-400" /> {venue.rooms || 0} Rooms</span>
                                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5">{venue.type || "Venue"}</span>
                                </div>
@@ -2006,7 +2028,7 @@ export default function VendorDashboard() {
                         onClick={() => setIsEditingProfile(!isEditingProfile)}
                         className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[11px] font-black tracking-widest uppercase transition-all shadow-sm ${isEditingProfile ? "bg-stone-200 text-stone-700 hover:bg-stone-300 dark:bg-stone-800 dark:text-stone-300" : "bg-[#EE7429] text-white hover:bg-[#d66825] shadow-[#EE7429]/20"}`}
                       >
-                        {isEditingProfile ? <><X className="w-3.5 h-3.5" /> Cancel Edit</> : <><Edit2 className="w-3.5 h-3.5" /> Edit Profile</>}
+                        {isEditingProfile ? <><XIcon className="w-3.5 h-3.5" /> Cancel Edit</> : <><Edit2 className="w-3.5 h-3.5" /> Edit Profile</>}
                       </button>
                     </div>
 
@@ -2194,7 +2216,7 @@ export default function VendorDashboard() {
                                       disabled={index === 0}
                                       className="p-1 bg-white/20 text-white rounded-xl disabled:opacity-30 hover:bg-white/40 cursor-pointer"
                                     >
-                                      <ArrowLeft className="w-3.5 h-3.5" />
+                                      <ArrowLeftIcon className="w-3.5 h-3.5" />
                                     </button>
                                     <button
                                       type="button"
@@ -2202,7 +2224,7 @@ export default function VendorDashboard() {
                                       disabled={index === showcaseImages.length - 1}
                                       className="p-1 bg-white/20 text-white rounded-xl disabled:opacity-30 hover:bg-white/40 cursor-pointer"
                                     >
-                                      <ArrowRight className="w-3.5 h-3.5" />
+                                      <ArrowRightIcon className="w-3.5 h-3.5" />
                                     </button>
                                   </div>
                                 </div>
@@ -2218,7 +2240,7 @@ export default function VendorDashboard() {
                                   </>
                                 ) : (
                                   <>
-                                    <Plus className="w-5 h-5 mb-1" />
+                                    <PlusIcon className="w-5 h-5 mb-1" />
                                     <span className="text-[9px] font-bold uppercase tracking-wider">Upload Item</span>
                                   </>
                                 )}
@@ -2407,7 +2429,7 @@ export default function VendorDashboard() {
                         ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
                         : "bg-stone-100 dark:bg-stone-800 text-stone-400 group-hover:bg-stone-200 dark:group-hover:bg-stone-700"
                         }`}>
-                        <Sun className="w-6 h-6" />
+                        <SunIcon className="w-6 h-6" />
                       </div>
                       {/* Mini preview */}
                       <div className="w-full rounded-xl border border-stone-200 bg-white p-3 space-y-2 transition-all">
@@ -2442,7 +2464,7 @@ export default function VendorDashboard() {
                         ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
                         : "bg-stone-100 text-stone-400 group-hover:bg-stone-200"
                         }`}>
-                        <Moon className="w-6 h-6" />
+                        <MoonIcon className="w-6 h-6" />
                       </div>
                       {/* Mini preview */}
                       <div className="w-full rounded-xl border border-stone-700 bg-stone-900 p-3 space-y-2 transition-all">
@@ -2475,7 +2497,7 @@ export default function VendorDashboard() {
                     <div>
                       <label className="block text-xs font-bold mb-1.5 text-stone-500 uppercase tracking-wider">Current Password</label>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                        <LockIcon className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
                         <input
                           type="password"
                           required
@@ -2499,7 +2521,7 @@ export default function VendorDashboard() {
                         </button>
                       </div>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                        <LockIcon className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
                         <input
                           type={showPassword ? "text" : "password"}
                           required
@@ -2514,7 +2536,7 @@ export default function VendorDashboard() {
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600 transition-colors"
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                         </button>
                       </div>
                       <p className="text-[10px] text-stone-400 mt-1.5">Minimum 6 characters. Use a mix of letters, numbers, and symbols.</p>
@@ -2590,7 +2612,7 @@ export default function VendorDashboard() {
                           onClick={() => openAddService(activeTab)}
                           className="flex items-center gap-1.5 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold text-xs transition-colors shadow-none"
                         >
-                          <Plus className="w-3.5 h-3.5" />
+                          <PlusIcon className="w-3.5 h-3.5" />
                           Add New
                         </button>
                       </div>
@@ -2616,7 +2638,7 @@ export default function VendorDashboard() {
                             onClick={() => setServiceView("grid")}
                             className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 dark:hover:bg-stone-700 text-stone-500 transition-colors z-10 cursor-pointer"
                           >
-                            <X className="w-3.5 h-3.5" />
+                            <XIcon className="w-3.5 h-3.5" />
                           </button>
                           
                           <h3 className={`font-extrabold text-lg mb-6 ${headingText}`}>
@@ -2964,7 +2986,7 @@ export default function VendorDashboard() {
                                      <div>
                                        <h4 className={`font-bold text-base truncate ${headingText}`}>{service.name}</h4>
                                        <p className="text-xs text-stone-500 flex items-center gap-1 mt-1 truncate">
-                                         <MapPin className="w-3 h-3" /> {service.city}
+                                         <MapPinIcon className="w-3 h-3" /> {service.city}
                                        </p>
                                      </div>
                                      <div className="text-right shrink-0 hidden sm:block">

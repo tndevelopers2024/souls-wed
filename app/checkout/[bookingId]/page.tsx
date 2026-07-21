@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CheckCircle2, AlertCircle, Loader2, IndianRupee, ArrowRight, ShieldCheck } from "lucide-react";
+import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { IndianRupeeIcon } from "@/components/ui/indian-rupee";
+import { ArrowRightIcon } from "@/components/ui/arrow-right";
+import { ShieldCheckIcon } from "@/components/ui/shield-check";
 import { formatAsCurrency } from "@/lib/currency";
 
 export default function CheckoutPage() {
@@ -158,7 +161,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="bg-stone-50 rounded-2xl p-4 border border-stone-100 flex items-start gap-3">
-              <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+              <ShieldCheckIcon className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-bold text-stone-800">100% Secure Payment</p>
                 <p className="text-xs font-medium text-stone-500 mt-0.5">Your payment is processed securely via Stripe. We do not store your card details.</p>
@@ -171,7 +174,7 @@ export default function CheckoutPage() {
         <div className="lg:col-span-2">
           <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-sm sticky top-6">
             <h2 className="text-lg font-bold text-stone-800 mb-6 flex items-center gap-2">
-              <IndianRupee className="w-5 h-5 text-primary-500" />
+              <IndianRupeeIcon className="w-5 h-5 text-primary-500" />
               Price Breakdown
             </h2>
 
@@ -213,7 +216,7 @@ export default function CheckoutPage() {
               ) : (
                 <>
                   Pay {formatAsCurrency(booking.advanceAmount, booking.currency)} securely 
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>

@@ -5,21 +5,12 @@ import { notFound, useParams, useSearchParams } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  MapPin,
-  Star,
-  BadgeCheck,
-  ChevronLeft,
-  ChevronDown,
-  Users,
-  BedDouble,
-  Car,
-  UtensilsCrossed,
-  TreePine,
-  Building,
-  Check,
-  Loader2,
-} from "lucide-react";
+import { Star, BadgeCheck, BedDouble, Car, UtensilsCrossed, TreePine, Building, Loader2 } from "lucide-react";
+import { MapPinIcon } from "@/components/ui/map-pin";
+import { ChevronLeftIcon } from "@/components/ui/chevron-left";
+import { ChevronDownIcon } from "@/components/ui/chevron-down";
+import { UsersIcon } from "@/components/ui/users";
+import { CheckIcon } from "@/components/ui/check";
 import type { Venue } from "@/lib/venues-data";
 import VenueHero from "@/components/venues/VenueHero";
 import VenueGallery from "@/components/venues/VenueGallery";
@@ -219,7 +210,7 @@ export default function VenueDetailPage() {
                     key={f}
                     className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 text-slate-600"
                   >
-                    <Check className="w-3.5 h-3.5 text-green-500" />
+                    <CheckIcon className="w-3.5 h-3.5 text-green-500" />
                     {f}
                   </span>
                 ))}
@@ -334,7 +325,7 @@ export default function VenueDetailPage() {
                         onClick={() => setOpenFaq(openFaq === i ? null : i)}
                       >
                         <span className="font-semibold text-sm text-slate-800">{faq.question}</span>
-                        <ChevronDown
+                        <ChevronDownIcon
                           className="w-4 h-4 flex-shrink-0 text-slate-400 transition-transform"
                           style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0)" }}
                         />
@@ -376,7 +367,7 @@ export default function VenueDetailPage() {
             ) : (
               <>
                 <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 animate-bounce">
-                  <Check className="w-8 h-8" />
+                  <CheckIcon className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 mb-2">Payment Confirmed!</h3>
                 <p className="text-sm text-slate-500 mb-6">Your booking is now confirmed. You can view all details in your dashboard.</p>

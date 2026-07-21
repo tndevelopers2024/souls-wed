@@ -5,7 +5,10 @@ import Link from "next/link";
 import Image from "@/components/shared/CustomImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Loader2, AlertCircle, Eye, EyeOff, Wand2, CheckCircle2 } from "lucide-react";
+import { Loader2, AlertCircle, Wand2, CheckCircle2 } from "lucide-react";
+import { LockIcon } from "@/components/ui/lock";
+import { EyeIcon } from "@/components/ui/eye";
+import { EyeOffIcon } from "@/components/ui/eye-off";
 
 export default function ResetPasswordPage() {
   return (
@@ -250,13 +253,13 @@ function ResetPasswordContent() {
                         maxLength={100}
                         autoComplete="new-password"
                       />
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
@@ -277,13 +280,13 @@ function ResetPasswordContent() {
                         required
                         minLength={8}
                       />
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                       >
-                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showConfirmPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>

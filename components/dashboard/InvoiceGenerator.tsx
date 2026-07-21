@@ -3,18 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
-import { 
-  Calendar, 
-  Trash2, 
-  Plus, 
-  Printer, 
-  Download, 
-  Send, 
-  Save, 
-  Hash, 
-  LayoutGrid, 
-  GripVertical
-} from "lucide-react";
+import { Calendar, Trash2, Printer, Save, Hash, GripVertical } from "lucide-react";
+import { PlusIcon } from "@/components/ui/plus";
+import { DownloadIcon } from "@/components/ui/download";
+import { SendIcon } from "@/components/ui/send";
+import { LayoutGridIcon } from "@/components/ui/layout-grid";
 
 interface InvoiceItem {
   id: string;
@@ -180,7 +173,7 @@ export default function InvoiceGenerator({ initialInvoice, onSave }: InvoiceGene
             disabled={isSaving || isSending}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-stone-900 dark:bg-white text-white dark:text-stone-900 hover:bg-stone-800 dark:hover:bg-stone-200 transition-colors disabled:opacity-50"
           >
-            <Send className="w-4 h-4" /> {isSending ? "Sending..." : "Send Invoice"}
+            <SendIcon className="w-4 h-4" /> {isSending ? "Sending..." : "Send Invoice"}
           </button>
         </div>
       </div>
@@ -243,7 +236,7 @@ export default function InvoiceGenerator({ initialInvoice, onSave }: InvoiceGene
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-xs font-bold text-stone-700 dark:text-stone-300">Billed To</label>
                 <button className="text-xs font-bold text-stone-900 dark:text-white flex items-center gap-1 hover:opacity-70 transition-opacity">
-                  <Plus className="w-3 h-3" /> Add New Client
+                  <PlusIcon className="w-3 h-3" /> Add New Client
                 </button>
               </div>
               <div>
@@ -270,7 +263,7 @@ export default function InvoiceGenerator({ initialInvoice, onSave }: InvoiceGene
               <div className="flex items-center justify-between mb-4 mt-6">
                 <label className="block text-sm font-bold text-stone-900 dark:text-white">Invoice Items</label>
                 <button onClick={handleAddItem} className="text-xs font-bold text-stone-900 dark:text-white flex items-center gap-1 hover:opacity-70 transition-opacity">
-                  <Plus className="w-3 h-3" /> Add Item
+                  <PlusIcon className="w-3 h-3" /> Add Item
                 </button>
               </div>
 
@@ -383,7 +376,7 @@ export default function InvoiceGenerator({ initialInvoice, onSave }: InvoiceGene
               </button>
               <div className="w-px h-4 bg-stone-200 dark:bg-white/10"></div>
               <button onClick={handlePrint} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-white/5 transition-colors">
-                <Download className="w-3.5 h-3.5" /> Download PDF
+                <DownloadIcon className="w-3.5 h-3.5" /> DownloadIcon PDF
               </button>
             </div>
           </div>
@@ -395,7 +388,7 @@ export default function InvoiceGenerator({ initialInvoice, onSave }: InvoiceGene
               {/* Invoice Header */}
               <div className="flex justify-between items-start mb-16">
                 <div>
-                  <LayoutGrid className="w-10 h-10 mb-8" />
+                  <LayoutGridIcon className="w-10 h-10 mb-8" />
                   
                   <div className="grid grid-cols-[100px_1fr] gap-y-1 text-xs">
                     <span className="text-stone-500">Reference:</span>

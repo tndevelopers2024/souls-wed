@@ -3,7 +3,12 @@
 import { useState } from "react";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
-import { MapPin, Star, BadgeCheck, ChevronLeft, Phone, Image as ImageIcon, Heart, PenSquare, Share2, Check } from "lucide-react";
+import { Star, BadgeCheck, Image as ImageIcon, PenSquare, Share2 } from "lucide-react";
+import { MapPinIcon } from "@/components/ui/map-pin";
+import { ChevronLeftIcon } from "@/components/ui/chevron-left";
+import { PhoneIcon } from "@/components/ui/phone";
+import { HeartIcon } from "@/components/ui/heart";
+import { CheckIcon } from "@/components/ui/check";
 import type { PublicVendor } from "@/components/vendors/PublicVendorDirectory";
 import { useWishlistStore } from "@/lib/store/useWishlistStore";
 
@@ -54,7 +59,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
           href={`/${vendor.category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeftIcon className="w-4 h-4" />
           Back to {vendor.category}
         </Link>
       </div>
@@ -89,7 +94,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
             </h1>
             
             <div className="flex items-center gap-1.5 text-slate-600 text-sm font-medium">
-              <MapPin className="w-4 h-4 text-slate-400"/>
+              <MapPinIcon className="w-4 h-4 text-slate-400"/>
               {vendor.city}, India
               {vendor.mapLink && (
                 <a href={vendor.mapLink} target="_blank" rel="noopener noreferrer" className="text-primary-600 font-semibold ml-2 hover:underline text-xs">
@@ -121,12 +126,12 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
         <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
           {vendor.contactPhone || vendor.phone ? (
             <a href={`tel:${vendor.contactPhone || vendor.phone}`} className="flex items-center gap-2 text-green-600 font-semibold text-sm">
-              <Phone className="w-4 h-4" />
+              <PhoneIcon className="w-4 h-4" />
               {vendor.contactPhone || vendor.phone || "Contact"}
             </a>
           ) : (
             <button className="flex items-center gap-2 text-green-600 font-semibold text-sm">
-              <Phone className="w-4 h-4" />
+              <PhoneIcon className="w-4 h-4" />
               Contact
             </button>
           )}
@@ -149,7 +154,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
           onClick={toggleWishlist}
           className={`flex items-center gap-2 text-sm font-semibold transition-opacity hover:opacity-70 ${isSaved ? "text-red-500" : "text-slate-600"}`}
         >
-          <Heart className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
+          <HeartIcon className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
           {isSaved ? "Saved" : "Shortlist"}
         </button>
         <button 
@@ -163,7 +168,7 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
           onClick={handleShare}
           className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
         >
-          {copied ? <Check className="w-4 h-4 text-green-600" /> : <Share2 className="w-4 h-4" />}
+          {copied ? <CheckIcon className="w-4 h-4 text-green-600" /> : <Share2 className="w-4 h-4" />}
           {copied ? <span className="text-green-600">Copied!</span> : "Share"}
         </button>
       </div>

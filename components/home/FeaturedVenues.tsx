@@ -2,7 +2,10 @@
 
 import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, ArrowRight, Building2, Loader2 } from "lucide-react";
+import { Building2, Loader2 } from "lucide-react";
+import { ChevronLeftIcon } from "@/components/ui/chevron-left";
+import { ChevronRightIcon } from "@/components/ui/chevron-right";
+import { ArrowRightIcon } from "@/components/ui/arrow-right";
 import VenueCard from "@/components/venues/VenueCard";
 import type { Venue } from "@/lib/venues-data";
 
@@ -61,7 +64,7 @@ export default function FeaturedVenues() {
               className="hidden md:inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:gap-3"
               style={{ background: "var(--sw-white)", color: "var(--sw-navy)" }}
             >
-              Search more <ArrowRight className="w-4 h-4" />
+              Search more <ArrowRightIcon className="w-4 h-4" />
             </a>
             <div className="flex gap-2">
               <button
@@ -69,14 +72,14 @@ export default function FeaturedVenues() {
                 className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
                 style={{ background: "var(--sw-white)", border: "0px solid var(--sw-light-gray)" }}
               >
-                <ChevronLeft className="w-5 h-5" style={{ color: "var(--sw-navy)" }} />
+                <ChevronLeftIcon className="w-5 h-5" style={{ color: "var(--sw-navy)" }} />
               </button>
               <button
                 onClick={() => scroll("right")}
                 className="w-11 h-11 rounded-full flex items-center justify-center transition-all hover:scale-110"
                 style={{ background: "var(--sw-ink)" }}
               >
-                <ChevronRight className="w-5 h-5 text-white" />
+                <ChevronRightIcon className="w-5 h-5 text-white" />
               </button>
             </div>
           </div>

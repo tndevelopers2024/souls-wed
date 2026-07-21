@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "@/components/shared/CustomImage";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Loader2, AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Mail, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ArrowLeftIcon } from "@/components/ui/arrow-left";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -215,7 +216,7 @@ export default function ForgotPasswordPage() {
             href="/login"
             className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeftIcon className="w-3.5 h-3.5" />
             Back to Login
           </Link>
         </div>

@@ -14,14 +14,10 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { format } from "date-fns";
-import {
-  CalendarDays,
-  Users,
-  BedDouble,
-  Clock,
-  AlertCircle,
-  Heart
-} from "lucide-react";
+import { BedDouble, Clock, AlertCircle } from "lucide-react";
+import { CalendarDaysIcon } from "@/components/ui/calendar-days";
+import { UsersIcon } from "@/components/ui/users";
+import { HeartIcon } from "@/components/ui/heart";
 import { useRouter } from "next/navigation";
 import { formatAsCurrency } from "@/lib/currency";
 import { getVenueById } from "@/lib/venues-data";
@@ -54,7 +50,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
     if (booking.bookingType === "room") {
       return (
         <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
-          <CalendarDays className="w-4 h-4 text-primary-500" />
+          <CalendarDaysIcon className="w-4 h-4 text-primary-500" />
           <span className="font-medium">
             {booking.checkIn && booking.checkOut ? (
               `${format(new Date(booking.checkIn), "MMM d")} → ${format(new Date(booking.checkOut), "MMM d, yyyy")}`
@@ -67,7 +63,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
     } else {
       return (
         <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-stone-300">
-          <CalendarDays className="w-4 h-4 text-primary-500" />
+          <CalendarDaysIcon className="w-4 h-4 text-primary-500" />
           <span className="font-medium">
             {booking.eventDates && booking.eventDates.length > 0 ? (
               booking.eventDates.map((d: any) => format(new Date(d), "MMM d")).join(", ") + ", " + format(new Date(booking.eventDates[0]), "yyyy")
@@ -153,7 +149,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
         <div className="flex items-center gap-4">
           {booking.bookingType === "venue" && booking.guestCount && (
             <div className="flex items-center gap-1.5 text-sm text-slate-700 dark:text-stone-300 font-medium">
-              <Users className="w-4 h-4 text-primary-500" />
+              <UsersIcon className="w-4 h-4 text-primary-500" />
               <span>{booking.guestCount} Guests</span>
             </div>
           )}
@@ -254,7 +250,7 @@ export default function BookingCard({ booking, isVendor = false }: BookingCardPr
               onClick={(e) => e.preventDefault()}
               aria-label="Shortlist"
             >
-              <Heart className="w-4 h-4" />
+              <HeartIcon className="w-4 h-4" />
             </button>
           }
           body={cardBody}

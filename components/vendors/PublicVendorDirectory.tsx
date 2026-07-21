@@ -5,11 +5,16 @@ import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Search, X, MapPin, Star, Heart, BadgeCheck,
-  ChevronDown, LayoutGrid, List, Loader2, Users,
-  SlidersHorizontal, Sparkles, Crown,
-} from "lucide-react";
+import { Star, BadgeCheck, List, Loader2, Crown } from "lucide-react";
+import { SearchIcon } from "@/components/ui/search";
+import { XIcon } from "@/components/ui/x";
+import { MapPinIcon } from "@/components/ui/map-pin";
+import { HeartIcon } from "@/components/ui/heart";
+import { ChevronDownIcon } from "@/components/ui/chevron-down";
+import { LayoutGridIcon } from "@/components/ui/layout-grid";
+import { UsersIcon } from "@/components/ui/users";
+import { SlidersHorizontalIcon } from "@/components/ui/sliders-horizontal";
+import { SparklesIcon } from "@/components/ui/sparkles";
 import { formatAsCurrency } from "@/lib/currency";
 import { useCurrency } from "@/lib/CurrencyContext";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
@@ -279,7 +284,7 @@ export default function PublicVendorDirectory({
                       }}
                     >
                       {f.label}
-                      <X className="w-3 h-3" />
+                      <XIcon className="w-3 h-3" />
                     </motion.button>
                   ))}
                   {activeFilters.length > 1 && (
@@ -306,7 +311,7 @@ export default function PublicVendorDirectory({
                   }`}
                 aria-label="Grid view"
               >
-                <LayoutGrid className="w-4 h-4" />
+                <LayoutGridIcon className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewType("list")}
@@ -334,7 +339,7 @@ export default function PublicVendorDirectory({
               >
                 <span className="hidden sm:inline text-slate-400 font-normal text-xs">Sort:</span>
                 {sort}
-                <ChevronDown
+                <ChevronDownIcon
                   className="w-4 h-4 transition-transform duration-200"
                   style={{ transform: sortOpen ? "rotate(180deg)" : "rotate(0)" }}
                 />
@@ -387,7 +392,7 @@ export default function PublicVendorDirectory({
               className="w-28 h-28 rounded-full flex items-center justify-center mb-6"
               style={{ background: "linear-gradient(135deg, #fceee3 0%, #fdf6f0 100%)" }}
             >
-              <Users className="w-12 h-12" style={{ color: "var(--sw-primary)", opacity: 0.5 }} />
+              <UsersIcon className="w-12 h-12" style={{ color: "var(--sw-primary)", opacity: 0.5 }} />
             </div>
             <p
               className="text-2xl font-bold mb-2"
@@ -472,9 +477,9 @@ export default function PublicVendorDirectory({
             animate={{ opacity: 1 }}
             className="text-center mt-12 flex items-center justify-center gap-2 text-xs text-slate-400 font-medium"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <SparklesIcon className="w-3.5 h-3.5" />
             You&apos;ve seen all {filtered.length} vendors
-            <Sparkles className="w-3.5 h-3.5" />
+            <SparklesIcon className="w-3.5 h-3.5" />
           </motion.div>
         )}
       </div>
@@ -508,7 +513,7 @@ function DirectoryItemCard({ vendor, index, view }: { vendor: PublicVendor; inde
               </div>
             )}
             <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 backdrop-blur-sm text-slate-400 hover:text-red-500 hover:bg-white transition-colors" onClick={(e) => e.preventDefault()}>
-              <Heart className="w-4 h-4" />
+              <HeartIcon className="w-4 h-4" />
             </button>
           </div>
           <div className="p-6 flex flex-col justify-between flex-grow">
@@ -523,7 +528,7 @@ function DirectoryItemCard({ vendor, index, view }: { vendor: PublicVendor; inde
                 )}
               </div>
               <div className="flex items-center gap-1.5 mb-4">
-                <MapPin className="w-4 h-4 text-slate-500" />
+                <MapPinIcon className="w-4 h-4 text-slate-500" />
                 <span className="text-sm text-slate-600">{vendor.city}</span>
               </div>
               <div className="flex flex-wrap gap-2 mb-4 sm:mb-0">

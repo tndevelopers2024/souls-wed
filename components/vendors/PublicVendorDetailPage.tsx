@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Check, Loader2, Star, ChevronDown, Package } from "lucide-react";
+import { Loader2, Star, Package } from "lucide-react";
+import { CheckIcon } from "@/components/ui/check";
+import { ChevronDownIcon } from "@/components/ui/chevron-down";
 
 import { useCurrency } from "@/lib/CurrencyContext";
 import { formatAsCurrency } from "@/lib/currency";
@@ -167,7 +169,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
               <div className="flex flex-wrap gap-2 mt-5">
                 {["Air Conditioned", "Parking Available", "Power Backup"].map((f) => (
                   <span key={f} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 text-slate-600">
-                    <Check className="w-3.5 h-3.5 text-green-500" />
+                    <CheckIcon className="w-3.5 h-3.5 text-green-500" />
                     {f}
                   </span>
                 ))}
@@ -273,7 +275,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                   <div key={i} className="rounded-[20px] overflow-hidden border border-slate-100" style={{ background: "white" }}>
                     <button className="w-full flex items-center justify-between px-5 py-4 text-left gap-3 outline-none" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                       <span className="font-semibold text-sm text-slate-800">{faq.question}</span>
-                      <ChevronDown className="w-4 h-4 flex-shrink-0 text-slate-400 transition-transform" style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0)" }} />
+                      <ChevronDownIcon className="w-4 h-4 flex-shrink-0 text-slate-400 transition-transform" style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0)" }} />
                     </button>
                     {openFaq === i && (
                       <div className="px-5 pb-4">
@@ -308,7 +310,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
             ) : (
               <>
                 <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 animate-bounce">
-                  <Check className="w-8 h-8" />
+                  <CheckIcon className="w-8 h-8" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 mb-2">Payment Confirmed!</h3>
                 <p className="text-sm text-slate-500 mb-6">Your booking is now confirmed. You can view all details in your dashboard.</p>

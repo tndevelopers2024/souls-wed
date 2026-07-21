@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Image from "@/components/shared/CustomImage";
-import { X, ChevronLeft, ChevronRight, Images } from "lucide-react";
+import { Images } from "lucide-react";
+import { XIcon } from "@/components/ui/x";
+import { ChevronLeftIcon } from "@/components/ui/chevron-left";
+import { ChevronRightIcon } from "@/components/ui/chevron-right";
 import { isDirectVideoUrl, toVideoEmbedUrl } from "@/lib/media";
 
 interface VenueGalleryProps {
@@ -153,14 +156,14 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
             className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors hover:bg-white/10"
             onClick={() => setLightboxIndex(null)}
           >
-            <X className="w-6 h-6" />
+            <XIcon className="w-6 h-6" />
           </button>
 
           <button
             className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white transition-colors hover:bg-white/10"
             onClick={(e) => { e.stopPropagation(); prev(); }}
           >
-            <ChevronLeft className="w-7 h-7" />
+            <ChevronLeftIcon className="w-7 h-7" />
           </button>
 
           <div
@@ -181,7 +184,7 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
             className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white transition-colors hover:bg-white/10"
             onClick={(e) => { e.stopPropagation(); next(); }}
           >
-            <ChevronRight className="w-7 h-7" />
+            <ChevronRightIcon className="w-7 h-7" />
           </button>
 
           <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-sm">

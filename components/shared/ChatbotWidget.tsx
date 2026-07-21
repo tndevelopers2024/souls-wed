@@ -2,7 +2,11 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles, MessageCircle, Maximize2, Bot } from "lucide-react";
+import { Maximize2 } from "lucide-react";
+import { XIcon } from "@/components/ui/x";
+import { SparklesIcon } from "@/components/ui/sparkles";
+import { MessageCircleIcon } from "@/components/ui/message-circle";
+import { BotIcon } from "@/components/ui/bot";
 import Image from "@/components/shared/CustomImage";
 
 export default function ChatbotWidget() {
@@ -32,7 +36,7 @@ export default function ChatbotWidget() {
             onClick={() => setIsOpen(true)}
             className="w-12 h-12 rounded-full bg-[var(--sw-primary)] flex items-center justify-center text-white border-2 border-white/20"
           >
-            <MessageCircle className="w-5 h-5 fill-current" />
+            <MessageCircleIcon className="w-5 h-5 fill-current" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -61,7 +65,7 @@ export default function ChatbotWidget() {
                 onClick={() => setIsOpen(false)}
                 className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 flex items-center justify-center text-slate-600 transition-colors"
               >
-                <X className="w-4 h-4" />
+                <XIcon className="w-4 h-4" />
               </button>
             </div>
 
@@ -73,7 +77,7 @@ export default function ChatbotWidget() {
                 className="relative w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl border-[6px] border-amber-50"
               >
                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500 to-primary-600 flex items-center justify-center">
-                  <Bot className="w-8 h-8 text-white" />
+                  <BotIcon className="w-8 h-8 text-white" />
                 </div>
               </motion.div>
               {/* Fake shadow underneath avatar */}
@@ -122,7 +126,7 @@ export default function ChatbotWidget() {
                   className="w-full h-[52px] bg-white rounded-2xl pl-4 pr-12 text-[14px] text-slate-800 placeholder-slate-400 focus:outline-none border-2 border-transparent focus:border-[var(--sw-primary)] shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all"
                 />
                 <button className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl flex items-center justify-center text-[var(--sw-primary)] hover:bg-[#EE7429]/10 transition-colors">
-                  <Sparkles className="w-5 h-5" />
+                  <SparklesIcon className="w-5 h-5" />
                 </button>
               </div>
             </div>

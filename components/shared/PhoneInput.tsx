@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { countries } from "@/lib/countries";
-import { Phone } from "lucide-react";
+import { PhoneIcon } from "@/components/ui/phone";
 
 interface PhoneInputProps {
   value?: string;
@@ -57,7 +57,7 @@ export function PhoneInput({ value, defaultValue = "", onChange, placeholder = "
     <div className={`relative flex items-center w-full ${className}`}>
       {/* Icon (optional, we keep it if parent wraps it, but the plan asked for a direct drop-in replacement) */}
       <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 z-10 pointer-events-none">
-        <Phone className="w-4 h-4 text-stone-400" />
+        <PhoneIcon className="w-4 h-4 text-stone-400" />
       </div>
 
       <select

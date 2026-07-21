@@ -5,19 +5,14 @@ import Link from "next/link";
 import Image from "@/components/shared/CustomImage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Mail,
-  Lock,
-  Loader2,
-  AlertCircle,
-  ArrowLeft,
-  Eye,
-  EyeOff,
-  User,
-  Store,
-  ShieldCheck,
-  Check,
-} from "lucide-react";
+import { Mail, Loader2, AlertCircle, Store } from "lucide-react";
+import { LockIcon } from "@/components/ui/lock";
+import { ArrowLeftIcon } from "@/components/ui/arrow-left";
+import { EyeIcon } from "@/components/ui/eye";
+import { EyeOffIcon } from "@/components/ui/eye-off";
+import { UserIcon } from "@/components/ui/user";
+import { ShieldCheckIcon } from "@/components/ui/shield-check";
+import { CheckIcon } from "@/components/ui/check";
 
 type UserRole = "user" | "vendor" | "admin";
 
@@ -25,7 +20,7 @@ const ROLES: { id: UserRole; label: string; icon: React.ReactNode; subtitle: str
   {
     id: "user",
     label: "User",
-    icon: <User className="w-4 h-4" />,
+    icon: <UserIcon className="w-4 h-4" />,
     subtitle: "Manage bookings, explore venues & plan your dream wedding",
     cta: "Sign In",
     redirect: "/dashboard",
@@ -41,7 +36,7 @@ const ROLES: { id: UserRole; label: string; icon: React.ReactNode; subtitle: str
   {
     id: "admin",
     label: "Admin",
-    icon: <ShieldCheck className="w-4 h-4" />,
+    icon: <ShieldCheckIcon className="w-4 h-4" />,
     subtitle: "Restricted access — authorized personnel only",
     cta: "Access Console",
     redirect: "/admin/dashboard",
@@ -99,7 +94,7 @@ function LoginContent() {
     setShowPassword(false);
   }, [role]);
 
-  // Check existing session on mount
+  // CheckIcon existing session on mount
   useEffect(() => {
     fetch("/api/auth/me")
       .then((r) => r.json())
@@ -398,13 +393,13 @@ function LoginContent() {
                         maxLength={100}
                         autoComplete="current-password"
                       />
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
@@ -494,7 +489,7 @@ function LoginContent() {
             href="/"
             className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeftIcon className="w-3.5 h-3.5" />
             Back to SoulsWed
           </Link>
         </div>

@@ -8,13 +8,42 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
 import { Trash2 } from "lucide-react";
-import { User, Home, Star, MapPin, Heart, Flower2, ClipboardList, BedDouble, Users, Sparkles, Building2, LayoutDashboard, UserCheck, BookOpen, Map, Camera, Brush, HeartHandshake, UtensilsCrossed, Utensils, Palette, Package, Briefcase, ChevronDown, ChevronRight, Settings, Lock, Save, Loader2, Wand2, Eye, EyeOff, Moon, Sun, SlidersHorizontal, LogOut, Shield, AlertCircle, Search, Bell, RefreshCw, Wallet, CalendarCheck, Copy, Check, Menu, X, ChevronLeft, SearchX, Mail, Phone, CalendarDays } from "lucide-react";
+import { Star, Flower2, ClipboardList, BedDouble, Building2, LayoutDashboard, BookOpen, Map, Camera, Brush, UtensilsCrossed, Utensils, Palette, Package, Briefcase, Save, Loader2, Wand2, LogOut, Shield, AlertCircle, SearchX, Mail } from "lucide-react";
+import { UserIcon } from "@/components/ui/user";
+import { HomeIcon } from "@/components/ui/home";
+import { MapPinIcon } from "@/components/ui/map-pin";
+import { HeartIcon } from "@/components/ui/heart";
+import { UsersIcon } from "@/components/ui/users";
+import { SparklesIcon } from "@/components/ui/sparkles";
+import { UserCheckIcon } from "@/components/ui/user-check";
+import { HeartHandshakeIcon } from "@/components/ui/heart-handshake";
+import { ChevronDownIcon } from "@/components/ui/chevron-down";
+import { ChevronRightIcon } from "@/components/ui/chevron-right";
+import { SettingsIcon } from "@/components/ui/settings";
+import { LockIcon } from "@/components/ui/lock";
+import { EyeIcon } from "@/components/ui/eye";
+import { EyeOffIcon } from "@/components/ui/eye-off";
+import { MoonIcon } from "@/components/ui/moon";
+import { SunIcon } from "@/components/ui/sun";
+import { SlidersHorizontalIcon } from "@/components/ui/sliders-horizontal";
+import { SearchIcon } from "@/components/ui/search";
+import { BellIcon } from "@/components/ui/bell";
+import { RefreshCWIcon } from "@/components/ui/refresh-cw";
+import { WalletIcon } from "@/components/ui/wallet";
+import { CalendarCheckIcon } from "@/components/ui/calendar-check";
+import { CopyIcon } from "@/components/ui/copy";
+import { CheckIcon } from "@/components/ui/check";
+import { MenuIcon } from "@/components/ui/menu";
+import { XIcon } from "@/components/ui/x";
+import { ChevronLeftIcon } from "@/components/ui/chevron-left";
+import { PhoneIcon } from "@/components/ui/phone";
+import { CalendarDaysIcon } from "@/components/ui/calendar-days";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
 import AvatarUploader from "@/components/shared/AvatarUploader";
 import { VENDOR_CATEGORIES } from "@/lib/config/categories";
-import InvoicesManager from "@/components/dashboard/InvoicesManager";
+
 
 interface AdminSession {
   id: string;
@@ -24,7 +53,7 @@ interface AdminSession {
   profileImage?: string;
 }
 
-type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "services" | "invoices" | "settings";
+type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "services" | "settings";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -49,7 +78,7 @@ export default function AdminDashboard() {
   const [venuesList, setVenuesList] = useState<any[]>([]);
   const [servicesList, setServicesList] = useState<any[]>([]);
 
-  // Copy state for feedback
+  // CopyIcon state for feedback
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { isDark: isDarkMode, toggleTheme } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -566,7 +595,7 @@ export default function AdminDashboard() {
             disabled={tablePage === 1}
             className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-default ${isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 text-stone-600 hover:bg-stone-50"}`}
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeftIcon className="w-4 h-4" />
           </button>
           <span className={`text-[11px] font-black px-1 ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{tablePage} / {pages}</span>
           <button
@@ -574,7 +603,7 @@ export default function AdminDashboard() {
             disabled={tablePage === pages}
             className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-default ${isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 text-stone-600 hover:bg-stone-50"}`}
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRightIcon className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -600,13 +629,13 @@ export default function AdminDashboard() {
       icon: Briefcase,
       count: venuesList.length + servicesList.length || null
     },
-    { id: "approvals", label: "Approvals", count: pendingApprovals.length || null, icon: UserCheck },
+    { id: "approvals", label: "Approvals", count: pendingApprovals.length || null, icon: UserCheckIcon },
     { id: "vendors", label: "Vendors", count: vendors.length || null, icon: Building2 },
-    { id: "users", label: "Customers", count: users.length || null, icon: Users },
+    { id: "users", label: "Customers", count: users.length || null, icon: UsersIcon },
     { id: "bookings", label: "Bookings", count: bookings.length || null, icon: BookOpen },
-    { id: "invoices", label: "Invoices", count: null, icon: ClipboardList },
-    { id: "settings", label: "Settings", count: null, icon: Settings },
-    { id: "home", label: "Back to Home", icon: Home, href: "/" },
+
+    { id: "settings", label: "Settings", count: null, icon: SettingsIcon },
+    { id: "home", label: "Back to Home", icon: HomeIcon, href: "/" },
   ];
 
   // Standard theme variables for consistency (corrected colors from non-standard)
@@ -683,7 +712,7 @@ export default function AdminDashboard() {
                   title={item.label}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-[18px] h-[18px] shrink-0" />
+                    <Icon className="w-[18px] h-[18px] shrink-0" {...(Icon.displayName?.includes("Icon") || Icon.name?.includes("Icon") ? { isAnimating: isActive } : {})} />
                     {!sidebarCollapsed && <span>{item.label}</span>}
                   </div>
                   {!sidebarCollapsed && item.count !== undefined && item.count !== null && !hasSubItems && (
@@ -697,7 +726,7 @@ export default function AdminDashboard() {
                     </span>
                   )}
                   {!sidebarCollapsed && hasSubItems && (
-                    servicesExpanded ? <ChevronDown className="w-4 h-4 opacity-70" /> : <ChevronRight className="w-4 h-4 opacity-70" />
+                    servicesExpanded ? <ChevronDownIcon className="w-4 h-4 opacity-70" /> : <ChevronRightIcon className="w-4 h-4 opacity-70" />
                   )}
                   {sidebarCollapsed && item.count !== undefined && item.count !== null && !hasSubItems && (
                     <span className={`absolute right-1.5 top-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-black ${isActive
@@ -737,7 +766,7 @@ export default function AdminDashboard() {
                               }`}
                           >
                             <div className="flex items-center gap-2.5">
-                              <SubIcon className="w-[15px] h-[15px] shrink-0" />
+                              <SubIcon className="w-[15px] h-[15px] shrink-0" {...(SubIcon.displayName?.includes("Icon") || SubIcon.name?.includes("Icon") ? { isAnimating: isSubItemActive } : {})} />
                               <span>{subItem.label}</span>
                             </div>
                             {subItem.count !== undefined && subItem.count !== null && (
@@ -769,7 +798,7 @@ export default function AdminDashboard() {
               <div className="absolute -bottom-12 -left-8 w-28 h-28 rounded-full bg-amber-500/20 blur-2xl pointer-events-none" />
               <div className="relative">
                 <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center mb-3">
-                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  <SparklesIcon className="w-4 h-4 text-amber-300" />
                 </div>
                 <p className="font-extrabold text-sm">Approvals Queue</p>
                 <p className="text-[10px] text-stone-400 font-semibold mt-1 leading-relaxed">
@@ -824,7 +853,7 @@ export default function AdminDashboard() {
               className={`lg:hidden px-3 py-1.5 rounded-xl border text-xs font-bold ${isDarkMode ? "border-stone-800 text-stone-300 hover:bg-stone-800" : "border-stone-200 hover:bg-stone-50"
                 }`}
             >
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              {mobileMenuOpen ? <XIcon className="w-4 h-4" /> : <MenuIcon className="w-4 h-4" />}
             </button>
 
             <div className="min-w-0">
@@ -838,10 +867,10 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            {/* Search */}
+            {/* SearchIcon */}
             <div className={`hidden md:flex items-center gap-2 px-4 h-10 rounded-full border transition-colors ${isDarkMode ? "bg-stone-900 border-stone-800" : "bg-white border-stone-200"
               }`}>
-              <Search className="w-4 h-4 text-stone-400" />
+              <SearchIcon className="w-4 h-4 text-stone-400" />
               <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -858,7 +887,7 @@ export default function AdminDashboard() {
               className={`w-10 h-10 rounded-full border flex items-center justify-center transition-colors cursor-pointer disabled:opacity-50 ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800" : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
                 }`}
             >
-              <RefreshCw className={`w-4 h-4 ${loadingData ? "animate-spin" : ""}`} />
+              <RefreshCWIcon className={`w-4 h-4 ${loadingData ? "animate-spin" : ""}`} />
             </button>
 
             {/* Notifications */}
@@ -868,7 +897,7 @@ export default function AdminDashboard() {
               className={`relative w-10 h-10 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${isDarkMode ? "bg-stone-900 border-stone-800 text-stone-300 hover:bg-stone-800" : "bg-white border-stone-200 text-stone-600 hover:bg-stone-50"
                 }`}
             >
-              <Bell className="w-4 h-4" />
+              <BellIcon className="w-4 h-4" />
               {pendingApprovals.length > 0 && (
                 <span className={`absolute top-2 right-2.5 w-2 h-2 rounded-full bg-primary-500 ring-2 ${isDarkMode ? "ring-stone-900" : "ring-white"}`} />
               )}
@@ -882,7 +911,7 @@ export default function AdminDashboard() {
                 <img src={admin.profileImage} alt={admin.name} className="w-10 h-10 rounded-full object-cover" />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500 flex items-center justify-center">
-                  <User className="w-5 h-5" />
+                  <UserIcon className="w-5 h-5" />
                 </div>
               )}
               <div className="hidden sm:block leading-tight">
@@ -936,7 +965,7 @@ export default function AdminDashboard() {
                           </span>
                         )}
                         {hasSubItems && (
-                          servicesExpanded ? <ChevronDown className="w-4 h-4 opacity-70" /> : <ChevronRight className="w-4 h-4 opacity-70" />
+                          servicesExpanded ? <ChevronDownIcon className="w-4 h-4 opacity-70" /> : <ChevronRightIcon className="w-4 h-4 opacity-70" />
                         )}
                       </div>
                     </button>
@@ -1037,7 +1066,7 @@ export default function AdminDashboard() {
                         <div className="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-white/10 blur-2xl pointer-events-none" />
                         <div className="relative flex items-start justify-between">
                           <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm">
-                            <Wallet className="w-5 h-5 text-primary-500" />
+                            <WalletIcon className="w-5 h-5 text-primary-500" />
                           </div>
                           <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-white/20 text-white">
                             {revenueChange >= 0 ? "+" : ""}{revenueChange}%
@@ -1052,8 +1081,8 @@ export default function AdminDashboard() {
 
                       {/* 2-4. White KPI cards */}
                       {[
-                        { label: "Total Bookings", value: stats?.totalBookings ?? bookings.length, icon: CalendarCheck, badge: `${bookingsChange >= 0 ? "+" : ""}${bookingsChange}%`, positive: bookingsChange >= 0, sub: "Bookings vs\nlast month" },
-                        { label: "Registered Users", value: stats?.totalUsers ?? users.length, icon: Users, badge: `+${newUsersThisMonth}`, positive: true, sub: "New in\nlast 30 days" },
+                        { label: "Total Bookings", value: stats?.totalBookings ?? bookings.length, icon: CalendarCheckIcon, badge: `${bookingsChange >= 0 ? "+" : ""}${bookingsChange}%`, positive: bookingsChange >= 0, sub: "Bookings vs\nlast month" },
+                        { label: "Registered Users", value: stats?.totalUsers ?? users.length, icon: UsersIcon, badge: `+${newUsersThisMonth}`, positive: true, sub: "New in\nlast 30 days" },
                         { label: "Partner Vendors", value: stats?.totalVendors ?? vendors.length, icon: Building2, badge: `+${newVendorsThisMonth}`, positive: true, sub: "Joined in\nlast 30 days" },
                       ].map((card, i) => (
                         <div key={i} className={`rounded-3xl p-6 border shadow-none ${cardClass}`}>
@@ -1081,7 +1110,7 @@ export default function AdminDashboard() {
                         </div>
                         <button className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold cursor-default ${isDarkMode ? "border-stone-800 text-stone-300" : "border-stone-200 text-stone-600"}`}>
                           Last 6 months
-                          <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+                          <ChevronDownIcon className="w-3.5 h-3.5 opacity-60" />
                         </button>
                       </div>
 
@@ -1148,7 +1177,7 @@ export default function AdminDashboard() {
                             <option value="week">This Week</option>
                             <option value="today">Today</option>
                           </select>
-                          <ChevronDown className="w-3.5 h-3.5 opacity-60 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                          <ChevronDownIcon className="w-3.5 h-3.5 opacity-60 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
                       </div>
 
@@ -1199,7 +1228,7 @@ export default function AdminDashboard() {
                             <option value="week">This Week</option>
                             <option value="today">Today</option>
                           </select>
-                          <ChevronDown className="w-3.5 h-3.5 opacity-60 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                          <ChevronDownIcon className="w-3.5 h-3.5 opacity-60 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
                       </div>
 
@@ -1275,7 +1304,7 @@ export default function AdminDashboard() {
                   ) : filteredApprovals.length === 0 ? (
                     <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
-                        <UserCheck className="w-6 h-6 text-stone-400" />
+                        <UserCheckIcon className="w-6 h-6 text-stone-400" />
                       </div>
                       <h4 className={`font-bold text-sm ${headingText}`}>Approvals queue is clear</h4>
                       <p className="text-xs text-stone-400 max-w-xs">All submitted vendor profile requests have been moderated.</p>
@@ -1301,12 +1330,12 @@ export default function AdminDashboard() {
                           <div className="p-5 flex flex-col flex-1">
                             <h3 className={`font-extrabold text-sm leading-snug line-clamp-1 ${headingText}`}>{v.businessName || "No Business Name"}</h3>
                             <p className="flex items-center gap-1 text-[11px] font-semibold text-stone-400 mt-1">
-                              <MapPin className="w-3 h-3" /> {v.city || "Not specified"}
+                              <MapPinIcon className="w-3 h-3" /> {v.city || "Not specified"}
                             </p>
 
                             <div className={`flex flex-col divide-y rounded-2xl border mt-4 text-[11px] ${isDarkMode ? "divide-stone-800 border-stone-800" : "divide-stone-100 border-stone-100"}`}>
                               <div className="flex items-center gap-2 px-3 py-2">
-                                <Users className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                <UsersIcon className="w-3.5 h-3.5 text-stone-400 shrink-0" />
                                 <span className={`font-bold truncate ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{v.name}</span>
                               </div>
                               <div className="flex items-center gap-2 px-3 py-2">
@@ -1314,11 +1343,11 @@ export default function AdminDashboard() {
                                 <span className={`font-semibold truncate ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{v.email}</span>
                               </div>
                               <div className="flex items-center gap-2 px-3 py-2">
-                                <Phone className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                <PhoneIcon className="w-3.5 h-3.5 text-stone-400 shrink-0" />
                                 <span className={`font-semibold ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>{v.phone || "Not provided"}</span>
                               </div>
                               <div className="flex items-center gap-2 px-3 py-2">
-                                <CalendarDays className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                <CalendarDaysIcon className="w-3.5 h-3.5 text-stone-400 shrink-0" />
                                 <span className={`font-semibold ${isDarkMode ? "text-stone-300" : "text-stone-600"}`}>Applied {formatDate(v.createdAt)}</span>
                               </div>
                             </div>
@@ -1512,7 +1541,7 @@ export default function AdminDashboard() {
                                     title="Copy booking ID"
                                     className={`p-1 rounded-md transition-colors cursor-pointer ${copiedId === b._id ? "text-emerald-500" : "text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"}`}
                                   >
-                                    {copiedId === b._id ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                    {copiedId === b._id ? <CheckIcon className="w-3 h-3" /> : <CopyIcon className="w-3 h-3" />}
                                   </button>
                                 </div>
                               </td>
@@ -1717,7 +1746,7 @@ export default function AdminDashboard() {
                           ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
                           : "bg-stone-100 dark:bg-stone-800 text-stone-400 group-hover:bg-stone-200 dark:group-hover:bg-stone-700"
                           }`}>
-                          <Sun className="w-6 h-6" />
+                          <SunIcon className="w-6 h-6" />
                         </div>
                         {/* Mini preview */}
                         <div className="w-full rounded-xl border border-stone-200 bg-white p-3 space-y-2 transition-all">
@@ -1752,7 +1781,7 @@ export default function AdminDashboard() {
                           ? "bg-[#EE7429] text-white shadow-lg shadow-orange-400/30"
                           : "bg-stone-100 text-stone-400 group-hover:bg-stone-200"
                           }`}>
-                          <Moon className="w-6 h-6" />
+                          <MoonIcon className="w-6 h-6" />
                         </div>
                         {/* Mini preview */}
                         <div className="w-full rounded-xl border border-stone-700 bg-stone-900 p-3 space-y-2 transition-all">
@@ -1785,7 +1814,7 @@ export default function AdminDashboard() {
                       <div>
                         <label className="block text-xs font-bold mb-1.5 text-stone-500 uppercase tracking-wider">Current Password</label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                          <LockIcon className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
                           <input
                             type="password"
                             required
@@ -1809,7 +1838,7 @@ export default function AdminDashboard() {
                           </button>
                         </div>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
+                          <LockIcon className="absolute left-3 top-2.5 h-4 w-4 text-stone-400" />
                           <input
                             type={showPassword ? "text" : "password"}
                             required
@@ -1824,7 +1853,7 @@ export default function AdminDashboard() {
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-2.5 text-stone-400 hover:text-stone-600 transition-colors"
                           >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                           </button>
                         </div>
                         <p className="text-[10px] text-stone-400 mt-1.5">Minimum 6 characters. Use a mix of letters, numbers, and symbols.</p>
@@ -2004,13 +2033,13 @@ export default function AdminDashboard() {
                               }
                               tags={
                                 <>
-                                  <CardTag><Users className="w-3 h-3" /> {v.minGuests}–{v.maxGuests} pax</CardTag>
+                                  <CardTag><UsersIcon className="w-3 h-3" /> {v.minGuests}–{v.maxGuests} pax</CardTag>
                                   {v.type && <CardTag tone="accent">{v.type}</CardTag>}
                                 </>
                               }
                               body={
                                 <div className="flex items-center gap-1.5 mb-2 mt-[-4px]">
-                                  <User className="w-3 h-3 text-slate-500 dark:text-stone-400" />
+                                  <UserIcon className="w-3 h-3 text-slate-500 dark:text-stone-400" />
                                   <span className="text-[11px] font-medium text-slate-600 dark:text-stone-300 line-clamp-1">By {vendorName}</span>
                                 </div>
                               }
@@ -2119,10 +2148,10 @@ export default function AdminDashboard() {
                                      <h4 className={`font-bold text-base truncate ${headingText}`}>{v.name}</h4>
                                      <div className="flex flex-col gap-1 mt-1">
                                        <p className="text-xs text-stone-500 flex items-center gap-1 truncate">
-                                         <MapPin className="w-3 h-3" /> {`${v.location || v.city}${v.country ? `, ${v.country}` : ""}`}
+                                         <MapPinIcon className="w-3 h-3" /> {`${v.location || v.city}${v.country ? `, ${v.country}` : ""}`}
                                        </p>
                                        <p className="text-xs text-stone-500 flex items-center gap-1 truncate">
-                                         <User className="w-3 h-3" /> By {vendorName}
+                                         <UserIcon className="w-3 h-3" /> By {vendorName}
                                        </p>
                                      </div>
                                    </div>
@@ -2183,7 +2212,7 @@ export default function AdminDashboard() {
                                    >
                                      {v.active ? "Live" : "Hidden"}
                                    </button>
-                                   <span className="text-[11px] ml-auto font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-stone-400" /> {v.minGuests || 50}–{v.maxGuests || 500} pax</span>
+                                   <span className="text-[11px] ml-auto font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5"><UsersIcon className="w-3.5 h-3.5 text-stone-400" /> {v.minGuests || 50}–{v.maxGuests || 500} pax</span>
                                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center gap-1.5">{v.type || "Venue"}</span>
                                  </div>
                               </div>
@@ -2294,7 +2323,7 @@ export default function AdminDashboard() {
                                 tags={<CardTag tone="accent">{s.category}</CardTag>}
                                 body={
                                   <div className="flex items-center gap-1.5 mb-2 mt-[-4px]">
-                                    <User className="w-3 h-3 text-slate-500 dark:text-stone-400" />
+                                    <UserIcon className="w-3 h-3 text-slate-500 dark:text-stone-400" />
                                     <span className="text-[11px] font-medium text-slate-600 dark:text-stone-300 line-clamp-1">By {vendorName}</span>
                                   </div>
                                 }
@@ -2371,10 +2400,10 @@ export default function AdminDashboard() {
                                        <h4 className={`font-bold text-base truncate ${headingText}`}>{s.name}</h4>
                                        <div className="flex flex-col gap-1 mt-1">
                                          <p className="text-xs text-stone-500 flex items-center gap-1 truncate">
-                                           <MapPin className="w-3 h-3" /> {s.city}
+                                           <MapPinIcon className="w-3 h-3" /> {s.city}
                                          </p>
                                          <p className="text-xs text-stone-500 flex items-center gap-1 truncate">
-                                           <User className="w-3 h-3" /> By {vendorName}
+                                           <UserIcon className="w-3 h-3" /> By {vendorName}
                                          </p>
                                        </div>
                                      </div>
@@ -2436,11 +2465,6 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {activeTab === "invoices" && (
-              <div className="h-full pt-10">
-                <InvoicesManager />
-              </div>
-            )}
 
             </motion.div>
           </AnimatePresence>
@@ -2499,7 +2523,7 @@ export default function AdminDashboard() {
             className="fixed bottom-6 right-6 z-[95] flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-stone-950 text-white border border-stone-800 shadow-2xl"
           >
             <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
-              {toast.type === "success" ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <AlertCircle className="w-3.5 h-3.5 text-red-400" />}
+              {toast.type === "success" ? <CheckIcon className="w-3.5 h-3.5 text-emerald-400" /> : <AlertCircle className="w-3.5 h-3.5 text-red-400" />}
             </span>
             <span className="text-xs font-bold">{toast.msg}</span>
           </motion.div>

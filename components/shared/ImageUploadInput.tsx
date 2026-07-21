@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { UploadCloud, Loader2, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
+import { UploadCloud, Loader2, Image as ImageIcon } from "lucide-react";
+import { LinkIcon } from "@/components/ui/link";
 
 interface ImageUploadInputProps {
   value: string;

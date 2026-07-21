@@ -26,7 +26,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeftIcon } from "@/components/ui/chevron-left";
+import { ChevronRightIcon } from "@/components/ui/chevron-right";
 
 // ─── Types ───────────────────────────────────────────────────
 interface BookingCalendarProps {
@@ -316,7 +317,7 @@ export default function BookingCalendar({
               : "text-slate-600 hover:bg-primary-50 hover:text-primary-600"
             }`}
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeftIcon className="w-5 h-5" />
         </button>
         <h3 className="text-sm font-bold text-slate-800">{monthName}</h3>
         <button
@@ -324,7 +325,7 @@ export default function BookingCalendar({
           onClick={goToNextMonth}
           className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 hover:bg-primary-50 hover:text-primary-600 transition-colors"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRightIcon className="w-5 h-5" />
         </button>
       </div>
 
