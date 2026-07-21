@@ -87,7 +87,7 @@ export default function CheckoutPage() {
   const remainingBalance = booking.totalAmount - booking.advanceAmount;
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] py-12 px-4 font-body flex justify-center">
+    <div className="min-h-screen bg-[#fafaf9] pt-32 pb-12 px-4 font-body flex justify-center">
       <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-5 gap-8">
         
         {/* Left column: Details */}
