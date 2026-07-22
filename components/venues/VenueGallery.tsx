@@ -16,7 +16,7 @@ interface VenueGalleryProps {
 
 export default function VenueGallery({ images, videos = [], venueName }: VenueGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"portfolio" | "albums" | "videos">("portfolio");
+  const [activeTab, setActiveTab] = useState<"portfolio" | "videos">("portfolio");
 
   const cleanImages = images.filter((img) => img && img.trim());
   const cleanVideos = videos.filter((vid) => vid && vid.trim());
@@ -41,17 +41,7 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
         >
           PORTFOLIO ({allImages.length})
         </button>
-        <button 
-          onClick={() => setActiveTab("albums")}
-          className={`text-sm pb-3 uppercase tracking-wider transition-colors ${
-            activeTab === "albums" 
-              ? "font-bold text-primary-600 border-b-2 border-primary-600" 
-              : "font-semibold text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          ALBUMS (6)
-        </button>
-        <button 
+        <button
           onClick={() => setActiveTab("videos")}
           className={`text-sm pb-3 uppercase tracking-wider transition-colors ${
             activeTab === "videos" 
@@ -63,38 +53,40 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
         </button>
       </div>
 
-      {/* Grid */}
+      {/* Booking.com-style collage: one hero image plus a grid of four,
+          with the overflow count on the last tile. */}
       {activeTab === "portfolio" && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {allImages.slice(0, 9).map((img, idx) => (
-            <div
-              key={idx}
-              className="relative cursor-pointer aspect-square rounded-xl overflow-hidden group"
-              onClick={() => setLightboxIndex(idx)}
-            >
-              <Image
-                src={img}
-                alt={`${venueName} – photo ${idx + 1}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 50vw, 33vw"
-              />
-              {idx === 8 && allImages.length > 9 && (
-                <div
-                  className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 hover:bg-black/40 transition-colors"
-                >
-                  <span className="text-white font-bold text-xl">+{allImages.length - 9}</span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {activeTab === "albums" && (
-        <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
-          <Images className="w-12 h-12 text-slate-300 mb-4" />
-          <p className="text-slate-500 font-medium">Albums are currently being curated.</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-2 rounded-2xl overflow-hidden [&>*:first-child]:col-span-2 [&>*:first-child]:md:row-span-2">
+          {allImages.slice(0, 5).map((img, idx) => {
+            const isLastTile = idx === 4;
+            const hidden = allImages.length - 5;
+            return (
+              <div
+                key={idx}
+                className={`relative cursor-pointer overflow-hidden group ${
+                  idx === 0 ? "aspect-[4/3] md:aspect-auto md:min-h-[320px]" : "aspect-[4/3] md:aspect-auto"
+                }`}
+                onClick={() => setLightboxIndex(idx)}
+              >
+                <Image
+                  src={img}
+                  alt={`${venueName} – photo ${idx + 1}`}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes={idx === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 50vw, 25vw"}
+                  priority={idx === 0}
+                />
+                {isLastTile && hidden > 0 && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/55 hover:bg-black/45 transition-colors">
+                    <span className="text-white font-bold text-xl">+{hidden}</span>
+                    <span className="text-white/80 text-[11px] font-semibold uppercase tracking-wider mt-0.5">
+                      photos
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -132,15 +124,15 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
         )
       )}
 
-      {/* "View all photos" button */}
-      {allImages.length > 9 && (
-        <div className="flex justify-center mt-6">
+      {/* "Show all photos" button — Booking.com puts this under the collage */}
+      {activeTab === "portfolio" && allImages.length > 1 && (
+        <div className="flex justify-center mt-5">
           <button
             onClick={() => setLightboxIndex(0)}
-            className="px-6 py-2 rounded-full border text-sm font-bold"
+            className="px-6 py-2 rounded-full border text-sm font-bold transition-opacity hover:opacity-80 cursor-pointer"
             style={{ borderColor: "var(--sw-primary)", color: "var(--sw-primary)" }}
           >
-            View {allImages.length - 9} more
+            Show all {allImages.length} photos
           </button>
         </div>
       )}
