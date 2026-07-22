@@ -14,6 +14,15 @@ interface VenueGalleryProps {
   venueName: string;
 }
 
+/**
+ * Demo listings are seeded with licensed stock photography. Showing those under
+ * a real property's name without saying so would mislead someone about to book,
+ * so any gallery served from the stock pool carries a visible caption.
+ */
+function isStockImage(url: string) {
+  return url.includes("images.unsplash.com");
+}
+
 export default function VenueGallery({ images, videos = [], venueName }: VenueGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"portfolio" | "videos">("portfolio");
@@ -95,6 +104,15 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
               </div>
             ))}
           </div>
+
+          {allImages.some(isStockImage) && (
+            <p
+              className="text-[11px] font-medium mt-0.5"
+              style={{ color: "var(--sw-steel)" }}
+            >
+              Representative images — not photographs of this specific property.
+            </p>
+          )}
 
           {/* Thumbnail strip */}
           {thumbs.length > 0 && (
