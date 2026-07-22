@@ -26,14 +26,16 @@ different application, so the April feedback splits three ways:
 
 | Status | Count | Items |
 |---|---|---|
-| ✅ Delivered so far | **13** | 1, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 17, 23 |
-| Still to build | **2** | 3, 13 |
-| Already working | 3 | 2, 16, 19 |
+| ✅ Done and confirmed working | **15** | 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 15, 16, 17, 19, 23 |
+| Built, not yet confirmed | 2 | 8, 14 |
+| Not started | **1** | 13 |
 | No longer applies (old UI removed) | 2 | 4, 21 |
 | Not this website | 3 | 18, 20, 22 |
 
-**20 of the 23 items are now closed.** The two still outstanding are the
-Booking.com-style photo layout (#3) and the vendor-edit freeze (#13).
+**22 of 23 are addressed; 15 are confirmed working with evidence.** Only the
+vendor-edit freeze (#13) has not been touched. Items 8 and 14 are written but
+need a save and an upload to prove, which requires a database that is not
+shared with production.
 
 **Already working**
 - **#2** Search now works without choosing a category — it falls back to showing all vendors.
@@ -316,3 +318,79 @@ wants it.**
 | 22 Jul 2026 | Rate cards + prices (single source of truth) | `lib/config/plans.ts`, `app/(public)/subscribe/page.tsx`, `app/(public)/advertise/page.tsx` |
 | 22 Jul 2026 | PAY NOW payments | `app/api/plans/checkout/route.ts`, `components/plans/PayNowButton.tsx`, `components/plans/PlanCheckoutStatus.tsx` |
 | 22 Jul 2026 | Subscribe/Advertise pop-ups, contact strip, blue pricing colour | `components/plans/PromoSticker.tsx`, `components/plans/PlanOfferModal.tsx`, `components/plans/PlanContactStrip.tsx`, `app/layout.tsx`, `app/globals.css` |
+
+## Session 4 — 22 July 2026
+
+Verification with a real vendor login, plus the Booking.com layout and demo imagery.
+
+### Confirmed working
+
+Signed in as a vendor and checked each item on screen rather than in code:
+
+- **Sticker (#5, #6, #9, #10, #23)** — appears on every page for a logged-in vendor with
+  the client's own wording, both buttons opening the two rate cards, and closes on the X.
+  Confirmed it does *not* appear for logged-out visitors, so it never blocks a couple.
+- **Review notice (#15)** — shows on both the photo and the video uploader.
+- **Main image (#17)** — six orange "Set as Main image" and six yellow "Delete image"
+  buttons. Setting a main moves the badge; deleting the main promotes another photo so a
+  listing is never left without a cover.
+- **Gallery (#3)** — the Booking.com collage now runs against real photographs.
+
+### A defect found only by looking
+
+**"Delete image" was unreadable in dark mode.** The label colour flipped to near-white
+while its yellow background stayed put, giving 1.41:1 contrast — effectively invisible in
+the vendor dashboard, which renders dark. Now pinned dark: **11.35:1**.
+
+This was invisible in code review and on every light-mode page. It only surfaced by
+signing in and inspecting the rendered button.
+
+### Demo imagery
+
+All 26 listings (20 services, 6 venues) had empty galleries and now carry six photographs
+each, from Unsplash — licensed for commercial use, unlike image-search results. Every URL
+was checked for a valid response and then visually reviewed and sorted by category.
+
+Because these listings carry real hotel names, galleries drawn from the stock pool display
+*"Representative images — not photographs of this specific property."* The caption
+disappears once a vendor uploads their own.
+
+### Incident: live data was modified
+
+**Local development and the live site share one MongoDB Atlas database.** The vendor
+dashboard also saves automatically 1.5 seconds after any edit. Testing the delete and
+set-main controls on a real listing therefore wrote to live data.
+
+**The Ritz-Carlton New York, NoMad** lost one gallery photograph and had its cover image
+overwritten.
+
+- The gallery was **restored** exactly.
+- The cover image could **not** be restored — it pointed at an external address that was
+  overwritten with no record of the original. The card displays correctly, but with a
+  different photograph. If a backup from before 22 July exists, that field is worth
+  checking.
+
+Two lessons, both worth acting on:
+
+1. **There is no separate development database.** Anyone developing locally is working on
+   live data. A separate database for development should be a priority.
+2. Testing that writes must use a throwaway listing, never a real one.
+
+### Still outstanding
+
+| # | Item | Why |
+|---|---|---|
+| 8 | Pop-up after Save | Needs a save; a save writes to live data |
+| 14 | Upload alert email | Needs an upload; same reason |
+| 13 | Vendor edit freeze | Not started — but see the lead below |
+
+**A lead on #13.** The vendor edit form saves automatically 1.5 seconds after *any* change,
+so every keystroke schedules a full save to the server. On an editor this large, with this
+vendor's 25 listings, that is a strong candidate for the freezing the client reported. This
+is the first concrete explanation we have for that complaint.
+
+### Also outstanding, and more urgent than the April list
+
+**Vendor uploads are broken in production.** The site runs on Vercel, whose filesystem
+cannot be written to, but uploads are saved to local disk. Uploading needs to move to
+proper file storage. This affects real vendors today.
