@@ -3,12 +3,7 @@ import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "@/lib/session";
 import { getStripe } from "@/lib/stripe";
-import {
-  findPlan,
-  PLAN_TEST_MODE,
-  TEST_PRICE_INR,
-  SUBSCRIPTION_PLANS,
-} from "@/lib/config/plans";
+import { findPlan, PLAN_TEST_MODE, testAmountFor } from "@/lib/config/plans";
 
 /**
  * Creates a Stripe Checkout Session for a subscription or advertisement plan.
@@ -42,14 +37,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const isSubscription = SUBSCRIPTION_PLANS.some((p) => p.id === plan.id);
-    const label = "name" in plan ? plan.name : plan.title;
+    const { isSubscription, label } = plan;
 
     // Amount is resolved on the server from the plan id — never trust a price
     // sent by the browser.
     const currency = PLAN_TEST_MODE ? "inr" : "usd";
     const amountMinorUnits = PLAN_TEST_MODE
-      ? TEST_PRICE_INR[plan.testTier] * 100
+      ? testAmountFor(plan.offerPriceUSD) * 100
       : Math.round(plan.offerPriceUSD * 100);
 
     const origin = new URL(req.url).origin;
@@ -62,9 +56,10 @@ export async function POST(req: Request) {
           price_data: {
             currency,
             product_data: {
-              name: isSubscription
-                ? `SoulsWed ${label} subscription`
-                : `SoulsWed advertising — ${label}`,
+              name: (isSubscription
+                ? `SoulsWed subscription — ${label}`
+                : `SoulsWed advertising — ${label}`
+              ).slice(0, 250),
               ...(PLAN_TEST_MODE
                 ? { description: "Test transaction — reduced amount for payment verification" }
                 : {}),

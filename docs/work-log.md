@@ -199,10 +199,10 @@ on every save, so it prompts without nagging, and closes with the X or the Escap
 
 | Item | Detail |
 |---|---|
-| **Confirm all prices** | Every figure was transcribed from the April screenshots, where the client's own pen marks covered several digits. All prices are collected in one file (`lib/config/plans.ts`) and each is marked `NEEDS CONFIRMATION`. **These must be checked against the real rate card before going live.** |
-| **WhatsApp number** | The number in the screenshot was too blurred to read. The WhatsApp button stays hidden until the number is supplied — the email addresses show either way. No number was guessed. |
 | **Stripe keys** | Live payments need `STRIPE_SECRET_KEY` set. Until then PAY NOW will report a payment error. |
 | **Vendor-side check** | The pop-up and the after-save pop-up were verified in code but not clicked through with a real vendor login, as there is no test vendor account. Worth a five-minute check once one exists. |
+
+> Pricing was still unconfirmed at this point. It was resolved in Session 3.
 
 ### Still outstanding
 
@@ -210,6 +210,68 @@ on every save, so it prompts without nagging, and closes with the X or the Escap
 |---|---|---|
 | 3 | Booking.com-style photo layout | Plain square grid today. Medium effort. |
 | 13 | Page freezes when editing a vendor | Needs to be reproduced before it can be fixed. |
+
+---
+
+## Session 3 — 22 July 2026
+
+The existing soulswed.com was made available locally, which let us replace every
+guessed figure with the real production data. **All pricing is now verified, and the
+rate cards cover every vendor category rather than just hotels.**
+
+### What changed and why
+
+The April document only showed screenshots of the *hotel* rate card, so Session 2 built
+one subscription card and one advertising card. Reading the live site showed that is not
+how the business actually works:
+
+- There are **five different subscription rate cards**, one per vendor category —
+  Venues/Banquet Halls, Photographers, Makeup Artists, Decorators and Wedding Planners.
+  Each has its own prices and its own benefits. This matches the client's own note that
+  *"for other vendors we have a different rate card."*
+- There are **two advertising rate cards** — one for hotels (5 options) and a separate
+  one for all other vendors (6 options, including two cheaper inside-page placements
+  that hotels do not get).
+
+Both pages now have category tabs, so a vendor sees the card that applies to them.
+
+### Prices corrected
+
+Reading the client's annotated screenshots got the discounted prices right but the
+original "was" prices wrong, because their pen marks covered the digits:
+
+| | Previously shown | Correct |
+|---|---|---|
+| Venues Plus — was | US $ 990 | **US $ 1,950** |
+| Venues Luxe — was | US $ 6,930 | **US $ 6,900** |
+| Hotel advert 1 — was | US $ 2,499 | **US $ 2,400** |
+| Hotel advert 2 — was | US $ 4,899 | **US $ 4,590** |
+| Hotel advert 3 — was | US $ 2,065 | **US $ 3,069** |
+| Hotel advert 4 — was | US $ 5,995 | **US $ 5,969** |
+| Hotel advert 5 — was | US $ 2,045 | **US $ 2,949** |
+
+All discounted prices (the ones customers actually pay) were already correct. Two plan
+benefits were also wrong and are now fixed: the free tier gives **15 photos a year**, not
+10, and reads *"not visible on first page, **<9% of visitors** visit this section"*.
+
+Every figure now comes from the live site rather than from a reading of a screenshot.
+
+### Contact details resolved
+
+- **WhatsApp: +91 94452 66640** — taken from the live site's own floating WhatsApp
+  button. The button is now live on both rate cards.
+- **Email:** the live site uses `info@pearlsntiaras.com`. The April to-do list asked for
+  `weddings@pearlsntiaras.com`. The live address is used, since it is known to work.
+  **Worth one question to the client:** which of the two should it be?
+
+### Verified
+
+- Both pages checked in a browser: category tabs switch correctly and show the right
+  prices per category (spot-checked Makeup Artists — US $ 1,249 → US $ 492 + 2 months
+  free, matching the live site exactly).
+- A character-encoding fault introduced while importing the data was caught and fixed —
+  nine plan titles had a corrupted dash. All text now renders cleanly.
+- No new code errors.
 
 ---
 

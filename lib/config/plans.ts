@@ -1,17 +1,16 @@
 /**
  * Subscription and advertisement rate cards.
  *
- * ─────────────────────────────────────────────────────────────────────────────
- *  ⚠️  PRICES BELOW ARE TRANSCRIBED FROM THE CLIENT'S APRIL SCREENSHOTS AND
- *      HAVE NOT BEEN CONFIRMED. Several figures were partly obscured by the
- *      client's own annotations. Every number marked `NEEDS CONFIRMATION`
- *      must be checked against the client's rate card before going live.
- * ─────────────────────────────────────────────────────────────────────────────
+ * SOURCE OF TRUTH: transcribed directly from the live legacy soulswed.com
+ * Angular bundle (`this.venuesPlans`, `this.photoGraphersPlans`,
+ * `this.mackupArtistsPlans`, `this.decoratorsPlans`, `this.weddingPlanersPlans`,
+ * `this.hotelServices`, `this.advertisePlans`). These are the real production
+ * figures, not a reading of the client's annotated screenshots.
  *
  * While `PLAN_TEST_MODE` is on, checkout charges TEST_PRICE_INR instead of the
  * real amount — the client asked for ₹30 / ₹50 so they can verify the payment
- * flow end to end, then switch back to the real prices. Flip the env var
- * NEXT_PUBLIC_PLAN_TEST_MODE to "false" to charge real amounts.
+ * flow end to end, then switch back. Set NEXT_PUBLIC_PLAN_TEST_MODE to "false"
+ * to charge real prices.
  */
 
 export const PLAN_TEST_MODE =
@@ -23,181 +22,624 @@ export const TEST_PRICE_INR = {
   high: 50,
 } as const;
 
-export interface PlanFeature {
-  text: string;
-}
-
-export interface SubscriptionPlan {
+export interface SubscriptionTier {
   id: string;
   name: string;
-  club: string;
-  /** Original price in USD, shown struck through. 0 = no "was" price. */
+  /** Original price in USD, shown struck through. 0 = free tier. */
   listPriceUSD: number;
   /** Current offer price in USD. 0 = free tier, no payment button. */
   offerPriceUSD: number;
-  /** Which test amount this plan uses while PLAN_TEST_MODE is on. */
-  testTier: keyof typeof TEST_PRICE_INR;
-  highlight?: boolean;
+  /** e.g. "2 months free" — shown next to the price where the legacy site had it. */
+  extra?: string;
+  highlight: boolean;
   features: string[];
 }
 
-/**
- * SUBSCRIPTION PLANS — for Banquet Halls and Rooms.
- * Four columns; Core is free, so three PAY NOW buttons (client item #7).
- */
-export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
-  {
-    id: "core",
-    name: "Core",
-    club: "Jade Club — 6 months subscription",
-    listPriceUSD: 0,
-    offerPriceUSD: 0,
-    testTier: "low",
-    features: [
-      "Lowest visibility (visible only after clicking 'Show More' below Sapphire subscribers)",
-      "Not visible on the first page, where most visitors land",
-      "A commission of 10% applicable on sales",
-      "10 photos a year",
-      "Can reply to reviews",
-      "Can list either Venues or Rooms",
-    ],
-  },
-  {
-    id: "plus",
-    name: "Plus",
-    club: "Sapphire Club — 1 year subscription + 2 months free",
-    listPriceUSD: 990, // NEEDS CONFIRMATION
-    offerPriceUSD: 690, // NEEDS CONFIRMATION
-    testTier: "low",
-    features: [
-      "Visible below Diamond and Ruby",
-      "Your property videos and pictures will be uploaded on our social media pages when we start marketing to attract customers to your property",
-      "Visible on the first or second page",
-      "Can reply to reviews",
-    ],
-  },
-  {
-    id: "elite",
-    name: "Elite",
-    club: "Ruby Club — 1 year subscription + 3 months free",
-    listPriceUSD: 3930, // NEEDS CONFIRMATION
-    offerPriceUSD: 996, // NEEDS CONFIRMATION
-    testTier: "high",
-    highlight: true,
-    features: [
-      "Visible below Diamond Club",
-      "Your property videos and pictures will be uploaded on our social media pages when we start marketing to attract customers to your property",
-      "Showcase your property by adding videos",
-      "Can reply to reviews",
-    ],
-  },
-  {
-    id: "luxe",
-    name: "Luxe",
-    club: "Diamond Club — 1 year subscription + 4 months free",
-    listPriceUSD: 6930, // NEEDS CONFIRMATION
-    offerPriceUSD: 2625, // NEEDS CONFIRMATION
-    testTier: "high",
-    features: [
-      "Buy one, get one free — get registered on both SoulsWed and AmazingHalls for a discount",
-      "Topmost visibility to attract wedding customers on SoulsWed.com and event clients on AmazingHalls.com",
-      "Your property videos and pictures will be uploaded on our social media pages",
-      "Can reply to reviews",
-    ],
-  },
-];
+export interface SubscriptionRateCard {
+  slug: string;
+  label: string;
+  subtitle: string;
+  tiers: SubscriptionTier[];
+}
 
-export interface AdvertisementPlan {
+export interface AdvertisementOption {
   id: string;
   title: string;
   details: string[];
   listPriceUSD: number;
   offerPriceUSD: number;
-  testTier: keyof typeof TEST_PRICE_INR;
-  highlight?: boolean;
+  highlight: boolean;
 }
 
-/**
- * ADVERTISEMENT PLANS — for Hotels.
- * Five boxes, each with its own PAY NOW button (client item #11).
- */
-export const ADVERTISEMENT_PLANS: AdvertisementPlan[] = [
+export interface AdvertisementRateCard {
+  slug: string;
+  label: string;
+  options: AdvertisementOption[];
+}
+
+export const SUBSCRIPTION_RATE_CARDS: SubscriptionRateCard[] = [
   {
-    id: "ad-home-single-14d",
-    title: "Property video on the home page of SoulsWed.com or AmazingHalls.com — 14 days",
-    details: [
-      "Video will be linked to your page on SoulsWed.com or AmazingHalls.com",
-      "Shortened and full versions of videos to be uploaded on social media platforms including Instagram, YouTube and Facebook",
+    slug: "venues",
+    label: "Venues / Banquet Halls",
+    subtitle: "For Hotels, Banquet Halls and Rooms",
+    tiers: [
+      {
+        id: "venues-core",
+        name: "Core",
+        listPriceUSD: 0,
+        offerPriceUSD: 0,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "JADE CLUB – 6 MONTHS SUBSCRIPTION",
+          "Lowest Visibility (Visible only after clicking 'Show More' button below Sapphire subscribers)",
+          "Not visible on first page <9% visitors visit this section",
+          "A commission of 10% applicable on sales",
+          "15 photos a year",
+          "Can reply to reviews",
+          "Can list either Venues or Rooms",
+        ],
+      },
+      {
+        id: "venues-plus",
+        name: "Plus",
+        listPriceUSD: 1950,
+        offerPriceUSD: 690,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "SAPPHIRE CLUB – 1 YEAR SUBSCRIPTION + 2 MONTHS FREE",
+          "Visible below Diamond and Ruby",
+          "Your property videos and pictures will be uploaded on our social media pages when we start marketing to attract customers to your property",
+          "Visible on first or second page",
+          "Non-commissionable for 12 months + 2 months free",
+          "Up to 42 photos per year",
+          "Email support – info@soulswed.com",
+          "Can reply to reviews",
+          "Two reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Chat directly with customers",
+          "Can list all Venues and Rooms in one property",
+        ],
+      },
+      {
+        id: "venues-elite",
+        name: "Elite",
+        listPriceUSD: 3930,
+        offerPriceUSD: 996,
+        extra: undefined,
+        highlight: true,
+        features: [
+          "RUBY CLUB – 1 YEAR SUBSCRIPTION + 3 MONTHS FREE",
+          "Visible below Diamond Club",
+          "Your property videos and pictures will be uploaded on our social media pages when we start marketing to attract customers to your property.",
+          "Showcase your property by adding 3 videos, including 3D video of your hotel/property, up to 2 GB.",
+          "Videos can be made by our photography team at actual cost. Please contact us for estimated costs. Link here: (info@soulswed.com)",
+          "Get the 'verified' tag next to your hotel for international clients, after verification by our team members.",
+          "Visible on first or second page",
+          "Non-commissionable for 1 year + 3 months free",
+          "Unlimited photo uploads",
+          "Call / WhatsApp/ Email support",
+          "Can reply to reviews",
+          "Two reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Request for Profile management",
+          "Chat directly with customers",
+          "Can list all Venues and Rooms in one property",
+        ],
+      },
+      {
+        id: "venues-luxe",
+        name: "Luxe",
+        listPriceUSD: 6900,
+        offerPriceUSD: 2625,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "DIAMOND CLUB – 1 YEAR SUBSCRIPTION + 4 MONTHS FREE – BUY ONE, GET ONE FREE! Get registered on both SoulsWed and Amazing Halls for a discount.",
+          "Topmost Visibility to attract wedding customers on SoulsWed.com and Event clients on AmazingHalls.com",
+          "Your property videos and pictures will be uploaded on our social media pages when we start marketing to attract customers to your property.",
+          "Your property video can be placed on our header on the Home Page for 2 weeks. This will be connected to your landing page on our websites.",
+          "Showcase your property by adding up to 5 videos of your hotel/property, including 3D videos, up to 3 GB.",
+          "Videos can be made by our photography team at actual cost. Please contact us for estimated costs. Link here: (info@soulswed.com &  info@amazinghalls.com)",
+          "Get the 'verified' tag next to your hotel for international clients. Our team members will visit your property for verification.",
+          "Visible on the first page",
+          "Non-commissionable for 1 year + 4 months free",
+          "Unlimited photo uploads",
+          "Call / WhatApp / Email support",
+          "Can reply to reviews",
+          "Five reviews can be chosen to be pinned to top",
+          "Analytics access (they should be able to see how many customers are looking, how many booking etc.)",
+          "Request for Profile management",
+          "Chat directly with customers",
+          "Can list all Venues and Rooms in one property on both SoulsWed.com and AmazingHalls.com",
+          "Contact us – (link to go to info@soulswed.com and 091 94452 66640 Or info@amazinghalls.com",
+        ],
+      },
     ],
-    listPriceUSD: 2499, // NEEDS CONFIRMATION
-    offerPriceUSD: 1590, // NEEDS CONFIRMATION
-    testTier: "low",
-    highlight: true,
   },
   {
-    id: "ad-home-both-14d",
-    title: "Property video on the home page of both SoulsWed.com and AmazingHalls.com — 14 days",
-    details: [
-      "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
-      "Shortened and full versions of videos to be uploaded on social media platforms including Instagram, YouTube and Facebook",
+    slug: "photographers",
+    label: "Photographers",
+    subtitle: "For Photographers & Videographers",
+    tiers: [
+      {
+        id: "photographers-core",
+        name: "Core",
+        listPriceUSD: 0,
+        offerPriceUSD: 0,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "No profile management support",
+          "Email support only (no call support)",
+          "Visible after other vendors",
+          "Can be listed in one location",
+          "Chat with customers",
+          "Add up to 24 photos",
+        ],
+      },
+      {
+        id: "photographers-plus",
+        name: "Plus",
+        listPriceUSD: 2400,
+        offerPriceUSD: 999,
+        extra: "2 months free",
+        highlight: false,
+        features: [
+          "Get more visibility than Core (free) plan",
+          "Profile management support",
+          "Email support only (no call support)",
+          "Visible on first page below Luxe and Elite",
+          "2 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Chat directly with customers",
+          "Unlimited photo uploads",
+        ],
+      },
+      {
+        id: "photographers-elite",
+        name: "Elite",
+        listPriceUSD: 3900,
+        offerPriceUSD: 1716,
+        extra: "3 months free",
+        highlight: true,
+        features: [
+          "Get more than 2x visibility of Plus plan",
+          "Profile management support",
+          "Call support",
+          "Visible on first page below Luxe",
+          "5 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Chat directly with customers",
+          "Unlimited photo uploads",
+        ],
+      },
+      {
+        id: "photographers-luxe",
+        name: "Luxe",
+        listPriceUSD: 6900,
+        offerPriceUSD: 3399,
+        extra: "4 months free",
+        highlight: false,
+        features: [
+          "Buy one, get one free – registration on both Soulswed and Amazing Halls",
+          "Can put video on Photographer's page header for two weeks",
+          "Get more than 4x visibility of Plus plan, and more than 2x visibility of Elite plan",
+          "Profile management support",
+          "Call support",
+          "Visible on first page",
+          "8 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Chat directly with customers",
+          "Unlimited photo uploads",
+        ],
+      },
     ],
-    listPriceUSD: 4899, // NEEDS CONFIRMATION
-    offerPriceUSD: 2499, // NEEDS CONFIRMATION
-    testTier: "low",
   },
   {
-    id: "ad-home-both-extra-14d",
-    title: "Property video on the home page of both sites — additional 14 days each",
-    details: [
-      "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
-      "Shortened and full versions of videos to be uploaded on social media platforms including Instagram, YouTube and Facebook",
+    slug: "makeup-artists",
+    label: "Makeup Artists",
+    subtitle: "For Makeup Artists",
+    tiers: [
+      {
+        id: "makeup-artists-core",
+        name: "Core",
+        listPriceUSD: 0,
+        offerPriceUSD: 0,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "No profile management support",
+          "Email support only (no call support)",
+          "Visible after other vendors",
+          "Can be listed in one location",
+          "Chat with customers",
+          "Add up to 24 photos",
+        ],
+      },
+      {
+        id: "makeup-artists-plus",
+        name: "Plus",
+        listPriceUSD: 1249,
+        offerPriceUSD: 492,
+        extra: "2 months free",
+        highlight: false,
+        features: [
+          "Get more visibility than Core (free) plan",
+          "No Profile management support",
+          "Email support only (no call)",
+          "Visible on first page below Luxe and Elite",
+          "2 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Chat with customers",
+          "Unlimited photo uploads",
+        ],
+      },
+      {
+        id: "makeup-artists-elite",
+        name: "Elite",
+        listPriceUSD: 1590,
+        offerPriceUSD: 699,
+        extra: "3 months free",
+        highlight: true,
+        features: [
+          "Get more than 2x visibility of Plus plan",
+          "Profile management support",
+          "Call support",
+          "Visible on first page below Luxe",
+          "6 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Chat with customers",
+          "Unlimited photo uploads",
+        ],
+      },
+      {
+        id: "makeup-artists-luxe",
+        name: "Luxe",
+        listPriceUSD: 2500,
+        offerPriceUSD: 1059,
+        extra: "4 months free",
+        highlight: false,
+        features: [
+          "Can put video on makeup page's header for two weeks",
+          "Get more than 4x visibility of Plus plan, and more than 2x visibility of Elite plan",
+          "Profile management support",
+          "Call support",
+          "Visible on first page",
+          "9 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Chat with customers",
+          "Unlimited photo uploads",
+        ],
+      },
     ],
-    listPriceUSD: 2065, // NEEDS CONFIRMATION
-    offerPriceUSD: 1599, // NEEDS CONFIRMATION
-    testTier: "high",
   },
   {
-    id: "ad-home-both-extra-1m",
-    title: "Property video on the home page of both sites — additional 1 month each",
-    details: [
-      "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
-      "Shortened and full versions of videos to be uploaded on social media platforms including Instagram, YouTube and Facebook",
+    slug: "decorators",
+    label: "Decorators",
+    subtitle: "For Decorators",
+    tiers: [
+      {
+        id: "decorators-core",
+        name: "Core",
+        listPriceUSD: 0,
+        offerPriceUSD: 0,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "No profile management support",
+          "Email support only (no call support)",
+          "Visible after other vendors",
+          "Can be listed in one location",
+          "Chat with customers",
+          "Add up to 24 photos",
+        ],
+      },
+      {
+        id: "decorators-elite",
+        name: "Elite",
+        listPriceUSD: 1400,
+        offerPriceUSD: 798,
+        extra: undefined,
+        highlight: true,
+        features: [
+          "Get more than 2x visibility of Core (free) plan",
+          "Profile management support",
+          "Call support",
+          "Visible on first page below Luxe",
+          "5 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Visible contact details of customers who call you",
+          "Unlimited photo uploads",
+        ],
+      },
+      {
+        id: "decorators-luxe",
+        name: "Luxe",
+        listPriceUSD: 5469,
+        offerPriceUSD: 2553,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "Buy one, get one free – registration on both Soulswed and Amazing Halls",
+          "Can put video on Planners page header for two weeks",
+          "Get more than 4x visibility of Core (free) plan, and more than 2x visibility of Elite plan",
+          "Profile management support",
+          "Call support",
+          "Visible on first page",
+          "8 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Visible contact details of customers who call you",
+          "Unlimited photo uploads",
+        ],
+      },
     ],
-    listPriceUSD: 5995, // NEEDS CONFIRMATION
-    offerPriceUSD: 2959, // NEEDS CONFIRMATION
-    testTier: "high",
   },
   {
-    id: "ad-inside-both-1m",
-    title: "Property video on the inside pages of both sites — additional 1 month each",
-    details: [
-      "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
-      "Shortened and full versions of videos to be uploaded on social media platforms including Instagram, YouTube and Facebook",
+    slug: "planners",
+    label: "Wedding Planners",
+    subtitle: "For Wedding Planners",
+    tiers: [
+      {
+        id: "planners-core",
+        name: "Core",
+        listPriceUSD: 0,
+        offerPriceUSD: 0,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "No profile management support",
+          "Email support only (no call support)",
+          "Visible after other vendors",
+          "Can be listed in one location",
+          "Chat with customers",
+          "Add up to 24 photos",
+        ],
+      },
+      {
+        id: "planners-elite",
+        name: "Elite",
+        listPriceUSD: 2139,
+        offerPriceUSD: 996,
+        extra: undefined,
+        highlight: true,
+        features: [
+          "Get more than 2x visibility of Core (free) plan",
+          "Profile management support",
+          "Call support",
+          "Visible on first page below Luxe",
+          "5 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Chat with customers",
+          "Unlimited photo uploads",
+        ],
+      },
+      {
+        id: "planners-luxe",
+        name: "Luxe",
+        listPriceUSD: 5469,
+        offerPriceUSD: 2553,
+        extra: undefined,
+        highlight: false,
+        features: [
+          "Buy one, get one free – registration on both Soulswed and Amazing Halls",
+          "Can put video on Planners page header for two weeks",
+          "Get more than 4x visibility of Core (free) plan, and more than 2x visibility of Elite plan",
+          "Profile management support",
+          "Call support",
+          "Visible on first page",
+          "8 Relationship calls per year",
+          "2 reviews can be chosen to be pinned to top",
+          "Analytics access",
+          "Can be listed in multiple cities (Additional Charges apply)",
+          "Chat with customers",
+          "Unlimited photo uploads",
+        ],
+      },
     ],
-    listPriceUSD: 2045, // NEEDS CONFIRMATION
-    offerPriceUSD: 1149, // NEEDS CONFIRMATION
-    testTier: "high",
   },
 ];
-
-/** Contact routes offered alongside every plan (client item #11). */
+export const ADVERTISEMENT_RATE_CARDS: AdvertisementRateCard[] = [
+  {
+    slug: "hotels",
+    label: "For Hotels",
+    options: [
+      {
+        id: "ad-hotels-1",
+        title: "PROPERTY VIDEO ON HOME PAGE OF SOULSWED.COM or AMAZINGHALLS.COM  - 14 days",
+        details: [
+          "Video will connect to your page on SoulsWed.com or AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 2400,
+        offerPriceUSD: 1590,
+        highlight: true,
+      },
+      {
+        id: "ad-hotels-2",
+        title: "PROPERTY VIDEO ON HOME PAGE OF BOTH SOULSWED.COM AND AMAZINGHALLS.COM – 14 days",
+        details: [
+          "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 4590,
+        offerPriceUSD: 2499,
+        highlight: false,
+      },
+      {
+        id: "ad-hotels-3",
+        title: "PROPERTY VIDEO ON HOME PAGE OF BOTH SOULSWED.COM AND AMAZINGHALLS.COM – For additional 14 days each",
+        details: [
+          "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 3069,
+        offerPriceUSD: 1599,
+        highlight: false,
+      },
+      {
+        id: "ad-hotels-4",
+        title: "PROPERTY VIDEO ON HOME PAGE OF BOTH SOULSWED.COM AND AMAZINGHALLS.COM – for additional 1 month each",
+        details: [
+          "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 5969,
+        offerPriceUSD: 2959,
+        highlight: false,
+      },
+      {
+        id: "ad-hotels-5",
+        title: "PROPERTY VIDEO ON INSIDE PAGES OF BOTH SOULSWED.COM AND AMAZINGHALLS.COM – for additional 1 month each",
+        details: [
+          "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 2949,
+        offerPriceUSD: 1149,
+        highlight: false,
+      },
+    ],
+  },
+  {
+    slug: "vendors",
+    label: "For All Other Vendors",
+    options: [
+      {
+        id: "ad-vendors-1",
+        title: "YOUR VIDEO (less than 9 seconds) ON HOME PAGE OF SOULSWED.COM or AMAZINGHALLS.COM  - 14 days",
+        details: [
+          "Video will connect to your page on SoulsWed.com or AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 2400,
+        offerPriceUSD: 1590,
+        highlight: true,
+      },
+      {
+        id: "ad-vendors-2",
+        title: "YOUR VIDEO (less than 9 seconds) ON HOME PAGE OF BOTH SOULSWED.COM AND AMAZINGHALLS.COM – 14 days",
+        details: [
+          "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 4590,
+        offerPriceUSD: 2499,
+        highlight: false,
+      },
+      {
+        id: "ad-vendors-3",
+        title: "YOUR VIDEO (less than 9 seconds)  ON HOME PAGE OF BOTH SOULSWED.COM AND AMAZINGHALLS.COM – For additional 14 days each",
+        details: [
+          "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 3069,
+        offerPriceUSD: 1599,
+        highlight: false,
+      },
+      {
+        id: "ad-vendors-4",
+        title: "YOUR VIDEO (less than 9 seconds) ON HOME PAGE OF BOTH SOULSWED.COM AND AMAZINGHALLS.COM – for additional 1 month each",
+        details: [
+          "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 5969,
+        offerPriceUSD: 2959,
+        highlight: false,
+      },
+      {
+        id: "ad-vendors-5",
+        title: "YOUR VIDEO (less than 9 seconds) ON INSIDE PAGES OF EITHER SOULSWED.COM OR AMAZINGHALLS.COM – for 1 month",
+        details: [
+          "Video will be linked to your page on EITHER SoulsWed.com or AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 1959,
+        offerPriceUSD: 789,
+        highlight: false,
+      },
+      {
+        id: "ad-vendors-6",
+        title: "YOUR VIDEO (less than 9 seconds) ON INSIDE PAGES OF BOTH SOULSWED.COM AND AMAZINGHALLS.COM – for additional 1 month each",
+        details: [
+          "Video will be linked to your page on both SoulsWed.com and AmazingHalls.com",
+          "SHORTENED AND FULL VERSIONS OF VIDEOS TO BE UPLOADED ON SOCIAL MEDIA PLATFORMS INCLUDING INSTAGRAM, YOUTUBE, FACEBOOK",
+        ],
+        listPriceUSD: 2949,
+        offerPriceUSD: 1149,
+        highlight: false,
+      },
+    ],
+  },
+];
+/**
+ * Contact routes offered alongside every plan (client item #11).
+ *
+ * NOTE: the April to-do list asked for `weddings@pearlsntiaras.com`, but the
+ * live site uses `info@pearlsntiaras.com`. The live address is used here since
+ * it is known to work — confirm with the client which they want.
+ */
 export const PLAN_CONTACT = {
   emails: [
-    "weddings@pearlsntiaras.com",
+    "info@pearlsntiaras.com",
     "info@soulswed.com",
     "info@amazinghalls.com",
   ],
-  /**
-   * WhatsApp number in international format, digits only.
-   * The number in the client's screenshot was too blurred to transcribe —
-   * set NEXT_PUBLIC_WHATSAPP_NUMBER once the client confirms it.
-   */
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "",
+  /** From the live site's floating WhatsApp button: +91 94452 66640. */
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919445266640",
 } as const;
 
-export function findPlan(id: string): SubscriptionPlan | AdvertisementPlan | undefined {
-  return (
-    SUBSCRIPTION_PLANS.find((p) => p.id === id) ??
-    ADVERTISEMENT_PLANS.find((p) => p.id === id)
-  );
+/** Every payable plan across both rate-card families, flattened for lookup. */
+export function findPlan(
+  id: string
+): { id: string; label: string; offerPriceUSD: number; isSubscription: boolean } | undefined {
+  for (const card of SUBSCRIPTION_RATE_CARDS) {
+    const tier = card.tiers.find((t) => t.id === id);
+    if (tier) {
+      return {
+        id: tier.id,
+        label: `${card.label} — ${tier.name}`,
+        offerPriceUSD: tier.offerPriceUSD,
+        isSubscription: true,
+      };
+    }
+  }
+  for (const card of ADVERTISEMENT_RATE_CARDS) {
+    const opt = card.options.find((o) => o.id === id);
+    if (opt) {
+      return {
+        id: opt.id,
+        label: `${card.label} — ${opt.title}`,
+        offerPriceUSD: opt.offerPriceUSD,
+        isSubscription: false,
+      };
+    }
+  }
+  return undefined;
+}
+
+/** Cheaper plans use the low test amount, pricier ones the high amount. */
+export function testAmountFor(offerPriceUSD: number): number {
+  return offerPriceUSD >= 1000 ? TEST_PRICE_INR.high : TEST_PRICE_INR.low;
 }
