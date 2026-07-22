@@ -1,6 +1,6 @@
-# SoulsWed
+# SoulsWed — Premium Wedding Marketplace
 
-**Designed and developed by Mohan.**
+> Designed and developed by Mohan.
 
 SoulsWed is India's premium wedding marketplace connecting couples with top wedding venues, photographers, planners, and vendors across the country.
 
