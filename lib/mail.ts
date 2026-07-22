@@ -220,3 +220,58 @@ export async function sendInvoiceEmail(to: string, invoice: any) {
     throw error;
   }
 }
+
+/**
+ * Notifies the SoulsWed moderation inbox that a vendor has uploaded media.
+ *
+ * Uploads arrive in bursts (the gallery editor fires one request per file), so
+ * callers batch a burst into a single call rather than emailing per file.
+ */
+export async function sendUploadNotificationEmail(params: {
+  vendorName: string;
+  vendorEmail: string;
+  vendorId: string;
+  imageCount: number;
+  videoCount: number;
+}) {
+  const to = process.env.UPLOAD_NOTIFY_EMAIL || "soulswed99@gmail.com";
+
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("SMTP credentials are not fully configured. Skipping upload notification for vendor:", params.vendorId);
+    return;
+  }
+
+  const { vendorName, vendorEmail, vendorId, imageCount, videoCount } = params;
+  const parts: string[] = [];
+  if (imageCount > 0) parts.push(`${imageCount} ${imageCount === 1 ? "photo" : "photos"}`);
+  if (videoCount > 0) parts.push(`${videoCount} ${videoCount === 1 ? "video" : "videos"}`);
+  const summary = parts.join(" and ") || "media";
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"${process.env.SMTP_FROM_NAME || "SoulsWed"}" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      to,
+      subject: `New upload for review — ${vendorName} (${summary})`,
+      html: `
+        <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #DEE2E6; border-radius: 8px;">
+          <h2 style="color: #EE7429; margin-top: 0;">New Media Awaiting Review</h2>
+          <p style="color: #4a4a4a; line-height: 1.5;">A vendor has just uploaded <strong>${summary}</strong> to their listing.</p>
+
+          <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #FCCB11;">
+            <p style="margin: 5px 0; color: #1A1A1A;"><strong>Vendor:</strong> ${vendorName}</p>
+            <p style="margin: 5px 0; color: #1A1A1A;"><strong>Email:</strong> ${vendorEmail}</p>
+            <p style="margin: 5px 0; color: #1A1A1A;"><strong>Vendor ID:</strong> ${vendorId}</p>
+            <p style="margin: 5px 0; color: #1A1A1A;"><strong>Uploaded:</strong> ${new Date().toLocaleString()}</p>
+          </div>
+
+          <p style="color: #4a4a4a; line-height: 1.5;">Please review this content in the admin dashboard and remove anything that breaches the content policy.</p>
+          <br>
+          <p style="color: #4a4a4a; line-height: 1.5;">— <strong style="color: #1A1A1A;">SoulsWed Platform</strong></p>
+        </div>
+      `,
+    });
+    console.log("Upload notification email sent to %s, messageId: %s", to, info.messageId);
+  } catch (error) {
+    console.error("Error sending upload notification email:", error);
+  }
+}

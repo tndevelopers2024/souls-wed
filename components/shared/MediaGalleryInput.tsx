@@ -13,6 +13,9 @@ interface MediaGalleryInputProps {
   mode: "image" | "video";
   isDarkMode?: boolean;
   max?: number;
+  /** Current main/cover image. Pass together with onSetMain to show the per-tile actions. */
+  mainItem?: string;
+  onSetMain?: (url: string) => void;
 }
 
 const IMAGE_ACCEPT = "image/jpeg, image/png, image/webp, image/gif, image/avif";
@@ -23,7 +26,7 @@ function youtubeThumb(url: string): string | null {
   return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
 }
 
-export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = false, max = 30 }: MediaGalleryInputProps) {
+export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = false, max = 30, mainItem, onSetMain }: MediaGalleryInputProps) {
   const [pendingCount, setPendingCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [urlDraft, setUrlDraft] = useState("");
@@ -58,6 +61,7 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
     }
 
     setPendingCount(c => c + files.length);
+    let uploaded = 0;
     await Promise.all(files.map(async (file) => {
       try {
         const formData = new FormData();
@@ -67,6 +71,7 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
         const data = await res.json();
         if (res.ok && data.url) {
           appendItems([data.url]);
+          uploaded += 1;
         } else {
           setError(data.message || `Failed to upload ${file.name}`);
         }
@@ -76,7 +81,17 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
         setPendingCount(c => c - 1);
       }
     }));
-  }, [appendItems, mode, remaining]);
+
+    // One notification per batch — the moderation team gets a single email
+    // however many files went up. Never let this affect the upload result.
+    if (uploaded > 0) {
+      fetch("/api/upload/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(isVideo ? { videos: uploaded } : { images: uploaded }),
+      }).catch(() => {});
+    }
+  }, [appendItems, mode, remaining, isVideo]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     uploadFiles(Array.from(e.target.files ?? []));
@@ -109,12 +124,17 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
   };
 
   const removeAt = (idx: number) => {
+    const removed = items[idx];
     const next = items.filter((_, i) => i !== idx);
     itemsRef.current = next;
     onChange(next);
+    // Deleting the cover image would otherwise leave a dangling reference.
+    if (onSetMain && mainItem && mainItem === removed) onSetMain(next[0] ?? "");
   };
 
   const tileBase = `relative group rounded-xl overflow-hidden border ${isDarkMode ? "border-stone-800 bg-stone-900" : "border-stone-200 bg-stone-100"}`;
+  // Labelled actions replace the hover ✕ only where a main image makes sense.
+  const showTileActions = !isVideo && typeof onSetMain === "function";
 
   return (
     <div
@@ -128,11 +148,20 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
       onDrop={handleDrop}
     >
       {/* Tiles */}
-      <div className={`grid gap-3 ${isVideo ? "grid-cols-2 sm:grid-cols-3" : "grid-cols-3 sm:grid-cols-4 md:grid-cols-5"}`}>
+      <div className={`grid gap-3 ${
+        isVideo
+          ? "grid-cols-2 sm:grid-cols-3"
+          : showTileActions
+            ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+            : "grid-cols-3 sm:grid-cols-4 md:grid-cols-5"
+      }`}>
         {items.map((url, idx) => {
           const thumb = isVideo ? youtubeThumb(url) : url;
+          const isMain = showTileActions && mainItem === url;
           return (
-            <div key={`${url}-${idx}`} className={`${tileBase} ${isVideo ? "aspect-video" : "aspect-square"}`}>
+            <div key={`${url}-${idx}`} className={`${tileBase} ${isVideo ? "aspect-video" : "aspect-square"} ${
+              isMain ? "ring-2 ring-offset-1 ring-[var(--sw-primary)]" : ""
+            }`}>
               {isVideo && isDirectVideoUrl(url) ? (
                 <video src={url} muted preload="metadata" className="w-full h-full object-cover" />
               ) : thumb ? (
@@ -149,14 +178,45 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
                   <PlayCircle className="w-8 h-8 text-white drop-shadow-md opacity-80" />
                 </div>
               )}
-              <button
-                type="button"
-                onClick={() => removeAt(idx)}
-                aria-label="Remove"
-                className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-              >
-                <XIcon className="w-3.5 h-3.5" />
-              </button>
+              {isMain && (
+                <span
+                  className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider text-white"
+                  style={{ background: "var(--sw-primary)" }}
+                >
+                  Main
+                </span>
+              )}
+
+              {showTileActions ? (
+                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-1.5 bg-gradient-to-t from-black/75 via-black/40 to-transparent">
+                  <button
+                    type="button"
+                    onClick={() => onSetMain?.(url)}
+                    disabled={isMain}
+                    className="w-full px-1.5 py-1 rounded-full text-[9px] font-bold text-white leading-tight transition-opacity cursor-pointer hover:opacity-90 disabled:opacity-45 disabled:cursor-default"
+                    style={{ background: "var(--sw-primary)" }}
+                  >
+                    {isMain ? "Main image" : "Set as Main image"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeAt(idx)}
+                    className="w-full px-1.5 py-1 rounded-full text-[9px] font-bold leading-tight transition-opacity cursor-pointer hover:opacity-90"
+                    style={{ background: "var(--sw-secondary)", color: "var(--sw-navy)" }}
+                  >
+                    Delete image
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => removeAt(idx)}
+                  aria-label="Remove"
+                  className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 hover:bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                >
+                  <XIcon className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           );
         })}
@@ -230,12 +290,26 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
         <p className={`text-[10px] ${isDarkMode ? "text-stone-600" : "text-stone-400"}`}>
           {isVideo
             ? "Drag & drop MP4/WebM/MOV (max 200 MB each), or paste YouTube/Vimeo links."
-            : "Drag & drop JPEG/PNG/WebP (max 15 MB each). First photo is shown first in the gallery."}
+            : showTileActions
+              ? "Drag & drop JPEG/PNG/WebP (max 15 MB each). The main image is used as the listing cover."
+              : "Drag & drop JPEG/PNG/WebP (max 15 MB each). First photo is shown first in the gallery."}
         </p>
         <span className={`text-[10px] font-bold shrink-0 ${isDarkMode ? "text-stone-600" : "text-stone-400"}`}>
           {items.length}/{max}
         </span>
       </div>
+
+      {/* Moderation notice — required on every upload surface */}
+      <p
+        className="flex items-start gap-1.5 text-[10px] font-semibold rounded-lg px-2.5 py-2"
+        style={{
+          background: isDarkMode ? "rgba(238,116,41,0.10)" : "rgba(238,116,41,0.07)",
+          color: "var(--sw-primary)",
+        }}
+      >
+        <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-px" />
+        Uploads are subject to review and can be deleted if found inappropriate.
+      </p>
 
       {error && (
         <p className="flex items-center gap-1.5 text-red-500 text-xs font-semibold">
