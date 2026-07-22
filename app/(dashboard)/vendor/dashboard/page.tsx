@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Image from "@/components/shared/CustomImage";
@@ -32,6 +32,7 @@ import { SearchIcon } from "@/components/ui/search";
 import BookingCard from "@/components/booking/BookingCard";
 import ImageUploadInput from "@/components/shared/ImageUploadInput";
 import MediaGalleryInput from "@/components/shared/MediaGalleryInput";
+import PlanOfferModal from "@/components/plans/PlanOfferModal";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import { useTheme } from "@/lib/ThemeContext";
@@ -226,6 +227,14 @@ export default function VendorDashboard() {
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; type: 'venue' | 'service'; id: string; apiId?: string; name: string } | null>(null);
   const [isDeletingItem, setIsDeletingItem] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  // Offered once per session after a successful save, so it doesn't nag on every edit.
+  const [showPlanOffer, setShowPlanOffer] = useState(false);
+  const planOfferShownRef = useRef(false);
+  const offerPlansAfterSave = useCallback(() => {
+    if (planOfferShownRef.current) return;
+    planOfferShownRef.current = true;
+    setShowPlanOffer(true);
+  }, []);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -420,6 +429,7 @@ export default function VendorDashboard() {
         setVenueMessage("Venue submitted! Admin will review and activate it.");
         if (vendor?.id) await fetchVenues(vendor.id);
         setTimeout(() => setVenueView("grid"), 1800);
+        offerPlansAfterSave();
       } else if (venueView === "edit" && editingVenue) {
         const res = await fetch("/api/venues", {
           method: "PATCH",
@@ -434,6 +444,7 @@ export default function VendorDashboard() {
         if (vendor?.id) await fetchVenues(vendor.id);
         if (!isAutoSave) {
           setTimeout(() => setVenueView("grid"), 1200);
+          offerPlansAfterSave();
         }
       }
     } catch (err) {
@@ -515,6 +526,7 @@ export default function VendorDashboard() {
         setServiceMessage("Service submitted! Admin will review and activate it.");
         if (vendor?.id) await fetchServices(vendor.id);
         setTimeout(() => setServiceView("grid"), 1800);
+        offerPlansAfterSave();
       } else if (serviceView === "edit" && editingService) {
         const res = await fetch("/api/services", {
           method: "PATCH",
@@ -529,6 +541,7 @@ export default function VendorDashboard() {
         if (vendor?.id) await fetchServices(vendor.id);
         if (!isAutoSave) {
           setTimeout(() => setServiceView("grid"), 1200);
+          offerPlansAfterSave();
         }
       }
     } catch (err) {
@@ -734,6 +747,7 @@ export default function VendorDashboard() {
       setShowcaseImages(data.vendor.images || []);
       setAvailable(data.vendor.available !== false);
       setProfileMessage(data.message || "Profile saved.");
+      offerPlansAfterSave();
     } catch (err) {
       setProfileMessage(err instanceof Error ? err.message : "Failed to save vendor profile.");
     } finally {
@@ -1734,6 +1748,8 @@ export default function VendorDashboard() {
                               mode="image"
                               items={venueForm.gallery}
                               onChange={(items) => setVenueForm(p => ({ ...p, gallery: items }))}
+                              mainItem={venueForm.image}
+                              onSetMain={(url) => setVenueForm(p => ({ ...p, image: url }))}
                               isDarkMode={isDarkMode}
                             />
                           </div>
@@ -2824,6 +2840,8 @@ export default function VendorDashboard() {
                                 mode="image"
                                 items={serviceForm.gallery}
                                 onChange={(items) => setServiceForm(p => ({ ...p, gallery: items }))}
+                                mainItem={serviceForm.image}
+                                onSetMain={(url) => setServiceForm(p => ({ ...p, image: url }))}
                                 isDarkMode={isDarkMode}
                               />
                             </div>
@@ -3089,6 +3107,8 @@ export default function VendorDashboard() {
         </div>,
         document.body
       )}
+
+      <PlanOfferModal open={showPlanOffer} onClose={() => setShowPlanOffer(false)} />
     </div>
   );
 }

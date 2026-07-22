@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { CurrencyProvider } from "@/lib/CurrencyContext";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import Preloader from "@/components/shared/Preloader";
+import PromoSticker from "@/components/plans/PromoSticker";
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -53,6 +54,7 @@ export default function RootLayout({
           <CurrencyProvider>
             <Preloader />
             {children}
+            <PromoSticker />
           </CurrencyProvider>
         </ThemeProvider>
       </body>

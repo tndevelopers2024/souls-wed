@@ -20,6 +20,8 @@
   --sw-steel: #000000;
   --sw-peach: #EED9C4;
   --sw-light-gold: #F6D356;
+  /* Rate-card pricing. Yellow-on-white was unreadable, so plan prices use blue. */
+  --sw-blue: #1B4F9C;
   --sw-deep-navy: #2F3843;
   --sw-light-gray: #DEE2E6;
   --sw-white: #FFFFFF;
@@ -399,6 +401,8 @@ h6 {
   --sw-deep-navy: #D6D3D1;
   /* Muted body/sub text (pure black in light) becomes a soft warm grey */
   --sw-steel: #A8A29E;
+  /* Pricing blue lightens so it still reads on the near-black surface */
+  --sw-blue: #7FB2F0;
   /* Surfaces become warm near-black */
   --sw-white: #1B1917;
   --sw-surface: #211E1B;
