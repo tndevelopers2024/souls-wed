@@ -215,9 +215,17 @@ on every save, so it prompts without nagging, and closes with the X or the Escap
 
 ## Session 3 — 22 July 2026
 
-The existing soulswed.com was made available locally, which let us replace every
-guessed figure with the real production data. **All pricing is now verified, and the
-rate cards cover every vendor category rather than just hotels.**
+A copy of the old soulswed.com was made available locally, which let us replace every
+guessed figure with the data the old site itself shipped. **Pricing now comes from the
+old site rather than from a reading of a screenshot, and the rate cards cover every
+vendor category rather than just hotels.**
+
+> **Where this data came from.** The old site was read at `http://127.0.0.1:5501/` — the
+> local copy, not a public URL. There are no live links to give: **soulswed.com currently
+> serves a maintenance page**, and amazinghalls.com and soulswed.in do not resolve at all.
+> So these figures could not be cross-checked against a running deployment. They are the
+> best available source by a wide margin, but the client should still confirm them before
+> real money is charged.
 
 ### What changed and why
 

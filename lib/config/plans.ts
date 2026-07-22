@@ -1,11 +1,15 @@
 /**
  * Subscription and advertisement rate cards.
  *
- * SOURCE OF TRUTH: transcribed directly from the live legacy soulswed.com
- * Angular bundle (`this.venuesPlans`, `this.photoGraphersPlans`,
- * `this.mackupArtistsPlans`, `this.decoratorsPlans`, `this.weddingPlanersPlans`,
- * `this.hotelServices`, `this.advertisePlans`). These are the real production
- * figures, not a reading of the client's annotated screenshots.
+ * SOURCE: extracted from the legacy Angular build (`main-XVHBGUNX.js`, served
+ * locally at 127.0.0.1:5501) — variables `this.venuesPlans`,
+ * `this.photoGraphersPlans`, `this.mackupArtistsPlans`, `this.decoratorsPlans`,
+ * `this.weddingPlanersPlans`, `this.hotelServices`, `this.advertisePlans`.
+ *
+ * These are the figures the old site itself shipped, which is far better than
+ * reading the client's annotated screenshots — but note soulswed.com is
+ * currently serving a maintenance page, so this could not be checked against a
+ * live deployment. Confirm with the client before charging real money.
  *
  * While `PLAN_TEST_MODE` is on, checkout charges TEST_PRICE_INR instead of the
  * real amount — the client asked for ₹30 / ₹50 so they can verify the payment
