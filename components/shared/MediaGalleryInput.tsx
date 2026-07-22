@@ -202,7 +202,10 @@ export default function MediaGalleryInput({ items, onChange, mode, isDarkMode = 
                     type="button"
                     onClick={() => removeAt(idx)}
                     className="w-full px-1.5 py-1 rounded-full text-[9px] font-bold leading-tight transition-opacity cursor-pointer hover:opacity-90"
-                    style={{ background: "var(--sw-secondary)", color: "var(--sw-navy)" }}
+                    // The yellow background is fixed in both themes, so the label
+                    // must be too — --sw-navy flips to near-white in dark mode and
+                    // left this unreadable.
+                    style={{ background: "var(--sw-secondary)", color: "#1A1A1A" }}
                   >
                     Delete image
                   </button>
