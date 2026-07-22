@@ -22,6 +22,24 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
   const cleanVideos = videos.filter((vid) => vid && vid.trim());
   const allImages = cleanImages.length > 0 ? cleanImages : ["/soulswed/venue.jpg"];
 
+  // Booking.com's main block is a wide hero, a tall middle, and two stacked on
+  // the right. With fewer than four photos the survivors share the space
+  // instead of leaving holes in the grid.
+  const MAIN_SPANS: Record<number, string[]> = {
+    1: ["col-span-12 row-span-2"],
+    2: ["col-span-7 row-span-2", "col-span-5 row-span-2"],
+    3: ["col-span-6 row-span-2", "col-span-6", "col-span-6"],
+    4: ["col-span-5 row-span-2", "col-span-3 row-span-2", "col-span-4", "col-span-4"],
+  };
+  const mainCount = Math.min(allImages.length, 4);
+  const spans = MAIN_SPANS[mainCount];
+  const mainTiles = allImages
+    .slice(0, mainCount)
+    .map((src, index) => ({ src, index, span: spans[index] }));
+
+  const thumbs = allImages.slice(4, 9).map((src, i) => ({ src, index: i + 4 }));
+  const hiddenCount = allImages.length - 9;
+
   const prev = () =>
     setLightboxIndex((i) => (i === null ? 0 : (i - 1 + allImages.length) % allImages.length));
   const next = () =>
@@ -53,40 +71,61 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
         </button>
       </div>
 
-      {/* Booking.com-style collage: one hero image plus a grid of four,
-          with the overflow count on the last tile. */}
+      {/* Booking.com collage: a 4-image main block (wide hero, tall middle,
+          two stacked) above a strip of thumbnails, with the overflow count on
+          the last thumbnail. */}
       {activeTab === "portfolio" && (
-        <div className="grid grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-2 rounded-2xl overflow-hidden [&>*:first-child]:col-span-2 [&>*:first-child]:md:row-span-2">
-          {allImages.slice(0, 5).map((img, idx) => {
-            const isLastTile = idx === 4;
-            const hidden = allImages.length - 5;
-            return (
+        <div className="flex flex-col gap-2">
+          {/* Main block */}
+          <div className="grid grid-cols-12 grid-rows-2 gap-2 h-[260px] sm:h-[340px] md:h-[400px]">
+            {mainTiles.map(({ src, index, span }) => (
               <div
-                key={idx}
-                className={`relative cursor-pointer overflow-hidden group ${
-                  idx === 0 ? "aspect-[4/3] md:aspect-auto md:min-h-[320px]" : "aspect-[4/3] md:aspect-auto"
-                }`}
-                onClick={() => setLightboxIndex(idx)}
+                key={index}
+                className={`relative cursor-pointer overflow-hidden group first:rounded-l-xl last:rounded-r-xl ${span}`}
+                onClick={() => setLightboxIndex(index)}
               >
                 <Image
-                  src={img}
-                  alt={`${venueName} – photo ${idx + 1}`}
+                  src={src}
+                  alt={`${venueName} – photo ${index + 1}`}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes={idx === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 50vw, 25vw"}
-                  priority={idx === 0}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority={index === 0}
                 />
-                {isLastTile && hidden > 0 && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/55 hover:bg-black/45 transition-colors">
-                    <span className="text-white font-bold text-xl">+{hidden}</span>
-                    <span className="text-white/80 text-[11px] font-semibold uppercase tracking-wider mt-0.5">
-                      photos
-                    </span>
-                  </div>
-                )}
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          {/* Thumbnail strip */}
+          {thumbs.length > 0 && (
+            <div className="grid grid-cols-5 gap-2">
+              {thumbs.map(({ src, index }, i) => {
+                const isLast = i === thumbs.length - 1;
+                return (
+                  <div
+                    key={index}
+                    className="relative cursor-pointer overflow-hidden rounded-lg aspect-[16/10] group"
+                    onClick={() => setLightboxIndex(index)}
+                  >
+                    <Image
+                      src={src}
+                      alt={`${venueName} – photo ${index + 1}`}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="20vw"
+                    />
+                    {isLast && hiddenCount > 0 && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 hover:bg-black/50 transition-colors">
+                        <span className="text-white font-bold text-xs sm:text-sm underline">
+                          +{hiddenCount} photos
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

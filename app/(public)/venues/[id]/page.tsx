@@ -15,6 +15,7 @@ import type { Venue } from "@/lib/venues-data";
 import VenueHero from "@/components/venues/VenueHero";
 import VenueGallery from "@/components/venues/VenueGallery";
 import VenueSidebar from "@/components/venues/VenueSidebar";
+import VenueMapCard from "@/components/venues/VenueMapCard";
 import VenueReviews from "@/components/venues/VenueReviews";
 import SimilarVenues from "@/components/venues/SimilarVenues";
 import { useCurrency } from "@/lib/CurrencyContext";
@@ -343,8 +344,14 @@ export default function VenueDetailPage() {
           </div>
 
           {/* Right — sidebar */}
-          <div>
+          <div className="flex flex-col gap-6">
             <VenueSidebar venue={venue} type={typeParam} />
+            <VenueMapCard
+              name={venue.name}
+              city={venue.city}
+              location={venue.location}
+              mapLink={venue.mapLink}
+            />
           </div>
         </div>
       </div>
