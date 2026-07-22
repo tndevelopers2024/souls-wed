@@ -1,5 +1,7 @@
 # SoulsWed
 
+**Designed and developed by Mohan.**
+
 SoulsWed is India's premium wedding marketplace connecting couples with top wedding venues, photographers, planners, and vendors across the country.
 
 This project is a modern, high-performance web application built using Next.js 16 (App Router), Tailwind CSS 4, smooth scrolling via Lenis, dynamic animations powered by GSAP and Framer Motion, and MongoDB backend.
@@ -40,7 +42,3 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
----
-
-**Designed and developed by Mohan.**
