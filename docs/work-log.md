@@ -505,3 +505,23 @@ Driven in a browser, each step confirmed on screen rather than in code:
 > "+N" overlay never appears with the current data. Rather than add photographs to a real
 > listing — which is what caused the Session 4 incident — the API response was rewritten in
 > the browser for that one page view. Nothing was written to the database.
+
+### The orange button replaced by the label on the photo
+
+The client compared the two pages side by side: ours had an orange **"Show all 6 photos"**
+button sitting under the collage, where Booking.com has no button at all — the label sits
+**on the last photograph**, white and underlined over a dark tint.
+
+The button is gone. The last tile of the collage now carries that label, and it is the only
+way in, exactly as on the reference site:
+
+- With more photographs than fit, it reads **"+5 photos"** — the remainder, as Booking.com
+  writes it.
+- With everything already on screen, it reads **"Show all 6 photos"**, so a small gallery is
+  still reachable rather than losing its way into the grid.
+- On a listing with four photographs or fewer there is no thumbnail row, so the label moves
+  onto the last tile of the main block.
+
+Verified on screen in both states: a six-photo listing shows "Show all 6 photos" on its last
+thumbnail, a fourteen-photo listing shows "+5 photos", the orange button is gone from both,
+and clicking the label opens the grid with every photograph and no stray viewer underneath.

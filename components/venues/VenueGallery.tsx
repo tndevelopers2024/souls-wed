@@ -31,6 +31,28 @@ interface VenueGalleryProps {
   reviews?: GalleryReview[];
 }
 
+/**
+ * The label sitting on the last tile of the collage, as Booking.com does it —
+ * white underlined text over a dark scrim, opening the all-photos grid.
+ */
+function OverflowLabel({ label, onOpen }: { label: string; onOpen: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      className="absolute inset-0 flex items-center justify-center bg-black/55 hover:bg-black/45 transition-colors cursor-pointer px-2"
+      onClick={(e) => {
+        e.stopPropagation();
+        onOpen();
+      }}
+    >
+      <span className="text-white font-bold text-xs sm:text-sm underline text-center leading-snug">
+        {label}
+      </span>
+    </button>
+  );
+}
+
 /** Booking.com's wording for its review scores. */
 function ratingLabel(rating: number) {
   if (rating >= 4.5) return "Exceptional";
@@ -82,6 +104,15 @@ export default function VenueGallery({
 
   const thumbs = allImages.slice(4, 9).map((src, i) => ({ src, index: i + 4 }));
   const hiddenCount = allImages.length - 9;
+
+  // Booking.com has no button under the collage — the last tile carries the
+  // label that opens the all-photos grid. When nothing is hidden it still
+  // needs to be reachable, so the label names the total instead of a remainder.
+  const overflowLabel =
+    hiddenCount > 0 ? `+${hiddenCount} photos` : `Show all ${allImages.length} photos`;
+  const showOverflow = allImages.length > 1;
+  const overflowOnThumb = thumbs.length > 0 ? thumbs.length - 1 : -1;
+  const overflowOnMain = thumbs.length > 0 ? -1 : mainTiles.length - 1;
 
   const prev = () =>
     setLightboxIndex((i) => (i === null ? 0 : (i - 1 + allImages.length) % allImages.length));
@@ -159,7 +190,7 @@ export default function VenueGallery({
       <div className="flex flex-col gap-2">
         {/* Main block */}
         <div className="grid grid-cols-12 grid-rows-2 gap-2 h-[260px] sm:h-[340px] md:h-[400px]">
-          {mainTiles.map(({ src, index, span }) => (
+          {mainTiles.map(({ src, index, span }, i) => (
             <div
               key={index}
               className={`relative cursor-pointer overflow-hidden group first:rounded-l-xl last:rounded-r-xl ${span}`}
@@ -173,6 +204,9 @@ export default function VenueGallery({
                 sizes="(max-width: 768px) 100vw, 50vw"
                 priority={index === 0}
               />
+              {showOverflow && i === overflowOnMain && (
+                <OverflowLabel label={overflowLabel} onOpen={() => setGridOpen(true)} />
+              )}
             </div>
           ))}
         </div>
@@ -184,61 +218,32 @@ export default function VenueGallery({
             className="grid gap-2 h-[72px] sm:h-[90px] md:h-[104px]"
             style={{ gridTemplateColumns: `repeat(${thumbs.length}, minmax(0, 1fr))` }}
           >
-            {thumbs.map(({ src, index }, i) => {
-              const isLast = i === thumbs.length - 1;
-              return (
-                <div
-                  key={index}
-                  className="relative cursor-pointer overflow-hidden rounded-lg group"
-                  onClick={() => setLightboxIndex(index)}
-                >
-                  <Image
-                    src={src}
-                    alt={`${venueName} – photo ${index + 1}`}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="20vw"
-                  />
-                  {isLast && hiddenCount > 0 && (
-                    <button
-                      type="button"
-                      aria-label={`Show all ${allImages.length} photos`}
-                      className="absolute inset-0 flex items-center justify-center bg-black/60 hover:bg-black/50 transition-colors cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setGridOpen(true);
-                      }}
-                    >
-                      <span className="text-white font-bold text-xs sm:text-sm underline">
-                        +{hiddenCount} photos
-                      </span>
-                    </button>
-                  )}
-                </div>
-              );
-            })}
+            {thumbs.map(({ src, index }, i) => (
+              <div
+                key={index}
+                className="relative cursor-pointer overflow-hidden rounded-lg group"
+                onClick={() => setLightboxIndex(index)}
+              >
+                <Image
+                  src={src}
+                  alt={`${venueName} – photo ${index + 1}`}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="20vw"
+                />
+                {showOverflow && i === overflowOnThumb && (
+                  <OverflowLabel label={overflowLabel} onOpen={() => setGridOpen(true)} />
+                )}
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-between gap-2 mt-1">
-          {allImages.some(isStockImage) ? (
-            <p className="text-[11px] font-medium" style={{ color: "var(--sw-steel)" }}>
-              Representative images — not photographs of this specific property.
-            </p>
-          ) : (
-            <span />
-          )}
-
-          {allImages.length > 1 && (
-            <button
-              onClick={() => setGridOpen(true)}
-              className="px-5 py-1.5 rounded-full border text-xs font-bold transition-opacity hover:opacity-80 cursor-pointer whitespace-nowrap"
-              style={{ borderColor: "var(--sw-primary)", color: "var(--sw-primary)" }}
-            >
-              Show all {allImages.length} photos
-            </button>
-          )}
-        </div>
+        {allImages.some(isStockImage) && (
+          <p className="text-[11px] font-medium mt-1" style={{ color: "var(--sw-steel)" }}>
+            Representative images — not photographs of this specific property.
+          </p>
+        )}
       </div>
 
       {/* All-photos grid — Booking.com opens this from "+N photos", a sheet of
