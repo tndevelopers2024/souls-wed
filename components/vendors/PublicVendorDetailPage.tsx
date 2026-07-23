@@ -120,7 +120,12 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
           id="photos"
           className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4 lg:gap-6 mt-6 mb-14 scroll-mt-28"
         >
-          <VenueGallery images={gallery} venueName={vendor.businessName || vendor.name} />
+          <VenueGallery
+            images={gallery}
+            venueName={vendor.businessName || vendor.name}
+            rating={vendor.rating || 0}
+            reviewCount={vendor.reviewCount || 0}
+          />
           <VenueMapCard
             name={vendor.businessName || vendor.name}
             city={vendor.city}

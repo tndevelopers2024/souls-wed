@@ -144,7 +144,13 @@ export default function VenueDetailPage() {
           id="photos"
           className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4 lg:gap-6 mt-6 mb-14 scroll-mt-28"
         >
-          <VenueGallery images={venue.gallery || []} venueName={venue.name} />
+          <VenueGallery
+            images={venue.gallery || []}
+            venueName={venue.name}
+            rating={venue.rating}
+            reviewCount={venue.reviewCount}
+            reviews={venue.reviews}
+          />
           <VenueMapCard
             name={venue.name}
             city={venue.city}

@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "@/components/shared/CustomImage";
-import { Images } from "lucide-react";
+import { Images, Star } from "lucide-react";
 import { XIcon } from "@/components/ui/x";
 import { ChevronLeftIcon } from "@/components/ui/chevron-left";
 import { ChevronRightIcon } from "@/components/ui/chevron-right";
 import { isDirectVideoUrl, toVideoEmbedUrl } from "@/lib/media";
+
+export interface GalleryReview {
+  id?: string | number;
+  author?: string;
+  date?: string;
+  text?: string;
+}
 
 interface VenueGalleryProps {
   images: string[];
@@ -18,6 +25,19 @@ interface VenueGalleryProps {
    * "videos" — the video grid on its own, for the section further down.
    */
   variant?: "hero" | "videos";
+  /** Shown in the all-photos grid's side panel, as Booking.com does. */
+  rating?: number;
+  reviewCount?: number;
+  reviews?: GalleryReview[];
+}
+
+/** Booking.com's wording for its review scores. */
+function ratingLabel(rating: number) {
+  if (rating >= 4.5) return "Exceptional";
+  if (rating >= 4) return "Wonderful";
+  if (rating >= 3.5) return "Very good";
+  if (rating >= 3) return "Good";
+  return "Review score";
 }
 
 /**
@@ -34,8 +54,12 @@ export default function VenueGallery({
   videos = [],
   venueName,
   variant = "hero",
+  rating = 0,
+  reviewCount = 0,
+  reviews = [],
 }: VenueGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [gridOpen, setGridOpen] = useState(false);
 
   const cleanImages = images.filter((img) => img && img.trim());
   const cleanVideos = videos.filter((vid) => vid && vid.trim());
@@ -63,6 +87,35 @@ export default function VenueGallery({
     setLightboxIndex((i) => (i === null ? 0 : (i - 1 + allImages.length) % allImages.length));
   const next = () =>
     setLightboxIndex((i) => (i === null ? 0 : (i + 1) % allImages.length));
+
+  // Escape closes the viewer first, then the grid, so one press never drops a
+  // visitor straight back to the page from a photo they were looking at.
+  // Arrow keys page through the viewer.
+  const viewerOpen = lightboxIndex !== null;
+  useEffect(() => {
+    if (!viewerOpen && !gridOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (viewerOpen) setLightboxIndex(null);
+        else setGridOpen(false);
+      }
+      if (!viewerOpen) return;
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [viewerOpen, gridOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keep the page behind from scrolling under the overlay.
+  useEffect(() => {
+    if (!viewerOpen && !gridOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [viewerOpen, gridOpen]);
 
   if (variant === "videos") {
     return cleanVideos.length > 0 ? (
@@ -147,11 +200,19 @@ export default function VenueGallery({
                     sizes="20vw"
                   />
                   {isLast && hiddenCount > 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 hover:bg-black/50 transition-colors">
+                    <button
+                      type="button"
+                      aria-label={`Show all ${allImages.length} photos`}
+                      className="absolute inset-0 flex items-center justify-center bg-black/60 hover:bg-black/50 transition-colors cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setGridOpen(true);
+                      }}
+                    >
                       <span className="text-white font-bold text-xs sm:text-sm underline">
                         +{hiddenCount} photos
                       </span>
-                    </div>
+                    </button>
                   )}
                 </div>
               );
@@ -170,7 +231,7 @@ export default function VenueGallery({
 
           {allImages.length > 1 && (
             <button
-              onClick={() => setLightboxIndex(0)}
+              onClick={() => setGridOpen(true)}
               className="px-5 py-1.5 rounded-full border text-xs font-bold transition-opacity hover:opacity-80 cursor-pointer whitespace-nowrap"
               style={{ borderColor: "var(--sw-primary)", color: "var(--sw-primary)" }}
             >
@@ -179,6 +240,145 @@ export default function VenueGallery({
           )}
         </div>
       </div>
+
+      {/* All-photos grid — Booking.com opens this from "+N photos", a sheet of
+          every photograph with the review panel alongside. */}
+      {gridOpen && (
+        <div
+          className="fixed inset-0 z-[95] flex flex-col"
+          style={{ background: "var(--sw-white, #fff)" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`All photos of ${venueName}`}
+        >
+          {/* Header */}
+          <div
+            className="flex items-center justify-between gap-4 px-4 sm:px-6 py-4 border-b shrink-0"
+            style={{ borderColor: "var(--sw-light-gray)" }}
+          >
+            <div className="min-w-0">
+              <p
+                className="font-bold text-base sm:text-lg truncate"
+                style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
+              >
+                {venueName}
+              </p>
+              <p className="text-xs" style={{ color: "var(--sw-steel)" }}>
+                {allImages.length} photos
+              </p>
+            </div>
+            <button
+              onClick={() => setGridOpen(false)}
+              className="flex items-center gap-1.5 text-sm font-bold shrink-0 px-3 py-2 rounded-full transition-colors hover:bg-slate-100 cursor-pointer"
+              style={{ color: "var(--sw-navy)" }}
+            >
+              Close
+              <XIcon className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Body: photo grid, with the review panel beside it on wide screens */}
+          <div className="flex-1 overflow-y-auto">
+            <div
+              className={`mx-auto max-w-[1600px] px-4 sm:px-6 py-5 gap-6 ${
+                rating > 0 ? "lg:grid lg:grid-cols-[1fr_320px]" : ""
+              }`}
+            >
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+                {allImages.map((src, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setLightboxIndex(index)}
+                    className="relative aspect-[4/3] rounded-lg overflow-hidden group cursor-pointer bg-slate-100"
+                    aria-label={`Open photo ${index + 1} of ${allImages.length}`}
+                  >
+                    <Image
+                      src={src}
+                      alt={`${venueName} – photo ${index + 1}`}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                    />
+                  </button>
+                ))}
+              </div>
+
+              {rating > 0 && (
+                <aside className="hidden lg:block">
+                  <div
+                    className="rounded-2xl border p-4 sticky top-0"
+                    style={{ borderColor: "var(--sw-light-gray)" }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="flex items-center gap-1 text-white font-bold px-3 py-1.5 rounded-lg"
+                        style={{ background: "var(--sw-navy)" }}
+                      >
+                        <Star
+                          className="w-4 h-4"
+                          style={{ color: "var(--sw-secondary)", fill: "var(--sw-secondary)" }}
+                        />
+                        {rating.toFixed(1)}
+                      </span>
+                      <div>
+                        <p className="font-bold text-sm" style={{ color: "var(--sw-navy)" }}>
+                          {ratingLabel(rating)}
+                        </p>
+                        {reviewCount > 0 && (
+                          <p className="text-xs" style={{ color: "var(--sw-steel)" }}>
+                            {reviewCount} reviews
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {reviews.length > 0 && (
+                      <div className="mt-4 space-y-4">
+                        <p className="text-xs font-bold" style={{ color: "var(--sw-navy)" }}>
+                          What couples said:
+                        </p>
+                        {reviews.slice(0, 4).map((review, i) => (
+                          <div
+                            key={review.id ?? i}
+                            className="pt-3 border-t"
+                            style={{ borderColor: "var(--sw-light-gray)" }}
+                          >
+                            <p
+                              className="text-[13px] leading-relaxed"
+                              style={{ color: "var(--sw-steel)" }}
+                            >
+                              &ldquo;{review.text}&rdquo;
+                            </p>
+                            {review.author && (
+                              <p
+                                className="text-[11px] font-semibold mt-1.5"
+                                style={{ color: "var(--sw-navy)" }}
+                              >
+                                {review.author}
+                                {review.date ? ` · ${review.date}` : ""}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </aside>
+              )}
+            </div>
+
+            {allImages.some(isStockImage) && (
+              <p
+                className="mx-auto max-w-[1600px] px-4 sm:px-6 pb-6 text-[11px] font-medium"
+                style={{ color: "var(--sw-steel)" }}
+              >
+                Representative images — not photographs of this specific property.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Lightbox */}
       {lightboxIndex !== null && (

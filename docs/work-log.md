@@ -464,3 +464,44 @@ On a 375px phone the collage starts 674px down — the title, location, rating, 
 button and action bar stack vertically above it and fill the first screen. It is one flick
 away rather than immediately visible. Booking.com solves this by putting the photograph
 *above* the title on phones. Worth asking the client whether they want the same.
+
+### The all-photos pop-up
+
+The client then pointed out the missing half of the feature: on Booking.com, clicking
+**"+119 photos"** opens a pop-up showing every photograph at once. Ours jumped straight to
+a single full-screen picture instead.
+
+There are now **three levels**, as on the reference site:
+
+1. **The collage** — the nine photographs visible on the page.
+2. **The all-photos pop-up** — opened by "+N photos" or by "Show all N photos". Every
+   photograph in a grid (four columns on a desktop, three on a tablet, two on a phone),
+   with the property name and count in the header, a Close button, and the review score
+   beside it. Where a listing carries written reviews, up to four are quoted in that panel,
+   as Booking.com does.
+3. **The single-photo viewer** — opened by clicking any photograph in either the collage or
+   the pop-up. Arrow keys and the on-screen arrows page through the set.
+
+Escape steps back one level at a time: from a photograph to the grid, from the grid to the
+page. It never drops a visitor straight out of a photograph they were looking at. The page
+behind is locked from scrolling while either overlay is open, and the lock is released
+afterwards.
+
+### Verified
+
+Driven in a browser, each step confirmed on screen rather than in code:
+
+- "Show all photos" → grid opens, page scroll locked. Click a photograph → viewer opens
+  over the grid. Escape → back to the grid, still open. Escape → closed, scroll released.
+- Arrow keys page correctly: photo 5 → 6 → 5 → 4 of 14.
+- The **"+N photos" overlay opens the grid only** — it does not also open the single-photo
+  viewer underneath. That was the real risk in this change and it is clean.
+- The grid shows every photograph, not just the nine on the page: a 14-photo listing gave
+  14 tiles.
+- Mobile (375px): two columns, no horizontal overflow, the review panel correctly hidden.
+- No console errors. Type-error count unchanged at 34.
+
+> **How the 14-photo case was tested.** No listing has more than nine photographs, so the
+> "+N" overlay never appears with the current data. Rather than add photographs to a real
+> listing — which is what caused the Session 4 incident — the API response was rewritten in
+> the browser for that one page view. Nothing was written to the database.
