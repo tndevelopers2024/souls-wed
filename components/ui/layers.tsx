@@ -15,6 +15,7 @@ export interface LayersIconHandle {
 interface LayersIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
   isAnimating?: boolean;
+  strokeWidth?: number | string;
 }
 
 const DEFAULT_TRANSITION: Transition = {
@@ -25,7 +26,7 @@ const DEFAULT_TRANSITION: Transition = {
 };
 
 const LayersIcon = forwardRef<LayersIconHandle, LayersIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, ...props }, ref) => {
+  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, strokeWidth = 2, ...props }, ref) => {
     const controls = useAnimation();
     useEffect(() => { if (isAnimating) { controls.start("animate"); } else if (isAnimating === false) { controls.start("normal"); } }, [isAnimating, controls]);
     const isControlledRef = useRef(false);
@@ -79,7 +80,7 @@ const LayersIcon = forwardRef<LayersIconHandle, LayersIconProps>(
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
+          strokeWidth={strokeWidth}
           viewBox="0 0 24 24"
           width={size}
           xmlns="http://www.w3.org/2000/svg"

@@ -525,3 +525,70 @@ way in, exactly as on the reference site:
 Verified on screen in both states: a six-photo listing shows "Show all 6 photos" on its last
 thumbnail, a fourteen-photo listing shows "+5 photos", the orange button is gone from both,
 and clicking the label opens the grid with every photograph and no stray viewer underneath.
+
+---
+
+## Session 6 — 23 July 2026
+
+The client reported that icons look wrong across the site — *"some places it's looking big
+and some places it's looking good."* That is one bug with a precise cause, plus a second
+one hiding behind it.
+
+### Why some icons were too big
+
+Eighteen of the animated icons had the **same attribute written twice**:
+
+```
+<motion.svg
+  className={cn(className)}                                  ← the size you asked for
+  className={cn("inline-flex items-center justify-center")}  ← overwrites it
+```
+
+The second one wins, so **the size passed by the page was silently thrown away** and the
+icon fell back to its own default of 28 pixels. That is exactly the reported symptom: a
+`w-4 h-4` icon meant to be 16px rendered at 28px next to its neighbours, while icons whose
+files did not have the duplicate looked right.
+
+The categories page showed it plainly — about thirty ordinary icons at 32px, and five
+animated ones sitting at 28px in the same row.
+
+Affected: bell, file-text, heart-handshake, heart, lock, map-pin, message-circle,
+message-square, moon, phone, plus, refresh-cw, search, send, settings, smile, trending-up,
+wallet.
+
+### The second bug: the shortlist heart could never fill
+
+Four pages asked the heart for a solid fill when a listing is shortlisted, and two more
+asked for a thinner line:
+
+```
+<HeartIcon className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
+```
+
+The icons **did not accept those settings at all**, so they never reached the drawing. A
+shortlisted venue showed the same hollow heart as an unshortlisted one — only the colour
+changed. All the animated icons now accept the same settings as the ordinary ones, so they
+are interchangeable and this cannot recur.
+
+### Why this went unnoticed
+
+**The type checker had been reporting all of it since the icon migration.** Eighteen errors
+reading *"JSX elements cannot have multiple attributes with the same name"* and six more for
+the rejected settings — twenty-four of the thirty-four errors carried in this log as "known
+issues" since Session 1 were this bug, describing it accurately.
+
+### Verified
+
+Measured in a browser rather than read in code:
+
+- **Homepage: 89 animated icons, every one now the size the page asks for.** Venues page:
+  38 of 38. Categories page: all in the grid at a matching 32px.
+- The shortlist heart toggles correctly: red and solid when saved, grey and hollow when
+  not — the colour and the fill now move together.
+- No console errors on any page checked.
+
+**Type errors: 34 → 5.** The five left are unrelated to icons, all in the vendor dashboard:
+four where a value's type is unknown before `.toLowerCase()` is called on it, and one which
+was a price field carrying `type="text"` and `type="number"` at once — that one is fixed
+here too, since it is the same duplicate-attribute mistake. A production build was blocked
+by these errors and is now four fixes closer.

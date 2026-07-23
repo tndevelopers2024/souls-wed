@@ -15,6 +15,7 @@ export interface TrendingUpIconHandle {
 interface TrendingUpIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
   isAnimating?: boolean;
+  strokeWidth?: number | string;
 }
 
 const SVG_VARIANTS: Variants = {
@@ -72,7 +73,7 @@ const ARROW_VARIANTS: Variants = {
 };
 
 const TrendingUpIcon = forwardRef<TrendingUpIconHandle, TrendingUpIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, ...props }, ref) => {
+  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, strokeWidth = 2, ...props }, ref) => {
     const controls = useAnimation();
     useEffect(() => { if (isAnimating) { controls.start("animate"); } else if (isAnimating === false) { controls.start("normal"); } }, [isAnimating, controls]);
     const isControlledRef = useRef(false);
@@ -117,7 +118,6 @@ const TrendingUpIcon = forwardRef<TrendingUpIconHandle, TrendingUpIconProps>(
       >
         <motion.svg
           className={cn(className)}
-          className={cn("inline-flex items-center justify-center")}
           animate={controls}
           fill="none"
           height={size}
@@ -125,7 +125,7 @@ const TrendingUpIcon = forwardRef<TrendingUpIconHandle, TrendingUpIconProps>(
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
+          strokeWidth={strokeWidth}
           variants={SVG_VARIANTS}
           viewBox="0 0 24 24"
           width={size}

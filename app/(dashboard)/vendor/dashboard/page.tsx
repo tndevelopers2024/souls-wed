@@ -1596,7 +1596,7 @@ export default function VendorDashboard() {
                           <div className="flex flex-col gap-1.5">
                             <label className="font-bold text-stone-500 uppercase tracking-wider">Starting Price</label>
                             <input
-                              type="text" value={venueForm.price}
+                              value={venueForm.price}
                               onChange={e => setVenueForm(p => ({ ...p, price: e.target.value }))}
                               placeholder="e.g. 50000"
                               className={`border rounded-xl px-4 py-2.5 outline-none font-semibold ${isDarkMode ? "bg-stone-950 border-stone-800 text-stone-200" : "bg-white border-stone-200 text-stone-800"

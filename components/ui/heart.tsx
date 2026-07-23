@@ -14,10 +14,25 @@ export interface HeartIconHandle {
 interface HeartIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
   isAnimating?: boolean;
+  /** Set to "currentColor" for the filled, shortlisted heart. */
+  fill?: string;
+  strokeWidth?: number | string;
 }
 
 const HeartIcon = forwardRef<HeartIconHandle, HeartIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, ...props }, ref) => {
+  (
+    {
+      onMouseEnter,
+      onMouseLeave,
+      className,
+      size = 28,
+      isAnimating,
+      fill = "none",
+      strokeWidth = 2,
+      ...props
+    },
+    ref
+  ) => {
     const controls = useAnimation();
     useEffect(() => { if (isAnimating) { controls.start("animate"); } else if (isAnimating === false) { controls.start("normal"); } }, [isAnimating, controls]);
     const isControlledRef = useRef(false);
@@ -62,14 +77,13 @@ const HeartIcon = forwardRef<HeartIconHandle, HeartIconProps>(
       >
         <motion.svg
           className={cn(className)}
-          className={cn("inline-flex items-center justify-center")}
           animate={controls}
-          fill="none"
+          fill={fill}
           height={size}
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
+          strokeWidth={strokeWidth}
           transition={{
             duration: 0.45,
             repeat: 2,

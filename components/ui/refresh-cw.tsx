@@ -55,7 +55,6 @@ const RefreshCWIcon = forwardRef<RefreshCCWIconWIcon, RefreshCCWIcoWIcon>(
       >
         <motion.svg
           className={cn(className)}
-          className={cn("inline-flex items-center justify-center")}
           animate={controls}
           fill="none"
           height={size}

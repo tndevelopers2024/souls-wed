@@ -15,6 +15,7 @@ export interface SparklesIconHandle {
 interface SparklesIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
   isAnimating?: boolean;
+  strokeWidth?: number | string;
 }
 
 const SPARKLE_VARIANTS: Variants = {
@@ -51,7 +52,7 @@ const STAR_VARIANTS: Variants = {
 };
 
 const SparklesIcon = forwardRef<SparklesIconHandle, SparklesIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, ...props }, ref) => {
+  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, strokeWidth = 2, ...props }, ref) => {
     const starControls = useAnimation();
     const sparkleControls = useAnimation();
     const isControlledRef = useRef(false);
@@ -109,7 +110,7 @@ const SparklesIcon = forwardRef<SparklesIconHandle, SparklesIconProps>(
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
+          strokeWidth={strokeWidth}
           viewBox="0 0 24 24"
           width={size}
           xmlns="http://www.w3.org/2000/svg"

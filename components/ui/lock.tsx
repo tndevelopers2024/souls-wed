@@ -14,10 +14,11 @@ export interface LockIconHandle {
 interface LockIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
   isAnimating?: boolean;
+  strokeWidth?: number | string;
 }
 
 const LockIcon = forwardRef<LockIconHandle, LockIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, ...props }, ref) => {
+  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, strokeWidth = 2, ...props }, ref) => {
     const controls = useAnimation();
     useEffect(() => { if (isAnimating) { controls.start("animate"); } else if (isAnimating === false) { controls.start("normal"); } }, [isAnimating, controls]);
     const isControlledRef = useRef(false);
@@ -62,7 +63,6 @@ const LockIcon = forwardRef<LockIconHandle, LockIconProps>(
       >
         <motion.svg
           className={cn(className)}
-          className={cn("inline-flex items-center justify-center")}
           animate={controls}
           fill="none"
           height={size}
@@ -70,7 +70,7 @@ const LockIcon = forwardRef<LockIconHandle, LockIconProps>(
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
+          strokeWidth={strokeWidth}
           transition={{
             duration: 1,
             ease: [0.4, 0, 0.2, 1],

@@ -4,14 +4,25 @@ import { SearchIcon } from "@/components/ui/search";
 import { SmileIcon } from "@/components/ui/smile";
 import { HeartIcon } from "@/components/ui/heart";
 import { UserCheckIcon } from "@/components/ui/user-check";
-import { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
+
+/**
+ * Categories mix plain Lucide icons with the animated ones in components/ui.
+ * The two have different prop types, so the field is typed by what every
+ * caller actually uses — a className and an optional size.
+ */
+export type CategoryIcon = ComponentType<{
+  className?: string;
+  size?: number;
+  strokeWidth?: number | string;
+}>;
 
 export interface VendorCategory {
   name: string;
   tagline: string;
   slug: string;
   image?: string; // Optional since we are moving to icon-based
-  icon: LucideIcon;
+  icon: CategoryIcon;
   features?: string; // e.g. "Booking feature with calendar and payment"
 }
 

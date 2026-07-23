@@ -13,6 +13,7 @@ export interface PhoneIconHandle {
 interface PhoneIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
   isAnimating?: boolean;
+  strokeWidth?: number | string;
 }
 
 const PHONE_VARIANTS: Variants = {
@@ -31,7 +32,7 @@ const PHONE_VARIANTS: Variants = {
 };
 
 const PhoneIcon = forwardRef<PhoneIconHandle, PhoneIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, ...props }, ref) => {
+  ({ onMouseEnter, onMouseLeave, className, size = 28, isAnimating, strokeWidth = 2, ...props }, ref) => {
     const controls = useAnimation();
     useEffect(() => { if (isAnimating) { controls.start("animate"); } else if (isAnimating === false) { controls.start("normal"); } }, [isAnimating, controls]);
     const isControlledRef = useRef(false);
@@ -75,7 +76,6 @@ const PhoneIcon = forwardRef<PhoneIconHandle, PhoneIconProps>(
       >
         <motion.svg
           className={cn(className)}
-          className={cn("inline-flex items-center justify-center")}
           animate={controls}
           fill="none"
           height={size}
@@ -83,7 +83,7 @@ const PhoneIcon = forwardRef<PhoneIconHandle, PhoneIconProps>(
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth="2"
+          strokeWidth={strokeWidth}
           variants={PHONE_VARIANTS}
           viewBox="0 0 24 24"
           width={size}
