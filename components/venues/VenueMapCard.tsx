@@ -22,10 +22,10 @@ export default function VenueMapCard({ name, city, location, mapLink }: VenueMap
 
   return (
     <div
-      className="rounded-2xl border overflow-hidden"
+      className="rounded-2xl border overflow-hidden h-full flex flex-col"
       style={{ borderColor: "var(--sw-light-gray)", background: "var(--sw-surface)" }}
     >
-      <div className="relative h-[180px] w-full bg-slate-100">
+      <div className="relative flex-1 min-h-[180px] w-full bg-slate-100">
         <iframe
           src={embedSrc}
           title={`Map showing ${name}`}

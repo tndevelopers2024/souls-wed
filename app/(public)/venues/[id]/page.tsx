@@ -37,7 +37,7 @@ export default function VenueDetailPage() {
 
   // Scroll-spy: track which section is in view
   useEffect(() => {
-    const sectionIds = ["areas", "about", "gallery", "pricing", "reviews"];
+    const sectionIds = ["areas", "about", "videos", "pricing", "reviews"];
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -136,18 +136,33 @@ export default function VenueDetailPage() {
 
       {/* ── Main content ────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 pt-28 pb-10">
+        {/* Title block, then the photo collage — the client asked for the
+            gallery to greet a visitor rather than sit at the foot of the page. */}
+        <VenueHero venue={venue} photoCount={(venue.gallery || []).filter(Boolean).length} />
+
+        <div
+          id="photos"
+          className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4 lg:gap-6 mt-6 mb-14 scroll-mt-28"
+        >
+          <VenueGallery images={venue.gallery || []} venueName={venue.name} />
+          <VenueMapCard
+            name={venue.name}
+            city={venue.city}
+            location={venue.location}
+            mapLink={venue.mapLink}
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10">
           {/* Left — main */}
           <div className="space-y-16">
-            <VenueHero venue={venue} />
-
             {/* Tab Navigation */}
             <div className="sticky top-20 z-40 bg-white py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-8">
               <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1 overflow-x-auto no-scrollbar">
                 {[
                   { id: "areas", label: "Areas Available" },
                   { id: "about", label: "About" },
-                  { id: "gallery", label: "Gallery" },
+                  { id: "videos", label: "Videos" },
                   { id: "pricing", label: "Pricing" },
                   { id: "reviews", label: "Reviews" },
                 ].map((tab) => (
@@ -229,15 +244,20 @@ export default function VenueDetailPage() {
               <p className="text-slate-600 leading-loose text-base font-medium max-w-4xl">{venue.description}</p>
             </section>
 
-            {/* Gallery */}
-            <section id="gallery" className="scroll-mt-32">
+            {/* Videos — the photographs now live in the collage at the top */}
+            <section id="videos" className="scroll-mt-32">
               <h2
                 className="text-2xl font-bold mb-5"
                 style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
               >
-                Gallery
+                Videos
               </h2>
-              <VenueGallery images={venue.gallery || []} videos={venue.videos || []} venueName={venue.name} />
+              <VenueGallery
+                variant="videos"
+                images={venue.gallery || []}
+                videos={venue.videos || []}
+                venueName={venue.name}
+              />
             </section>
 
             {/* Pricing Table */}
@@ -343,15 +363,9 @@ export default function VenueDetailPage() {
             )}
           </div>
 
-          {/* Right — sidebar */}
+          {/* Right — sidebar (the map card sits beside the collage above) */}
           <div className="flex flex-col gap-6">
             <VenueSidebar venue={venue} type={typeParam} />
-            <VenueMapCard
-              name={venue.name}
-              city={venue.city}
-              location={venue.location}
-              mapLink={venue.mapLink}
-            />
           </div>
         </div>
       </div>

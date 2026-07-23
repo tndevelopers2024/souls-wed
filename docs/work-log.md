@@ -394,3 +394,73 @@ is the first concrete explanation we have for that complaint.
 **Vendor uploads are broken in production.** The site runs on Vercel, whose filesystem
 cannot be written to, but uploads are saved to local disk. Uploading needs to move to
 proper file storage. This affects real vendors today.
+
+---
+
+## Session 5 — 23 July 2026
+
+The client asked for the photo collage to greet a visitor rather than sit at the foot of
+the page, pointing at a Booking.com property page as the reference.
+
+### What changed
+
+The collage was built in Session 4 but lived in a "Gallery" section below Areas Available,
+About and the tab bar — roughly 2,000 pixels down. **It is now the first thing under the
+listing's name**, on both venue pages and vendor pages, with the map card beside it, exactly
+as in the client's reference.
+
+To make room, the single large hero photograph above the title was removed. It showed the
+same picture that now opens the collage, and keeping it would have pushed the collage back
+below the fold — which is the whole point of the request.
+
+Three consequences worth naming:
+
+- The old Gallery section would have repeated the same photographs, so it is now a
+  **Videos** section, and the tab reads "Videos". No video was lost; every photograph is
+  still reachable from the collage and its full-screen viewer.
+- The map card moved out of the right-hand sidebar and up beside the collage, and now
+  fills the height of that column instead of being a 180-pixel strip.
+- The thumbnail strip used to be a fixed five columns, so a listing with two spare photos
+  filled two-fifths of the row and left a gap. The columns now follow the photo count, so
+  the strip fills the width whatever a vendor has uploaded.
+
+### Two defects found while verifying
+
+**The star rating was invisible on every venue page.** `bg-sw-navy` and `fill-sw-secondary`
+are not real Tailwind classes — they resolved to transparent, leaving white text on a white
+background. The 4.9 rating and its star simply could not be seen. Now pinned to the brand
+colours and clearly legible. This was easy to miss before; the collage change moves that
+badge above the fold, where it is the second thing on the page.
+
+**Vendor pages fell back to an image that does not exist.** A vendor with no photographs
+fell back to `/soulswed/vendors/1182.avif`, and there is no `vendors` folder in the site's
+public files at all. That produced an amber "Unavailable" tile — previously a small hero
+image, now the full-width opening photograph. It now falls back to a file that exists.
+
+> **Still outstanding from this:** `components/vendors/PublicVendorDirectory.tsx` draws its
+> placeholder images from the same missing folder (four paths). Vendor listing cards without
+> photographs will be showing "Unavailable" tiles. Not fixed here — it needs a decision about
+> what those placeholders should be.
+
+### Verified
+
+Checked in a browser at desktop (1440×900), wide desktop and mobile (375px):
+
+- On a 1440×900 desktop the collage begins 427px down and **474px of it is visible without
+  scrolling** — the main block is fully in view the moment the page opens.
+- Collage geometry matches the reference: 347×400 hero, 205×400 tall middle, two 276×196
+  stacked right, thumbnails 418×104.
+- Every image confirmed decoded and painted, not merely present in the markup — pixel data
+  was read back from each of the six tiles.
+- Mobile: no horizontal overflow (page width 375px, viewport 375px). The collage stacks
+  above the map, both full width.
+- The rating badge now renders `rgb(26, 26, 26)` — the brand navy — instead of transparent.
+- A vendor with a single photograph renders correctly as one full-width tile.
+- No browser console errors. Type-error count unchanged at 34, all pre-existing.
+
+### Note on mobile
+
+On a 375px phone the collage starts 674px down — the title, location, rating, contact
+button and action bar stack vertically above it and fill the first screen. It is one flick
+away rather than immediately visible. Booking.com solves this by putting the photograph
+*above* the title on phones. Worth asking the client whether they want the same.

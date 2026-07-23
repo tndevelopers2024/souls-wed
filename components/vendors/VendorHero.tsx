@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { Star, BadgeCheck, Image as ImageIcon, PenSquare, Share2 } from "lucide-react";
 import { MapPinIcon } from "@/components/ui/map-pin";
@@ -14,9 +13,11 @@ import { useWishlistStore } from "@/lib/store/useWishlistStore";
 
 interface VendorHeroProps {
   vendor: PublicVendor;
+  /** Number of photographs in the collage above, for the "N Photos" jump. */
+  photoCount?: number;
 }
 
-export default function VendorHero({ vendor }: VendorHeroProps) {
+export default function VendorHero({ vendor, photoCount }: VendorHeroProps) {
   const { items, addItem, removeItem } = useWishlistStore();
   const isSaved = items.some((item) => item.id === vendor._id);
 
@@ -46,7 +47,6 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const image = vendor.images && vendor.images.length > 0 ? vendor.images[0] : "/soulswed/vendors/1128.webp";
   const name = vendor.businessName || vendor.name;
   const rating = vendor.rating || 0;
   const reviewCount = vendor.reviewCount || 0;
@@ -64,28 +64,17 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
         </Link>
       </div>
 
-      {/* Hero Image */}
-      <div className="relative w-full h-[400px] rounded-t-3xl overflow-hidden">
-        <Image
-          src={vendor.heroImage || image}
-          alt={name}
-          fill
-          priority
-          className="object-cover"
-          sizes="(max-width: 1024px) 100vw, 800px"
-        />
-        {vendor.verified && (
-          <div className="absolute top-4 left-4 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-white text-slate-800 border border-slate-200">
-            <BadgeCheck className="w-4 h-4 text-green-600"/>
-            Verified Partner
-          </div>
-        )}
-      </div>
-
-      {/* Info Card (Slight overlap) */}
-      <div className="bg-white border border-slate-200 rounded-b-3xl rounded-t-xl -mt-6 relative z-10 p-6 flex flex-col gap-5">
+      {/* Info Card */}
+      <div className="bg-white border border-slate-200 rounded-3xl relative z-10 p-6 flex flex-col gap-5">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="space-y-2">
+            {vendor.verified && (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-md mb-1">
+                <BadgeCheck className="w-3.5 h-3.5 text-green-600" />
+                Verified Partner
+              </span>
+            )}
+
             <h1
               className="text-2xl sm:text-3xl font-bold text-slate-900 leading-tight"
               style={{ fontFamily: "var(--font-heading)" }}
@@ -144,11 +133,11 @@ export default function VendorHero({ vendor }: VendorHeroProps) {
       {/* Action Bar */}
       <div className="flex flex-wrap items-center justify-between sm:justify-start gap-4 sm:gap-8 border-b border-slate-200 py-4 px-2 mt-2">
         <button 
-          onClick={() => document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => document.getElementById('photos')?.scrollIntoView({ behavior: 'smooth' })}
           className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
         >
           <ImageIcon className="w-4 h-4" />
-          {vendor.images?.length || 1} Photos
+          {photoCount || vendor.images?.length || 1} Photos
         </button>
         <button 
           onClick={toggleWishlist}

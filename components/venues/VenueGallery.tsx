@@ -12,6 +12,12 @@ interface VenueGalleryProps {
   images: string[];
   videos?: string[];
   venueName: string;
+  /**
+   * "hero" — the Booking.com collage, shown at the top of the page so a
+   * visitor sees the photographs the moment it opens.
+   * "videos" — the video grid on its own, for the section further down.
+   */
+  variant?: "hero" | "videos";
 }
 
 /**
@@ -23,9 +29,13 @@ function isStockImage(url: string) {
   return url.includes("images.unsplash.com");
 }
 
-export default function VenueGallery({ images, videos = [], venueName }: VenueGalleryProps) {
+export default function VenueGallery({
+  images,
+  videos = [],
+  venueName,
+  variant = "hero",
+}: VenueGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"portfolio" | "videos">("portfolio");
 
   const cleanImages = images.filter((img) => img && img.trim());
   const cleanVideos = videos.filter((vid) => vid && vid.trim());
@@ -54,145 +64,121 @@ export default function VenueGallery({ images, videos = [], venueName }: VenueGa
   const next = () =>
     setLightboxIndex((i) => (i === null ? 0 : (i + 1) % allImages.length));
 
+  if (variant === "videos") {
+    return cleanVideos.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {cleanVideos.map((vid, idx) => (
+          <div key={idx} className="aspect-video w-full rounded-xl overflow-hidden bg-slate-100">
+            {isDirectVideoUrl(vid) ? (
+              <video
+                src={vid}
+                controls
+                preload="metadata"
+                playsInline
+                className="w-full h-full object-cover bg-black"
+              />
+            ) : (
+              <iframe
+                src={toVideoEmbedUrl(vid)}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+                title={`${venueName} – video ${idx + 1}`}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
+        <Images className="w-12 h-12 text-slate-300 mb-4" />
+        <p className="text-slate-500 font-medium">No videos uploaded yet.</p>
+      </div>
+    );
+  }
+
   return (
     <>
-      {/* Tabs */}
-      <div className="flex items-center gap-8 border-b border-slate-200 mb-6">
-        <button 
-          onClick={() => setActiveTab("portfolio")}
-          className={`text-sm pb-3 uppercase tracking-wider transition-colors ${
-            activeTab === "portfolio" 
-              ? "font-bold text-primary-600 border-b-2 border-primary-600" 
-              : "font-semibold text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          PORTFOLIO ({allImages.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("videos")}
-          className={`text-sm pb-3 uppercase tracking-wider transition-colors ${
-            activeTab === "videos" 
-              ? "font-bold text-primary-600 border-b-2 border-primary-600" 
-              : "font-semibold text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          VIDEOS ({cleanVideos.length})
-        </button>
-      </div>
-
       {/* Booking.com collage: a 4-image main block (wide hero, tall middle,
           two stacked) above a strip of thumbnails, with the overflow count on
           the last thumbnail. */}
-      {activeTab === "portfolio" && (
-        <div className="flex flex-col gap-2">
-          {/* Main block */}
-          <div className="grid grid-cols-12 grid-rows-2 gap-2 h-[260px] sm:h-[340px] md:h-[400px]">
-            {mainTiles.map(({ src, index, span }) => (
-              <div
-                key={index}
-                className={`relative cursor-pointer overflow-hidden group first:rounded-l-xl last:rounded-r-xl ${span}`}
-                onClick={() => setLightboxIndex(index)}
-              >
-                <Image
-                  src={src}
-                  alt={`${venueName} – photo ${index + 1}`}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  priority={index === 0}
-                />
-              </div>
-            ))}
-          </div>
-
-          {allImages.some(isStockImage) && (
-            <p
-              className="text-[11px] font-medium mt-0.5"
-              style={{ color: "var(--sw-steel)" }}
+      <div className="flex flex-col gap-2">
+        {/* Main block */}
+        <div className="grid grid-cols-12 grid-rows-2 gap-2 h-[260px] sm:h-[340px] md:h-[400px]">
+          {mainTiles.map(({ src, index, span }) => (
+            <div
+              key={index}
+              className={`relative cursor-pointer overflow-hidden group first:rounded-l-xl last:rounded-r-xl ${span}`}
+              onClick={() => setLightboxIndex(index)}
             >
+              <Image
+                src={src}
+                alt={`${venueName} – photo ${index + 1}`}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority={index === 0}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Thumbnail strip — the columns follow the photo count so a listing
+            with five spare photos and one with two both fill the row. */}
+        {thumbs.length > 0 && (
+          <div
+            className="grid gap-2 h-[72px] sm:h-[90px] md:h-[104px]"
+            style={{ gridTemplateColumns: `repeat(${thumbs.length}, minmax(0, 1fr))` }}
+          >
+            {thumbs.map(({ src, index }, i) => {
+              const isLast = i === thumbs.length - 1;
+              return (
+                <div
+                  key={index}
+                  className="relative cursor-pointer overflow-hidden rounded-lg group"
+                  onClick={() => setLightboxIndex(index)}
+                >
+                  <Image
+                    src={src}
+                    alt={`${venueName} – photo ${index + 1}`}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="20vw"
+                  />
+                  {isLast && hiddenCount > 0 && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 hover:bg-black/50 transition-colors">
+                      <span className="text-white font-bold text-xs sm:text-sm underline">
+                        +{hiddenCount} photos
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center justify-between gap-2 mt-1">
+          {allImages.some(isStockImage) ? (
+            <p className="text-[11px] font-medium" style={{ color: "var(--sw-steel)" }}>
               Representative images — not photographs of this specific property.
             </p>
+          ) : (
+            <span />
           )}
 
-          {/* Thumbnail strip */}
-          {thumbs.length > 0 && (
-            <div className="grid grid-cols-5 gap-2">
-              {thumbs.map(({ src, index }, i) => {
-                const isLast = i === thumbs.length - 1;
-                return (
-                  <div
-                    key={index}
-                    className="relative cursor-pointer overflow-hidden rounded-lg aspect-[16/10] group"
-                    onClick={() => setLightboxIndex(index)}
-                  >
-                    <Image
-                      src={src}
-                      alt={`${venueName} – photo ${index + 1}`}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      sizes="20vw"
-                    />
-                    {isLast && hiddenCount > 0 && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 hover:bg-black/50 transition-colors">
-                        <span className="text-white font-bold text-xs sm:text-sm underline">
-                          +{hiddenCount} photos
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+          {allImages.length > 1 && (
+            <button
+              onClick={() => setLightboxIndex(0)}
+              className="px-5 py-1.5 rounded-full border text-xs font-bold transition-opacity hover:opacity-80 cursor-pointer whitespace-nowrap"
+              style={{ borderColor: "var(--sw-primary)", color: "var(--sw-primary)" }}
+            >
+              Show all {allImages.length} photos
+            </button>
           )}
         </div>
-      )}
-
-      {activeTab === "videos" && (
-        cleanVideos.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {cleanVideos.map((vid, idx) => (
-              <div key={idx} className="aspect-video w-full rounded-xl overflow-hidden bg-slate-100">
-                {isDirectVideoUrl(vid) ? (
-                  <video
-                    src={vid}
-                    controls
-                    preload="metadata"
-                    playsInline
-                    className="w-full h-full object-cover bg-black"
-                  />
-                ) : (
-                  <iframe
-                    src={toVideoEmbedUrl(vid)}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                    title={`${venueName} – video ${idx + 1}`}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
-            <Images className="w-12 h-12 text-slate-300 mb-4" />
-            <p className="text-slate-500 font-medium">No videos uploaded yet.</p>
-          </div>
-        )
-      )}
-
-      {/* "Show all photos" button — Booking.com puts this under the collage */}
-      {activeTab === "portfolio" && allImages.length > 1 && (
-        <div className="flex justify-center mt-5">
-          <button
-            onClick={() => setLightboxIndex(0)}
-            className="px-6 py-2 rounded-full border text-sm font-bold transition-opacity hover:opacity-80 cursor-pointer"
-            style={{ borderColor: "var(--sw-primary)", color: "var(--sw-primary)" }}
-          >
-            Show all {allImages.length} photos
-          </button>
-        </div>
-      )}
+      </div>
 
       {/* Lightbox */}
       {lightboxIndex !== null && (
