@@ -52,10 +52,10 @@ export interface PublicVendor {
 const sortOptions = ["Recommended", "Price: Low to High", "Price: High to Low", "Highest Rated"];
 
 const fallbackImages = [
-  "/soulswed/vendors/1182.avif",
-  "/soulswed/vendors/1128.webp",
-  "/soulswed/vendors/1129.png",
-  "/soulswed/vendors/1118.jpg",
+  "/soulswed/venue.jpg",
+  "/soulswed/decorators.jpg",
+  "/soulswed/venue.jpg",
+  "/soulswed/decorators.jpg",
 ];
 
 // ── Category-specific hero config ──

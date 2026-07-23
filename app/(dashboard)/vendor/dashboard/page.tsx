@@ -67,6 +67,9 @@ type TabType = "overview" | "leads" | "settings" | "account-settings" | "service
 interface DashboardBooking {
   _id: string;
   status?: string;
+  userName?: string;
+  providerName?: string;
+  venueName?: string;
   [key: string]: unknown;
 }
 
@@ -319,6 +322,10 @@ export default function VendorDashboard() {
   const [savingService, setSavingService] = useState(false);
   const [serviceMessage, setServiceMessage] = useState<string | null>(null);
 
+  // Prevent concurrent auto-saves from stacking up
+  const venueSaveInProgressRef = useRef(false);
+  const serviceSaveInProgressRef = useRef(false);
+
   const fetchVenues = async (vendorId: string) => {
     try {
       const res = await fetch(`/api/venues?vendorId=${vendorId}`);
@@ -405,6 +412,10 @@ export default function VendorDashboard() {
       if (!isAutoSave) setVenueMessage("Venue name and city are required.");
       return;
     }
+    // Prevent concurrent auto-saves from stacking
+    if (isAutoSave && venueSaveInProgressRef.current) return;
+    if (isAutoSave) venueSaveInProgressRef.current = true;
+
     if (!isAutoSave) setSavingVenue(true);
     if (!isAutoSave) setVenueMessage(null);
     try {
@@ -441,7 +452,8 @@ export default function VendorDashboard() {
         if (!isAutoSave) {
           setVenueMessage("Venue updated successfully!");
         }
-        if (vendor?.id) await fetchVenues(vendor.id);
+        // Only fetch venues on user-initiated saves, not on auto-saves (expensive operation)
+        if (!isAutoSave && vendor?.id) await fetchVenues(vendor.id);
         if (!isAutoSave) {
           setTimeout(() => setVenueView("grid"), 1200);
           offerPlansAfterSave();
@@ -453,6 +465,7 @@ export default function VendorDashboard() {
       }
     } finally {
       if (!isAutoSave) setSavingVenue(false);
+      if (isAutoSave) venueSaveInProgressRef.current = false;
     }
   };
 
@@ -501,6 +514,10 @@ export default function VendorDashboard() {
       if (!isAutoSave) setServiceMessage("Name and city are required.");
       return;
     }
+    // Prevent concurrent auto-saves from stacking
+    if (isAutoSave && serviceSaveInProgressRef.current) return;
+    if (isAutoSave) serviceSaveInProgressRef.current = true;
+
     if (!isAutoSave) setSavingService(true);
     if (!isAutoSave) setServiceMessage(null);
     try {
@@ -538,7 +555,8 @@ export default function VendorDashboard() {
         if (!isAutoSave) {
           setServiceMessage("Service updated successfully!");
         }
-        if (vendor?.id) await fetchServices(vendor.id);
+        // Only fetch services on user-initiated saves, not on auto-saves (expensive operation)
+        if (!isAutoSave && vendor?.id) await fetchServices(vendor.id);
         if (!isAutoSave) {
           setTimeout(() => setServiceView("grid"), 1200);
           offerPlansAfterSave();
@@ -550,6 +568,7 @@ export default function VendorDashboard() {
       }
     } finally {
       if (!isAutoSave) setSavingService(false);
+      if (isAutoSave) serviceSaveInProgressRef.current = false;
     }
   };
 

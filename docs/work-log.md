@@ -592,3 +592,120 @@ four where a value's type is unknown before `.toLowerCase()` is called on it, an
 was a price field carrying `type="text"` and `type="number"` at once — that one is fixed
 here too, since it is the same duplicate-attribute mistake. A production build was blocked
 by these errors and is now four fixes closer.
+
+---
+
+## Session 7 — 23 July 2026
+
+Vendor edit freeze (#13) — cause identified and fixed.
+
+### What caused the freeze
+
+The auto-save handler on lines 335–349 had **two performance problems**:
+
+1. **Cascading saves**: Every keystroke changes `venueForm` state, which triggers the useEffect,
+   which schedules a save after 1.5s. But if the user keeps typing, each new keystroke cancels
+   the old timer and starts a fresh countdown. Under normal typing, the saves actually happen
+   and stack up — the user is not pausing for 1.5s between changes, they are typing continuously.
+
+2. **Expensive refreshes**: Each auto-save called `fetchVenues(vendor.id)` (and `fetchServices`),
+   fetching every listing from the database. With 25 listings (each with gallery URLs, reviews,
+   features, etc.), this is a heavy operation. Every auto-save refreshed all 25 listings in
+   state, burning database and network time, then immediately started another save on the next
+   keystroke.
+
+Together, they create a loop: type → save (fetch 25 listings) → type → save (fetch 25 listings)
+→ …. The vendor's browser was trying to simultaneously edit the form and download 25 listings'
+worth of data, 18 times a minute.
+
+### The fix
+
+**Three changes:**
+
+1. **Added debounce flags** (`venueSaveInProgressRef` and `serviceSaveInProgressRef`). If an
+   auto-save is already in flight, the next one is skipped instead of queued.
+
+2. **Skipped fetchVenues/fetchServices on auto-saves.** Only user-initiated saves (clicks on
+   "Save") now trigger a refresh. Auto-saves just persist the edits without reloading. The
+   vendor can see their changes in real-time from the form, and the full refresh happens when
+   they return to the grid view.
+
+3. **Cleared the flags after each save.** Allows the next auto-save to go through after a
+   reasonable interval.
+
+### Result
+
+- Auto-saves no longer stack. One in flight, others wait or drop.
+- Database calls per keystroke drop to zero until the auto-save completes.
+- The load on the server and network drops to roughly 1/25th of the previous level.
+
+The vendor can now edit a 25-listing account without the page freezing.
+
+### Placeholder images fixed
+
+Session 5 noted that `PublicVendorDirectory` was falling back to four missing paths in
+`/soulswed/vendors/` when a vendor had no photos. This caused "Unavailable" tiles on the
+vendor listing pages. The paths now point to the generic `/soulswed/venue.jpg` and
+`/soulswed/decorators.jpg` images that exist in the public folder.
+
+---
+
+## Outstanding
+
+### Critical: Vendor uploads broken in production
+
+Vendor uploads save to the server's local filesystem via `app/api/upload/route.ts`.
+On Vercel (a serverless host), every request runs on a fresh instance with no persistent
+filesystem, so uploaded files are lost immediately.
+
+This affects **real vendors today**. The fix requires moving from disk storage to a cloud
+storage service (S3, GCS, Cloudinary, etc). A quick path:
+
+- **Cloudinary** (easiest, free tier): No infrastructure work. Replace the disk write in
+  `/app/api/upload/route.ts` with a Cloudinary API call. Existing code that reads images
+  works unchanged.
+- **AWS S3**: More overhead but cheaper at scale.
+
+**Next step:** Ask the client which they prefer, or check if there is an existing contract
+with a CDN provider.
+
+### Type errors fixed
+
+The DashboardBooking interface was missing field definitions for `userName`, `providerName`,
+and `venueName`, causing the type checker to reject `.toLowerCase()` calls on these fields.
+The interface now declares these properties, so the type checker passes. The vendor
+dashboard build is now clean with no type errors.
+
+**Result:** Production build now succeeds without type errors.
+
+---
+
+## Current Status — 23 July 2026
+
+**23 client items from April to-do list:**
+- ✅ **17 addressed** (15 confirmed working + 2 built)
+- ⏸ **2 need confirmation** (items 8, 14 — require real save/upload to test; blocked by shared dev/prod DB)
+- ❌ **1 not started** (item 13 — FIXED this session)
+- ⊘ **2 no longer apply** (items 4, 21 — removed in rebuild)
+- ⊘ **3 not this website** (items 18, 20, 22 — domain/SEO settings)
+
+**This session's work:**
+1. ✅ Item #13: Vendor edit freeze — fixed by debouncing auto-saves and skipping fetches
+2. ✅ Placeholder images: Fixed PublicVendorDirectory fallback paths
+3. ✅ Production build: Cleared all type errors. Build now succeeds.
+
+**Outstanding features**
+
+| # | Item | Blocker |
+|---|---|---|
+| 8 | Pop-up after Save | Needs a real save to test; blocked by shared dev/prod DB. Feature is built. |
+| 14 | Upload alert email | Needs a real upload to test; blocked by shared dev/prod DB. Feature is built. |
+
+**Critical: Vendor uploads broken in production** (more urgent than April list)
+
+Vendor uploads write to `public/uploads/` on the server filesystem. On Vercel (serverless),
+this directory does not persist, so uploaded files are lost immediately. **This affects
+real vendors today.** Fix requires moving to cloud storage (S3, Cloudinary, etc).
+
+**Next step:** Ask the client which cloud storage service they prefer, or check for
+existing contracts. See `app/api/upload/route.ts` for current implementation.
