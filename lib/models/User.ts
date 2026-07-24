@@ -11,6 +11,7 @@ const UserSchema = new Schema({
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   lastLoginAt:  { type: Date },
+  lastLoginDevice: { type: String },
   createdAt:    { type: Date, default: Date.now },
 });
 

@@ -29,10 +29,10 @@ export async function GET() {
     await connectDB();
 
     const [users, vendors] = await Promise.all([
-      User.find({ lastLoginAt: { $ne: null } }, "name email role lastLoginAt")
+      User.find({ lastLoginAt: { $ne: null } }, "name email role lastLoginAt lastLoginDevice")
         .sort({ lastLoginAt: -1 })
         .lean(),
-      Vendor.find({ lastLoginAt: { $ne: null } }, "name businessName email city lastLoginAt")
+      Vendor.find({ lastLoginAt: { $ne: null } }, "name businessName email city lastLoginAt lastLoginDevice")
         .sort({ lastLoginAt: -1 })
         .lean(),
     ]);

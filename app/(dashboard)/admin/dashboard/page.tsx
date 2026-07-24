@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { formatAsCurrency } from "@/lib/currency";
 import { Trash2 } from "lucide-react";
-import { Star, Flower2, ClipboardList, BedDouble, Building2, LayoutDashboard, BookOpen, Map, Camera, Brush, UtensilsCrossed, Utensils, Palette, Package, Briefcase, Save, Loader2, Wand2, LogOut, Shield, AlertCircle, SearchX, Mail } from "lucide-react";
+import { Star, Flower2, ClipboardList, BedDouble, Building2, LayoutDashboard, BookOpen, Map, Camera, Brush, UtensilsCrossed, Utensils, Palette, Package, Briefcase, Save, Loader2, Wand2, LogOut, Shield, AlertCircle, SearchX, Mail, Smartphone, Monitor, Tablet } from "lucide-react";
 import { UserIcon } from "@/components/ui/user";
 import { HomeIcon } from "@/components/ui/home";
 import { MapPinIcon } from "@/components/ui/map-pin";
@@ -1743,6 +1743,7 @@ export default function AdminDashboard() {
                               <tr className={`border-b text-[10px] uppercase tracking-wider font-black text-stone-400 ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
                                 <th className="p-4">Name</th>
                                 <th className="p-4">Email</th>
+                                <th className="p-4">Device</th>
                                 <th className="p-4">Status</th>
                                 <th className="p-4">Last Login</th>
                               </tr>
@@ -1759,6 +1760,18 @@ export default function AdminDashboard() {
                                     </div>
                                   </td>
                                   <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{s.email}</td>
+                                  <td className={`p-4 font-medium ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>
+                                    <span className="inline-flex items-center gap-1.5">
+                                      {s.lastLoginDevice?.includes("Mobile") ? (
+                                        <Smartphone className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                      ) : s.lastLoginDevice?.includes("Tablet") ? (
+                                        <Tablet className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                      ) : (
+                                        <Monitor className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                                      )}
+                                      {s.lastLoginDevice || "Unknown Device"}
+                                    </span>
+                                  </td>
                                   <td className="p-4">
                                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black ${s.isOnline ? "bg-green-500/10 text-green-600" : "bg-stone-500/10 text-stone-500"}`}>
                                       <span className={`w-1.5 h-1.5 rounded-full ${s.isOnline ? "bg-green-500" : "bg-stone-400"}`} />

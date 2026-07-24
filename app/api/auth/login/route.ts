@@ -28,6 +28,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "@/lib/session";
+import { describeDevice } from "@/lib/device";
 
 export async function POST(req: Request) {
   try {
@@ -103,18 +104,20 @@ export async function POST(req: Request) {
     session.isLoggedIn = true;
 
     await session.save();
-
-    // Record last login time for the admin panel's active-sessions view.
-    if (role === "vendor" || role === "user") {
-      user.lastLoginAt = new Date();
-      await user.save();
-    }
     // ↑ This encrypts all the session data and sets it as a cookie
     // The cookie value looks like: "Fe26.2**abc123..." (encrypted gibberish)
     // Nobody can read or modify it without SESSION_SECRET
 
-    // Send asynchronous login notification email
     const userAgent = req.headers.get("user-agent") || "Unknown Device";
+
+    // Record last login time + device identity for the admin panel's active-sessions view.
+    if (role === "vendor" || role === "user") {
+      user.lastLoginAt = new Date();
+      user.lastLoginDevice = describeDevice(userAgent);
+      await user.save();
+    }
+
+    // Send asynchronous login notification email
     await sendLoginNotificationEmail(user.email, user.name, role, userAgent);
 
     return NextResponse.json({
