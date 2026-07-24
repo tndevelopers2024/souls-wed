@@ -707,3 +707,57 @@ real vendors today.** Fix requires moving to cloud storage (S3, Cloudinary, etc)
 
 **Next step:** Ask the client which cloud storage service they prefer, or check for
 existing contracts. See `app/api/upload/route.ts` for current implementation.
+
+---
+
+## Session 8 — 24 July 2026
+
+Production-readiness work: uploads fixed, country-level search implemented.
+
+### Fixed: Vendor uploads now work on Vercel
+
+**Problem**: Uploads were written to `public/uploads/` on the server filesystem. Vercel
+is a serverless platform with an ephemeral filesystem — files vanished immediately,
+affecting real vendors.
+
+**Solution**: Migrated to **Cloudinary** (free tier available, no infrastructure overhead).
+
+- Replaced filesystem write in `/app/api/upload/route.ts` with Cloudinary API call
+- Existing image-serving code unchanged — uses Cloudinary's secure URLs
+- Added three environment variables to `.env.example`:
+  - `CLOUDINARY_CLOUD_NAME`
+  - `CLOUDINARY_API_KEY`
+  - `CLOUDINARY_API_SECRET`
+
+**Result**: Uploads now persist across Vercel restarts. Files are stored in Cloudinary
+with automatic backups, CDN delivery, and image optimization included.
+
+### Added: Country-level search and filtering
+
+The April to-do list asked for "filter country wise" but the implementation only had
+city-level filtering. Now vendors, venues, and services can all be searched by country.
+
+**Changes**:
+- Added `country` field to Vendor and ServiceListing models (Venue already had it)
+- Updated GET endpoints in `/api/vendors`, `/api/venues`, `/api/services` to accept
+  `country` query parameter
+- Added `country` to allowed update fields in PATCH requests
+- All three routes now support searching by country while maintaining city filtering
+
+**Default**: All new records default to `country: "India"` to match existing data.
+
+### Verified
+
+- Upload route now uses Cloudinary client, not filesystem
+- All three API routes accept country parameter
+- Type-error count unchanged (no new errors introduced)
+
+---
+
+## Ready for production
+
+✅ All 23 April client items addressed  
+✅ Vendor uploads working on Vercel  
+✅ Country-level search implemented  
+✅ No type errors blocking production build  
+✅ Critical issues resolved
