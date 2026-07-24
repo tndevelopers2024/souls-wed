@@ -9,6 +9,7 @@ const VendorSchema = new Schema({
   category:     { type: String }, // Legacy, kept for backwards compatibility during migration
   categories:   [{ type: String }], // E.g. ["venues", "rooms", "planners", "caterers", "decorators"]
   city:         { type: String, required: true },
+  country:      { type: String, default: "India" },
   description:  { type: String, default: "" },
   website:      { type: String, default: "" },
   instagram:    { type: String, default: "" },

@@ -37,13 +37,15 @@ export async function GET(req: Request) {
       }
     }
 
-    const city     = searchParams.get("city");
+    const country   = searchParams.get("country");
+    const city      = searchParams.get("city");
     const featured  = searchParams.get("featured");
     const verified  = searchParams.get("verified");
     const search    = searchParams.get("search");
     const id        = searchParams.get("id");
 
     if (id)       query.venueId  = id;
+    if (country)  query.country  = { $regex: country, $options: "i" };
     if (city)     query.city     = { $regex: city, $options: "i" };
     if (featured) query.featured = true;
     if (verified) query.verified = true;

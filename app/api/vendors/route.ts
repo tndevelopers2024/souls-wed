@@ -12,6 +12,7 @@ export async function GET(req: Request) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
+    const country = searchParams.get("country");
     const city = searchParams.get("city");
     const featured = searchParams.get("featured");
     const search = searchParams.get("search");
@@ -62,6 +63,7 @@ export async function GET(req: Request) {
     };
 
     if (category) query.category = { $regex: `^${escapeRegex(category)}$`, $options: "i" };
+    if (country) query.country = { $regex: country, $options: "i" };
     if (city) query.city = { $regex: city, $options: "i" };
     if (featured) query.featured = true;
     if (search) {
@@ -107,6 +109,7 @@ export async function PATCH(req: Request) {
       "phone",
       "category",
       "city",
+      "country",
       "description",
       "website",
       "instagram",

@@ -39,14 +39,16 @@ export async function GET(req: Request) {
 
     const category = searchParams.get("category");
     if (category) query.category = category;
-    
+
     const id = searchParams.get("id");
+    const country = searchParams.get("country");
     const city = searchParams.get("city");
     const featured = searchParams.get("featured");
     const verified = searchParams.get("verified");
     const search = searchParams.get("search");
 
     if (id)       query.serviceId  = id;
+    if (country)  query.country  = { $regex: country, $options: "i" };
     if (city)     query.city     = { $regex: city, $options: "i" };
     if (featured) query.featured = true;
     if (verified) query.verified = true;
@@ -99,6 +101,7 @@ export async function POST(req: Request) {
       name:               body.name,
       location:           body.location   || body.city,
       city:               body.city,
+      country:            body.country    || "India",
       priceFrom:          parseFloat(body.priceFrom) || 0,
       priceUnit:          body.priceUnit  || "per event",
       pricePerPlateVeg:   body.pricePerPlateVeg || "",
@@ -152,7 +155,7 @@ export async function PATCH(req: Request) {
 
     const safeFields = [
       "verified", "featured", "active",
-      "name", "city", "location", "category", "description",
+      "name", "city", "country", "location", "category", "description",
       "contactPhone", "mapLink",
       "priceFrom", "priceUnit", "pricePerPlateVeg", "pricePerPlateNonVeg", "rentalCost",
       "minGuests", "maxGuests", "rooms", "outdoor", "indoor", "parking", "catering",

@@ -17,8 +17,9 @@ const ServiceListingSchema = new Schema({
 
   name:      { type: String, required: true },
   city:      { type: String, required: true },
+  country:   { type: String, default: "India" },
   location:  { type: String },
-  
+
   // Contact & Location Details
   contactPhone: { type: String },
   mapLink:      { type: String },
