@@ -44,6 +44,7 @@ const VendorSchema = new Schema({
   available:    { type: Boolean, default: true },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
+  lastLoginAt:  { type: Date },
   createdAt:    { type: Date, default: Date.now },
 });
 

@@ -53,7 +53,7 @@ interface AdminSession {
   profileImage?: string;
 }
 
-type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "services" | "settings";
+type TabType = "overview" | "approvals" | "vendors" | "bookings" | "users" | "services" | "sessions" | "settings";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -77,6 +77,8 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [venuesList, setVenuesList] = useState<any[]>([]);
   const [servicesList, setServicesList] = useState<any[]>([]);
+  const [sessionUsers, setSessionUsers] = useState<any[]>([]);
+  const [sessionVendors, setSessionVendors] = useState<any[]>([]);
 
   // CopyIcon state for feedback
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -133,13 +135,14 @@ export default function AdminDashboard() {
     setLoadingData(true);
     setError(null);
     try {
-      const [statsRes, vendorsRes, bookingsRes, usersRes, venuesRes, servicesRes] = await Promise.all([
+      const [statsRes, vendorsRes, bookingsRes, usersRes, venuesRes, servicesRes, sessionsRes] = await Promise.all([
         fetch("/api/admin/stats"),
         fetch("/api/admin/vendors"),
         fetch("/api/admin/bookings"),
         fetch("/api/admin/users"),
         fetch("/api/venues?limit=100"),
         fetch("/api/services?limit=500"),
+        fetch("/api/admin/sessions"),
       ]);
 
       if (statsRes.ok) {
@@ -172,6 +175,12 @@ export default function AdminDashboard() {
       if (servicesRes.ok) {
         const data = await servicesRes.json();
         setServicesList(data.services || []);
+      }
+
+      if (sessionsRes.ok) {
+        const data = await sessionsRes.json();
+        setSessionUsers(data.users || []);
+        setSessionVendors(data.vendors || []);
       }
     } catch (err: any) {
       console.error("Failed to load admin dashboard data:", err);
@@ -633,6 +642,7 @@ export default function AdminDashboard() {
     { id: "vendors", label: "Vendors", count: vendors.length || null, icon: Building2 },
     { id: "users", label: "Customers", count: users.length || null, icon: UsersIcon },
     { id: "bookings", label: "Bookings", count: bookings.length || null, icon: BookOpen },
+    { id: "sessions", label: "Logged-In Sessions", count: (sessionUsers.filter((u: any) => u.isOnline).length + sessionVendors.filter((v: any) => v.isOnline).length) || null, icon: Shield },
 
     { id: "settings", label: "Settings", count: null, icon: SettingsIcon },
     { id: "home", label: "Back to Home", icon: HomeIcon, href: "/" },
@@ -1695,6 +1705,75 @@ export default function AdminDashboard() {
                     </div>
                   )}
                   <TablePager total={filteredUsers.length} />
+                </div>
+              )}
+
+              {/* ─── TAB: LOGGED-IN SESSIONS ─── */}
+              {activeTab === "sessions" && (
+                <div className="flex flex-col gap-6">
+                  {[
+                    { title: "Customer Sessions", sub: "Users who have logged in, most recent first", rows: sessionUsers, emptyLabel: "No customer logins recorded yet." },
+                    { title: "Vendor Sessions", sub: "Vendors who have logged in, most recent first", rows: sessionVendors, emptyLabel: "No vendor logins recorded yet." },
+                  ].map((group) => (
+                    <div key={group.title} className={`border rounded-3xl overflow-hidden p-6 shadow-none ${cardClass}`}>
+                      <div className={`flex justify-between items-center pb-4 border-b mb-6 ${dividerClass}`}>
+                        <div>
+                          <h3 className={`font-extrabold text-base ${headingText}`}>{group.title}</h3>
+                          <p className="text-[10px] text-stone-400 font-semibold mt-0.5">{group.sub}</p>
+                        </div>
+                      </div>
+
+                      {loadingData && group.rows.length === 0 ? (
+                        <div className="flex flex-col gap-3">
+                          {[...Array(3)].map((_, i) => (
+                            <div key={i} className={`h-14 rounded-2xl animate-pulse ${isDarkMode ? "bg-stone-800/60" : "bg-stone-100"}`} />
+                          ))}
+                        </div>
+                      ) : group.rows.length === 0 ? (
+                        <div className="py-16 flex flex-col items-center justify-center text-center gap-3">
+                          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isDarkMode ? "bg-stone-800" : "bg-stone-100"}`}>
+                            <Shield className="w-6 h-6 text-stone-400" />
+                          </div>
+                          <p className="text-xs text-stone-400 max-w-xs">{group.emptyLabel}</p>
+                        </div>
+                      ) : (
+                        <div className={`overflow-x-auto border rounded-2xl ${dividerClass}`}>
+                          <table className="w-full text-left text-xs border-collapse">
+                            <thead>
+                              <tr className={`border-b text-[10px] uppercase tracking-wider font-black text-stone-400 ${isDarkMode ? 'bg-stone-900/50' : 'bg-[#fafaf9]'}`}>
+                                <th className="p-4">Name</th>
+                                <th className="p-4">Email</th>
+                                <th className="p-4">Status</th>
+                                <th className="p-4">Last Login</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {group.rows.map((s: any) => (
+                                <tr key={s._id} className={`border-b last:border-0 transition-colors ${isDarkMode ? "border-stone-800 hover:bg-stone-900/40" : "border-stone-200 hover:bg-primary-50/20"}`}>
+                                  <td className="p-4">
+                                    <div className="flex items-center gap-3">
+                                      <div className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center font-black text-xs uppercase ${isDarkMode ? "bg-primary-500/15 text-primary-400" : "bg-primary-50 text-primary-600"}`}>
+                                        {(s.businessName || s.name || "?").slice(0, 1)}
+                                      </div>
+                                      <span className={`font-black text-sm ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{s.businessName || s.name}</span>
+                                    </div>
+                                  </td>
+                                  <td className={`p-4 font-semibold ${isDarkMode ? 'text-stone-300' : 'text-stone-700'}`}>{s.email}</td>
+                                  <td className="p-4">
+                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black ${s.isOnline ? "bg-green-500/10 text-green-600" : "bg-stone-500/10 text-stone-500"}`}>
+                                      <span className={`w-1.5 h-1.5 rounded-full ${s.isOnline ? "bg-green-500" : "bg-stone-400"}`} />
+                                      {s.isOnline ? "Online" : "Offline"}
+                                    </span>
+                                  </td>
+                                  <td className="p-4 text-stone-500 font-semibold">{formatDate(s.lastLoginAt)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
 

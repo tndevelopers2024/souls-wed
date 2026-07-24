@@ -103,6 +103,12 @@ export async function POST(req: Request) {
     session.isLoggedIn = true;
 
     await session.save();
+
+    // Record last login time for the admin panel's active-sessions view.
+    if (role === "vendor" || role === "user") {
+      user.lastLoginAt = new Date();
+      await user.save();
+    }
     // ↑ This encrypts all the session data and sets it as a cookie
     // The cookie value looks like: "Fe26.2**abc123..." (encrypted gibberish)
     // Nobody can read or modify it without SESSION_SECRET
