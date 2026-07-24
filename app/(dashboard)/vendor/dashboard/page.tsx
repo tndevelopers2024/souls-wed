@@ -1392,7 +1392,7 @@ export default function VendorDashboard() {
 
                 {bookings.filter(b => {
                   const val = searchTerm.toLowerCase();
-                  return !val || (b.userName || "").toLowerCase().includes(val) || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                  return !val || String(b.userName || "").toLowerCase().includes(val) || String(b.providerName || b.venueName || "").toLowerCase().includes(val) || String(b.status || "").toLowerCase().includes(val) || String(b._id || "").toLowerCase().includes(val);
                 }).length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center py-16">
                     <h4 className="font-bold text-stone-705 text-sm">No inquiries recorded</h4>
@@ -1404,7 +1404,7 @@ export default function VendorDashboard() {
                   <div className="flex gap-5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
                     {bookings.filter(b => {
                       const val = searchTerm.toLowerCase();
-                      return !val || (b.userName || "").toLowerCase().includes(val) || (b.providerName || b.venueName || "").toLowerCase().includes(val) || (b.status || "").toLowerCase().includes(val) || (b._id || "").toLowerCase().includes(val);
+                      return !val || String(b.userName || "").toLowerCase().includes(val) || String(b.providerName || b.venueName || "").toLowerCase().includes(val) || String(b.status || "").toLowerCase().includes(val) || String(b._id || "").toLowerCase().includes(val);
                     }).map((booking) => (
                       <div key={booking._id} className="flex-shrink-0 w-[85vw] sm:w-[320px] lg:w-[360px]">
                         <BookingCard booking={booking} isVendor={true} />
