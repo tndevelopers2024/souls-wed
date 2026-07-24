@@ -11,6 +11,7 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import type { Venue } from "@/lib/venues-data";
 import BookingForm from "@/components/booking/BookingForm";
@@ -24,6 +25,15 @@ interface VenueSidebarProps {
 
 export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
   const { currency } = useCurrency();
+  const [recentEnquiries, setRecentEnquiries] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/bookings/demand?providerId=${encodeURIComponent(venue.id)}`)
+      .then((res) => res.json())
+      .then((data) => setRecentEnquiries(typeof data.count === "number" ? data.count : null))
+      .catch(() => setRecentEnquiries(null));
+  }, [venue.id]);
+
   const bookingTypes = [];
   
   if (type === "room") {
@@ -37,7 +47,7 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
       
       {/* Pricing Information Card */}
       {(venue.pricePerPlateVeg || venue.pricePerPlateNonVeg || venue.rentalCost || venue.price) && (
-        <div className="bg-white border border-slate-200 rounded-[24px] overflow-hidden p-6">
+        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden p-6">
           <h3 className="font-bold text-slate-900 mb-5 text-lg">Starting Price</h3>
           
           {(venue.pricePerPlateVeg || venue.pricePerPlateNonVeg) && (
@@ -92,7 +102,7 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
        * - Live price calculation
        * - Booking creation API call
        */}
-      <div className="bg-white border border-slate-200 rounded-[24px] p-6">
+      <div className="bg-white border border-slate-200 rounded-lg p-6">
         <h3 className="font-bold text-slate-900 text-lg mb-5">
           Book {venue.name}
         </h3>
@@ -113,20 +123,33 @@ export default function VenueSidebar({ venue, type }: VenueSidebarProps) {
         />
       </div>
 
-      {/* Demand badge */}
-      <div className="flex items-center justify-center gap-2">
-        <span className="bg-primary-100 text-primary-800 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200">
-          In High Demand
-        </span>
-        <span className="text-xs font-semibold text-slate-600">
-          12 enquiries last week
-        </span>
-      </div>
+      {currency !== "INR" && (
+        <p className="text-[11px] text-slate-400 text-center -mt-2">
+          Prices shown in {currency} for reference — you&apos;ll be charged in INR at checkout.
+        </p>
+      )}
 
-      <button className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:opacity-70 transition-opacity">
+      {/* Demand badge — real count of bookings made in the last 7 days */}
+      {recentEnquiries !== null && recentEnquiries > 0 && (
+        <div className="flex items-center justify-center gap-2">
+          <span className="bg-primary-100 text-primary-800 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200">
+            In High Demand
+          </span>
+          <span className="text-xs font-semibold text-slate-600">
+            {recentEnquiries} {recentEnquiries === 1 ? "enquiry" : "enquiries"} last week
+          </span>
+        </div>
+      )}
+
+      <a
+        href={`mailto:hello@soulswed.com?subject=${encodeURIComponent(
+          `Reporting an issue with ${venue.name}`
+        )}&body=${encodeURIComponent(`Venue ID: ${venue.id}\n\nPlease describe the issue:\n`)}`}
+        className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:opacity-70 transition-opacity"
+      >
         <AlertTriangle className="w-3.5 h-3.5" />
         Report an Issue
-      </button>
+      </a>
     </div>
   );
 }

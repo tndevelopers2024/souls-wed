@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "@/components/shared/CustomImage";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Loader2, Star, Package } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { CheckIcon } from "@/components/ui/check";
 import { ChevronDownIcon } from "@/components/ui/chevron-down";
 
@@ -15,35 +15,14 @@ import VendorHero from "@/components/vendors/VendorHero";
 import VendorSidebar from "@/components/vendors/VendorSidebar";
 import VenueGallery from "@/components/venues/VenueGallery";
 import VenueMapCard from "@/components/venues/VenueMapCard";
-
-
-// Basic mocked reviews component to mimic VenueReviews
-function VendorReviews({ rating, reviewCount }: { rating: number; reviewCount: number }) {
-  const displayRating = rating > 0 ? rating : 5;
-  const count = reviewCount > 0 ? reviewCount : 2;
-  return (
-    <div className="flex flex-col md:flex-row gap-8 items-center bg-primary-50/40 p-6 rounded-2xl mb-8 border border-primary-100">
-      <div className="text-center md:border-r border-primary-200/50 md:pr-10 shrink-0">
-        <div className="text-5xl font-black text-slate-900 mb-1">{displayRating.toFixed(1)}</div>
-        <div className="flex justify-center gap-0.5 mb-1.5">
-          {[1, 2, 3, 4, 5].map((s) => (
-            <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-          ))}
-        </div>
-        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{count} Reviews</p>
-      </div>
-      <div className="flex-1 text-slate-600 text-sm italic font-medium max-w-lg text-center md:text-left">
-        &ldquo;Absolutely fantastic service. They were professional, accommodating, and delivered exactly what we wanted for our wedding!&rdquo;
-      </div>
-    </div>
-  );
-}
+import VenueReviews from "@/components/venues/VenueReviews";
 
 interface PublicVendorDetailPageProps {
   vendor: PublicVendor;
 }
 
-export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPageProps) {
+export default function PublicVendorDetailPage({ vendor: initialVendor }: PublicVendorDetailPageProps) {
+  const [vendor, setVendor] = useState(initialVendor);
   const searchParams = useSearchParams();
   const { currency } = useCurrency();
 
@@ -54,11 +33,11 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
   const [verifyingPayment, setVerifyingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState("areas");
+  const [activeTab, setActiveTab] = useState("about");
 
   // Scroll-spy: track which section is in view
   useEffect(() => {
-    const sectionIds = ["areas", "about", "videos", "pricing", "reviews"];
+    const sectionIds = ["about", "videos", "pricing", "reviews"];
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -76,7 +55,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
     return () => observer.disconnect();
   }, [vendor]);
 
-  const cat = vendor.category.toLowerCase();
+  const cat = (vendor.category || "").toLowerCase();
   const isVenue = cat.includes("venue") || cat.includes("banquet");
   const isRoom = cat.includes("room") || cat.includes("accommodation");
   const isCaterer = cat.includes("cater");
@@ -102,11 +81,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
   const images = vendor.images?.length ? vendor.images : ["/soulswed/venue.jpg"];
   const gallery = vendor.gallery?.length ? vendor.gallery : images;
 
-  // Dynamic mocked FAQs based on category
-  const faqs = [
-    { question: "What is your booking and cancellation policy?", answer: "We require a 30% advance payment to lock in your date. Cancellations made more than 30 days prior to the event receive a full refund of the advance." },
-    { question: `Do you travel for destination weddings?`, answer: "Yes, we travel all across India and internationally. Travel and accommodation charges are covered by the client." }
-  ];
+  const faqs = vendor.faqs || [];
 
   return (
     <div className="min-h-screen" style={{ background: "var(--sw-white)" }}>
@@ -114,7 +89,17 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
       <div className="max-w-7xl mx-auto px-4 pt-28 pb-10">
         {/* Title block, then the photo collage — the client asked for the
             gallery to greet a visitor rather than sit at the foot of the page. */}
-        <VendorHero vendor={{ ...vendor, images }} photoCount={gallery.length} />
+        <VendorHero
+          vendor={{ ...vendor, images }}
+          photoCount={gallery.length}
+          onReviewSubmitted={(review) =>
+            setVendor((prev) => {
+              const reviews = [review, ...(prev.reviews || [])];
+              const rating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+              return { ...prev, reviews, reviewCount: reviews.length, rating };
+            })
+          }
+        />
 
         <div
           id="photos"
@@ -141,7 +126,6 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
             <div className="sticky top-20 z-40 bg-white py-4 -mx-4 px-4 sm:mx-0 sm:px-0 mt-6">
               <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1 overflow-x-auto no-scrollbar">
                 {[
-                  { id: "areas", label: "Areas Available" },
                   { id: "about", label: "About" },
                   { id: "videos", label: "Videos" },
                   { id: "pricing", label: "Pricing" },
@@ -152,8 +136,8 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                     href={`#${tab.id}`}
                     onClick={() => setActiveTab(tab.id)}
                     className={`text-sm rounded-lg px-4 py-2 whitespace-nowrap transition-colors ${activeTab === tab.id
-                        ? "font-semibold text-slate-900 bg-white"
-                        : "font-medium text-slate-500"
+                      ? "font-semibold text-slate-900 bg-white"
+                      : "font-medium text-slate-500"
                       }`}
                   >
                     {tab.label}
@@ -161,43 +145,6 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                 ))}
               </div>
             </div>
-
-            {/* Areas Available */}
-            <section id="areas" className="scroll-mt-32">
-              <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
-                Areas Available (2)
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-200 bg-slate-50/50">
-                  <div className="w-12 h-12 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0 text-primary-600">
-                    <Package className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-800 text-sm">200 Seating | 300 Floating</h4>
-                    <p className="text-xs text-slate-500 mt-1">Indoor • Banquet Hall</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-200 bg-slate-50/50">
-                  <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0 text-green-600">
-                    <Package className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-800 text-sm">500 Seating | 800 Floating</h4>
-                    <p className="text-xs text-slate-500 mt-1">Outdoor • Lawn</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Feature tags */}
-              <div className="flex flex-wrap gap-2 mt-5">
-                {["Air Conditioned", "Parking Available", "Power Backup"].map((f) => (
-                  <span key={f} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 text-slate-600">
-                    <CheckIcon className="w-3.5 h-3.5 text-green-500" />
-                    {f}
-                  </span>
-                ))}
-              </div>
-            </section>
 
             {/* About */}
             <section id="about" className="scroll-mt-32">
@@ -227,11 +174,11 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
               <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
                 Pricing
               </h2>
-              <div className="rounded-[24px] overflow-hidden border border-slate-100" style={{ background: "white" }}>
+              <div className="rounded-lg overflow-hidden border border-slate-200" style={{ background: "white" }}>
 
                 {isPerPlate ? (
                   <>
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
                       <div>
                         <p className="font-semibold text-slate-800 text-sm">Veg Menu</p>
                         <p className="text-xs text-slate-400">Per plate, inclusive of taxes</p>
@@ -240,7 +187,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                         {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
                       </p>
                     </div>
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
                       <div>
                         <p className="font-semibold text-slate-800 text-sm">Non-Veg Menu</p>
                         <p className="text-xs text-slate-400">Per plate, inclusive of taxes</p>
@@ -288,32 +235,38 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
             {/* Reviews */}
             <section id="reviews" className="scroll-mt-32">
               <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
-                Reviews <span className="text-slate-400 ml-2 text-xl">({(vendor.reviewCount || 0) > 0 ? vendor.reviewCount : 2})</span>
+                Reviews {(vendor.reviewCount || 0) > 0 && <span className="text-slate-400 ml-2 text-xl">({vendor.reviewCount})</span>}
               </h2>
-              <VendorReviews rating={vendor.rating || 5} reviewCount={vendor.reviewCount || 2} />
+              <VenueReviews
+                rating={vendor.rating || 0}
+                reviewCount={vendor.reviewCount || 0}
+                reviews={vendor.reviews || []}
+              />
             </section>
 
             {/* FAQ */}
-            <section id="faq" className="scroll-mt-32">
-              <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
-                Frequently Asked Questions
-              </h2>
-              <div className="space-y-3">
-                {faqs.map((faq, i) => (
-                  <div key={i} className="rounded-[20px] overflow-hidden border border-slate-100" style={{ background: "white" }}>
-                    <button className="w-full flex items-center justify-between px-5 py-4 text-left gap-3 outline-none" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                      <span className="font-semibold text-sm text-slate-800">{faq.question}</span>
-                      <ChevronDownIcon className="w-4 h-4 flex-shrink-0 text-slate-400 transition-transform" style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0)" }} />
-                    </button>
-                    {openFaq === i && (
-                      <div className="px-5 pb-4">
-                        <p className="text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
+            {faqs.length > 0 && (
+              <section id="faq" className="scroll-mt-32">
+                <h2 className="text-2xl font-bold mb-5" style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}>
+                  Frequently Asked Questions
+                </h2>
+                <div className="space-y-3">
+                  {faqs.map((faq, i) => (
+                    <div key={i} className="rounded-lg overflow-hidden border border-slate-200" style={{ background: "white" }}>
+                      <button className="w-full flex items-center justify-between px-5 py-4 text-left gap-3 outline-none" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                        <span className="font-semibold text-sm text-slate-800">{faq.question}</span>
+                        <ChevronDownIcon className="w-4 h-4 flex-shrink-0 text-slate-400 transition-transform" style={{ transform: openFaq === i ? "rotate(180deg)" : "rotate(0)" }} />
+                      </button>
+                      {openFaq === i && (
+                        <div className="px-5 pb-4">
+                          <p className="text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* Right — sidebar */}
@@ -326,7 +279,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
       {/* Stripe Payment Verification Modal Overlay */}
       {(verifyingPayment || paymentSuccess) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl border border-slate-100 flex flex-col items-center">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center shadow-lg border border-slate-200 flex flex-col items-center">
             {verifyingPayment ? (
               <>
                 <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 mb-4">
@@ -342,7 +295,7 @@ export default function PublicVendorDetailPage({ vendor }: PublicVendorDetailPag
                 </div>
                 <h3 className="text-lg font-bold text-slate-800 mb-2">Payment Confirmed!</h3>
                 <p className="text-sm text-slate-500 mb-6">Your booking is now confirmed. You can view all details in your dashboard.</p>
-                <Link href="/dashboard" className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-full text-sm transition-colors text-center block shadow-md">
+                <Link href="/dashboard" className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded text-sm transition-colors text-center block">
                   Go to Dashboard
                 </Link>
               </>

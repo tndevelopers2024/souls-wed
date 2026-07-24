@@ -8,16 +8,19 @@ import { ChevronLeftIcon } from "@/components/ui/chevron-left";
 import { PhoneIcon } from "@/components/ui/phone";
 import { HeartIcon } from "@/components/ui/heart";
 import { CheckIcon } from "@/components/ui/check";
-import type { Venue } from "@/lib/venues-data";
+import type { Venue, VenueReview } from "@/lib/venues-data";
 import { useWishlistStore } from "@/lib/store/useWishlistStore";
+import ReviewFormModal from "@/components/shared/ReviewFormModal";
 
 interface VenueHeroProps {
   venue: Venue;
   /** Number of photographs in the collage above, for the "N Photos" jump. */
   photoCount?: number;
+  onReviewSubmitted?: (review: VenueReview) => void;
 }
 
-export default function VenueHero({ venue, photoCount }: VenueHeroProps) {
+export default function VenueHero({ venue, photoCount, onReviewSubmitted }: VenueHeroProps) {
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const { items, addItem, removeItem } = useWishlistStore();
   const isSaved = items.some((item) => item.id === venue.id);
 
@@ -67,9 +70,6 @@ export default function VenueHero({ venue, photoCount }: VenueHeroProps) {
             <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-100 text-primary-800 px-2.5 py-1 rounded-md">
               Venue & Estate
             </span>
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md">
-              2 bookings recently
-            </span>
             {venue.verified && (
               <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-md">
                 <BadgeCheck className="w-3.5 h-3.5 text-green-600" />
@@ -77,16 +77,16 @@ export default function VenueHero({ venue, photoCount }: VenueHeroProps) {
               </span>
             )}
           </div>
-          
+
           <h1
             className="text-4xl sm:text-5xl font-bold text-slate-900 leading-tight"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             {venue.name}
           </h1>
-          
+
           <div className="flex items-center gap-2 text-slate-500 text-sm font-medium pt-1">
-            <MapPinIcon className="w-4 h-4 text-slate-400"/>
+            <MapPinIcon className="w-4 h-4 text-slate-400" />
             {venue.location}, {venue.country}
             {venue.mapLink ? (
               <a href={venue.mapLink} target="_blank" rel="noopener noreferrer" className="text-primary-600 font-semibold ml-2 hover:underline text-xs">
@@ -121,7 +121,7 @@ export default function VenueHero({ venue, photoCount }: VenueHeroProps) {
               </span>
             </div>
           )}
-          
+
           <a href={venue.contactPhone ? `tel:${venue.contactPhone}` : "#"} className="flex items-center justify-center gap-2 w-full md:w-auto bg-green-50 text-green-700 font-bold px-6 py-2.5 rounded-xl border border-green-200 hover:bg-green-100 transition-colors">
             <PhoneIcon className="w-4 h-4" />
             {venue.contactPhone ? venue.contactPhone : "Contact Venue"}
@@ -131,28 +131,28 @@ export default function VenueHero({ venue, photoCount }: VenueHeroProps) {
 
       {/* Action Bar */}
       <div className="flex flex-wrap items-center justify-between sm:justify-start gap-4 sm:gap-8 py-5">
-        <button 
+        <button
           onClick={() => document.getElementById('photos')?.scrollIntoView({ behavior: 'smooth' })}
           className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
         >
           <ImageIcon className="w-4 h-4" />
           {photoCount || 1} Photos
         </button>
-        <button 
+        <button
           onClick={toggleWishlist}
           className={`flex items-center gap-2 text-sm font-semibold transition-opacity hover:opacity-70 ${isSaved ? "text-red-500" : "text-slate-600"}`}
         >
           <HeartIcon className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
           {isSaved ? "Saved" : "Shortlist"}
         </button>
-        <button 
-          onClick={() => document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' })}
+        <button
+          onClick={() => setReviewModalOpen(true)}
           className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
         >
           <PenSquare className="w-4 h-4" />
           Write a Review
         </button>
-        <button 
+        <button
           onClick={handleShare}
           className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
         >
@@ -160,6 +160,13 @@ export default function VenueHero({ venue, photoCount }: VenueHeroProps) {
           {copied ? <span className="text-green-600">Copied!</span> : "Share"}
         </button>
       </div>
+
+      <ReviewFormModal
+        open={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+        endpoint={`/api/venues/${venue.id}/reviews`}
+        onSubmitted={(review) => onReviewSubmitted?.(review)}
+      />
     </div>
   );
 }

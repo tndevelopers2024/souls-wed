@@ -21,6 +21,7 @@
 import { connectDB } from "@/lib/mongodb";
 import { Booking } from "@/lib/models/Booking";
 import { Vendor } from "@/lib/models/Vendor";
+import { Venue } from "@/lib/models/Venue";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getIronSession } from "iron-session";
@@ -233,10 +234,16 @@ export async function GET() {
 
     await connectDB();
 
-    // Users see only their own bookings.
-    // Admins see all bookings. Vendors have their own dedicated endpoint.
+    // Users see bookings they made. Vendors see bookings received — either
+    // against their own account id (service vendors) or against a venue they
+    // own (providerId is the venue's slug id, not the vendor's account id).
+    // Admins see everything.
     let query: Record<string, unknown> = { userId: session.userId };
-    if (session.role === "admin") {
+    if (session.role === "vendor") {
+      const ownedVenues = await Venue.find({ vendorId: session.userId }).select("venueId").lean();
+      const providerIds = [session.userId, ...ownedVenues.map((v) => v.venueId)];
+      query = { providerId: { $in: providerIds } };
+    } else if (session.role === "admin") {
       query = {};
     }
 

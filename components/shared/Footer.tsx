@@ -13,7 +13,7 @@ import { ChevronUpIcon } from "@/components/ui/chevron-up";
 import { SparklesIcon } from "@/components/ui/sparkles";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { CURRENCIES } from "@/lib/currency";
-import ChatbotWidget from "@/components/shared/ChatbotWidget";
+import ZohoSalesIQ from "@/components/shared/ZohoSalesIQ";
 
 function IconInstagram({ className }: { className?: string }) {
   return (
@@ -62,26 +62,48 @@ const services = [
   { label: "Decorators", href: "/decorators" },
 ];
 
-const contactItems = [
+interface ContactLine {
+  text: string;
+  href: string;
+  external?: boolean;
+}
+
+interface ContactItem {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  lines: ContactLine[];
+}
+
+const contactItems: ContactItem[] = [
   {
     icon: PhoneIcon,
     label: "24/7 Support",
-    lines: ["+91 98765 43210", "+91 98765 43211"],
+    lines: [
+      { text: "+91 98765 43210", href: "tel:+919876543210" },
+      { text: "+91 98765 43211", href: "tel:+919876543211" },
+    ],
   },
   {
     icon: MessageCircleIcon,
     label: "WhatsApp Enquiry",
-    lines: ["+91 96000 43002"],
+    lines: [
+      { text: "+91 96000 43002", href: "https://wa.me/919600043002", external: true },
+    ],
   },
   {
     icon: PhoneIcon,
     label: "For Bookings",
-    lines: ["+91 80412 48273"],
+    lines: [
+      { text: "+91 80412 48273", href: "tel:+918041248273" },
+    ],
   },
   {
     icon: Mail,
     label: "Email Us",
-    lines: ["hello@soulswed.com", "vendors@soulswed.com"],
+    lines: [
+      { text: "hello@soulswed.com", href: "mailto:hello@soulswed.com" },
+      { text: "vendors@soulswed.com", href: "mailto:vendors@soulswed.com" },
+    ],
   },
 ];
 
@@ -93,12 +115,37 @@ const socialLinks = [
 
 export default function Footer() {
   const pathname = usePathname();
-  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const { currency, setCurrency } = useCurrency();
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const currencyRef = useRef<HTMLDivElement>(null);
   const [showFab, setShowFab] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [newsletterMessage, setNewsletterMessage] = useState("");
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNewsletterStatus("submitting");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newsletterEmail }),
+      });
+      const data = await res.json();
+      setNewsletterMessage(data.message || "");
+      if (!res.ok) {
+        setNewsletterStatus("error");
+        return;
+      }
+      setNewsletterStatus("success");
+      setNewsletterEmail("");
+    } catch {
+      setNewsletterMessage("Something went wrong. Please try again.");
+      setNewsletterStatus("error");
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -180,24 +227,32 @@ export default function Footer() {
                 Subscribe to receive curated destination wedding inspiration, venue guides, and exclusive partner promotions.
               </p>
             </div>
-            <div className="lg:col-span-5 flex items-center lg:justify-end mt-4 lg:mt-0">
-              <form onSubmit={(e) => e.preventDefault()} className="relative w-full lg:max-w-[400px]">
+            <div className="lg:col-span-5 flex flex-col items-end lg:justify-end mt-4 lg:mt-0 gap-2">
+              <form onSubmit={handleNewsletterSubmit} className="relative w-full lg:max-w-[400px]">
                 <input
                   id="newsletterEmail"
                   name="newsletterEmail"
                   type="email"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
                   placeholder="Your Email Address"
                   className="w-full bg-white/80 border border-amber-200/60 focus:border-amber-400 focus:ring-4 focus:ring-amber-100/50 rounded-full px-5 py-3.5 pr-28 md:px-6 md:py-4 md:pr-36 outline-none transition-all text-sm md:text-base text-slate-800 shadow-inner font-medium placeholder-slate-400"
                   required
                 />
                 <button
                   type="submit"
-                  className="absolute right-1.5 top-1.5 bottom-1.5 px-5 md:right-2 md:top-2 md:bottom-2 md:px-7 rounded-full text-white font-bold text-[11px] md:text-[13px] tracking-wider uppercase transition-all duration-300 cursor-pointer"
+                  disabled={newsletterStatus === "submitting"}
+                  className="absolute right-1.5 top-1.5 bottom-1.5 px-5 md:right-2 md:top-2 md:bottom-2 md:px-7 rounded-full text-white font-bold text-[11px] md:text-[13px] tracking-wider uppercase transition-all duration-300 cursor-pointer disabled:opacity-60"
                   style={{ background: "var(--sw-primary)" }}
                 >
-                  Subscribe
+                  {newsletterStatus === "submitting" ? "..." : "Subscribe"}
                 </button>
               </form>
+              {newsletterMessage && (
+                <p className={`text-xs font-medium ${newsletterStatus === "error" ? "text-red-600" : "text-emerald-600"}`}>
+                  {newsletterMessage}
+                </p>
+              )}
             </div>
           </div>
 
@@ -229,7 +284,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-115 hover:-translate-y-1 hover:bg-gradient-to-tr hover:from-amber-400 hover:to-primary-500 text-amber-700 hover:text-white border border-amber-100 hover:border-transparent bg-amber-50/40 shadow-xs"
+                    className="w-11 h-11 rounded-full flex items-center justify-center text-amber-700 border border-amber-100 bg-amber-50/40 shadow-xs"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -250,40 +305,16 @@ export default function Footer() {
               </button>
               <div className={`overflow-hidden transition-all duration-300 ${openSection === "about" ? "max-h-96 mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
                 <ul className="flex flex-col gap-1">
-                  {aboutLinks.map((item) => {
-                    const isHovered = hoveredLink === item.href;
-                    return (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ?'text-amber-600':'text-slate-600'}`}
-                          onMouseEnter={() => setHoveredLink(item.href)}
-                          onMouseLeave={() => setHoveredLink(null)}
-                        >
-                          <AnimatePresence>
-                            {isHovered && (
-                              <motion.div
-                                layoutId="footer-about-pill"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 rounded-full hidden lg:block"
-                                style={{
-                                  background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
-                                  border: "1px solid rgba(238, 116, 41, 0.1)",
-                                  backdropFilter: "blur(12px) saturate(150%)",
-                                  boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
-                                  zIndex: -1,
-                                }}
-                                transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
-                              />
-                            )}
-                          </AnimatePresence>
-                          <span className="relative z-10">{item.label}</span>
-                        </Link>
-                      </li>
-                    )
-                  })}
+                  {aboutLinks.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="inline-block py-1 text-[14px] font-medium text-slate-600 hover:text-amber-600 transition-all duration-200 hover:translate-x-1.5"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -301,40 +332,16 @@ export default function Footer() {
               </button>
               <div className={`overflow-hidden transition-all duration-300 ${openSection === "services" ? "max-h-96 mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
                 <ul className="flex flex-col gap-1">
-                  {services.map((item) => {
-                    const isHovered = hoveredLink === item.href;
-                    return (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          className={`relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10 ${isHovered ?'text-amber-600':'text-slate-600'}`}
-                          onMouseEnter={() => setHoveredLink(item.href)}
-                          onMouseLeave={() => setHoveredLink(null)}
-                        >
-                          <AnimatePresence>
-                            {isHovered && (
-                              <motion.div
-                                layoutId="footer-services-pill"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 rounded-full hidden lg:block"
-                                style={{
-                                  background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
-                                  border: "1px solid rgba(238, 116, 41, 0.1)",
-                                  backdropFilter: "blur(12px) saturate(150%)",
-                                  boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
-                                  zIndex: -1,
-                                }}
-                                transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
-                              />
-                            )}
-                          </AnimatePresence>
-                          <span className="relative z-10">{item.label}</span>
-                        </Link>
-                      </li>
-                    )
-                  })}
+                  {services.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="inline-block py-1 text-[14px] font-medium text-slate-600 hover:text-amber-600 transition-all duration-200 hover:translate-x-1.5"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -351,46 +358,30 @@ export default function Footer() {
                 <ChevronUpIcon className={`w-4 h-4 text-amber-500 transition-transform lg:hidden ${openSection === "contact" ? "rotate-180" : "rotate-180"}`} style={{ transform: openSection === "contact" ? "rotate(0deg)" : "rotate(180deg)" }} />
               </button>
               <div className={`overflow-hidden transition-all duration-300 ${openSection === "contact" ? "max-h-[500px] mt-4" : "max-h-0"} lg:max-h-none lg:mt-0`}>
-                <ul className="flex flex-col gap-1.5">
+                <ul className="flex flex-col gap-2">
                   {contactItems.map((item) => {
                     const Icon = item.icon;
-                    const isHovered = hoveredLink === item.label;
                     return (
                       <li key={item.label}>
-                        <div 
-                          className="relative block py-2 px-4 -ml-4 z-10 transition-colors cursor-pointer"
-                          onMouseEnter={() => setHoveredLink(item.label)}
-                          onMouseLeave={() => setHoveredLink(null)}
-                        >
-                          <AnimatePresence>
-                            {isHovered && (
-                              <motion.div
-                                layoutId="footer-contact-pill"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="absolute inset-0 rounded-3xl hidden lg:block"
-                                style={{
-                                  background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
-                                  border: "1px solid rgba(238, 116, 41, 0.1)",
-                                  backdropFilter: "blur(12px) saturate(150%)",
-                                  boxShadow: "inset 0 1px 1px var(--sw-chip-bg), 0 2px 10px rgba(238, 116, 41, 0.05)",
-                                  zIndex: -1,
-                                }}
-                                transition={{ type: "spring", stiffness: 120, damping: 20, mass: 1.1 }}
-                              />
-                            )}
-                          </AnimatePresence>
-                          <div className="relative z-10 flex items-start gap-3">
-                             <Icon className={`w-4 h-4 mt-0.5 ${isHovered ?'text-amber-600':'text-amber-500'} transition-colors`} />
-                             <div>
-                               <p className={`text-[13px] font-bold ${isHovered ?'text-amber-700':'text-slate-800'} transition-colors`}>{item.label}</p>
-                               <div className="flex flex-col gap-0.5 mt-0.5">
-                                 {item.lines.map((line) => (
-                                   <p key={line} className="text-[12px] text-slate-500 font-medium">{line}</p>
-                                 ))}
-                               </div>
-                             </div>
+                        <div className="py-1 flex items-start gap-3 group transition-all duration-200">
+                          <Icon className="w-4 h-4 mt-0.5 text-amber-500 group-hover:text-amber-600 transition-colors" />
+                          <div>
+                            <p className="text-[13px] font-bold text-slate-800 group-hover:text-amber-600 transition-colors">
+                              {item.label}
+                            </p>
+                            <div className="flex flex-col gap-0.5 mt-0.5">
+                              {item.lines.map((lineObj) => (
+                                <a
+                                  key={lineObj.text}
+                                  href={lineObj.href}
+                                  target={lineObj.external ? "_blank" : undefined}
+                                  rel={lineObj.external ? "noopener noreferrer" : undefined}
+                                  className="text-[12px] text-slate-500 hover:text-amber-600 font-medium transition-colors inline-block"
+                                >
+                                  {lineObj.text}
+                                </a>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </li>
@@ -468,49 +459,45 @@ export default function Footer() {
       {/* Floating Action Buttons (Scroll to Top, WhatsApp, Chatbot) */}
       <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[100] flex flex-col gap-3 md:gap-4">
 
+        {/* Scroll to Top — only after scrolling down a bit */}
         <AnimatePresence>
           {showFab && (
-            <motion.div
+            <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="flex flex-col gap-4"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="hidden md:flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all group ml-auto"
+              style={{
+                background: "var(--sw-primary)",
+                color: "#fff",
+              }}
+              aria-label="Scroll to top"
             >
-              {/* Scroll to Top - hidden on small screens to save space */}
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="hidden md:flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all group ml-auto"
-                style={{
-                  background: "var(--sw-primary)",
-                  color: "#fff",
-                }}
-                aria-label="Scroll to top"
-              >
-                <ChevronUpIcon className="w-5 h-5 text-white transition-colors" />
-              </button>
-              
-              {/* WhatsApp */}
-              <a
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full transition-all ml-auto"
-                style={{
-                  background: "#25D366",
-                  color: "#fff",
-                }}
-                aria-label="Contact on WhatsApp"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.662-2.06-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                </svg>
-              </a>
-            </motion.div>
+              <ChevronUpIcon className="w-5 h-5 text-white transition-colors" />
+            </motion.button>
           )}
         </AnimatePresence>
 
-        {/* Chatbot */}
-        <ChatbotWidget />
+        {/* WhatsApp — always available as a direct chat channel */}
+        <a
+          href="https://wa.me/919600043002"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full shadow-lg transition-all ml-auto hover:scale-105"
+          style={{
+            background: "#25D366",
+            color: "#fff",
+          }}
+          aria-label="Chat with us on WhatsApp"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.662-2.06-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+          </svg>
+        </a>
+
+        {/* Live chat (Zoho SalesIQ — real support chat, no fake widget) */}
+        <ZohoSalesIQ />
       </div>
     </>
   );

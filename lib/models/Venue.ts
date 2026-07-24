@@ -1,12 +1,16 @@
 import mongoose, { Schema } from "mongoose";
 
 const VenueReviewSchema = new Schema({
-  id:     { type: Number },
-  author: { type: String },
-  avatar: { type: String },
-  date:   { type: String },
-  rating: { type: Number },
-  text:   { type: String },
+  id:        { type: Number },
+  author:    { type: String },
+  avatar:    { type: String },
+  date:      { type: String },
+  rating:    { type: Number },
+  text:      { type: String },
+  // Ties a review to the user/booking that earned it — lets us gate
+  // submissions to verified stays and block duplicate reviews per booking.
+  userId:    { type: Schema.Types.ObjectId, ref: "User" },
+  bookingId: { type: Schema.Types.ObjectId, ref: "Booking" },
 });
 
 const VenueFaqSchema = new Schema({

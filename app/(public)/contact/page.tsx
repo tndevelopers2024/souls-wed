@@ -1,11 +1,40 @@
 "use client";
 
-import { Mail } from "lucide-react";
+import { useState } from "react";
+import { Mail, Loader2 } from "lucide-react";
 import { PhoneIcon } from "@/components/ui/phone";
 import { MapPinIcon } from "@/components/ui/map-pin";
 import { motion } from "framer-motion";
 
 export default function ContactPage() {
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("submitting");
+    setError("");
+    try {
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Failed to send your message.");
+        setStatus("error");
+        return;
+      }
+      setStatus("success");
+      setForm({ firstName: "", lastName: "", email: "", message: "" });
+    } catch {
+      setError("Something went wrong. Please try again.");
+      setStatus("error");
+    }
+  };
+
   return (
     <main className="min-h-screen pt-32 pb-24 relative">
       {/* Dynamic Background Elements */}
@@ -47,12 +76,22 @@ export default function ContactPage() {
               {
                 icon: PhoneIcon,
                 title: "Call Us",
-                content: <><p>+91 98765 43210</p><p>+91 80412 48273</p></>
+                content: (
+                  <div className="flex flex-col gap-1">
+                    <a href="tel:+919876543210" className="hover:text-primary-600 transition-colors">+91 98765 43210</a>
+                    <a href="tel:+918041248273" className="hover:text-primary-600 transition-colors">+91 80412 48273</a>
+                  </div>
+                )
               },
               {
                 icon: Mail,
                 title: "Email Us",
-                content: <><p>hello@soulswed.com</p><p>vendors@soulswed.com</p></>
+                content: (
+                  <div className="flex flex-col gap-1">
+                    <a href="mailto:hello@soulswed.com" className="hover:text-primary-600 transition-colors">hello@soulswed.com</a>
+                    <a href="mailto:vendors@soulswed.com" className="hover:text-primary-600 transition-colors">vendors@soulswed.com</a>
+                  </div>
+                )
               },
               {
                 icon: MapPinIcon,
@@ -90,34 +129,44 @@ export default function ContactPage() {
               <h2 className="text-xl font-extrabold mb-6" style={{ color: "var(--sw-navy)", fontFamily: "var(--font-heading)" }}>
                 Request a Consultation
               </h2>
-              <form className="space-y-6">
+              {status === "success" ? (
+                <div className="text-center py-10">
+                  <h3 className="text-lg font-bold mb-2" style={{ color: "var(--sw-navy)" }}>Thank you!</h3>
+                  <p className="text-sm text-slate-500">We've received your message and will be in touch shortly.</p>
+                </div>
+              ) : (
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
                   <div className="space-y-2">
                     <label htmlFor="firstName"className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase ml-2 mb-1">First Name</label>
-                    <input id="firstName"name="firstName"type="text"className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm"placeholder="Your First Name"required />
+                    <input id="firstName" name="firstName" type="text" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm" placeholder="Your First Name" required />
                   </div>
                   <div className="space-y-1">
                     <label htmlFor="lastName"className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase ml-2 mb-1">Last Name</label>
-                    <input id="lastName"name="lastName"type="text"className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm"placeholder="Your Last Name"required />
+                    <input id="lastName" name="lastName" type="text" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm" placeholder="Your Last Name" required />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <label htmlFor="email"className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase ml-2 mb-1">Email Address</label>
-                  <input id="email"name="email"type="email"className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm"placeholder="your@email.com"required />
+                  <input id="email" name="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium shadow-sm" placeholder="your@email.com" required />
                 </div>
                 <div className="space-y-1">
                   <label htmlFor="message"className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase ml-2 mb-1">Message</label>
-                  <textarea id="message"name="message"rows={4} className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium resize-none shadow-sm"placeholder="Tell us about your vision, preferred destinations, or any dates you have in mind..."required></textarea>
+                  <textarea id="message" name="message" rows={4} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full text-sm bg-white/50 border border-slate-200 rounded-xl px-5 py-3 outline-none focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-400 transition-all text-slate-800 placeholder-slate-400 font-medium resize-none shadow-sm" placeholder="Tell us about your vision, preferred destinations, or any dates you have in mind..." required></textarea>
                 </div>
-                <button 
-                  type="button" 
-                  className="w-full relative overflow-hidden text-white font-extrabold tracking-wide uppercase text-sm rounded-full px-6 py-4 transition-all transform hover:-translate-y-1 shadow-[0_8px_20px_rgba(238,116,41,0.25)] hover:shadow-[0_12px_25px_rgba(238,116,41,0.35)] group mt-2"
+                {status === "error" && <p className="text-sm text-red-600">{error}</p>}
+                <button
+                  type="submit"
+                  disabled={status === "submitting"}
+                  className="w-full relative overflow-hidden text-white font-extrabold tracking-wide uppercase text-sm rounded-full px-6 py-4 transition-all transform hover:-translate-y-1 shadow-[0_8px_20px_rgba(238,116,41,0.25)] hover:shadow-[0_12px_25px_rgba(238,116,41,0.35)] group mt-2 disabled:opacity-60 flex items-center justify-center gap-2"
                   style={{ background: "linear-gradient(135deg, var(--sw-primary), #f59e0b)" }}
                 >
+                  {status === "submitting" && <Loader2 className="w-4 h-4 animate-spin relative z-10" />}
                   <span className="relative z-10">Submit Inquiry</span>
                   <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:animate-[navbar-shimmer_1.5s_infinite] z-0" />
                 </button>
               </form>
+              )}
             </div>
           </motion.div>
         </div>

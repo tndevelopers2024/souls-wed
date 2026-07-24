@@ -8,16 +8,19 @@ import { ChevronLeftIcon } from "@/components/ui/chevron-left";
 import { PhoneIcon } from "@/components/ui/phone";
 import { HeartIcon } from "@/components/ui/heart";
 import { CheckIcon } from "@/components/ui/check";
-import type { PublicVendor } from "@/components/vendors/PublicVendorDirectory";
+import type { PublicVendor, PublicVendorReview } from "@/components/vendors/PublicVendorDirectory";
 import { useWishlistStore } from "@/lib/store/useWishlistStore";
+import ReviewFormModal from "@/components/shared/ReviewFormModal";
 
 interface VendorHeroProps {
   vendor: PublicVendor;
   /** Number of photographs in the collage above, for the "N Photos" jump. */
   photoCount?: number;
+  onReviewSubmitted?: (review: PublicVendorReview) => void;
 }
 
-export default function VendorHero({ vendor, photoCount }: VendorHeroProps) {
+export default function VendorHero({ vendor, photoCount, onReviewSubmitted }: VendorHeroProps) {
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const { items, addItem, removeItem } = useWishlistStore();
   const isSaved = items.some((item) => item.id === vendor._id);
 
@@ -50,22 +53,22 @@ export default function VendorHero({ vendor, photoCount }: VendorHeroProps) {
   const name = vendor.businessName || vendor.name;
   const rating = vendor.rating || 0;
   const reviewCount = vendor.reviewCount || 0;
-  
+
   return (
     <div className="w-full flex flex-col relative">
       {/* Back Link */}
       <div className="mb-4">
         <Link
-          href={`/${vendor.category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+          href={`/${(vendor.category || "vendors").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors"
         >
           <ChevronLeftIcon className="w-4 h-4" />
-          Back to {vendor.category}
+          Back to {vendor.category || "Vendors"}
         </Link>
       </div>
 
       {/* Info Card */}
-      <div className="bg-white border border-slate-200 rounded-3xl relative z-10 p-6 flex flex-col gap-5">
+      <div className="bg-white border border-slate-200 rounded-lg relative z-10 p-6 flex flex-col gap-5">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="space-y-2">
             {vendor.verified && (
@@ -81,9 +84,9 @@ export default function VendorHero({ vendor, photoCount }: VendorHeroProps) {
             >
               {name}
             </h1>
-            
+
             <div className="flex items-center gap-1.5 text-slate-600 text-sm font-medium">
-              <MapPinIcon className="w-4 h-4 text-slate-400"/>
+              <MapPinIcon className="w-4 h-4 text-slate-400" />
               {vendor.city}, India
               {vendor.mapLink && (
                 <a href={vendor.mapLink} target="_blank" rel="noopener noreferrer" className="text-primary-600 font-semibold ml-2 hover:underline text-xs">
@@ -91,9 +94,9 @@ export default function VendorHero({ vendor, photoCount }: VendorHeroProps) {
                 </a>
               )}
             </div>
-            
+
             <p className="text-xs text-slate-500 max-w-lg mt-1">
-              Premium {vendor.category} services in {vendor.city}
+              Premium {vendor.category || "wedding"} services in {vendor.city}
             </p>
           </div>
 
@@ -124,36 +127,38 @@ export default function VendorHero({ vendor, photoCount }: VendorHeroProps) {
               Contact
             </button>
           )}
-          <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-500 text-white px-2 py-0.5 rounded">
-            Highly Requested
-          </span>
+          {vendor.featured && (
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-primary-500 text-white px-2 py-0.5 rounded">
+              Featured Partner
+            </span>
+          )}
         </div>
       </div>
 
       {/* Action Bar */}
       <div className="flex flex-wrap items-center justify-between sm:justify-start gap-4 sm:gap-8 border-b border-slate-200 py-4 px-2 mt-2">
-        <button 
+        <button
           onClick={() => document.getElementById('photos')?.scrollIntoView({ behavior: 'smooth' })}
           className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
         >
           <ImageIcon className="w-4 h-4" />
           {photoCount || vendor.images?.length || 1} Photos
         </button>
-        <button 
+        <button
           onClick={toggleWishlist}
           className={`flex items-center gap-2 text-sm font-semibold transition-opacity hover:opacity-70 ${isSaved ? "text-red-500" : "text-slate-600"}`}
         >
           <HeartIcon className="w-4 h-4" fill={isSaved ? "currentColor" : "none"} />
           {isSaved ? "Saved" : "Shortlist"}
         </button>
-        <button 
-          onClick={() => document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth' })}
+        <button
+          onClick={() => setReviewModalOpen(true)}
           className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
         >
           <PenSquare className="w-4 h-4" />
           Write a Review
         </button>
-        <button 
+        <button
           onClick={handleShare}
           className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:opacity-70 transition-opacity"
         >
@@ -161,6 +166,13 @@ export default function VendorHero({ vendor, photoCount }: VendorHeroProps) {
           {copied ? <span className="text-green-600">Copied!</span> : "Share"}
         </button>
       </div>
+
+      <ReviewFormModal
+        open={reviewModalOpen}
+        onClose={() => setReviewModalOpen(false)}
+        endpoint={`/api/vendors/${vendor._id}/reviews`}
+        onSubmitted={(review) => onReviewSubmitted?.(review)}
+      />
     </div>
   );
 }

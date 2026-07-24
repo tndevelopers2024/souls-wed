@@ -64,6 +64,16 @@ export default function VenueDetailPage() {
   const [verifyingPayment, setVerifyingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
+  // ── Record a real page view (replaces the old fabricated demand numbers) ──
+  useEffect(() => {
+    if (!id) return;
+    fetch("/api/views", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ providerId: id, providerType: "venue" }),
+    }).catch(() => { });
+  }, [id]);
+
   // ── Fetch this venue from MongoDB API ──────────────────────────────────────
   useEffect(() => {
     if (!id) return;
@@ -138,7 +148,18 @@ export default function VenueDetailPage() {
       <div className="max-w-7xl mx-auto px-4 pt-28 pb-10">
         {/* Title block, then the photo collage — the client asked for the
             gallery to greet a visitor rather than sit at the foot of the page. */}
-        <VenueHero venue={venue} photoCount={(venue.gallery || []).filter(Boolean).length} />
+        <VenueHero
+          venue={venue}
+          photoCount={(venue.gallery || []).filter(Boolean).length}
+          onReviewSubmitted={(review) =>
+            setVenue((prev) => {
+              if (!prev) return prev;
+              const reviews = [review, ...prev.reviews];
+              const rating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+              return { ...prev, reviews, reviewCount: reviews.length, rating };
+            })
+          }
+        />
 
         <div
           id="photos"
@@ -176,11 +197,10 @@ export default function VenueDetailPage() {
                     key={tab.id}
                     href={`#${tab.id}`}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`text-sm rounded-lg px-4 py-2 whitespace-nowrap transition-colors ${
-                      activeTab === tab.id
-                        ? "font-semibold text-slate-900 bg-white"
-                        : "font-medium text-slate-500"
-                    }`}
+                    className={`text-sm rounded-lg px-4 py-2 whitespace-nowrap transition-colors ${activeTab === tab.id
+                      ? "font-semibold text-slate-900 bg-white"
+                      : "font-medium text-slate-500"
+                      }`}
                   >
                     {tab.label}
                   </a>
@@ -198,7 +218,7 @@ export default function VenueDetailPage() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {venue.indoor && (
-                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-200 bg-slate-50/50">
+                  <div className="flex flex-col gap-4 p-6 rounded-lg border border-slate-200 bg-slate-50/50">
                     <div className="w-14 h-14 rounded-2xl bg-primary-50/80 flex items-center justify-center flex-shrink-0 text-primary-600">
                       <Building className="w-6 h-6 stroke-[1.5]" />
                     </div>
@@ -211,7 +231,7 @@ export default function VenueDetailPage() {
                   </div>
                 )}
                 {venue.outdoor && (
-                  <div className="flex flex-col gap-4 p-6 rounded-[24px] border border-slate-200 bg-slate-50/50">
+                  <div className="flex flex-col gap-4 p-6 rounded-lg border border-slate-200 bg-slate-50/50">
                     <div className="w-14 h-14 rounded-2xl bg-green-50/80 flex items-center justify-center flex-shrink-0 text-green-600">
                       <TreePine className="w-6 h-6 stroke-[1.5]" />
                     </div>
@@ -224,7 +244,7 @@ export default function VenueDetailPage() {
                   </div>
                 )}
               </div>
-              
+
               {/* Feature tags */}
               <div className="flex flex-wrap gap-2 mt-5">
                 {venue.features.map((f) => (
@@ -277,7 +297,7 @@ export default function VenueDetailPage() {
               {venue.pricePerPlateVeg || venue.pricePerPlateNonVeg || venue.rentalCost ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {venue.pricePerPlateVeg && (
-                    <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50">
+                    <div className="p-6 rounded-lg border border-slate-200 bg-white">
                       <p className="font-semibold text-slate-500 text-xs tracking-widest uppercase mb-2">Veg Menu</p>
                       <p className="text-3xl font-bold text-slate-900 mb-1">
                         {convertPriceString(venue.pricePerPlateVeg, currency)}
@@ -286,7 +306,7 @@ export default function VenueDetailPage() {
                     </div>
                   )}
                   {venue.pricePerPlateNonVeg && (
-                    <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50">
+                    <div className="p-6 rounded-lg border border-slate-200 bg-white">
                       <p className="font-semibold text-slate-500 text-xs tracking-widest uppercase mb-2">Non-Veg Menu</p>
                       <p className="text-3xl font-bold text-slate-900 mb-1">
                         {convertPriceString(venue.pricePerPlateNonVeg, currency)}
@@ -295,7 +315,7 @@ export default function VenueDetailPage() {
                     </div>
                   )}
                   {venue.rentalCost && (
-                    <div className="p-6 rounded-[24px] border border-primary-100 bg-primary-50/30 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="p-6 rounded-lg border border-primary-100 bg-primary-50/30 md:col-span-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <p className="font-semibold text-primary-600/80 text-xs tracking-widest uppercase mb-2">Venue Rental</p>
                         <p className="text-3xl font-bold text-slate-900 mb-1">
@@ -303,14 +323,14 @@ export default function VenueDetailPage() {
                         </p>
                         <p className="text-sm text-slate-500">Full-day exclusive use of the property</p>
                       </div>
-                      <button className="bg-slate-900 text-white font-bold px-8 py-3 rounded-xl">
+                      <button className="bg-primary-600 hover:bg-primary-700 transition-colors text-white font-bold px-8 py-3 rounded">
                         Request Quote
                       </button>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="p-6 rounded-[24px] border border-slate-100 bg-white/50 text-center">
+                <div className="p-6 rounded-lg border border-slate-200 bg-white text-center">
                   <p className="text-slate-500 text-sm">Pricing details are available upon request. Please contact the venue directly for a custom quote.</p>
                 </div>
               )}
@@ -344,7 +364,7 @@ export default function VenueDetailPage() {
                   {venue.faqs.map((faq, i) => (
                     <div
                       key={i}
-                      className="rounded-[20px] overflow-hidden border border-slate-100"
+                      className="rounded-lg overflow-hidden border border-slate-200"
                       style={{ background: "white" }}
                     >
                       <button
@@ -382,7 +402,7 @@ export default function VenueDetailPage() {
       {/* Stripe Payment Verification Modal Overlay */}
       {(verifyingPayment || paymentSuccess) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl border border-slate-100 flex flex-col items-center">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center shadow-lg border border-slate-200 flex flex-col items-center">
             {verifyingPayment ? (
               <>
                 <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center text-primary-600 mb-4">
@@ -400,7 +420,7 @@ export default function VenueDetailPage() {
                 <p className="text-sm text-slate-500 mb-6">Your booking is now confirmed. You can view all details in your dashboard.</p>
                 <Link
                   href="/dashboard"
-                  className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-full text-sm transition-colors text-center block shadow-md"
+                  className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded text-sm transition-colors text-center block"
                 >
                   Go to Dashboard
                 </Link>

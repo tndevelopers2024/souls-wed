@@ -12,6 +12,7 @@ import { SparklesIcon } from "@/components/ui/sparkles";
 import VenueCard from "@/components/venues/VenueCard";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
 import type { Venue } from "@/lib/venues-data";
+import { relevanceSearch } from "@/lib/search";
 import WeddingCategoriesSection from "@/components/home/WeddingCategoriesSection";
 
 const sortOptions = ["Recommended", "Price: Low to High", "Price: High to Low", "Highest Rated"];
@@ -52,16 +53,6 @@ export default function VenuesPage() {
   const filtered = useMemo(() => {
     let list = [...allVenues];
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (v) =>
-          v.name.toLowerCase().includes(q) ||
-          v.city.toLowerCase().includes(q) ||
-          v.location.toLowerCase().includes(q)
-      );
-    }
-
     if (activeCities.length > 0) {
       list = list.filter(
         (v) =>
@@ -70,6 +61,18 @@ export default function VenuesPage() {
             v.location.toLowerCase().includes(city.toLowerCase())
           )
       );
+    }
+
+    const searching = search.trim().length > 0;
+    if (searching) {
+      list = relevanceSearch(list, search, (v) => [
+        { value: v.name, weight: 10 },
+        { value: v.city, weight: 6 },
+        { value: v.location, weight: 5 },
+        { value: v.type, weight: 4 },
+        { value: (v.features || []).join(" "), weight: 3 },
+        { value: v.description, weight: 2 },
+      ]);
     }
 
     if (sort === "Price: Low to High") {
@@ -86,7 +89,9 @@ export default function VenuesPage() {
       });
     } else if (sort === "Highest Rated") {
       list.sort((a, b) => b.rating - a.rating);
-    } else {
+    } else if (!searching) {
+      // Recommended (no active search): featured first. While searching,
+      // preserve the relevance ranking produced by relevanceSearch.
       list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     }
 
@@ -306,8 +311,8 @@ export default function VenuesPage() {
               <button
                 onClick={() => setViewType("grid")}
                 className={`p-1.5 rounded-full transition-all ${viewType === "grid"
-                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 hover:text-slate-600"
+                  ? "bg-white shadow-sm text-[var(--sw-primary)]"
+                  : "text-slate-400 hover:text-slate-600"
                   }`}
                 aria-label="Grid view"
               >
@@ -316,8 +321,8 @@ export default function VenuesPage() {
               <button
                 onClick={() => setViewType("list")}
                 className={`p-1.5 rounded-full transition-all ${viewType === "list"
-                    ? "bg-white shadow-sm text-[var(--sw-primary)]"
-                    : "text-slate-400 hover:text-slate-600"
+                  ? "bg-white shadow-sm text-[var(--sw-primary)]"
+                  : "text-slate-400 hover:text-slate-600"
                   }`}
                 aria-label="List view"
               >

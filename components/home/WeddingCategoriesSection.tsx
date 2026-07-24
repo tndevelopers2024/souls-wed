@@ -22,7 +22,7 @@ export default function WeddingCategoriesSection({ singleRow = false }: { single
   const [isExpanded, setIsExpanded] = useState(false);
 
   // If single row, show all items (horizontally scrollable). 
-  // Else, use expansion logic (8 items initially -> all).
+  // Else, use expansion logic (8 items initially -> 1 row -> all).
   const displayedCategories = singleRow
     ? VENDOR_CATEGORIES
     : (isExpanded ? VENDOR_CATEGORIES : VENDOR_CATEGORIES.slice(0, 8));
@@ -52,7 +52,7 @@ export default function WeddingCategoriesSection({ singleRow = false }: { single
 
         {/* Categories Flex Container */}
         <div
-          className="flex flex-nowrap md:flex-wrap md:justify-center overflow-x-auto md:overflow-x-visible gap-4 md:gap-8 mt-8 pb-4 md:pb-0 custom-scrollbar snap-x snap-mandatory"
+          className="flex flex-wrap justify-center gap-4 md:gap-8 mt-8 pb-4 md:pb-0"
         >
           {displayedCategories.map((cat, i) => (
             <motion.a
@@ -61,7 +61,7 @@ export default function WeddingCategoriesSection({ singleRow = false }: { single
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: Math.min(i * 0.03, 0.3) }}
-              className="group min-w-[100px] w-[100px] md:min-w-0 md:w-[120px] flex flex-col items-center justify-start gap-2.5 p-1 flex-shrink-0 snap-start"
+              className="group min-w-[100px] w-[100px] md:min-w-0 md:w-[120px] flex flex-col items-center justify-start gap-2.5 p-1 flex-shrink-0"
             >
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center"

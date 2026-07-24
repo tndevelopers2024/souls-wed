@@ -17,10 +17,20 @@ import { SlidersHorizontalIcon } from "@/components/ui/sliders-horizontal";
 import { SparklesIcon } from "@/components/ui/sparkles";
 import { formatAsCurrency } from "@/lib/currency";
 import { useCurrency } from "@/lib/CurrencyContext";
+import { relevanceSearch } from "@/lib/search";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
 import ListingCard, { CardTag } from "@/components/shared/ListingCard";
 import VendorCard from "@/components/vendors/VendorCard";
 import WeddingCategoriesSection from "@/components/home/WeddingCategoriesSection";
+
+export interface PublicVendorReview {
+  id: number;
+  author: string;
+  avatar: string;
+  date: string;
+  rating: number;
+  text: string;
+}
 
 export interface PublicVendor {
   _id: string;
@@ -45,6 +55,8 @@ export interface PublicVendor {
   website?: string;
   instagram?: string;
   advancePercentage?: number;
+  reviews?: PublicVendorReview[];
+  faqs?: { question: string; answer: string }[];
 }
 
 
@@ -95,16 +107,6 @@ export default function PublicVendorDirectory({
   const filtered = useMemo(() => {
     let list = [...vendors];
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (v) =>
-          (v.businessName || v.name).toLowerCase().includes(q) ||
-          v.city.toLowerCase().includes(q) ||
-          (v.description || "").toLowerCase().includes(q)
-      );
-    }
-
     if (activeCities.length > 0) {
       list = list.filter((v) =>
         activeCities.some((city) =>
@@ -113,13 +115,25 @@ export default function PublicVendorDirectory({
       );
     }
 
+    const searching = search.trim().length > 0;
+    if (searching) {
+      list = relevanceSearch(list, search, (v) => [
+        { value: v.businessName || v.name, weight: 10 },
+        { value: v.category, weight: 6 },
+        { value: v.city, weight: 5 },
+        { value: v.description, weight: 2 },
+      ]);
+    }
+
     if (sort === "Price: Low to High") {
       list.sort((a, b) => (a.priceFrom || 0) - (b.priceFrom || 0));
     } else if (sort === "Price: High to Low") {
       list.sort((a, b) => (b.priceFrom || 0) - (a.priceFrom || 0));
     } else if (sort === "Highest Rated") {
       list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    } else {
+    } else if (!searching) {
+      // Recommended (no active search): featured first. While searching,
+      // preserve the relevance ranking produced by relevanceSearch.
       list.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     }
 

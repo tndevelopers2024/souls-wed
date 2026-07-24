@@ -4,44 +4,46 @@ import React, { useMemo } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useTheme } from "@/lib/ThemeContext";
 
-export default function VendorAnalyticsChart({ bookings = [] }: { bookings?: any[] }) {
+export default function VendorAnalyticsChart({ bookings = [], views = [] }: { bookings?: any[]; views?: { viewedAt: string }[] }) {
   const { isDark: isDarkMode } = useTheme();
 
-  // Generate chart data for the last 7 months based on real bookings
+  // Generate chart data for the last 7 months based on real bookings and real page views
   const data = useMemo(() => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const chartData = [];
     const now = new Date();
-    
+
     // Go back 6 months from current month to create the 7 month timeline
     for (let i = 6; i >= 0; i--) {
       const targetMonthIndex = (now.getMonth() - i + 12) % 12;
       const targetYear = now.getFullYear() - (now.getMonth() - i < 0 ? 1 : 0);
-      
+
       // Count bookings matching this month and year
       const monthlyBookings = bookings.filter(b => {
         // Fallback to eventDate or checkIn if createdAt is missing
         const dateString = b.createdAt || b.eventDate || b.checkIn;
         if (!dateString) return false;
-        
+
         const bDate = new Date(dateString);
         return bDate.getMonth() === targetMonthIndex && bDate.getFullYear() === targetYear;
       });
-      
+
       const inquiriesCount = monthlyBookings.length;
-      // Dummy logic for views: base views + inquiries multiplier, because views aren't tracked in DB
-      const baseViews = 1500 + targetMonthIndex * 120;
-      const viewsCount = inquiriesCount > 0 ? (inquiriesCount * 35) + baseViews : baseViews - 200;
-      
+
+      const viewsCount = views.filter((v) => {
+        const vDate = new Date(v.viewedAt);
+        return vDate.getMonth() === targetMonthIndex && vDate.getFullYear() === targetYear;
+      }).length;
+
       chartData.push({
         name: months[targetMonthIndex],
         views: viewsCount,
         inquiries: inquiriesCount,
       });
     }
-    
+
     return chartData;
-  }, [bookings]);
+  }, [bookings, views]);
   
   const textColor = isDarkMode ? "#a8a29e" : "#57534e"; // stone-400 / stone-600
   const gridColor = isDarkMode ? "#292524" : "#e7e5e4"; // stone-800 / stone-200

@@ -236,14 +236,14 @@ function DropdownMenu({ columns }: { columns: { title: string; items: { label: s
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="relative block py-2 px-4 -ml-4 text-[14px] font-medium transition-colors z-10"
+                  className="relative w-fit block py-1.5 px-3 -ml-3 text-[14px] font-medium transition-colors z-10"
                   style={{ color: showPill ? "var(--sw-primary)" : "var(--sw-navy)", fontFamily: "var(--font-heading)" }}
                   onMouseEnter={() => setHoveredItem(item.href)}
                 >
                   {showPill && (
                     <motion.div
                       layoutId="mega-menu-pill"
-                      className="absolute inset-0 rounded-full"
+                      className="absolute inset-0 rounded-xl"
                       style={{
                         background: "linear-gradient(135deg, rgba(238, 116, 41, 0.08) 0%, rgba(238, 116, 41, 0.02) 100%)",
                         border: "1px solid rgba(238, 116, 41, 0.2)",

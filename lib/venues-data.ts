@@ -1102,15 +1102,17 @@ export const venues: Venue[] = [
 
 
 export const cities = [
-  { name: "Paris", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=200&h=200&fit=crop&crop=center&q=80" },
   { name: "New York", image: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=200&h=200&fit=crop&crop=center&q=80" },
-  { name: "London", image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=200&h=200&fit=crop&crop=center&q=80" },
-  { name: "Tokyo", image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Hong Kong", image: "https://images.unsplash.com/photo-1506970845246-18f21d533b20?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Chicago", image: "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Honolulu", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&h=200&fit=crop&crop=center&q=80" },
   { name: "Dubai", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=200&h=200&fit=crop&crop=center&q=80" },
-  { name: "Rome", image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=200&h=200&fit=crop&crop=center&q=80" },
-  { name: "Bali", image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=200&h=200&fit=crop&crop=center&q=80" },
   { name: "Sydney", image: "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=200&h=200&fit=crop&crop=center&q=80" },
-  { name: "Istanbul", image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Auckland", image: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Paris", image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Kollam", image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Kochi", image: "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=200&h=200&fit=crop&crop=center&q=80" },
+  { name: "Phuket", image: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=200&h=200&fit=crop&crop=center&q=80" },
 ];
 
 export function getVenueById(id: string): Venue | undefined {

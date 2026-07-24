@@ -22,7 +22,7 @@ export default function VenueMapCard({ name, city, location, mapLink }: VenueMap
 
   return (
     <div
-      className="rounded-2xl border overflow-hidden h-full flex flex-col"
+      className="rounded-lg border overflow-hidden h-full flex flex-col"
       style={{ borderColor: "var(--sw-light-gray)", background: "var(--sw-surface)" }}
     >
       <div className="relative flex-1 min-h-[180px] w-full bg-slate-100">
@@ -54,7 +54,7 @@ export default function VenueMapCard({ name, city, location, mapLink }: VenueMap
           href={openHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full text-center px-4 py-2 rounded-full font-bold text-xs text-white transition-opacity hover:opacity-90"
+          className="block w-full text-center px-4 py-2.5 rounded font-bold text-xs text-white transition-colors hover:brightness-95"
           style={{ background: "var(--sw-primary)" }}
         >
           Show on map

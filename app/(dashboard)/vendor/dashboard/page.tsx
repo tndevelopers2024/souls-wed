@@ -222,6 +222,7 @@ export default function VendorDashboard() {
   const [loadingData, setLoadingData] = useState(false);
   const [available, setAvailable] = useState(true);
   const [bookings, setBookings] = useState<DashboardBooking[]>([]);
+  const [views, setViews] = useState<{ viewedAt: string }[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [selectedCategory, setSelectedCategory] = useState("venues");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -587,6 +588,18 @@ export default function VendorDashboard() {
     }
   };
 
+  const fetchViews = async (vendorId: string) => {
+    try {
+      const res = await fetch(`/api/views?providerId=${encodeURIComponent(vendorId)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setViews(data.views || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch views", err);
+    }
+  };
+
   useEffect(() => {
     async function checkSession() {
       try {
@@ -601,6 +614,7 @@ export default function VendorDashboard() {
               (data.user.unavailableDates || []).map((d: string) => new Date(d).toISOString().split("T")[0])
             );
             fetchBookings();
+            fetchViews(data.user.id);
             fetchVenues(data.user.id);
             fetchServices(data.user.id);
           } else if (data.authenticated) {
@@ -1335,7 +1349,7 @@ export default function VendorDashboard() {
                   })()}
 
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-                    <VendorAnalyticsChart bookings={bookings} />
+                    <VendorAnalyticsChart bookings={bookings} views={views} />
 
                     {/* Leads list section */}
                     <div className={`rounded-3xl p-6 border shadow-none flex flex-col gap-5 min-h-[320px] ${cardClass}`}>

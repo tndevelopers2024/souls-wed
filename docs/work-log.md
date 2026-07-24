@@ -761,3 +761,103 @@ city-level filtering. Now vendors, venues, and services can all be searched by c
 ✅ Country-level search implemented  
 ✅ No type errors blocking production build  
 ✅ Critical issues resolved
+
+---
+
+## Session 9 — 24 July 2026
+
+Production-hardening pass: removed fabricated numbers/claims and rebuilt search
+as a relevance-ranking engine. Continued from the earlier "no fake UI" work.
+
+### Removed fabricated numbers & claims
+
+Every displayed number must be backed by real data. Removed/fixed:
+
+- **VenueHero** — deleted the hardcoded "2 bookings recently" badge (pure fiction;
+  the sidebar already shows real recent-demand).
+- **VendorHero** — the unconditional "Highly Requested" badge is now a "Featured
+  Partner" badge gated on the real `vendor.featured` admin flag.
+- **PublicVendorDetailPage** — deleted the entirely fake "Areas Available (2)"
+  section (hardcoded "200 Seating | 300 Floating", "500 Seating | 800 Floating",
+  and invented "Air Conditioned / Parking / Power Backup" tags). Vendors have no
+  area/capacity data in the model. Removed the matching tab and scroll-spy entry.
+- **`/api/vendors` GET** — ServiceListing fallback no longer defaults empty
+  records to `rating: 5.0 / reviewCount: 10`; now `0 / 0`.
+
+Note: the venue detail page's "Areas Available" is legitimate (real indoor/outdoor
+flags + real min/max guest counts) and was left intact.
+
+### Rebuilt search: substring filter → relevance engine
+
+Old search everywhere was a flat `.toLowerCase().includes()` filter — no ranking,
+no typo tolerance, single field. Replaced with `lib/search.ts`:
+
+- Tokenized queries with AND semantics (every word must match somewhere)
+- Weighted fields (name > city > location > type > features > description)
+- Tiered match quality: exact > prefix > word-prefix > substring > fuzzy
+- Typo tolerance via bounded **Damerau-Levenshtein** (transpositions = 1 edit,
+  so "mariott" → "Marriott", "resrot" → "resort")
+- Results sorted by descending relevance; empty query returns list unchanged
+
+Wired into: `app/(public)/venues/page.tsx`, `components/vendors/PublicVendorDirectory.tsx`
+(covers `/vendors` and `/[category]`), and `app/(public)/vendors/[category]/page.tsx`.
+
+### Fixed a real production crash (found while testing)
+
+`PublicVendorDetailPage.tsx:58` did `vendor.category.toLowerCase()`, which threw
+`Cannot read properties of undefined` for any vendor with no `category` set —
+taking down the **entire** vendor detail page ("This page couldn't load"). Guarded
+this and the same access in `VendorHero.tsx`.
+
+### Verified
+
+- 12/12 unit tests pass for the search engine (ranking, weighting, fuzzy,
+  transpositions, AND semantics, empty query).
+- Browser, live data: typo "mariott" → JW Marriott (old search returned nothing);
+  "new york" → exactly the 3 New York venues, others excluded.
+- Vendor detail page renders clean (no crash, no fabricated sections).
+- `npm run build` passes clean.
+
+### Follow-up (same day) — fabricated review counts + missing chat widget
+
+Two issues surfaced from a live vendor page (Burj Al Arab – Panoramic Suite):
+
+- **"412 reviews" was fabricated seed data.** 20 ServiceListings + 5 venues shipped
+  with baked-in `reviewCount`/`rating` (e.g. 412 reviews, 5.0) and zero actual review
+  documents. Added `scripts/backfill-review-stats.mjs`, which recomputes both fields
+  from the real `reviews[]` array (0 when none). Ran it: 25 records corrected to 0/0.
+  All cards/hero already hide rating when 0, so pages now honestly show "No reviews yet";
+  the gated review API repopulates real numbers as bookings complete.
+- **Chatbot wasn't rendering.** The Zoho SalesIQ embed was missing the required
+  `$zoho.salesiq` init object, so the widget never initialised. Fixed the embed to define
+  `$zoho` before injecting the widget script. Also made the **WhatsApp FAB always visible**
+  (previously only appeared after scrolling) so there's a guaranteed working chat channel
+  regardless of Zoho's per-domain allow-list (Zoho only renders on approved domains — may
+  stay hidden on localhost until the domain is added in the Zoho console).
+
+Verified live: `/api/vendors?id=room-burj-1` now returns rating 0 / reviewCount 0; the hero
+no longer shows the "412 reviews" badge; the WhatsApp button renders bottom-right; the Zoho
+script injects with `$zoho.salesiq` ready.
+
+### Follow-up — inner detail pages restyled flat (Booking.com-style)
+
+Client wants the venue/vendor detail pages to look like Booking.com: flatter, calmer,
+no heavy shadows or bouncy hover effects. Applied one consistent system across the
+detail pages (many components are shared, so this covers both venue and vendor):
+
+- **Surfaces**: removed all heavy drop-shadows (`shadow-2xl`, `shadow-[0_24px_60px…]`)
+  and large radii (`rounded-3xl`, `rounded-[24px]`, `rounded-[20px]`) → flat white with
+  a thin `border-slate-200` and `rounded-lg`.
+- **Hovers**: removed image zoom-on-hover in the gallery, `hover:-translate-y`, and
+  `hover:scale` bounces → simple colour/background hovers only.
+- **Buttons/CTAs**: solid `bg-primary-600 hover:bg-primary-700`, small `rounded`.
+- Files: VenueReviews, VenueGallery, VenueMapCard, VenueSidebar, VendorHero,
+  VendorSidebar, PublicVendorDetailPage, and the venue `[id]` page shell.
+
+Verified: `npm run build` clean, no console errors, and computed styles confirm the
+cards now render with `box-shadow: none`, ~10px radius, and 1px slate borders.
+
+**Tooling note for future sessions:** do NOT run `npm run build` while `next dev` is
+running — they share `.next/` and Turbopack's cache gets corrupted (surfaces as fake
+syntax errors in the dev overlay). Stop the dev server first, or build in a separate
+checkout.

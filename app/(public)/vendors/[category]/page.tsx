@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Loader2, Building2 } from "lucide-react";
 import VendorCard from "@/components/vendors/VendorCard";
 import VenueFilterBar from "@/components/venues/VenueFilterBar";
+import { relevanceSearch } from "@/lib/search";
 import Link from "next/link";
 
 interface Vendor {
@@ -78,18 +79,16 @@ export default function VendorCategoryPage() {
   const filtered = useMemo(() => {
     let list = [...allVendors];
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (v) =>
-          v.name.toLowerCase().includes(q) ||
-          v.businessName?.toLowerCase().includes(q) ||
-          v.city.toLowerCase().includes(q)
-      );
-    }
-
     if (activeCities.length > 0) {
       list = list.filter((v) => activeCities.some((city) => v.city.toLowerCase().includes(city.toLowerCase())));
+    }
+
+    if (search.trim()) {
+      list = relevanceSearch(list, search, (v) => [
+        { value: v.businessName || v.name, weight: 10 },
+        { value: v.category, weight: 6 },
+        { value: v.city, weight: 5 },
+      ]);
     }
 
     return list;

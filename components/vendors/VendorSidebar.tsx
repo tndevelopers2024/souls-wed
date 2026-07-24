@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import type { PublicVendor } from "@/components/vendors/PublicVendorDirectory";
 import BookingForm from "@/components/booking/BookingForm";
@@ -12,7 +13,15 @@ interface VendorSidebarProps {
 
 export default function VendorSidebar({ vendor }: VendorSidebarProps) {
   const { currency } = useCurrency();
-  
+  const [recentEnquiries, setRecentEnquiries] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/bookings/demand?providerId=${encodeURIComponent(vendor._id)}`)
+      .then((res) => res.json())
+      .then((data) => setRecentEnquiries(typeof data.count === "number" ? data.count : null))
+      .catch(() => setRecentEnquiries(null));
+  }, [vendor._id]);
+
   const categoryStr = vendor.category || "Vendor";
   const cat = categoryStr.toLowerCase();
   const isVenue = cat.includes("venue") || cat.includes("banquet");
@@ -45,13 +54,13 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
     <div className="sticky top-24 flex flex-col gap-6">
       
       {/* Pricing Information Card */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
         <div className="p-5">
           <h3 className="font-bold text-slate-800 mb-3">Starting Price</h3>
           
           {isPerPlate ? (
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div>
                   <span className="text-xl font-bold text-primary-600">
                     {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
@@ -72,7 +81,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
               </div>
             </div>
           ) : isRoom ? (
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
                 <span className="text-xl font-bold text-primary-600">
                   {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
@@ -81,7 +90,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
                 <span className="text-xl font-bold text-primary-600">
                   {vendor.priceFrom ? formatAsCurrency(vendor.priceFrom, currency) : "On request"}
@@ -95,7 +104,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
       
       {/* Destination Price (Only for Venues) */}
       {isVenue && (
-        <div className="bg-primary-50/50 p-5 border-t border-slate-100 border border-slate-200 rounded-xl mt-4">
+        <div className="bg-primary-50/50 p-5 border-t border-slate-100 border border-slate-200 rounded-lg mt-4">
           <h3 className="font-bold text-slate-800 mb-2">Venue Rental</h3>
           <div className="flex items-center justify-between">
             <span className="text-xl font-bold text-slate-800">
@@ -110,7 +119,7 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
       )}
 
       {/* ─── BOOKING FORM ─── */}
-      <div className="bg-white border border-slate-200 rounded-xl p-5">
+      <div className="bg-white border border-slate-200 rounded-lg p-5">
         <h3 className="font-bold text-slate-800 text-sm mb-4">
           Book {vendor.businessName || vendor.name}
         </h3>
@@ -122,20 +131,33 @@ export default function VendorSidebar({ vendor }: VendorSidebarProps) {
         />
       </div>
 
-      {/* Demand badge */}
-      <div className="flex items-center justify-center gap-2">
-        <span className="bg-primary-100 text-primary-800 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200">
-          In High Demand
-        </span>
-        <span className="text-xs font-semibold text-slate-600">
-          {Math.floor(Math.random() * 15) + 5} enquiries last week
-        </span>
-      </div>
+      {currency !== "INR" && (
+        <p className="text-[11px] text-slate-400 text-center -mt-2">
+          Prices shown in {currency} for reference — you&apos;ll be charged in INR at checkout.
+        </p>
+      )}
 
-      <button className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:opacity-70 transition-opacity">
+      {/* Demand badge — real count of bookings made in the last 7 days */}
+      {recentEnquiries !== null && recentEnquiries > 0 && (
+        <div className="flex items-center justify-center gap-2">
+          <span className="bg-primary-100 text-primary-800 text-[10px] font-bold px-2 py-0.5 rounded border border-primary-200">
+            In High Demand
+          </span>
+          <span className="text-xs font-semibold text-slate-600">
+            {recentEnquiries} {recentEnquiries === 1 ? "enquiry" : "enquiries"} last week
+          </span>
+        </div>
+      )}
+
+      <a
+        href={`mailto:hello@soulswed.com?subject=${encodeURIComponent(
+          `Reporting an issue with ${vendor.businessName || vendor.name}`
+        )}&body=${encodeURIComponent(`Vendor ID: ${vendor._id}\n\nPlease describe the issue:\n`)}`}
+        className="flex items-center justify-center gap-1.5 text-xs font-semibold text-red-500 hover:opacity-70 transition-opacity"
+      >
         <AlertTriangle className="w-3.5 h-3.5" />
         Report an Issue
-      </button>
+      </a>
     </div>
   );
 }

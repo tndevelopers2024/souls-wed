@@ -13,6 +13,7 @@ import { SearchIcon } from "@/components/ui/search";
 import BookingCard from "@/components/booking/BookingCard";
 import AvatarUploader from "@/components/shared/AvatarUploader";
 import { PhoneInput } from "@/components/shared/PhoneInput";
+import { useWishlistStore } from "@/lib/store/useWishlistStore";
 
 interface UserSession {
   id: string;
@@ -38,6 +39,7 @@ export default function UserDashboard() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState({ text: "", type: "" });
   const [searchTerm, setSearchTerm] = useState("");
+  const { items: wishlistItems } = useWishlistStore();
 
   const generateStrongPassword = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
@@ -303,9 +305,9 @@ export default function UserDashboard() {
                   {/* Floating Stats */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
-                      { label: "Saved Venues", count: "0" },
+                      { label: "Saved Venues", count: wishlistItems.filter((i) => i.category === "venue").length },
                       { label: "Bookings", count: bookings.length },
-                      { label: "Enquiries", count: "0" },
+                      { label: "Enquiries", count: bookings.filter((b) => b.status === "pending").length },
                     ].map((stat, i) => (
                       <div
                         key={i}

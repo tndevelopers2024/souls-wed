@@ -14,6 +14,16 @@ export default function VendorDetailPage() {
   const [vendorLoading, setVendorLoading] = useState(true);
   const [vendorNotFound, setVendorNotFound] = useState(false);
 
+  // Record a real page view (feeds the vendor's analytics chart)
+  useEffect(() => {
+    if (!id) return;
+    fetch("/api/views", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ providerId: id, providerType: "vendor" }),
+    }).catch(() => {});
+  }, [id]);
+
   // Fetch this vendor from MongoDB API
   useEffect(() => {
     if (!id) return;

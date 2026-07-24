@@ -1,5 +1,21 @@
 import mongoose, { Schema } from "mongoose";
 
+const VendorReviewSchema = new Schema({
+  id:        { type: Number },
+  author:    { type: String },
+  avatar:    { type: String },
+  date:      { type: String },
+  rating:    { type: Number },
+  text:      { type: String },
+  userId:    { type: Schema.Types.ObjectId, ref: "User" },
+  bookingId: { type: Schema.Types.ObjectId, ref: "Booking" },
+});
+
+const VendorFaqSchema = new Schema({
+  question: { type: String },
+  answer:   { type: String },
+});
+
 const VendorSchema = new Schema({
   name:         { type: String, required: true },
   businessName: { type: String },  // Brand/business name — was missing before, signup data was silently dropped
@@ -20,6 +36,8 @@ const VendorSchema = new Schema({
   unavailableDates: [{ type: Date }],
   profileImage: { type: String, default: "" },
   images:       [{ type: String }],
+  faqs:         [VendorFaqSchema],
+  reviews:      [VendorReviewSchema],
   featured:     { type: Boolean, default: false },
   verified:     { type: Boolean, default: false }, // Admin verification
   isEmailVerified: { type: Boolean, default: false }, // Email OTP verification

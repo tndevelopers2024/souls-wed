@@ -175,7 +175,7 @@ export default function VenueGallery({
         ))}
       </div>
     ) : (
-      <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
+      <div className="flex flex-col items-center justify-center py-16 bg-slate-50 rounded-lg border border-slate-100 border-dashed">
         <Images className="w-12 h-12 text-slate-300 mb-4" />
         <p className="text-slate-500 font-medium">No videos uploaded yet.</p>
       </div>
@@ -200,7 +200,7 @@ export default function VenueGallery({
                 src={src}
                 alt={`${venueName} – photo ${index + 1}`}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
                 priority={index === 0}
               />
@@ -228,7 +228,7 @@ export default function VenueGallery({
                   src={src}
                   alt={`${venueName} – photo ${index + 1}`}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover"
                   sizes="20vw"
                 />
                 {showOverflow && i === overflowOnThumb && (
@@ -302,7 +302,7 @@ export default function VenueGallery({
                       src={src}
                       alt={`${venueName} – photo ${index + 1}`}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-cover"
                       sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
                     />
                   </button>
@@ -312,7 +312,7 @@ export default function VenueGallery({
               {rating > 0 && (
                 <aside className="hidden lg:block">
                   <div
-                    className="rounded-2xl border p-4 sticky top-0"
+                    className="rounded-lg border p-4 sticky top-0"
                     style={{ borderColor: "var(--sw-light-gray)" }}
                   >
                     <div className="flex items-center gap-3">

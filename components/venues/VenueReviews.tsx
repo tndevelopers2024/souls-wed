@@ -10,18 +10,19 @@ interface VenueReviewsProps {
 }
 
 export default function VenueReviews({ rating, reviewCount, reviews }: VenueReviewsProps) {
-  // Fake distribution for the rating bars (aesthetically reasonable)
-  const distribution = [
-    { stars: 5, pct: rating >= 4.5 ? 82 : 60 },
-    { stars: 4, pct: rating >= 4 ? 12 : 25 },
-    { stars: 3, pct: 4 },
-    { stars: 2, pct: 1 },
-    { stars: 1, pct: 1 },
-  ];
+  // Real distribution computed from the actual reviews, not a fixed guess.
+  const counts = [5, 4, 3, 2, 1].map(
+    (stars) => reviews.filter((r) => Math.round(r.rating) === stars).length
+  );
+  const total = counts.reduce((sum, c) => sum + c, 0) || 1;
+  const distribution = [5, 4, 3, 2, 1].map((stars, i) => ({
+    stars,
+    pct: Math.round((counts[i] / total) * 100),
+  }));
 
   if (reviewCount === 0) {
     return (
-      <div className="text-center py-10 rounded-[24px]" style={{ background: "var(--sw-peach)" }}>
+      <div className="text-center py-10 rounded-lg border border-slate-200 bg-slate-50">
         <p className="text-slate-500 text-sm">No reviews yet — be the first to celebrate here!</p>
       </div>
     );
@@ -30,10 +31,10 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
   return (
     <div>
       {/* Overall score */}
-      <div className="flex items-start gap-8 mb-8 p-6 rounded-[24px]" style={{ background: "var(--sw-peach)" }}>
+      <div className="flex items-start gap-8 mb-6 p-6 rounded-lg border border-slate-200 bg-white">
         <div className="text-center">
           <div
-            className="text-6xl font-bold leading-none mb-1"
+            className="text-5xl font-bold leading-none mb-1"
             style={{ fontFamily: "var(--font-heading)", color: "var(--sw-navy)" }}
           >
             {rating.toFixed(1)}
@@ -57,9 +58,9 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
             <div key={d.stars} className="flex items-center gap-3">
               <span className="text-xs font-semibold text-slate-600 w-4">{d.stars}</span>
               <Star className="w-3 h-3" style={{ color: "var(--sw-secondary)" }} fill="var(--sw-secondary)" />
-              <div className="flex-1 h-2 rounded-full bg-white overflow-hidden">
+              <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
                 <div
-                  className="h-full rounded-full transition-all"
+                  className="h-full rounded-full"
                   style={{
                     width: `${d.pct}%`,
                     background: "var(--sw-primary)",
@@ -73,12 +74,11 @@ export default function VenueReviews({ rating, reviewCount, reviews }: VenueRevi
       </div>
 
       {/* Individual reviews */}
-      <div className="space-y-5">
+      <div className="space-y-4">
         {reviews.map((review) => (
           <div
             key={review.id}
-            className="p-5 rounded-[20px] border border-slate-100"
-            style={{ background: "white" }}
+            className="p-5 rounded-lg border border-slate-200 bg-white"
           >
             <div className="flex items-start gap-3 mb-3">
               <div

@@ -275,3 +275,73 @@ export async function sendUploadNotificationEmail(params: {
     console.error("Error sending upload notification email:", error);
   }
 }
+
+/**
+ * Notifies the admin inbox of a new contact-form inquiry.
+ */
+export async function sendInquiryNotificationEmail(params: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  message: string;
+}) {
+  const to = process.env.UPLOAD_NOTIFY_EMAIL || "soulswed99@gmail.com";
+
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("SMTP credentials are not fully configured. Skipping inquiry notification from:", params.email);
+    return;
+  }
+
+  const { firstName, lastName, email, message } = params;
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"${process.env.SMTP_FROM_NAME || "SoulsWed"}" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      to,
+      replyTo: email,
+      subject: `New consultation inquiry from ${firstName} ${lastName}`,
+      html: `
+        <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #DEE2E6; border-radius: 8px;">
+          <h2 style="color: #EE7429; margin-top: 0;">New Consultation Request</h2>
+          <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #FCCB11;">
+            <p style="margin: 5px 0; color: #1A1A1A;"><strong>Name:</strong> ${firstName} ${lastName}</p>
+            <p style="margin: 5px 0; color: #1A1A1A;"><strong>Email:</strong> ${email}</p>
+          </div>
+          <p style="color: #4a4a4a; line-height: 1.5; white-space: pre-line;">${message}</p>
+        </div>
+      `,
+    });
+    console.log("Inquiry notification email sent to %s, messageId: %s", to, info.messageId);
+  } catch (error) {
+    console.error("Error sending inquiry notification email:", error);
+  }
+}
+
+/**
+ * Notifies the admin inbox of a new newsletter subscriber.
+ */
+export async function sendSubscriberNotificationEmail(email: string) {
+  const to = process.env.UPLOAD_NOTIFY_EMAIL || "soulswed99@gmail.com";
+
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.warn("SMTP credentials are not fully configured. Skipping subscriber notification for:", email);
+    return;
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"${process.env.SMTP_FROM_NAME || "SoulsWed"}" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      to,
+      subject: "New newsletter subscriber",
+      html: `
+        <div style="font-family: 'Plus Jakarta Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #DEE2E6; border-radius: 8px;">
+          <h2 style="color: #EE7429; margin-top: 0;">New Newsletter Subscriber</h2>
+          <p style="color: #1A1A1A; font-size: 16px;">${email}</p>
+        </div>
+      `,
+    });
+    console.log("Subscriber notification email sent to %s, messageId: %s", to, info.messageId);
+  } catch (error) {
+    console.error("Error sending subscriber notification email:", error);
+  }
+}

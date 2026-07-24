@@ -29,12 +29,30 @@ interface Props {
 }
 
 export default function VenueFilterBar({ activeCities, onCityChange, activeCategory, search, onSearchChange, searchPlaceholder }: Props) {
-  const noCitySelected = activeCities.length === 0;
+  const [localCities, setLocalCities] = useState<string[]>(activeCities || []);
+  const [localSearch, setLocalSearch] = useState(search || "");
   const [searchFocused, setSearchFocused] = useState(false);
   const { currency, setCurrency } = useCurrency();
   const [openFilter, setOpenFilter] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const filterContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setLocalCities(activeCities || []);
+  }, [activeCities]);
+
+  useEffect(() => {
+    setLocalSearch(search || "");
+  }, [search]);
+
+  const noCitySelected = localCities.length === 0;
+
+  const handleApplySearch = () => {
+    onCityChange(localCities);
+    if (onSearchChange) {
+      onSearchChange(localSearch);
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -105,8 +123,6 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
   return (
     <div className="px-4 mt-6 mb-8 flex flex-col gap-6 max-w-7xl mx-auto">
 
-
-
       {/* ═══════════ ROW 1 — Filter chips ═══════════ */}
       <div
         ref={filterContainerRef}
@@ -114,17 +130,13 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
         style={{ scrollbarWidth: "none" }}
       >
         {/* Main filter button */}
-        <motion.button
-          whileTap={{ scale: 0.96 }}
-          className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all"
+        <button
+          className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all cursor-pointer"
           style={{
             background: activeCount > 0
               ? "linear-gradient(135deg, var(--sw-primary) 0%, #f5932a 100%)"
               : "linear-gradient(135deg, var(--sw-ink) 0%, #2a3747 100%)",
             color: "white",
-            boxShadow: activeCount > 0
-              ? "0 6px 20px rgba(238,116,41,0.38)"
-              : "0 6px 20px rgba(55,71,90,0.28)",
           }}
         >
           <SlidersHorizontalIcon className="w-4 h-4" />
@@ -142,7 +154,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
               </motion.span>
             )}
           </AnimatePresence>
-        </motion.button>
+        </button>
 
         {/* Divider */}
         <div className="h-6 w-px flex-shrink-0 mx-1" style={{ background: "rgba(0,0,0,0.1)" }} />
@@ -156,10 +168,9 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
 
             return (
               <div key={f.label} className="relative flex-shrink-0">
-                <motion.button
-                  whileTap={{ scale: 0.96 }}
+                <button
                   onClick={() => toggleFilter(f.label)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-200"
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 cursor-pointer"
                   style={{
                     background: isActive
                       ? "linear-gradient(135deg, rgba(238,116,41,0.12) 0%, rgba(245,163,42,0.08) 100%)"
@@ -172,11 +183,6 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                       : isOpen
                         ? "1.5px solid rgba(55,71,90,0.15)"
                         : "1.5px solid rgba(55,71,90,0.08)",
-                    boxShadow: isActive
-                      ? "0 4px 12px rgba(238,116,41,0.12)"
-                      : isOpen
-                        ? "0 8px 24px rgba(0,0,0,0.06)"
-                        : "0 2px 8px rgba(0,0,0,0.03)",
                     backdropFilter: "blur(12px)",
                   }}
                 >
@@ -206,7 +212,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                       </svg>
                     </motion.span>
                   )}
-                </motion.button>
+                </button>
 
                 {/* Dropdown */}
                 <AnimatePresence>
@@ -220,8 +226,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                       style={{
                         background: "rgba(255,255,255,0.98)",
                         backdropFilter: "blur(20px)",
-                        border: "1px solid rgba(0,0,0,0.06)",
-                        boxShadow: "0 24px 60px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.06)",
+                        border: "1px solid rgba(0,0,0,0.1)",
                       }}
                     >
                       {/* Dropdown header */}
@@ -242,7 +247,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                             <button
                               key={opt}
                               onClick={() => selectOption(f.label, opt)}
-                              className="w-full flex items-center justify-between px-5 py-3 text-sm transition-all hover:bg-primary-50/80 group"
+                              className="w-full flex items-center justify-between px-5 py-3 text-sm transition-all cursor-pointer group"
                               style={{
                                 color: isSelected ? "var(--sw-primary)" : "var(--sw-navy)",
                                 fontWeight: isSelected ? 700 : 500,
@@ -267,8 +272,6 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
             );
           })}
 
-
-
           {/* Clear all */}
           <AnimatePresence>
             {activeCount > 0 && (
@@ -277,7 +280,7 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 onClick={() => setActiveFilters({})}
-                className="flex-shrink-0 text-xs font-bold underline underline-offset-4 transition-colors hover:text-primary-500 ml-2"
+                className="flex-shrink-0 text-xs font-bold underline underline-offset-4 transition-colors cursor-pointer ml-2"
                 style={{ color: "var(--sw-navy)", opacity: 0.6 }}
               >
                 Clear all
@@ -300,11 +303,9 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
           style={{ paddingBottom: "4px" }}
         >
           {/* All Cities circle */}
-          <motion.button
-            whileHover={{ y: -4, scale: 1.05 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={() => onCityChange([])}
-            className="flex-shrink-0 flex flex-col items-center gap-2.5"
+          <button
+            onClick={() => setLocalCities([])}
+            className="flex-shrink-0 flex flex-col items-center gap-2.5 cursor-pointer"
           >
             <div
               className="relative transition-all duration-300"
@@ -316,9 +317,6 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                 background: noCitySelected
                   ? "linear-gradient(135deg, var(--sw-primary), #f5a623)"
                   : "rgba(55,71,90,0.06)",
-                boxShadow: noCitySelected
-                  ? "0 8px 24px rgba(238,116,41,0.4)"
-                  : "0 4px 12px rgba(0,0,0,0.03)",
               }}
             >
               <div
@@ -347,24 +345,22 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
             >
               All Cities
             </span>
-          </motion.button>
+          </button>
 
           {/* City circles */}
           {cities.map((city) => {
-            const isActive = activeCities.includes(city.name);
+            const isActive = localCities.includes(city.name);
             return (
-              <motion.button
+              <button
                 key={city.name}
-                whileHover={{ y: -4, scale: 1.05 }}
-                whileTap={{ scale: 0.96 }}
                 onClick={() => {
                   if (isActive) {
-                    onCityChange(activeCities.filter((c) => c !== city.name));
+                    setLocalCities(localCities.filter((c) => c !== city.name));
                   } else {
-                    onCityChange([...activeCities, city.name]);
+                    setLocalCities([...localCities, city.name]);
                   }
                 }}
-                className="flex-shrink-0 flex flex-col items-center gap-2.5 group"
+                className="flex-shrink-0 flex flex-col items-center gap-2.5 group cursor-pointer"
               >
                 {/* Gradient ring + image */}
                 <div
@@ -377,19 +373,15 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                     background: isActive
                       ? "linear-gradient(135deg, var(--sw-primary), #f5a623)"
                       : "rgba(0,0,0,0.04)",
-                    boxShadow: isActive
-                      ? "0 8px 24px rgba(238,116,41,0.4)"
-                      : "0 4px 12px rgba(0,0,0,0.04)",
                   }}
                 >
-                  <div className="w-full h-full rounded-full overflow-hidden relative shadow-inner">
+                  <div className="w-full h-full rounded-full overflow-hidden relative">
                     <Image
                       src={city.image}
                       alt={city.name}
                       fill
                       className="object-cover"
                       sizes="76px"
-                      style={{ transform: isActive ? "scale(1.15)" : "scale(1)" }}
                     />
                     {/* Orange tint when active */}
                     {isActive && (
@@ -410,7 +402,6 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                       style={{
                         background: "var(--sw-primary)",
                         border: "2px solid white",
-                        boxShadow: "0 4px 12px rgba(238,116,41,0.5)",
                       }}
                     >
                       <CheckIcon className="w-3.5 h-3.5 text-white" strokeWidth={3} />
@@ -428,29 +419,22 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
                 >
                   {city.name}
                 </span>
-              </motion.button>
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* ═══════════ ROW 3 — SearchIcon Bar ═══════════ */}
+      {/* ═══════════ ROW 3 — Search Bar with Search Button ═══════════ */}
       {onSearchChange && (
-        <motion.div
-          className="max-w-2xl mx-auto w-full relative"
-          animate={{ scale: searchFocused ? 1.01 : 1 }}
-          transition={{ duration: 0.2 }}
-        >
+        <div className="max-w-3xl mx-auto w-full relative">
           <div
-            className="flex items-center rounded-full px-5 py-3 gap-3 transition-all duration-300"
+            className="flex items-center rounded-full p-2 pl-6 gap-3 transition-all duration-300"
             style={{
               background: "white",
               border: searchFocused
                 ? "2px solid var(--sw-primary)"
-                : "2px solid rgba(0,0,0,0.08)",
-              boxShadow: searchFocused
-                ? "0 8px 32px rgba(238,116,41,0.18)"
-                : "0 4px 16px rgba(0,0,0,0.06)",
+                : "2px solid rgba(0,0,0,0.12)",
             }}
           >
             <SearchIcon
@@ -459,30 +443,51 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
             />
             <input
               type="text"
-              placeholder={searchPlaceholder || "Search by name, city, or specialty…"}
-              value={search || ""}
-              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder={searchPlaceholder || "Search by venue name, city, or location…"}
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleApplySearch();
+                }
+              }}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
               className="flex-1 text-sm font-medium outline-none bg-transparent"
               style={{ color: "var(--sw-navy)" }}
             />
             <AnimatePresence>
-              {search && (
+              {localSearch && (
                 <motion.button
                   initial={{ opacity: 0, scale: 0.7 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.7 }}
-                  onClick={() => onSearchChange("")}
-                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
-                  style={{ background: "rgba(0,0,0,0.08)" }}
+                  onClick={() => {
+                    setLocalSearch("");
+                    if (onSearchChange) onSearchChange("");
+                  }}
+                  className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-colors mr-1 cursor-pointer"
+                  style={{ background: "rgba(0,0,0,0.06)" }}
+                  title="Clear search"
                 >
                   <XIcon className="w-3.5 h-3.5 text-slate-500" />
                 </motion.button>
               )}
             </AnimatePresence>
+
+            <button
+              onClick={handleApplySearch}
+              type="button"
+              className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold text-white flex-shrink-0 transition-all cursor-pointer"
+              style={{
+                background: "linear-gradient(135deg, var(--sw-primary) 0%, #f5932a 100%)",
+              }}
+            >
+              <SearchIcon className="w-4 h-4 text-white" />
+              <span>Search</span>
+            </button>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );
