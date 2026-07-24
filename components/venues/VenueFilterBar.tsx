@@ -54,6 +54,25 @@ export default function VenueFilterBar({ activeCities, onCityChange, activeCateg
     }
   };
 
+  // Live search: debounce as the user types instead of requiring Enter/click.
+  useEffect(() => {
+    if (!onSearchChange) return;
+    if (localSearch === (search || "")) return;
+    const timeout = setTimeout(() => onSearchChange(localSearch), 300);
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localSearch]);
+
+  // City selection applies immediately — no need to hit Search first.
+  useEffect(() => {
+    if (localCities === activeCities) return;
+    const same =
+      localCities.length === activeCities.length &&
+      localCities.every((c) => activeCities.includes(c));
+    if (!same) onCityChange(localCities);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localCities]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (filterContainerRef.current && !filterContainerRef.current.contains(event.target as Node)) {
